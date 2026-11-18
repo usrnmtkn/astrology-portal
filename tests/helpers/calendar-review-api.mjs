@@ -7,6 +7,7 @@ import { Readable } from "node:stream";
 import { readerRouteResponse, fixturePublications } from './content-reader-route.mjs';
 import { readFileSync } from "node:fs";
 import { calendarAspectStudioRecord } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/calendarAspectContentStudio.mjs";
+import { calendarPlanetaryIdentity } from '../../apps/admin/src/calendarPlanetarySources.ts';
 const read = path => JSON.parse(readFileSync(new URL(path, import.meta.url), "utf8"));
 const catalog = read("../../apps/web/src/content/fallbackArchitectureV3/authored-inputs/calendar-aspect-consequence-first-drafts-v1.json");
 const composed = read("../../packages/astro-knowledge/data/sky-calendar/composed-cards-v1.json");
@@ -61,6 +62,7 @@ export function matchesStoredInventory(row, params) {
     }
     if (value.startsWith("neq.")) return String(actual ?? "") !== value.slice(4);
     if (value.startsWith("gt.")) return actual > value.slice(3);
+    if (value.startsWith("gte.")) return actual >= value.slice(4);
     if (value.startsWith("lt.")) return actual < value.slice(3);
     if (value.startsWith("lte.")) return actual <= value.slice(4);
     if (value === "is.null") return actual == null;
@@ -76,7 +78,7 @@ export async function createApiStore(initial = fixtures, storeOptions = {}) {
   const { default: handler } = await import(process.env.CALENDAR_TEST_HANDLER ?? "../../api/admin/generated-content.ts");
   Object.assign(process.env, env);
   const rows = new Map(initial.map(row => [row.id, structuredClone(row)]));
-  const publication = publicationRpcFixture(() => [...rows.values()], saved => { for (const row of saved) rows.set(row.id, row); });
+  const publication = publicationRpcFixture(() => [...rows.values()], saved => { for (const row of saved) rows.set(row.id, row); }, () => fixturePublications([...rows.values()]));
   let sequence = 0;
   let versionSequence = 0;
   const nextVersion = () => new Date(Date.now() + ++versionSequence).toISOString();
@@ -86,7 +88,7 @@ export async function createApiStore(initial = fixtures, storeOptions = {}) {
     const reader = await readerRouteResponse(input, options);
     if (reader) return reader;
     const url = new URL(String(input));
-    if (url.origin === env.SUPABASE_URL && url.pathname === "/rest/v1/content_publications" && (!options.method || options.method === "GET")) return Response.json([...new Map([...fixturePublications([...rows.values()]), ...await publication.publications()].map(row => [row.content_key,row])).values()]);
+    if (url.origin === env.SUPABASE_URL && url.pathname === "/rest/v1/content_publications" && (!options.method || options.method === "GET")) return Response.json([...new Map([...fixturePublications([...rows.values()]), ...await publication.publications()].map(row => [row.content_key,row])).values()].filter(row=>matchesStoredInventory(row,url.searchParams)));
     if (url.origin !== env.SUPABASE_URL || url.pathname !== "/rest/v1/generated_interpretations") throw new Error(`Unexpected test storage request ${url.origin}${url.pathname}`);
     const found = [...rows.values()].filter(row => matchesStoredInventory(row, url.searchParams));
     const method = options.method ?? "GET";
@@ -101,7 +103,19 @@ export async function createApiStore(initial = fixtures, storeOptions = {}) {
         return 0;
       });
       const offset = Number(url.searchParams.get('offset') ?? 0);
-      return Response.json(found.slice(offset, offset + Number(url.searchParams.get('limit') ?? found.length)));
+      const selected = found.slice(offset, offset + Number(url.searchParams.get('limit') ?? found.length));
+      const fields = url.searchParams.get('select');
+      if (storeOptions.projectSelect && fields && fields !== '*') {
+        const names = fields.split(',').map(field => {
+          const match = /^(?:([a-z_]+):)?([a-z_]+(?:->>?[a-zA-Z_][a-zA-Z0-9_]*)*)$/u.exec(field);
+          assert(match, 'Projection fixture requires explicit columns or JSON paths');
+          const parts = match[2].split(/->>?/u);
+          return { name: match[1] ?? parts.at(-1), parts };
+        });
+        return Response.json(selected.map(row => Object.fromEntries(names.map(({name,parts}) =>
+          [name, parts.reduce((value, key) => value?.[key], row)]))));
+      }
+      return Response.json(selected);
     }
     const patch = JSON.parse(String(options.body));
     if (patch.status === 'LIVE') assert.equal(new Headers(options.headers).get('x-content-publication-action'), 'publish', 'Validated Live writes must signal publication to storage');
@@ -111,6 +125,21 @@ export async function createApiStore(initial = fixtures, storeOptions = {}) {
       return Response.json([created]);
     }
     if (method === "PATCH") {
+      if (storeOptions.sqlCalendarLifecycle && found.every(row => row.block_type === 'calendar_event' || row.block_type == null && calendarPlanetaryIdentity(row.content_key)?.sign)) {
+        const updated = await publication.patchCalendarRows(found, patch, options.headers);
+        for (const row of updated) rows.set(row.id, row);
+        return Response.json(updated);
+      }
+      if (storeOptions.sqlArticleLifecycle && found.every(row => row.content_key.startsWith('education/astro-101/'))) {
+        const updated = await publication.patchArticleRows(found, patch, options.headers);
+        for (const row of updated) rows.set(row.id, row);
+        return Response.json(updated);
+      }
+      if (storeOptions.sqlMoonLifecycle && found.every(row => /^(?:cms\/lunation-(?:horoscopes|article)|authored\/sky-lunation-macro)\//u.test(row.content_key) && row.mode === 'article')) {
+        const updated = await publication.patchMoonRows(found,patch,options.headers);
+        for (const row of updated) rows.set(row.id,row);
+        return Response.json(updated);
+      }
       const updated = found.map(row => ({ ...row, ...patch, updated_at: nextVersion() }));
       for (const row of updated) rows.set(row.id, row);
       return Response.json(updated);
@@ -125,17 +154,26 @@ export async function createApiStore(initial = fixtures, storeOptions = {}) {
     Object.assign(request, { method, url, headers: { authorization: `Bearer ${secret}` } });
     return new Promise(async (resolve, reject) => {
       const response = { statusCode: 200, setHeader() {}, end(text) { resolve({ status: this.statusCode, payload: JSON.parse(text) }); } };
-      try { const selectedHandler = url.startsWith("/api/admin/content-live-status") ? (await import("../../api/admin/content-live-status.ts")).default : url.startsWith("/api/admin/package-source") ? (await import("../../api/admin/package-source.ts")).default : url.startsWith("/api/admin/content-publication") ? (await import("../../api/admin/content-publication.ts")).default : url.startsWith("/api/admin/content-history") ? (await import("../../api/admin/content-history.ts")).default : url === "/api/content-reader" ? (await import("../../api/content-reader.ts")).default : url.startsWith("/api/admin/generated-content-inventory") ? (await import("../../api/admin/generated-content-inventory.ts")).default : handler; await selectedHandler(request, response); } catch (error) { reject(error); }
+      try { const selectedHandler = url.startsWith("/api/admin/content-baseline-recovery") ? (await import("../../api/admin/content-baseline-recovery.ts")).default : url.startsWith("/api/admin/content-live-status") ? (await import("../../api/admin/content-live-status.ts")).default : url.startsWith("/api/admin/package-source") ? (await import("../../api/admin/package-source.ts")).default : url.startsWith("/api/admin/content-publication") ? (await import("../../api/admin/content-publication.ts")).default : url.startsWith("/api/admin/content-history") ? (await import("../../api/admin/content-history.ts")).default : url === "/api/content-reader" ? (await import("../../api/content-reader.ts")).default : url.startsWith("/api/admin/generated-content-inventory") ? (await import("../../api/admin/generated-content-inventory.ts")).default : handler; await selectedHandler(request, response); } catch (error) { reject(error); }
     });
   };
   return { rows, invoke, publication, close: publication.close };
 }
 
 if (process.argv.includes("--ipc") && process.argv[1] === fileURLToPath(import.meta.url)) {
-  const store = await createApiStore(fixtures, {uuidIds: process.env.STUDIO_UUID_IDS === "true"});
+  const store = await createApiStore(fixtures, {uuidIds: process.env.STUDIO_UUID_IDS === "true", projectSelect: process.env.STUDIO_PROJECT_SELECT === "true", sqlArticleLifecycle: process.env.STUDIO_ARTICLE_SQL_LIFECYCLE === "true", sqlCalendarLifecycle: process.env.STUDIO_CALENDAR_SQL_LIFECYCLE === "true"});
   const { contentLiveStatuses } = await import("../../api/_lib/content-live-status.ts");
   process.on("message", async ({ id, method, body, url, key }) => {
     try {
+      if (method === "prepare-publication") {
+        if (Array.isArray(body)) {
+          store.rows.clear();
+          for (const row of body) store.rows.set(row.id, structuredClone(row));
+        }
+        await store.publication.prepare();
+        process.send({ id, result: true });
+        return;
+      }
       const result = method === "fixture" ? fixtures.find(row => row.content_key === key)
         : method === "publications" ? [...new Map([...fixturePublications([...store.rows.values()]), ...await store.publication.publications()].map(row => [row.content_key,row])).values()] : method === "rows" ? [...store.rows.values()]
         : method === "statuses" ? contentLiveStatuses([...store.rows.values()].filter(row => body.ids.includes(row.id)), [...store.rows.values()]) : await store.invoke(method, body, url);

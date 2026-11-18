@@ -68,6 +68,8 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Exact reader paragraph, composition map, and save/reopen controls
         run: npx playwright test --config=playwright.sky-debility.config.ts
+      - name: Saved dignity drafts, direct navigation, and draft-only saves
+        run: npx playwright test --config=playwright.sky-debility-drafts.config.ts
       - uses: actions/upload-artifact@v4
         if: always()
         with:

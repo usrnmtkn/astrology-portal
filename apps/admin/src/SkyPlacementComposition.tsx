@@ -137,18 +137,18 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
         <option value="direct">Direct</option>{retrogradeBodies.has(current.planet) && <option value="retrograde">Retrograde</option>}
       </AdminSelect></label>
     </div>}
-    {!defaultReadingOnly && <Text size="body" tone="secondary">Choose a writing path to inspect its saved sources and ordered blocks. This choice changes the preview, not what is published. Use the section buttons below or select a colored passage to edit its exact source. Imported article templates in the library below are separate records.</Text>}
+    {!defaultReadingOnly && <Text size="body" tone="secondary">Preview only. Select a section to edit its source.</Text>}
     {ingressRow && !defaultReadingOnly && <>
       <details className={`${containedDisclosure} admin-workspace-details admin-writing-system-details`} aria-label="Placement reader selection">
         <AdminDisclosureSummary>How the reader chooses writing</AdminDisclosureSummary>
-        <p>The reader uses the first available, eligible published body for the calculated motion and occurrence:</p>
+        <p>Published body priority:</p>
         <ol aria-label="Published placement selection order">
           <li>Complete article for the current motion.</li>
           <li>Shared complete placement article.</li>
           <li>Enabled placement composition with all required modules resolved.</li>
           <li>Evergreen fallback sections matching the motion, in their saved order. Empty sections are skipped.</li>
         </ol>
-        <p>TLDR, retrograde opening, dates, and other occurrence additions keep their own sources. Live badges report source eligibility; they do not prove that every field below is selected. Saved previews can include drafts. Open the published reader to check what readers receive.</p>
+        <p>This order selects the article body. Check the published reader for the complete reading.</p>
       </details>
       <SkyWritingSystemDetails system="placement" />
     </>}
@@ -186,7 +186,7 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
           const row = await loadRowRef.current?.({ id: `package:${key}`, content_key: key, inventory_only: true } as CompositionMapRow) as CompositionMapRow | undefined;
           return row ? effectivePackageRecord(row.sections) : undefined;
         }} /> : <>
-      <p>{current.planet === "moon" ? "The Moon write-up joins Opening, How it shows up, and Challenge and response in that order. Select a passage to edit its writing." : selectedWriting === "fallback" ? "These evergreen sections work for any occurrence of this placement. On canonical placement pages, they supply the body when neither a complete article nor an eligible placement composition is available. Only blocks matching the selected motion are included. Open a section to add writing or change the section order." : "This is the complete authored passage for the selected motion, or the shared passage when no motion-specific article is saved. It can be evergreen writing; it is not necessarily a dated article edition. Complete articles take priority over sentence composition and fallback sections."} This preview uses saved sources, including saved drafts. Dates, event additions, aspects, and horoscopes are added on the reader page.</p>
+      <p>Select a section to edit its writing.</p>
       {selectedWriting === "fallback" && <StudioButton type="button" onClick={() => openContextualReaderHref(`/?skyPlacementPreview=fallback#sky/placement/${current.planet}/${current.sign}`)}>Preview evergreen in app</StudioButton>}
       <StudioTabs label="Sky placement composition views" value={view} onValueChange={setView}
         hidden={defaultReadingOnly}
@@ -211,7 +211,7 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
           </div>
         </div>}
         {view === "template" && <div className="admin-sky-placement-template">
-          <p>The template joins the sections below in order. Each section slot supplies a whole passage; article variables substitute calculated facts and saved Writing Library phrases within that passage. Fallback sections retain their calculated-variable contract. Empty sections are skipped.</p>
+          <p>Sections render in saved order. Empty sections are skipped.</p>
           <ol aria-label="Placement template order">
             {parts.map(field => <li key={`${field.row.content_key}/${field.path}`}>
               <StudioButton type="button" className={`admin-composition-variable variable-${field.kind}`} data-variable-color={field.kind === "hook" ? "2" : "3"} onClick={() => edit(field)} aria-label={`Edit ${field.label.toLowerCase()}`}>
@@ -248,7 +248,7 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
             },
             onEdit: sourceId => onEditField ? onEditField(ingressRow, `ingress.sources.${sourceId}`, current) : onEditRow(ingressRow)
           } : undefined} />
-          <p>{selectedWriting === "fallback" ? "You can add and reorder evergreen sections in the linked editor. Empty sections are skipped." : "The app owns the article order. Edit the linked fields to change the wording."} The short retrograde copy is managed under Assembly and is not part of this article.</p>
+
         </div>}
         {view === "assembly" && availableRows.map(row => {
           const fields = skyPlacementAssemblyFields(row);

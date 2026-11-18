@@ -1,5 +1,11 @@
 import type { LocationInput, SkySnapshot } from "../types.js";
 import type { RetrogradeHistory } from "./retrogradeHistory.js";
+import type { CalendarSkyEventSnapshot } from "./ephemeris.js";
+
+export function getCalendarSkyEventSnapshotOffMainThread(location: LocationInput, route: string): Promise<CalendarSkyEventSnapshot | null> {
+  if (typeof Worker === "undefined") return loadEphemerisForNonBrowserRuntime().then(module => module.getCalendarSkyEventSnapshot(location, route));
+  return requestCalculation({ kind: "calendar-event-article", location, route });
+}
 
 export function getRetrogradeHistoryOffMainThread(planet: string, sign: string, referenceDate: Date): Promise<RetrogradeHistory> {
   if (typeof Worker === "undefined") return loadEphemerisForNonBrowserRuntime().then(({ getRetrogradeHistory }) => getRetrogradeHistory({ planet, sign, referenceDate }));
@@ -189,6 +195,13 @@ export function natalDailyTransitPeaksForOffMainThread(
     return loadEphemerisForNonBrowserRuntime().then(({ natalDailyTransitPeaksFor }) => natalDailyTransitPeaksFor(...args));
   }
   return requestCalculation({ kind: "natal-daily-peaks", args });
+}
+
+export function relationshipForecastDayOffMainThread(
+  ...args: Parameters<typeof import("./ephemeris.js").relationshipForecastDayFor>
+): ReturnType<typeof import("./ephemeris.js").relationshipForecastDayFor> {
+  if (typeof Worker === "undefined") return loadEphemerisForNonBrowserRuntime().then(({ relationshipForecastDayFor }) => relationshipForecastDayFor(...args));
+  return requestCalculation({ kind: "relationship-forecast-day", args });
 }
 
 export function preloadSwissEphemerisOffMainThread(): Promise<void> {

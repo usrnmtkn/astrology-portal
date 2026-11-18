@@ -1,10 +1,18 @@
+import { compositeRevisionTarget, isReusableCompositeSourceKey } from "../../src/shared/compositeSourceIdentity.js";
+import { writeupHoroscopesReady } from '../../src/shared/skyWriteupHoroscopes.js';
+import { parseNatalSectPlacementKey } from "../../src/shared/natalSectPlacement.js";
+import {isReusableLunationKey, LUNATION_TIMING_VARIABLES} from '../../src/shared/lunationTimingVariables.js';
 import {studioSkyIdentity} from '../_lib/sky-studio-identity.js';
+import { skyArticleCompiledHashMatches } from '../_lib/sky-article-reader-integrity.js';
 import { skyArticleVariableDraftRecord, resolveSkyArticleVariableFields, type SkyArticleVariableDraft } from '../../src/shared/skyArticleVariableDraft.js';
-import {standaloneArticleKind} from '../../src/shared/articleLibrary.js';
-import {studioOwnerApproval, hasExactStudioOwnerApproval, stampDailyOwnerApproval} from '../_lib/studio-owner-publication.js';
+import {articleRevisionTarget, standaloneArticleKind, validArticlePublishAt, validArticleTimeZone} from '../../src/shared/articleLibrary.js';
+import {natalEditorialRevisionTarget} from '../../src/shared/natalEditorialRevisions.js';
+import {calendarPlanetaryRevisionTarget} from '../../apps/admin/src/calendarPlanetarySources.js';
+import {studioOwnerApproval, hasExactStudioOwnerApproval, stampStudioPackageOwnerApproval} from '../_lib/studio-owner-publication.js';
 import {isDeepStrictEqual} from 'node:util';
 import { csvChanges, csvDraftPatch, csvRecordForRow, type CsvRecord } from '../../apps/admin/src/studioCsv.js';
 import {persistWeeklyHoroscope} from '../_lib/horoscope-storage-confirmation.js';
+import {persistDailyHoroscope} from '../_lib/daily-horoscope-storage.js';
 import {horoscopeEditorPayload} from '../_lib/horoscope-editor-payload.js';
 import {decodeWeeklyHistoryRow,encodeWeeklyHistory} from '../_lib/horoscope-history-storage.js';
 import { studioScopeStorageFilter } from "../../apps/admin/src/studioContentScope.js";
@@ -12,9 +20,11 @@ import { calendarPassageIdentity, calendarPassageErrors, calendarPassageVariable
 import { handleStudioVariables, StudioVariableError, snapshotStudioVariables, assertStudioVariablePublication } from "../_lib/studio-variables.js";
 import { handleStudioWritingProfiles } from "../_lib/studio-writing-profiles.js";
 import { prepareHoroscopeBrief, assertHoroscopeRow, horoscopePublicationIssues } from "../_lib/horoscope-editions.js";
+import { validateHoroscopeWindow } from '../../src/shared/horoscopeWindow.mjs';
 import { AdminHttpError, readPlatformRequestBody } from "../_lib/admin-http.js";
 import { mergeGeneratedInterpretationSections } from "../_lib/generated-interpretation-sections.js";
-import { approveNatalAspectStudioCopy } from "../_lib/content-studio-approval.js";
+import { approveNatalAspectStudioCopy, approveStudioPackageWording } from "../_lib/content-studio-approval.js";
+import { approveLunationStudioRevision, isLunationCycleVariable } from "../_lib/lunation-studio-publication.js";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { AsyncLocalStorage } from "node:async_hooks";
 import { createHash } from "node:crypto";
@@ -115,13 +125,18 @@ type GeneratedContentWriteBody = {
   evergreenBy?: string | null;
   expectedUpdatedAt?: string;
   horoscopeValidationOverride?: boolean;
+  skyPublicationAt?: string | null;
   csvRecord?: CsvRecord;
   ownerAction?:
     | "approve-and-schedule"
+    | "set-sky-article-publication-date"
+    | "cancel-sky-article-publication"
     | "publish-owner-content"
     | "save-and-publish-owner-content"
     | "import-csv-draft"
     | "approve-package-revision"
+    | "publish-standalone-article-revision"
+    | "publish-horoscope-edition-revision"
     | "approve-sky-article-edition"
     | "save-sky-article-edition-revision"
     | "publish-sky-article-edition-revision";
@@ -178,6 +193,8 @@ type ExistingGeneratedContentRow = {
   prompt_version?: string | null;
   source_snapshot?: Record<string, unknown> & {
     horoscopeGeneration?: {
+      dailyEditorial?: {version: string; pending?: unknown};
+      weeklyEditorial?: {pending?: unknown};
       active?: unknown; batch?: { status?: string };
       candidateHolds?: Record<string, { candidate: { headline: string; body: string }; operation: { id: string } }>;
       candidateResolutions?: unknown[];
@@ -212,9 +229,9 @@ function assertValidCmsTemplate({
 }) {
   const snapshot = isRecord(sourceSnapshot) ? sourceSnapshot : {};
   if (!contentKey?.startsWith("cms/") && snapshot.contentSystem !== "cms-surface-override") return;
-  const allowedSlots = Array.isArray(snapshot.allowedSlots)
+  const allowedSlots = libs().wheelTooltipField(contentKey ?? "")?.allowedSlots ?? libs().frictionFlowField(contentKey ?? "")?.allowedSlots ?? (Array.isArray(snapshot.allowedSlots)
     ? snapshot.allowedSlots.filter((slot): slot is string => typeof slot === "string")
-    : [];
+    : []);
   const validation = libs().validateCmsTemplate({
     allowedSlots,
     headline: headline ?? "",
@@ -223,6 +240,8 @@ function assertValidCmsTemplate({
   });
   validation.errors.push(...libs().skySummaryTemplateErrors(contentKey ?? "", body ?? ""));
   validation.errors.push(...libs().skyDebilityTemplateErrors(contentKey ?? "", body ?? "", headline ?? ""));
+  validation.errors.push(...libs().frictionFlowTemplateErrors(contentKey ?? "", body ?? ""));
+  validation.errors.push(...libs().wheelTooltipTemplateErrors(contentKey ?? "", body ?? ""));
   if (validation.errors.length > 0) {
     throw new Error(`CMS template cannot be published: ${validation.errors.join(" ")}`);
   }
@@ -260,22 +279,27 @@ let contentRoleContractCache: {
   };
 } | null = null;
 
-const compositeSourceBody = "(?:sun|moon|mercury|venus|mars|jupiter|saturn|uranus|neptune|pluto|chiron|north_node|south_node|ascendant|descendant|midheaven|imum_coeli)";
-const compositeSourceKey = new RegExp(`^composite\\.(?:${compositeSourceBody}|house\\.${compositeSourceBody}\\.house_(?:[1-9]|1[0-2])|aspect\\.${compositeSourceBody}\\.(?:conjunction|sextile|square|trine|opposition)\\.${compositeSourceBody})$`, "u");
-const compositeSignSourceKey = new RegExp(`^composite-${compositeSourceBody.replaceAll("_", "-")}-in-(?:aries|taurus|gemini|cancer|leo|virgo|libra|scorpio|sagittarius|capricorn|aquarius|pisces)$`, "u");
-
-const compositeHouseAliasKey = new RegExp(`^composite-${compositeSourceBody.replaceAll("_", "-")}-house-?(?:[1-9]|1[0-2])$`, "u");
 const natalEditorialSourceKey = /^cms\/(?:natal-twelfth-ruler\/(?:you|they)\/(?:introduction|ruler-house\/(?:[1-9]|1[0-2]))|natal-chart-context\/(?:you|they)\/sect\/(?:day|night)|natal-planet-sect\/(?:you|they)\/(?:jupiter|venus|mars|saturn)\/(?:day|night))$/u;
 
 function isSampleOnlyRow(surface?: GeneratedContentSurface, contentKey?: string, metadata?: { facts?: unknown; sourceSnapshot?: unknown }) {
   if (contentKey?.startsWith("sample-") || isRecord(metadata?.facts) && metadata.facts.sampleOnly || isRecord(metadata?.sourceSnapshot) && metadata.sourceSnapshot.sampleOnly) return true;
   // These are reusable reader-bank identities, not generated personal reports.
-  const reusableComposite = surface === "composite" && Boolean(contentKey && (compositeSourceKey.test(contentKey) || compositeSignSourceKey.test(contentKey) || compositeHouseAliasKey.test(contentKey)));
-  const reusableNatal = surface === "natal" && Boolean(contentKey && natalEditorialSourceKey.test(contentKey))
+  const reusableComposite = surface === "composite" && isReusableCompositeSourceKey(contentKey);
+  const placement = contentKey ? parseNatalSectPlacementKey(contentKey) : null;
+  const facts = isRecord(metadata?.facts) ? metadata.facts : {};
+  const reusablePlacement = placement && facts.planet === placement.planet && facts.sign === placement.sign
+    && facts.house === placement.house && facts.sect === placement.sect && facts.houseSystem === "whole-sign";
+  const reusableNatal = surface === "natal" && Boolean(contentKey && (natalEditorialSourceKey.test(contentKey) || reusablePlacement))
     && isRecord(metadata?.facts) && metadata.facts.scope === "editorial_library"
     && metadata.facts.audience === contentKey?.split("/")[2]
     && isRecord(metadata?.sourceSnapshot) && metadata.sourceSnapshot.contentSystem === "editorial-library";
-  return Boolean(surface && personalizedSampleSurfaces.has(surface)) && !reusableComposite && !reusableNatal;
+  const reusableFrictionFlow = surface === "relationship" && Boolean(contentKey && libs().frictionFlowField(contentKey))
+    && isRecord(metadata?.sourceSnapshot) && metadata.sourceSnapshot.contentSystem === "cms-surface-override";
+  const reusableSunMoon = (surface === 'you' || surface === 'natal')
+    && /^natal\.aspect\.sun\.(?:conjunction|sextile|square|trine|opposition|quincunx)\.moon$/u.test(contentKey ?? '')
+    && isRecord(metadata?.sourceSnapshot) && metadata.sourceSnapshot.contentType === 'authored-natal-aspect'
+    && metadata.sourceSnapshot.canonicalKey === contentKey;
+  return Boolean(surface && personalizedSampleSurfaces.has(surface)) && !reusableComposite && !reusableNatal && !reusableFrictionFlow && !reusableSunMoon;
 }
 
 function normalizedGeneratedContentBlockType(blockType: unknown, surface?: GeneratedContentSurface, mode?: GeneratedContentWriteBody["mode"]) {
@@ -333,6 +357,16 @@ function studioVariableStorage(params: URLSearchParams, options: { method?: stri
   });
 }
 
+function standalonePublicationSections(row: Record<string, any>, now: string, previous?: Record<string, any>) {
+  if (row.sections != null && !isRecord(row.sections)) return row.sections;
+  const sections = isRecord(row.sections) ? row.sections : {};
+  if (!standaloneArticleKind(row.content_key) || sections.articlePublication != null) return row.sections;
+  // An explicit clear publishes now. An unchanged legacy date survives revision.
+  const immediate = new Date(Math.min(Date.now(), Date.parse(now))).toISOString();
+  const publishAt = Object.hasOwn(sections, 'articlePublication') ? immediate : previous?.published_at ?? immediate;
+  return { ...sections, articlePublication: { publishAt: new Date(publishAt).toISOString() } };
+}
+
 async function prepareStudioVariables(body: GeneratedContentWriteBody, existing?: ExistingGeneratedContentRow) {
   if (standaloneArticleKind(body.contentKey ?? existing?.content_key ?? '') && ['body', 'headline', 'summary'].some(field => Object.hasOwn(body, field))) {
     const record = await snapshotStudioVariables({
@@ -352,7 +386,8 @@ function v3PackageRecord(row: { sections?: unknown; content_key?: string; headli
   const sections = isRecord(row.sections) ? row.sections : {};
   if (standaloneArticleKind(row.content_key ?? '')) return { headline: row.headline, summary: row.summary, body: row.body,
     _studioVariables: isRecord(sections.standaloneArticle) ? sections.standaloneArticle._studioVariables : [], _standaloneArticle: true };
-  return isRecord(sections.packageRecord) ? sections.packageRecord : {};
+  const record = isRecord(sections.packageRecord) ? sections.packageRecord : {};
+  return contentLibraries?.studioPackageSourceRecord(row.content_key ?? "", record, isRecord(sections.packageDraft) ? sections.packageDraft : {}) ?? record;
 }
 
 function isFallbackArchitectureV3Row(row: ExistingGeneratedContentRow | undefined) {
@@ -506,6 +541,17 @@ function applyPersonalTransitPackageDraft(record: Record<string, unknown>, secti
 }
 
 function validateAndApproveNatalAspectCopy(record: Record<string, unknown>, contentKey: string) {
+  if (libs().isNatalRetrogradeModifierKey(contentKey)) {
+    if (![record.body, record.body_they].every(value => typeof value === "string" && value.trim())) {
+      throw new GeneratedContentRequestError("Write both You and Friend retrograde modifiers before publishing. You can save an unfinished draft for later.", 400);
+    }
+    approveNatalAspectStudioCopy(record, contentKey);
+    return;
+  }
+  if (/^fallback-hook\/natal-you-placement-complete-final\//u.test(contentKey)) {
+    approveNatalAspectStudioCopy(record, contentKey);
+    return;
+  }
   if (contentKey.startsWith("fallback-hook/synastry-pair/")) {
     if (![record.body_you, record.body_they].every(value => typeof value === "string" && value.trim())) {
       throw new GeneratedContentRequestError("Write both directions of the synastry passage before publishing. You can save an unfinished draft for later.", 400);
@@ -568,6 +614,7 @@ function setPackageValueAt(record: Record<string, unknown>, path: string, value:
 }
 
 function isEditablePackageCopyPath(path: string, packageRecord?: Record<string, unknown>) {
+  if (path === 'astroHint' && String(packageRecord?.contentKey ?? '').startsWith('fallback-hook/natal-aspect-lived/')) return true;
   if (libs().calendarAspectRetrogradeOptions(String(packageRecord?.contentKey ?? "")).some(option => option.field === path)) return true;
   if (libs().isSkyEvergreenSource(packageRecord) && (path === "ingress" || path.startsWith("ingress."))) return true;
   if (libs().isSkyEvergreenSource(packageRecord) && libs().skyEvergreenEditableFields(packageRecord).some((field: { path: string }) => field.path === path)) return true;
@@ -605,19 +652,20 @@ function validateSkyV4TransitPovCopy(record: Record<string, unknown>, packageDra
       hardFailures.push(...libs().skyPlacementVariableIssues(libs().skyEvergreenSectionText(section)).map((issue: string) => `Evergreen section ${section.id}: ${issue}`));
     }
   }
+  const advisories: string[] = [];
   if (/\byou have (?:a|an) (?:gift|talent|natural ability|instinct)\b/iu.test(copy)) {
-    hardFailures.push("STP-02 natal-trait framing");
+    advisories.push("STP-02 natal-trait framing");
   }
   if (/\b(?:sun|moon|mercury|venus|mars|jupiter|saturn|uranus|neptune|pluto|chiron|lilith|north node|south node) in [a-z-]+ (?:people|person|native|individuals)\b/iu.test(copy)) {
-    hardFailures.push("STP-01 planet-in-sign identity language");
+    advisories.push("STP-01 planet-in-sign identity language");
   }
-  if (/\bright now,? you are\b/iu.test(copy)) hardFailures.push("STP-10 time-adverb trait sentence");
+  if (/\bright now,? you are\b/iu.test(copy)) advisories.push("STP-10 time-adverb trait sentence");
   const hasPlacementBody = !libs().isSkyEvergreenSource(effective) || stringFrom(effective.placementArticle).trim()
     || libs().skyEvergreenFields(effective).some((section: { value: string }) => section.value.trim());
   if (record.studio_content_type === "continuous-placement" && hasPlacementBody && !(seasonSources === undefined && libs().zodiacSeasonVariableNames(copy).length) && !/(?:\benters?\b|\breaches?\b|\bmoves? (?:through|into)\b|\btransit(?:s|ing)? through\b|\bduring this transit\b|\bseason\b|\bcurrent cycle\b|\b(?:while|during|when|with)\b[^.!?]{0,80}\b(?:in|through|reaches?)\b)/iu.test(copy)) {
-    hardFailures.push("STP-03 missing current-sky anchor");
+    advisories.push("STP-03 missing current-sky anchor");
   }
-  return { passed: hardFailures.length === 0, hardFailures };
+  return { passed: hardFailures.length === 0, hardFailures, advisories };
 }
 
 function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, patch: Record<string, unknown>, ownerAuthoredWording = false) {
@@ -718,7 +766,9 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
     }
     // Style is advisory for explicit owner writing. Identity, variables, and
     // factual context below still validate the exact submitted reader copy.
-    if (!ownerAuthoredWording && value.includes("—")) {
+    // Retaining exact approved package writing must not require rewriting it.
+    const approvedPackageField = libs().isApprovedStudioPackageField(row.content_key, field, value);
+    if (!ownerAuthoredWording && !approvedPackageField && value.includes("—")) {
       throw new GeneratedContentRequestError(`${field} contains an em dash. Use a comma, colon, or separate sentence instead.`);
     }
 
@@ -728,7 +778,7 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
       const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
       return new RegExp(`(^|[^a-z])${escaped}([^a-z]|$)`, "i").test(lower);
     });
-    if (banned && !ownerAuthoredWording) {
+    if (banned && !ownerAuthoredWording && !approvedPackageField) {
       throw new GeneratedContentRequestError(`${field} contains banned word "${banned}".`);
     }
 
@@ -757,6 +807,12 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
       ? packagePlaceholders(record.body_you)
       : new Set<string>();
     for (const slot of packagePlaceholders(value)) {
+      if (/(?:^|\.)(?:body|body_you|body_they)$/u.test(field)
+        && libs().natalPlacementVariableNames(row.content_key).includes(slot.slice(2, -2))) continue;
+      if (isReusableLunationKey(row.content_key) && /(?:^|\.)(?:body|body_you|body_they)$/u.test(field)
+        && LUNATION_TIMING_VARIABLES.some(name => slot === `{{${name}}}`)) continue;
+      if ((/^fallback-hook\/natal-you-placement-complete-final\//u.test(row.content_key) || libs().isNatalRetrogradeModifierKey(row.content_key))
+        && field.endsWith("body_they") && slot === "{{ownerName}}") continue;
       if (libs().isConnectionSourceKey(row.content_key) && /(?:^|\.)(?:body|body_you|body_they)$/u.test(field)
         && libs().connectionSourceSlots(row.content_key).includes(slot.slice(2, -2))) continue;
       if (skyVariableField || ingressVariableField || calendarTemplate && calendarPassageVariables.includes(slot.replace(/[{}#\/\s]/gu, ""))) continue;
@@ -787,7 +843,7 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
         if (libs().DAILY_GLANCE_PERSON_SLOT_KEYS.has(slot.slice(2, -2))) continue;
         throw new GeneratedContentRequestError(`${field} contains unsupported Daily Friend variable ${slot}. Use the Friend variable guide.`, 400);
       }
-      if (isLicensedPersonalTransitPlaceholder(row.content_key, slot)) continue;
+      if (isLicensedPersonalTransitPlaceholder(row.content_key, slot) || isLunationCycleVariable(row.content_key, slot)) continue;
       if (!originalSlots.has(slot) && !inheritedFriendSlots.has(slot)) {
         throw new GeneratedContentRequestError(`${field} contains unresolved placeholder ${slot} that was not in the package original.`, 400);
       }
@@ -822,6 +878,14 @@ function assertFallbackArchitectureV3StructureLocked(row: ExistingGeneratedConte
   }
 }
 
+function retainedTransitAlternate(row: ExistingGeneratedContentRow) {
+  const record = v3PackageRecord(row);
+  const sections = isRecord(row.sections) ? row.sections : {};
+  return libs().retainPersonalTransitAlternate({
+    ...record, body_you: record.body_you ?? sections.body_you ?? row.body, body_they: record.body_they ?? sections.body_they
+  }, row.updated_at);
+}
+
 function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow, body: GeneratedContentRequestBody, patch: Record<string, unknown>) {
   const storedSections = isRecord(row.sections) ? row.sections : {};
   const sections = { ...storedSections, ...(isRecord(body.sections) ? body.sections : {}) };
@@ -833,12 +897,12 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
   const record = { ...v3PackageRecord(row) };
   if (body.preserveCurrentTransitAsAlternate) {
     if (row.status !== "LIVE" && !record.alternate_copy_sha256) throw new GeneratedContentRequestError("Only the current live wording can be retained as an alternate.", 409);
-    Object.assign(record, libs().retainPersonalTransitAlternate({ ...record, body_you: record.body_you ?? storedSections.body_you ?? row.body, body_they: record.body_they ?? storedSections.body_they }, row.updated_at));
+    Object.assign(record, retainedTransitAlternate(row));
   }
   const incomingRecord = isRecord(sections.packageRecord) ? sections.packageRecord : {};
   const packageOriginalRecord = isRecord(storedSections.packageOriginalRecord)
     ? { ...storedSections.packageOriginalRecord }
-    : { ...record };
+    : isRecord(storedSections.packageRecord) ? { ...storedSections.packageRecord } : { ...record };
   const storedTransitProposal = isPersonalTransitSituationContentKey(row.content_key) && isRecord(sections.packageDraft);
   const hasPackageDraft = isRecord(sections.packageDraft) && !storedTransitProposal;
   const reviewStatus = body.sourceLifecycleAction === "archive"
@@ -1063,6 +1127,7 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
       record.body_they_authorship = "owner_authored";
     }
     validateAndApproveNatalAspectCopy(record, row.content_key);
+    if (body.ownerAuthoredWording === true) approveStudioPackageWording(record, row.content_key, String(patch.updated_at));
   }
   validateFallbackArchitectureV3Copy(row, { ...patch, sections }, body.ownerAuthoredWording === true);
   if (hasPackageDraft) {
@@ -1320,12 +1385,20 @@ async function readJsonBody(req: IncomingMessage) {
 }
 
 const generatedContentOwnerActions = new Set([
+  "set-sky-article-publication-date", "cancel-sky-article-publication",
   "import-csv-draft", "publish-owner-content", "save-and-publish-owner-content",
-  "approve-and-schedule", "approve-package-revision", "approve-sky-article-edition",
+  "approve-and-schedule", "approve-package-revision", "publish-standalone-article-revision", "publish-horoscope-edition-revision", "approve-sky-article-edition",
   "save-sky-article-edition-revision", "publish-sky-article-edition-revision"
 ]);
 
 function validateWriteBody(body: Record<string, unknown>) {
+  if (Object.hasOwn(body, 'skyPublicationAt') && (body.ownerAction !== 'set-sky-article-publication-date'
+    || body.skyPublicationAt !== null && (typeof body.skyPublicationAt !== 'string'
+    || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?Z$/u.test(body.skyPublicationAt)
+    || !Number.isFinite(Date.parse(body.skyPublicationAt))
+    || new Date(body.skyPublicationAt).toISOString().replace('.000Z', 'Z') !== body.skyPublicationAt.replace('.000Z', 'Z')))) {
+    throw new GeneratedContentRequestError('Choose a valid publication date with its time zone.');
+  }
   if (body.ownerAction === 'import-csv-draft') {
     if (Object.keys(body).some(key => !['id', 'expectedUpdatedAt', 'ownerAction', 'csvRecord'].includes(key))
       || !isRecord(body.csvRecord) || Object.values(body.csvRecord).some(value => typeof value !== 'string')
@@ -1336,16 +1409,18 @@ function validateWriteBody(body: Record<string, unknown>) {
   if (String(body.contentKey ?? "").startsWith("studio-lunation/")) throw new GeneratedContentRequestError("Manage dated drafts in Calendar Write-ups → New & Full Moons & Eclipses.");
   if (String(body.contentKey ?? "").startsWith("studio-writing-profile/")) throw new GeneratedContentRequestError("Manage writing profiles in their Studio writing workspace.");
   if (String(body.contentKey ?? "").startsWith(libs().STUDIO_VARIABLE_PREFIX)) throw new GeneratedContentRequestError("Manage this definition in Variables.");
-  try { libs().assertCleanReaderCopy(body); } catch (error) {
-    throw new GeneratedContentRequestError((error as Error).message);
-  }
   if (isRecord(body.sections)) {
+    if (body.sections.articlePublication != null && (!isRecord(body.sections.articlePublication)
+      || !validArticlePublishAt(body.sections.articlePublication.publishAt)
+      || body.sections.articlePublication.timeZone !== undefined && !validArticleTimeZone(body.sections.articlePublication.timeZone))) {
+      throw new GeneratedContentRequestError("Choose a valid publish date and time.");
+    }
     for (const record of [body.sections, body.sections.packageRecord, body.sections.packageDraft]) {
       if (isRecord(record)) validateAspectRetrogradeCopy(typeof body.contentKey === "string" ? body.contentKey : null, record);
     }
   }
   if (isRecord(body.sourceSnapshot)) {
-    const { studioOwnerApproval: _untrustedApproval, ...snapshot } = body.sourceSnapshot;
+    const { studioOwnerApproval: _untrustedApproval, skyArticlePublication: _untrustedSchedule, ...snapshot } = body.sourceSnapshot;
     body.sourceSnapshot = snapshot;
   }
   for (const field of ["id", "contentKey", "surface", "mode", "eventType", "status", "headline", "summary", "body", "reviewStatus", "sourceLifecycleAction", "editorialNotes", "promptVersion", "provider", "model", "reviewerNotes", "expectedUpdatedAt", "ownerAction"]) {
@@ -1388,13 +1463,23 @@ function validateAspectRetrogradeCopy(contentKey: string | null, record: Record<
 
 function normalizeArticleHoroscopes<T extends Record<string, any>>(row: T, previous:Record<string,any>|null=null): T {
   assertHoroscopeRow(row,{previous});
-  try { return libs().separateArticleHoroscopeRow(row); }
+  try { libs().assertMoonHoroscopeRow(row); return libs().separateArticleHoroscopeRow(row); }
   catch (error) { throw new GeneratedContentRequestError((error as Error).message, 422); }
 }
 
 function assertReaderEligiblePublication(row: Record<string, any>) {
   assertHoroscopeRow(row);
+  try { libs().assertMoonHoroscopeRow(row); }
+  catch(error) { throw new GeneratedContentRequestError((error as Error).message,422); }
   if (row.status !== "LIVE") return;
+  if(String(row.content_key??'').startsWith('cms/lunation-horoscopes/')&&!hasExactStudioOwnerApproval(row))throw new GeneratedContentRequestError('Save these Moon horoscopes as a draft, then approve and publish the saved wording.',409);
+  if (row.event_type === 'sky-article-edition' && !writeupHoroscopesReady(row.sections?.skyArticleEdition?.writeupHoroscopes)) {
+    throw new GeneratedContentRequestError('Complete all 12 sign readings before publishing these write-up horoscopes. Save a draft to keep partial readings.', 409);
+  }
+  if (row.event_type === 'sky-article-edition' && (!skyArticleCompiledHashMatches(row.sections?.skyArticleEdition)
+    || !libs().approvedSkyArticleReaderEdition(row as ExistingGeneratedContentRow))) {
+    throw new GeneratedContentRequestError('The compiled article no longer matches its approved reader copy. Recompile the complete edition before publishing.', 409);
+  }
   if (row.source_snapshot?.studioOwnerApproval && !hasExactStudioOwnerApproval(row)) throw new GeneratedContentRequestError("This wording changed after owner approval. Publish the current saved version again.", 409);
   if (row.content_key?.startsWith(libs().CONNECTION_ACTIVATION_PREFIX) || row.content_key?.startsWith(libs().CONNECTION_BRIDGE_PREFIX)) {
     const record = isRecord(row.sections?.packageRecord) ? row.sections.packageRecord : {};
@@ -1409,9 +1494,6 @@ function assertReaderEligiblePublication(row: Record<string, any>) {
     row.body = filled.body;
     row.sections = filled.sections;
     row.facts = filled.facts;
-  }
-  try { libs().assertCleanReaderCopy(row); } catch (error) {
-    throw new GeneratedContentRequestError((error as Error).message, 409);
   }
   const aspectSections = isRecord(row.sections) ? row.sections : {};
   validateAspectRetrogradeCopy(row.content_key, isRecord(aspectSections.packageRecord) ? aspectSections.packageRecord : aspectSections);
@@ -1856,6 +1938,7 @@ async function generatedContentStats(req: IncomingMessage) {
 }
 
 async function createGeneratedContentFromBody(body: GeneratedContentWriteBody) {
+  if (body.eventType === 'horoscope-edition-revision') throw new GeneratedContentRequestError('Save a revision from its published horoscope edition.', 409);
   await prepareStudioVariables(body);
   if (!body.contentKey?.trim()) {
     throw new GeneratedContentRequestError("contentKey is required.");
@@ -1929,7 +2012,9 @@ async function createGeneratedContentFromBody(body: GeneratedContentWriteBody) {
   };
 
   Object.assign(row, normalizeArticleHoroscopes(row));
-  stampDailyOwnerApproval(row, isExplicitDailyOwnerPublish(body), now);
+  if(row.content_key.startsWith('cms/lunation-horoscopes/')&&(await fetchExistingRowsByContentKey([row.content_key])).some(existing=>existing.mode===row.mode))throw new GeneratedContentRequestError('These Moon horoscopes already exist. Reload the saved version before editing.',409);
+  if (row.status === "LIVE") row.sections = standalonePublicationSections(row, now);
+  stampStudioPackageOwnerApproval(row, isExplicitDailyOwnerPublish(body) || body.ownerAuthoredWording === true && body.reviewStatus === "approved", now);
   assertReaderEligiblePublication(row);
   await assertZodiacSeasonPublication(row);
   Object.assign(row, await validatedLunationPublication(row));
@@ -2030,7 +2115,7 @@ function generatedContentRowFromWriteBody(body: GeneratedContentWriteBody) {
     reviewer_notes: body.reviewerNotes ?? (isSampleOnlyRow(body.surface, body.contentKey, body) ? sampleOnlyReviewerNote : ""),
     updated_at: new Date().toISOString()
   });
-  stampDailyOwnerApproval(row, isExplicitDailyOwnerPublish(body), String(row.updated_at));
+  stampStudioPackageOwnerApproval(row, isExplicitDailyOwnerPublish(body) || body.ownerAuthoredWording === true && body.reviewStatus === "approved", String(row.updated_at));
   return row;
 }
 
@@ -2060,7 +2145,7 @@ async function fetchExistingRowsByContentKey(contentKeys: string[]) {
 
 async function fetchExistingRowById(id: string) {
   const params = new URLSearchParams();
-  params.set("select", "id,content_key,surface,target_date,mode,event_type,status,headline,summary,body,sections,facts,lane,review_state,block_type,provider,prompt_version,source_snapshot,judge_score,judge_verdict,judge_gate,judge_why,updated_at");
+  params.set("select", "id,content_key,surface,target_date,mode,event_type,status,headline,summary,body,sections,facts,lane,review_state,block_type,provider,prompt_version,source_snapshot,judge_score,judge_verdict,judge_gate,judge_why,updated_at,published_at");
   params.set("id", `eq.${id}`);
   params.set("limit", "1");
   const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params.toString()}`, {
@@ -2081,6 +2166,10 @@ function nextGeneratedContentVersion(previous?: string | null) {
 }
 
 async function validatedLunationPublication(row: Record<string, any>) {
+  if (String(row.content_key ?? '').startsWith('cms/lunation-horoscopes/')) {
+    const {moonHoroscopePublicationPatch}=await import('../_lib/moon-horoscope-publication.js');
+    return moonHoroscopePublicationPatch(row);
+  }
   if (row.status !== "LIVE" || !String(row.content_key ?? "").startsWith("cms/lunation-article/")) return {};
   const { lunationPublicationPatch } = await import("../_lib/lunation-article-publication.js");
   return lunationPublicationPatch(row);
@@ -2176,10 +2265,11 @@ async function patchGeneratedContentRow(
 type PublicationDependency = { id: string; updatedAt: string; publicationRevision?: string };
 type PublicationContext = {
   actor: string; operationId?: string; requestSha256?: string;
+  scheduledExecution?: boolean;
   dependencies: Map<string, PublicationDependency>; targetPublication?: unknown; receipt?: Record<string, unknown>;
 };
 const publicationContext = new AsyncLocalStorage<PublicationContext>();
-const atomicPublicationActions = new Set(["approve-package-revision", "publish-sky-article-edition-revision"]);
+const atomicPublicationActions = new Set(["approve-package-revision", "publish-sky-article-edition-revision", "publish-standalone-article-revision", "publish-horoscope-edition-revision"]);
 
 function recordPublicationDependency(row: { id: string; updated_at: string }, publicationRevision?: string | number) {
   const context = publicationContext.getStore();
@@ -2206,7 +2296,8 @@ async function publicationRpc(name: string, body: Record<string, unknown>) {
 
 function identifyPublicationOperation(body: GeneratedContentWriteBody, context: PublicationContext) {
   const identity = JSON.stringify({ schema: "content-studio-publication-operation-v1", actor: context.actor,
-    action: body.ownerAction, proposalId: body.id, proposalVersion: body.expectedUpdatedAt });
+    action: body.ownerAction, proposalId: body.id, proposalVersion: body.expectedUpdatedAt,
+    ...(body.ownerAction==='publish-horoscope-edition-revision'?{horoscopeValidationOverride:body.horoscopeValidationOverride===true}:{}) });
   context.requestSha256 = createHash("sha256").update(identity).digest("hex");
   context.operationId = context.requestSha256;
 }
@@ -2302,7 +2393,8 @@ async function upsertGeneratedContentRow(row: Record<string, unknown>) {
       ...(row.status === "LIVE" ? { "x-content-publication-action": "publish" } : {}),
       prefer: "resolution=ignore-duplicates,return=representation"
     },
-    body: JSON.stringify(row)
+    body: JSON.stringify(['daily','weekly'].includes((row.sections as any)?.horoscopeEdition?.window?.period)
+      ?{...row,source_snapshot:encodeWeeklyHistory(row.source_snapshot)}:row)
   });
   const payload = response.payload;
   if (!response.ok) {
@@ -2323,6 +2415,7 @@ function assertSkyArticleRevisionIdentity(
 ) {
   const immutableFields = [
     "contentKey",
+    "scope",
     "templateKey",
     "templateHash",
     "fixedProseHash",
@@ -2384,6 +2477,75 @@ function skyArticleApprovalSnapshot(
     compiledHash: edition.compiledHash
   };
   return snapshot;
+}
+
+function skyPublicationRecord(row: ExistingGeneratedContentRow): Record<string, any> {
+  const value = row.source_snapshot?.skyArticlePublication;
+  return isRecord(value) ? value : {};
+}
+const skyPublicationActions = new Set(['approve-sky-article-edition', 'publish-sky-article-edition-revision']);
+function canonicalSkyPublicationValue(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(canonicalSkyPublicationValue);
+  if (isRecord(value)) return Object.fromEntries(Object.keys(value).sort().map(key => [key, canonicalSkyPublicationValue(value[key])]));
+  return value;
+}
+function skyPublicationHash(row: ExistingGeneratedContentRow) {
+  return createHash('sha256').update(JSON.stringify(canonicalSkyPublicationValue({ contentKey: row.content_key, headline: row.headline,
+    summary: row.summary, body: row.body, sections: row.sections, target: row.source_snapshot?.targetRowId,
+    targetVersion: row.source_snapshot?.targetRowUpdatedAt }))).digest('hex');
+}
+function skyPublicationDate(row: ExistingGeneratedContentRow, now: string) {
+  const value = skyPublicationRecord(row).publishAt;
+  return typeof value === 'string' && Number.isFinite(Date.parse(value)) ? value : now;
+}
+async function scheduleSkyPublication(row: ExistingGeneratedContentRow, body: GeneratedContentWriteBody, now: string) {
+  if (row.status !== 'DRAFT') throw new GeneratedContentRequestError('Save a private draft before scheduling publication.', 409);
+  const schedule = { schema: 'sky-article-publication/v1', state: 'scheduled', publishAt: skyPublicationDate(row, now),
+    approvedAt: now, actor: publicationContext.getStore()!.actor, action: body.ownerAction,
+    approvedHash: skyPublicationHash(row), requestedVersion: body.expectedUpdatedAt };
+  const saved = await patchGeneratedContentRow(row.id, { source_snapshot: { ...row.source_snapshot, skyArticlePublication: schedule },
+    updated_at: nextGeneratedContentVersion(row.updated_at) }, body.expectedUpdatedAt);
+  publicationContext.getStore()!.receipt = { currentStatus: 'DRAFT', currentPublicationState: 'scheduled', targetId: row.id };
+  return saved;
+}
+function publishedSkySnapshot(snapshot: Record<string, any>, row: ExistingGeneratedContentRow, now: string) {
+  const previous = skyPublicationRecord(row);
+  return { ...snapshot, skyArticlePublication: { ...previous, schema: 'sky-article-publication/v1', state: 'published',
+    publishAt: skyPublicationDate(row, now), approvedAt: previous?.approvedAt ?? now, executedAt: now } };
+}
+
+/** Only the authenticated cron calls this server export. Revalidate the exact saved
+ * wording and current target/dependencies through the ordinary publication path. */
+export async function publishDueSkyArticles() {
+  await loadGeneratedContentLibraries();
+  const query = new URLSearchParams({ select: '*', status: 'eq.DRAFT',
+    event_type: 'in.(sky-article-edition,sky-article-edition-revision)',
+    'source_snapshot->skyArticlePublication->>state': 'eq.scheduled',
+    'source_snapshot->skyArticlePublication->>publishAt': `lte.${new Date().toISOString()}`,
+    order: 'updated_at.asc', limit: '10' });
+  const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${query}`, { headers: adminHeaders() });
+  if (!response.ok || !Array.isArray(response.payload)) throw new Error('Scheduled articles could not load.');
+  let published = 0, held = 0;
+  const deadline = Date.now() + 240_000;
+  for (const row of response.payload) {
+    if (Date.now() >= deadline) break;
+    const schedule = row.source_snapshot?.skyArticlePublication;
+    if (!schedule || schedule.state !== 'scheduled' || !skyPublicationActions.has(schedule.action)
+      || typeof schedule.actor !== 'string' || !schedule.actor || schedule.approvedHash !== skyPublicationHash(row)
+      || !Number.isFinite(Date.parse(schedule.publishAt)) || Date.parse(schedule.publishAt) > Date.now()) { held++; continue; }
+    try {
+      const req = { method: 'PATCH', body: { id: row.id, expectedUpdatedAt: row.updated_at, ownerAction: schedule.action } } as unknown as IncomingMessage;
+      await publicationContext.run({ actor: schedule.actor, dependencies: new Map(), scheduledExecution: true }, () => updateGeneratedContent(req));
+      published++;
+    } catch {
+      // A changed target or unavailable source never publishes unchecked copy.
+      held++;
+      await patchGeneratedContentRow(row.id, { source_snapshot: { ...row.source_snapshot,
+        skyArticlePublication: { ...schedule, state: 'needs_attention', error: 'Publication could not be confirmed. Review the saved article and its current sources before scheduling again.' } },
+        updated_at: nextGeneratedContentVersion(row.updated_at) }, row.updated_at).catch(() => {});
+    }
+  }
+  return { published, held };
 }
 
 function generatedContentTargetKey({
@@ -2478,7 +2640,7 @@ async function recoverPublishedSkyRevision(existing: ExistingGeneratedContentRow
   const sections = isRecord(body.sections) ? body.sections : {};
   const proposal = isRecord(sections.packageDraft) ? sections.packageDraft : null;
   if (existing.status !== "ARCHIVED" || existing.review_state !== "published-revision"
-    || !["sky-v4-reader-copy-draft", "shared-sign-prose-draft", "calendar-passage-draft"].includes(existing.event_type ?? "") || body.ownerAction || body.sourceLifecycleAction || !proposal) return existing;
+    || !["sky-v4-reader-copy-draft", "shared-sign-prose-draft", "calendar-passage-draft", "studio-package-source-draft"].includes(existing.event_type ?? "") || body.ownerAction || body.sourceLifecycleAction || !proposal) return existing;
   validateFallbackArchitectureV3Copy(existing, { sections: body.sections }, body.ownerAuthoredWording === true);
   const targetId = stringFrom(existing.source_snapshot?.targetRowId);
   const target = targetId ? await fetchExistingRowById(targetId) : null;
@@ -2515,7 +2677,9 @@ async function updateGeneratedContent(req: IncomingMessage) {
   }
   requireCallerVersion(body.expectedUpdatedAt);
   if (atomicPublicationActions.has(body.ownerAction ?? "")) {
-    if (Object.entries(body).some(([key, value]) => !["id", "ownerAction", "expectedUpdatedAt"].includes(key) && value !== undefined)) {
+    const fields=["id", "ownerAction", "expectedUpdatedAt",...(body.ownerAction==='publish-horoscope-edition-revision'?["horoscopeValidationOverride"]:[])];
+    if (Object.entries(body).some(([key, value]) => !fields.includes(key) && value !== undefined)
+      || body.horoscopeValidationOverride !== undefined && typeof body.horoscopeValidationOverride !== 'boolean') {
       throw new GeneratedContentRequestError("Publish the saved revision separately from other edits.", 400);
     }
     const context = publicationContext.getStore()!;
@@ -2538,6 +2702,73 @@ async function updateGeneratedContent(req: IncomingMessage) {
   }
   if (body.expectedUpdatedAt !== existing.updated_at) {
     throw new GeneratedContentRequestError("This content changed after the editor was opened. Reload the row before saving so a newer edit is not overwritten.", 409);
+  }
+  if (body.sourceLifecycleAction && existing.content_key.startsWith('cms/lunation-horoscopes/')) {
+    if (Object.keys(body).some(key => !['id', 'expectedUpdatedAt', 'sourceLifecycleAction'].includes(key))) {
+      throw new GeneratedContentRequestError('Archive or restore the saved Moon readings separately from other edits.', 400);
+    }
+    if (existing.mode !== 'article' || existing.event_type !== 'lunation-horoscopes' || existing.lane !== 'serving') {
+      throw new GeneratedContentRequestError('Open the canonical Moon horoscope set to archive or restore it.', 409);
+    }
+    const {assertMoonHoroscopeRow} = await import('../../src/shared/datedLunationHoroscopes.mjs');
+    try { assertMoonHoroscopeRow(existing); }
+    catch (error) { throw new GeneratedContentRequestError((error as Error).message, 422); }
+    const archive = body.sourceLifecycleAction === 'archive';
+    if (archive ? !['DRAFT', 'LIVE'].includes(existing.status) : existing.status !== 'ARCHIVED') {
+      throw new GeneratedContentRequestError('The Moon readings changed state. Reload the saved version before retrying.', 409);
+    }
+    const status = archive ? 'ARCHIVED' : 'DRAFT';
+    const savedRows = await patchGeneratedContentRow(existing.id, {status}, body.expectedUpdatedAt);
+    const saved = savedRows[0];
+    if (savedRows.length !== 1 || saved?.status !== status || saved.updated_at === existing.updated_at
+      || typeof saved.updated_at !== 'string' || !Number.isFinite(Date.parse(saved.updated_at))
+      || Object.entries(existing).some(([key, value]) => !['status', 'updated_at'].includes(key) && !isDeepStrictEqual((saved as Record<string, unknown>)[key], value))) {
+      throw new GeneratedContentRequestError('Storage did not confirm the complete unchanged Moon readings. Reload before retrying.', 502);
+    }
+    // The row trigger withdraws serving copy. Confirm retirement explicitly too;
+    // restoration must remain a private draft until a separate owner publication.
+    const retired = await adminStorageFetch(`${supabaseUrl()}/rest/v1/rpc/retire_content_everywhere`, {
+      method: 'POST', headers: {...adminHeaders(), 'content-type': 'application/json'},
+      body: JSON.stringify({p_content_key: saved.content_key, p_row_id: saved.id, p_expected_updated_at: saved.updated_at})
+    });
+    const retirement = isRecord(retired.payload) ? retired.payload : null;
+    if (!retired.ok || !libs().validContentPublication(retirement) || retirement?.state !== 'retired'
+      || retirement.content_key !== saved.content_key) {
+      throw new GeneratedContentRequestError('The saved state changed, but reader retirement was not confirmed. Reload before retrying.', retired.status === 409 || retirement?.code === '40001' ? 409 : 503);
+    }
+    return savedRows;
+  }
+  if (existing.content_key.startsWith('cms/lunation-horoscopes/') && existing.status === 'ARCHIVED') {
+    throw new GeneratedContentRequestError('Restore the archived Moon readings as a draft before editing or publishing.', 409);
+  }
+  const scheduled = skyPublicationRecord(existing);
+  if (publicationContext.getStore()?.scheduledExecution && (existing.status !== 'DRAFT' || scheduled?.state !== 'scheduled'
+    || scheduled.action !== body.ownerAction || scheduled.approvedHash !== skyPublicationHash(existing)
+    || !Number.isFinite(Date.parse(scheduled.publishAt)) || Date.parse(scheduled.publishAt) > Date.now())) {
+    throw new GeneratedContentRequestError('The scheduled approval changed. Review this article again.', 409);
+  }
+  if (['set-sky-article-publication-date', 'cancel-sky-article-publication'].includes(body.ownerAction ?? '')) {
+    if (existing.event_type === 'sky-article-edition' && existing.status === 'LIVE'
+      && body.ownerAction === 'set-sky-article-publication-date') {
+      if (Object.keys(body).some(key => !['id', 'expectedUpdatedAt', 'ownerAction', 'skyPublicationAt'].includes(key))
+        || !body.skyPublicationAt || Date.parse(body.skyPublicationAt) > Date.now()) {
+        throw new GeneratedContentRequestError('Choose a previous publication date for this live article. Save content changes as a private draft to schedule a replacement.', 409);
+      }
+      const now = new Date().toISOString();
+      const dated = { status: 'LIVE', published_at: body.skyPublicationAt,
+        source_snapshot: { ...existing.source_snapshot, skyArticlePublication: { ...skyPublicationRecord(existing), schema: 'sky-article-publication/v1', state: 'published',
+          publishAt: body.skyPublicationAt, dateUpdatedAt: now, approvedAt: skyPublicationRecord(existing).approvedAt ?? (isRecord(existing.source_snapshot?.ownerApproval) ? existing.source_snapshot.ownerApproval.approvedAt : null) ?? now } } };
+      assertReaderEligiblePublication({ ...existing, ...dated });
+      return patchGeneratedContentRow(existing.id, dated, body.expectedUpdatedAt);
+    }
+    if (!['sky-article-edition', 'sky-article-edition-revision'].includes(existing.event_type ?? '') || existing.status !== 'DRAFT'
+      || Object.keys(body).some(key => !['id', 'expectedUpdatedAt', 'ownerAction', 'skyPublicationAt'].includes(key))) {
+      throw new GeneratedContentRequestError('Set publication timing on a saved private Sky article draft.', 409);
+    }
+    const publication = { schema: 'sky-article-publication/v1', state: 'draft',
+      publishAt: body.ownerAction === 'cancel-sky-article-publication' ? null : body.skyPublicationAt ?? null };
+    return patchGeneratedContentRow(existing.id, { source_snapshot: { ...existing.source_snapshot, skyArticlePublication: publication },
+      updated_at: nextGeneratedContentVersion(existing.updated_at) }, body.expectedUpdatedAt);
   }
   if (body.ownerAction === 'import-csv-draft') {
     const imported = body.csvRecord!;
@@ -2596,6 +2827,102 @@ async function updateGeneratedContent(req: IncomingMessage) {
   };
 
   const ownerPublication = body.ownerAction === "publish-owner-content" || body.ownerAction === "save-and-publish-owner-content";
+  const articleRevision = existing.event_type === "standalone-article-revision";
+  const forksArticleDraft = (articleRevisionTarget(existing) && body.status === "DRAFT"
+    || !isPackageRow && (calendarPlanetaryRevisionTarget(existing) || natalEditorialRevisionTarget(existing) || compositeRevisionTarget(existing)) && existing.lane === "serving" && !existing.review_state
+      && ["DRAFT", "REVIEWED"].includes(body.status ?? ""))
+    && existing.status === "LIVE" && !body.ownerAction && !body.sourceLifecycleAction;
+  const educationSource = existing.content_key.startsWith("education/astro-101/");
+  if (educationSource && body.sourceLifecycleAction
+    && (body.sourceLifecycleAction === "archive" ? body.status !== "ARCHIVED" : existing.status !== "ARCHIVED" || body.status !== "DRAFT")) {
+    throw new GeneratedContentRequestError("Archive the saved Learn page or restore an archived page as a draft.", 409);
+  }
+  if (educationSource && existing.status === "LIVE"
+    && (body.ownerAction || !["DRAFT", "ARCHIVED"].includes(body.status ?? ""))) {
+    throw new GeneratedContentRequestError("Save a private draft before publishing changes to this Learn page.", 409);
+  }
+  const horoscopeRevision = existing.event_type === 'horoscope-edition-revision';
+  if (horoscopeRevision && (ownerPublication || body.status === 'LIVE')) {
+    throw new GeneratedContentRequestError('Save this horoscope revision, then publish its saved changes.', 409);
+  }
+  if (horoscopeRevision && !body.ownerAction) { body.lane = 'reference'; body.reviewState = 'owner-review-required'; }
+  if (body.ownerAction === 'publish-horoscope-edition-revision') {
+    if (Object.keys(body).some(key => !['id','expectedUpdatedAt','ownerAction','horoscopeValidationOverride'].includes(key))
+      || body.horoscopeValidationOverride !== undefined && typeof body.horoscopeValidationOverride !== 'boolean') {
+      throw new GeneratedContentRequestError('Publish the saved revision; save other changes first.', 409);
+    }
+    const target = horoscopeRevision && existing.mode === 'studio-draft' && existing.status === 'DRAFT'
+      ? await fetchExistingRowById(stringFrom(existing.source_snapshot?.targetRowId)) : null;
+    if (!target || !(target.content_key.startsWith('horoscope/')||target.content_key.startsWith('cms/lunation-horoscopes/')) || target.content_key !== existing.content_key
+      || target.mode !== 'article' || target.status !== 'LIVE' || target.updated_at !== existing.source_snapshot?.targetRowUpdatedAt) {
+      throw new GeneratedContentRequestError('The published horoscope edition changed. Reopen it before publishing this revision.', 409);
+    }
+    const now = nextGeneratedContentVersion(target.updated_at);
+    const approved = {...target, headline:existing.headline, summary:existing.summary, body:existing.body,
+      sections:existing.sections, facts:existing.facts, updated_at:existing.updated_at, source_snapshot:existing.source_snapshot};
+    const snapshot:Record<string,any> = {...existing.source_snapshot, review_status:'approved', studioOwnerApproval:studioOwnerApproval(approved, now)};
+    delete snapshot.targetRowId; delete snapshot.targetRowUpdatedAt; delete snapshot.targetContentKey;
+    if (body.horoscopeValidationOverride === true) snapshot.studioOwnerApproval.horoscopeValidationOverride = {
+      approved:true, savedVersion:existing.updated_at, approvedAt:now,
+      issues:horoscopePublicationIssues(approved,true).filter(issue => issue.category === 'horoscope_fact_boundary')
+    };
+    const editionPatch = {headline:existing.headline, summary:existing.summary, body:existing.body, sections:existing.sections,
+      facts:existing.facts, source_snapshot:snapshot, status:'LIVE', lane:'serving', review_state:null,
+      updated_at:now, reviewed_at:now, published_at:now};
+    assertReaderEligiblePublication({...target,...editionPatch});
+    if(['daily','weekly'].includes(existing.sections?.horoscopeEdition?.window?.period))editionPatch.source_snapshot=encodeWeeklyHistory(snapshot);
+    publicationContext.getStore()!.targetPublication = await currentPublication(target.content_key);
+    return publishRevisionAtomically(body,existing,target,editionPatch);
+  }
+  if (articleRevision && (ownerPublication || body.status === "LIVE")) {
+    throw new GeneratedContentRequestError("Save this article revision, then publish its saved changes.", 409);
+  }
+  if (body.ownerAction === "publish-standalone-article-revision") {
+    if (Object.keys(body).some(key => !["id", "expectedUpdatedAt", "ownerAction"].includes(key))) {
+      throw new GeneratedContentRequestError("Publish the saved article revision; save other changes first.", 409);
+    }
+    const target = articleRevision && existing.mode === "studio-draft" && existing.status === "DRAFT"
+      ? await fetchExistingRowById(stringFrom(existing.source_snapshot?.targetRowId)) : null;
+    if (!target || target.content_key !== existing.content_key || !(articleRevisionTarget(target) || calendarPlanetaryRevisionTarget(target) || natalEditorialRevisionTarget(target) || compositeRevisionTarget(target))
+      || target.surface !== existing.surface || target.status !== "LIVE"
+      || existing.source_snapshot?.targetContentKey !== target.content_key
+      || target.updated_at !== existing.source_snapshot?.targetRowUpdatedAt) {
+      throw new GeneratedContentRequestError("The published article changed. Reopen its current source before publishing this revision.", 409);
+    }
+    if (compositeRevisionTarget(target) && (!compositeRevisionTarget(existing, "studio-draft")
+      || isFallbackArchitectureV3Row(target) || target.lane !== "serving" || target.review_state
+      || existing.block_type !== target.block_type || !isDeepStrictEqual(existing.facts ?? {}, target.facts ?? {}))) {
+      throw new GeneratedContentRequestError("The shared Composite source changed. Reopen it before publishing this revision.", 409);
+    }
+    if (calendarPlanetaryRevisionTarget(target) && (isFallbackArchitectureV3Row(target) || target.lane !== "serving" || target.review_state
+      || existing.block_type !== target.block_type || !isDeepStrictEqual(existing.sections?.slots, target.sections?.slots))) {
+      throw new GeneratedContentRequestError("The Calendar event facts changed. Reopen its current source before publishing this revision.", 409);
+    }
+    if (target.event_type==='lunation-article' && (existing.block_type!==target.block_type
+      || existing.target_date!==target.target_date || !isDeepStrictEqual(existing.facts,target.facts))) {
+      throw new GeneratedContentRequestError('The Moon event facts changed. Reopen its current source before publishing this revision.',409);
+    }
+    if (natalEditorialRevisionTarget(target) && (!natalEditorialRevisionTarget(existing, "studio-draft") || target.lane !== "serving" || target.review_state)) {
+      throw new GeneratedContentRequestError("The Natal reading identity changed. Reopen its current source before publishing this revision.", 409);
+    }
+    if (!existing.headline?.trim() || !existing.body?.trim()) throw new GeneratedContentRequestError("Complete the article title and body before publishing.");
+    await assertVersionedStudioVariablePublication(v3PackageRecord(existing));
+    const now = nextGeneratedContentVersion(target.updated_at);
+    const education = target.content_key.startsWith("education/astro-101/");
+    const approved = { ...target, headline: existing.headline, summary: existing.summary, body: existing.body, sections: existing.sections,
+      facts: education ? existing.facts : target.facts };
+    if (!education) approved.sections = standalonePublicationSections(approved, now, target);
+    publicationContext.getStore()!.targetPublication = await currentPublication(target.content_key);
+    const articlePatch = {
+      headline: existing.headline, summary: existing.summary, body: existing.body, sections: approved.sections,
+      ...(education ? { facts: approved.facts } : {}),
+      source_snapshot: { ...target.source_snapshot, review_status: "approved", studioOwnerApproval: studioOwnerApproval(approved, now) },
+      status: "LIVE", lane: "serving", review_state: null, updated_at: now, reviewed_at: now, published_at: now
+    };
+    Object.assign(articlePatch,await validatedLunationPublication({...target,...articlePatch}));
+    assertReaderEligiblePublication({ ...target, ...articlePatch });
+    return publishRevisionAtomically(body, existing, target, articlePatch);
+  }
   if (ownerPublication) {
     const fields = body.ownerAction === "save-and-publish-owner-content" ? ["headline", "summary", "body", "sections"] : [];
     if (!body.expectedUpdatedAt || Object.keys(body).some(key => !["id", "expectedUpdatedAt", "ownerAction", "horoscopeValidationOverride", ...fields].includes(key))) {
@@ -2605,11 +2932,35 @@ async function updateGeneratedContent(req: IncomingMessage) {
       throw new GeneratedContentRequestError("Use this editor's package or complete-edition publication action.", 409);
     }
     const approved = { ...existing, ...Object.fromEntries(fields.filter(field => body[field] !== undefined).map(field => [field, body[field]])) };
+    if (standaloneArticleKind(existing.content_key)) {
+      approved.sections = standalonePublicationSections(approved, String(patch.updated_at), existing);
+      patch.sections = approved.sections;
+      if (body.sections !== undefined) body.sections = approved.sections;
+    }
     if (body.horoscopeValidationOverride !== undefined && (typeof body.horoscopeValidationOverride !== 'boolean' || !existing.content_key.startsWith('horoscope/'))) {
       throw new GeneratedContentRequestError('The horoscope validation override requires a saved horoscope edition.', 400);
     }
     if (!approved.body?.trim()) throw new GeneratedContentRequestError("Add the reader copy before publishing.");
-    patch.source_snapshot = { ...existing.source_snapshot, review_status: "approved", studioOwnerApproval: studioOwnerApproval(approved, patch.updated_at as string) };
+    // Manual rows naming an installed Lilith article must publish the same
+    // canonical record shape consumed by its reader, rather than a body-only row.
+    if (/^sky-lilith\/article\/[a-z-]+$/u.test(existing.content_key)) {
+      const { servingPackageRecords } = await import("../_lib/serving-package-records.js");
+      const installed = servingPackageRecords.get(existing.content_key);
+      if (!installed || typeof installed.LilithArticle !== "string") throw new GeneratedContentRequestError("The installed Lilith source is unavailable. Reload before publishing.", 409);
+      const record = { ...structuredClone(installed), headline: approved.headline, summary: approved.summary ?? "",
+        LilithArticle: approved.body, body_you: approved.body, TLDR_What: approved.summary ?? "", TLDR_Takeaway: "",
+        review_status: "approved", studio_version_status: "approved-serving-revision" };
+      approveStudioPackageWording(record, existing.content_key, String(patch.updated_at));
+      approved.sections = { ...(isRecord(approved.sections) ? approved.sections : {}), packageRecord: record,
+        packageOriginalRecord: structuredClone(installed), body_you: approved.body };
+      patch.sections = approved.sections;
+      if (body.sections !== undefined) body.sections = approved.sections;
+      patch.provider = fallbackArchitectureV3Provider;
+      patch.facts = { ...existing.facts, fallbackArchitectureV3: true, review_status: "approved", readerServing: true };
+      approved.source_snapshot = { ...existing.source_snapshot, sourcePackage: fallbackArchitectureV3Provider,
+        content_role: installed.content_role, review_status: "approved" };
+    }
+    patch.source_snapshot = { ...approved.source_snapshot, review_status: "approved", studioOwnerApproval: studioOwnerApproval(approved, patch.updated_at as string) };
     if (body.horoscopeValidationOverride === true) {
       const issues = horoscopePublicationIssues(approved, true);
       (patch.source_snapshot as any).studioOwnerApproval.horoscopeValidationOverride = {
@@ -2618,7 +2969,6 @@ async function updateGeneratedContent(req: IncomingMessage) {
       };
     }
     if (existing.block_type === "sky_aspect") {
-      if (!libs().skyAspectReaderCopyPassesBoundary(approved.body)) throw new GeneratedContentRequestError("The Sky card contains timing mechanics or internal notes that belong outside reader copy.", 409);
       const identity = studioSkyIdentity(existing.content_key);
       if (identity.kind !== "aspect") throw new GeneratedContentRequestError("The saved Sky aspect identity is invalid.");
       patch.source_snapshot = { ...(patch.source_snapshot as Record<string, unknown>),
@@ -2641,7 +2991,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
       throw new Error(`Approve & publish revision cannot be combined with other changes: ${unexpectedFields.join(", ")}.`);
     }
 
-    const isVersionedReaderDraft = ["sky-v4-governed-aspect-draft", "sky-v4-reader-copy-draft", "shared-sign-prose-draft", "calendar-passage-draft", "calendar-moon-transition-draft"].includes(existing.event_type ?? "");
+    const isVersionedReaderDraft = ["sky-v4-governed-aspect-draft", "sky-v4-reader-copy-draft", "shared-sign-prose-draft", "calendar-passage-draft", "calendar-moon-transition-draft", "studio-package-source-draft"].includes(existing.event_type ?? "");
     const targetRowId = isVersionedReaderDraft ? stringFrom(existing.source_snapshot?.targetRowId) : existing.id;
     if (!targetRowId) throw new Error("This governed revision is missing its live target row.");
     const target = targetRowId === existing.id ? existing : await fetchExistingRowById(targetRowId);
@@ -2751,10 +3101,18 @@ async function updateGeneratedContent(req: IncomingMessage) {
       throw new GeneratedContentRequestError("Write the Calendar passage before publishing.");
     }
     const now = new Date().toISOString();
+    try { await approveLunationStudioRevision(promotedRecord, targetRecord, now); }
+    catch (error) { throw new GeneratedContentRequestError(error instanceof Error ? error.message : 'Could not verify the complete lunation revision.'); }
+    const privatePackageRevision = existing.event_type === "studio-package-source-draft";
+    const revisionRecord = v3PackageRecord(existing);
+    const csvImport = privatePackageRevision ? existing.source_snapshot?.editorialImport : null;
     const promotionPatch: Record<string, unknown> = { updated_at: now };
     applyFallbackArchitectureV3ReviewPatch(target, {
       id: target.id,
       ownerAuthoredWording: true,
+      // Derive retained writing from the version-checked live target again.
+      preserveCurrentTransitAsAlternate: privatePackageRevision && target.content_key.startsWith("authored/transit-aspect/")
+        && Boolean(revisionRecord.alternate_copy_sha256) && revisionRecord.alternate_source_version === target.updated_at,
       headline: stringFrom(promotedRecord.headline) || target.headline || "",
       summary: stringFrom(promotedRecord.summary) || target.summary || "",
       body: stringFrom(promotedRecord.body_you ?? promotedRecord.body ?? promotedRecord.text) || target.body || "",
@@ -2766,7 +3124,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
         packageDraft: null
       },
       facts: { ...(target.facts ?? {}), review_status: "approved" },
-      sourceSnapshot: { ...targetSnapshot, review_status: "approved" },
+      sourceSnapshot: { ...targetSnapshot, ...(isRecord(csvImport) ? { editorialImport: csvImport } : {}), review_status: "approved" },
       reviewStatus: calendarRevision ? "needs_review" : "approved"
     }, promotionPatch);
     const finalSections = isRecord(promotionPatch.sections) ? { ...promotionPatch.sections } : {};
@@ -2783,6 +3141,15 @@ async function updateGeneratedContent(req: IncomingMessage) {
       };
     }
     finalSections.dashboardEditHistory = history;
+    if (promotedRecord.studio_lunation_revision) {
+      // Preserve the full owner-approved unit, including boundary whitespace.
+      promotionPatch.body = promotedRecord.body;
+      Object.assign(finalSections.packageRecord as Record<string, unknown>, {
+        body: promotedRecord.body, approval: promotedRecord.approval, protected_content: promotedRecord.protected_content,
+        studio_lunation_revision: promotedRecord.studio_lunation_revision,
+        studio_version_status: promotedRecord.studio_version_status, promotion_authorized: true
+      });
+    }
     if (canonicalRevision) {
       const validation = validateSkyV4TransitPovCopy(promotedRecord, null, sharedSources);
       if (!validation.passed) throw new GeneratedContentRequestError(`SKY V4 POV validation failed: ${validation.hardFailures.join(", ")}.`);
@@ -2843,8 +3210,11 @@ async function updateGeneratedContent(req: IncomingMessage) {
     promotionPatch.published_at = now;
     // Match JSON/PostgREST: omitted fields retain the stored columns.
     for (const key of Object.keys(promotionPatch)) if (promotionPatch[key] === undefined) delete promotionPatch[key];
+    approveStudioPackageWording(finalSections.packageRecord as Record<string, unknown>, target.content_key, now);
     const ownerRow = { ...target, ...promotionPatch };
-    if (stampDailyOwnerApproval(ownerRow, true, now)) promotionPatch.source_snapshot = ownerRow.source_snapshot;
+    if (stampStudioPackageOwnerApproval(ownerRow, true, now)) {
+      for (const field of ['headline', 'summary', 'body', 'source_snapshot']) promotionPatch[field] = ownerRow[field];
+    }
     assertReaderEligiblePublication({ ...target, ...promotionPatch });
     return publishRevisionAtomically(body, existing, target, promotionPatch);
   }
@@ -2871,6 +3241,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
       ...(isRecord(existing.source_snapshot) ? existing.source_snapshot : {}),
       review_status: "needs_review",
       ownerApproval: null,
+      skyArticlePublication: { schema: "sky-article-publication/v1", state: "draft", publishAt: skyPublicationRecord(existing).publishAt ?? null },
       targetRowId,
       targetRowUpdatedAt: existing.event_type === 'sky-article-edition-revision'
         ? existing.source_snapshot?.targetRowUpdatedAt : existing.updated_at,
@@ -2967,15 +3338,16 @@ async function updateGeneratedContent(req: IncomingMessage) {
       summary: revised.tldr,
       body: revised.body,
       sections: { skyArticleEdition: revised, ...(variableDraft ? { skyArticleVariableDraft: variableDraft } : {}) },
-      source_snapshot: approvedSnapshot,
+      source_snapshot: publishedSkySnapshot(approvedSnapshot, existing, now),
       status: "LIVE",
       lane: "serving",
       review_state: null,
       reviewed_at: now,
-      published_at: now,
+      published_at: skyPublicationDate(existing, now),
       updated_at: now
     };
     assertReaderEligiblePublication({ ...target, ...publicationPatch });
+    if (Date.parse(skyPublicationDate(existing, now)) > Date.now()) return scheduleSkyPublication(existing, body, now);
     return publishRevisionAtomically(body, existing, target, publicationPatch);
   }
 
@@ -3059,8 +3431,10 @@ async function updateGeneratedContent(req: IncomingMessage) {
     patch.lane = "serving";
     patch.review_state = null;
     patch.reviewed_at = now;
-    patch.published_at = now;
-    patch.source_snapshot = sourceSnapshot;
+    patch.published_at = skyPublicationDate(existing, now);
+    patch.source_snapshot = publishedSkySnapshot(sourceSnapshot, existing, now);
+    assertReaderEligiblePublication({ ...existing, ...patch });
+    if (Date.parse(skyPublicationDate(existing, now)) > Date.now()) return scheduleSkyPublication(existing, body, now);
   }
 
   if (isPackageRow && existing) {
@@ -3175,8 +3549,9 @@ async function updateGeneratedContent(req: IncomingMessage) {
 
   if (body.sourceSnapshot !== undefined) {
     patch.source_snapshot = body.sourceSnapshot;
-    if (existing.content_key.startsWith('horoscope/') && existing.source_snapshot?.horoscopeGeneration) {
-      patch.source_snapshot = { ...existing.source_snapshot, ...(isRecord(body.sourceSnapshot) ? body.sourceSnapshot : {}), horoscopeGeneration: existing.source_snapshot.horoscopeGeneration };
+    if (existing.content_key.startsWith('horoscope/')) {
+      patch.source_snapshot = { ...existing.source_snapshot, ...(isRecord(body.sourceSnapshot) ? body.sourceSnapshot : {}),
+        ...(existing.source_snapshot?.horoscopeGeneration ? {horoscopeGeneration: existing.source_snapshot.horoscopeGeneration} : {}) };
     }
   }
 
@@ -3211,7 +3586,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
     && !(body.sections as Record<string, unknown>)?.articleHoroscopes) {
     throw new GeneratedContentRequestError("Saved article horoscopes cannot be omitted. Reload the article before saving.", 422);
   }
-  const editsHoroscopeEdition = existing.content_key.startsWith('horoscope/') && (
+  const editsHoroscopeEdition = (existing.content_key.startsWith('horoscope/') || existing.content_key.startsWith('cms/lunation-horoscopes/')) && (
     (body.body !== undefined && body.body !== existing.body)
     || (body.headline !== undefined && body.headline !== existing.headline)
     || (body.summary !== undefined && body.summary !== existing.summary)
@@ -3229,6 +3604,10 @@ async function updateGeneratedContent(req: IncomingMessage) {
     patch.body = separatedArticle.body;
     patch.sections = separatedArticle.sections;
     patch.source_snapshot = separatedArticle.source_snapshot;
+  }
+  if (existing.source_snapshot?.skyArticlePublication && !skyPublicationActions.has(body.ownerAction ?? '')) {
+    patch.source_snapshot = { ...existing.source_snapshot, ...(isRecord(patch.source_snapshot) ? patch.source_snapshot : {}),
+      skyArticlePublication: { schema: 'sky-article-publication/v1', state: 'draft', publishAt: skyPublicationRecord(existing).publishAt ?? null } };
   }
   const generation = existing.source_snapshot?.horoscopeGeneration;
   if (editsHoroscopeEdition && generation?.candidateHolds) {
@@ -3309,6 +3688,71 @@ async function updateGeneratedContent(req: IncomingMessage) {
   }
 
   const existingPackageRecord = existing ? v3PackageRecord(existing) : {};
+  const packageSourceRevision = existing.mode === "studio-draft" && existing.event_type === "studio-package-source-draft";
+  const packageSourceSections = isRecord(patch.sections) ? patch.sections : {};
+  // Some source editors submit their changed copy as a record rather than a
+  // packageDraft. Keep both forms private without changing the live parent.
+  const packageSourceProposal = isRecord(packageSourceSections.packageDraft) ? packageSourceSections.packageDraft
+    : isRecord(body.sections) && (isRecord(body.sections.packageRecord) || isRecord(body.sections.packageDraft))
+      && isRecord(packageSourceSections.packageRecord)
+      ? { ...packageSourceSections.packageRecord, review_status: existingPackageRecord.review_status } : null;
+  if (packageSourceRevision && patch.status === "DRAFT" && !body.ownerAction && !body.sourceLifecycleAction && packageSourceProposal) {
+    patch.sections = { ...packageSourceSections, packageRecord: existingPackageRecord, packageDraft: packageSourceProposal };
+  }
+  if (articleRevision || forksArticleDraft) {
+    for (const field of ["content_key", "surface", "mode", "event_type", "target_date"] as const) {
+      if (patch[field] !== undefined && !isDeepStrictEqual(patch[field], existing[field])) {
+        throw new GeneratedContentRequestError("An article revision must keep its saved source identity.", 409);
+      }
+    }
+  }
+  if (packageSourceRevision) {
+    for (const field of ["content_key", "surface", "mode", "event_type", "target_date"] as const) {
+      if (patch[field] !== undefined && !isDeepStrictEqual(patch[field], existing[field])) {
+        throw new GeneratedContentRequestError("A source revision must keep its saved source identity.", 409);
+      }
+    }
+  }
+  if (articleRevision || packageSourceRevision) {
+    const snapshot = isRecord(patch.source_snapshot) ? patch.source_snapshot : {};
+    for (const field of ["targetRowId", "targetRowUpdatedAt", "targetContentKey"]) {
+      if (snapshot[field] !== undefined && snapshot[field] !== existing.source_snapshot?.[field]) {
+        throw new GeneratedContentRequestError("The revision target cannot be changed. Reopen the published source.", 409);
+      }
+    }
+    patch.lane = "reference";
+    patch.review_state = "owner-review-required";
+    patch.source_snapshot = { ...existing.source_snapshot, ...snapshot,
+      targetRowId: existing.source_snapshot?.targetRowId, targetRowUpdatedAt: existing.source_snapshot?.targetRowUpdatedAt,
+      targetContentKey: existing.source_snapshot?.targetContentKey };
+  }
+  if (horoscopeRevision) {
+    if (['contentKey','surface','mode','eventType','targetDate'].some(key => body[key] !== undefined)) {
+      throw new GeneratedContentRequestError('A horoscope revision must keep its published edition identity.', 409);
+    }
+    patch.lane = 'reference';
+    patch.review_state = 'owner-review-required';
+    patch.source_snapshot = {...existing.source_snapshot, ...(patch.source_snapshot as object ?? {}),
+      targetRowId:existing.source_snapshot?.targetRowId, targetRowUpdatedAt:existing.source_snapshot?.targetRowUpdatedAt,
+      targetContentKey:existing.source_snapshot?.targetContentKey};
+  }
+  if ((existing.content_key.startsWith('horoscope/')||existing.content_key.startsWith('cms/lunation-horoscopes/')) && existing.mode === 'article' && existing.status === 'LIVE'
+    && patch.status === 'DRAFT' && !body.ownerAction && !body.sourceLifecycleAction) {
+    const revision = {...existing,...patch,id:undefined,mode:'studio-draft',event_type:'horoscope-edition-revision',
+      source_snapshot:{...existing.source_snapshot,...(patch.source_snapshot as object ?? {}),
+        targetRowId:existing.id,targetRowUpdatedAt:existing.updated_at,targetContentKey:existing.content_key},
+      status:'DRAFT',lane:'reference',review_state:'owner-review-required',published_at:null};
+    assertHoroscopeRow(revision,{previous:existing});
+    return upsertGeneratedContentRow(revision);
+  }
+  if (forksArticleDraft) {
+    return upsertGeneratedContentRow({
+      ...existing, ...patch, id: undefined, mode: "studio-draft", event_type: "standalone-article-revision",
+      source_snapshot: { ...(isRecord(patch.source_snapshot) ? patch.source_snapshot : existing.source_snapshot),
+        targetRowId: existing.id, targetRowUpdatedAt: existing.updated_at, targetContentKey: existing.content_key },
+      status: body.status === "REVIEWED" ? "REVIEWED" : "DRAFT", lane: "reference", review_state: "owner-review-required", published_at: null
+    });
+  }
   const forksGovernedAspectDraft = Boolean(
     isPackageRow
     && existing
@@ -3330,22 +3774,39 @@ async function updateGeneratedContent(req: IncomingMessage) {
     && isRecord((patch.sections as Record<string, unknown> | undefined)?.packageDraft));
   const forksCalendarMoonDraft = Boolean(isPackageRow && existing?.status === "LIVE" && libs().isCalendarMoonIngressContentKey(existing.content_key)
     && isRecord((patch.sections as Record<string, unknown> | undefined)?.packageDraft));
-  if ((forksGovernedAspectDraft || forksSkyV4ServingDraft || forksSharedSeasonDraft || forksCalendarPassageDraft || forksCalendarMoonDraft) && existing) {
+  const forksPackageSourceDraft = Boolean(isPackageRow && existing.status === "LIVE"
+    && existing.mode !== "studio-draft" && existing.lane === "serving" && existing.review_state == null
+    && patch.status === "DRAFT" && !body.ownerAction && !body.sourceLifecycleAction
+    && packageSourceProposal !== null
+    && !forksGovernedAspectDraft && !forksSkyV4ServingDraft && !forksSharedSeasonDraft
+    && !forksCalendarPassageDraft && !forksCalendarMoonDraft);
+  if (forksPackageSourceDraft) {
+    for (const field of ["content_key", "surface", "mode", "event_type", "target_date"] as const) {
+      if (patch[field] !== undefined && !isDeepStrictEqual(patch[field], existing[field])) {
+        throw new GeneratedContentRequestError("A source revision must keep its published source identity.", 409);
+      }
+    }
+  }
+  if ((forksGovernedAspectDraft || forksSkyV4ServingDraft || forksSharedSeasonDraft || forksCalendarPassageDraft || forksCalendarMoonDraft || forksPackageSourceDraft) && existing) {
     const skyV4ReaderDraft = forksSkyV4ServingDraft && !forksGovernedAspectDraft;
     return upsertGeneratedContentRow({
       content_key: existing.content_key,
       surface: existing.surface,
       target_date: existing.target_date,
-      mode: "studio-draft",
-      event_type: forksCalendarMoonDraft ? "calendar-moon-transition-draft" : forksCalendarPassageDraft ? "calendar-passage-draft" : forksSharedSeasonDraft ? "shared-sign-prose-draft" : skyV4ReaderDraft ? "sky-v4-reader-copy-draft" : "sky-v4-governed-aspect-draft",
       block_type: existing.block_type,
       provider: "owner-content-studio",
-      prompt_version: forksCalendarMoonDraft ? "calendar-moon-transition-draft-v1" : forksCalendarPassageDraft ? "calendar-passage-draft-v1" : forksSharedSeasonDraft ? "shared-sign-prose-draft-v1" : skyV4ReaderDraft ? "sky-v4-reader-copy-draft-v1" : "sky-v4-governed-aspect-draft-v1",
-      reviewer_notes: forksCalendarMoonDraft ? "Shared Moon transition draft. The published overview and event source remain unchanged until this revision is published." : forksSharedSeasonDraft ? "Shared sign prose draft. The published source remains unchanged until this revision is published." : skyV4ReaderDraft
+      prompt_version: forksPackageSourceDraft ? "studio-package-source-draft-v1" : forksCalendarMoonDraft ? "calendar-moon-transition-draft-v1" : forksCalendarPassageDraft ? "calendar-passage-draft-v1" : forksSharedSeasonDraft ? "shared-sign-prose-draft-v1" : skyV4ReaderDraft ? "sky-v4-reader-copy-draft-v1" : "sky-v4-governed-aspect-draft-v1",
+      reviewer_notes: forksPackageSourceDraft ? "Private source revision. Published wording remains unchanged until this revision is published." : forksCalendarMoonDraft ? "Shared Moon transition draft. The published overview and event source remain unchanged until this revision is published." : forksSharedSeasonDraft ? "Shared sign prose draft. The published source remains unchanged until this revision is published." : skyV4ReaderDraft
         ? "Versioned reader-copy draft. The approved SKY V4 serving baseline remains LIVE and unchanged."
         : "Versioned reader-copy draft. The approved governed aspect baseline remains LIVE and unchanged.",
       knowledge_ids: [],
       ...patch,
+      mode: "studio-draft",
+      event_type: forksPackageSourceDraft ? "studio-package-source-draft" : forksCalendarMoonDraft ? "calendar-moon-transition-draft" : forksCalendarPassageDraft ? "calendar-passage-draft" : forksSharedSeasonDraft ? "shared-sign-prose-draft" : skyV4ReaderDraft ? "sky-v4-reader-copy-draft" : "sky-v4-governed-aspect-draft",
+      ...(forksPackageSourceDraft ? { sections: { ...packageSourceSections,
+        packageRecord: body.preserveCurrentTransitAsAlternate
+          ? { ...existingPackageRecord, ...retainedTransitAlternate(existing) } : existingPackageRecord,
+        packageDraft: packageSourceProposal } } : {}),
       source_snapshot: {
         ...(isRecord(patch.source_snapshot) ? patch.source_snapshot : {}),
         targetRowId: existing.id,
@@ -3375,8 +3836,11 @@ async function updateGeneratedContent(req: IncomingMessage) {
   Object.assign(patch, await validatedLunationPublication({ ...existing, ...patch }));
   for (const key of Object.keys(patch)) if (patch[key] === undefined) delete patch[key];
   const ownerRow = { ...existing, ...patch };
-  if (stampDailyOwnerApproval(ownerRow, isExplicitDailyOwnerPublish(body), String(patch.updated_at))) {
-    patch.source_snapshot = ownerRow.source_snapshot;
+  if (patch.status === "LIVE" && !ownerPublication && standaloneArticleKind(existing.content_key) && !ownerRow.source_snapshot?.studioOwnerApproval) {
+    patch.sections = standalonePublicationSections(ownerRow, String(patch.updated_at), existing);
+  }
+  if (stampStudioPackageOwnerApproval(ownerRow, isExplicitDailyOwnerPublish(body) || body.ownerAuthoredWording === true && body.reviewStatus === "approved", String(patch.updated_at))) {
+    for (const field of ['headline', 'summary', 'body', 'source_snapshot']) patch[field] = ownerRow[field];
   }
   assertReaderEligiblePublication({ ...existing, ...patch });
   await assertZodiacSeasonPublication({ ...existing, ...patch });
@@ -3384,11 +3848,14 @@ async function updateGeneratedContent(req: IncomingMessage) {
 
   // Weekly editors send only editable fields. A compact, versioned checkpoint
   // retains the complete server-owned history without returning it through PATCH.
-  if(existing.sections?.horoscopeEdition?.window?.period==='weekly'&&existing.status==='DRAFT'&&patch.status!=='LIVE'){
+  if((existing.sections?.horoscopeEdition?.window?.period==='weekly'
+    ||existing.sections?.horoscopeEdition?.window?.period==='daily'&&existing.source_snapshot?.horoscopeGeneration?.dailyEditorial)
+    &&existing.status==='DRAFT'&&(patch.status===undefined||patch.status==='DRAFT')){
     const changed=Object.fromEntries(Object.entries(patch).filter(([key,value])=>key!=='updated_at'&&!isDeepStrictEqual(value,existing[key])));
     if(Object.keys(changed).every(key=>['sections','source_snapshot','body','facts','review_state','reviewed_at','status'].includes(key))
       &&(changed.review_state===undefined||changed.review_state===null)&&(changed.reviewed_at===undefined||changed.reviewed_at===null)){
-      const saved=await persistWeeklyHoroscope({url:`${supabaseUrl()}/rest/v1/generated_interpretations`,headers:adminHeaders(),row:existing,patch:changed});
+      const persist=existing.sections?.horoscopeEdition?.window?.period==='daily'?persistDailyHoroscope:persistWeeklyHoroscope;
+      const saved=await persist({url:`${supabaseUrl()}/rest/v1/generated_interpretations`,headers:adminHeaders(),row:existing,patch:changed});
       return [saved];
     }
   }
@@ -3406,7 +3873,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
       ...(patch.status === "LIVE" ? { "x-content-publication-action": "publish" } : {}),
       prefer: "return=representation"
     },
-    body: JSON.stringify(existing.sections?.horoscopeEdition?.window?.period==='weekly'&&patch.source_snapshot
+    body: JSON.stringify(['daily','weekly'].includes(existing.sections?.horoscopeEdition?.window?.period)&&patch.source_snapshot
       ?{...patch,source_snapshot:encodeWeeklyHistory(patch.source_snapshot)}:patch)
   });
   const payload = response.payload;
@@ -3432,7 +3899,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
     }
   }
 
-  return updatedRows;
+  return updatedRows.map(decodeWeeklyHistoryRow);
 }
 
 async function deleteGeneratedContent(req: IncomingMessage) {
@@ -3449,8 +3916,9 @@ async function deleteGeneratedContent(req: IncomingMessage) {
   if (!existing) {
     throw new GeneratedContentRequestError("Content row was not found.", 404);
   }
-  if (existing.content_key.startsWith('horoscope/') && (existing.source_snapshot?.horoscopeGeneration?.active||existing.source_snapshot?.horoscopeGeneration?.batch?.status==='running')) {
-    throw new GeneratedContentRequestError('A horoscope reading is running. Retrieve or release that request before deleting the edition.', 409);
+  const generation=existing.source_snapshot?.horoscopeGeneration;
+  if (existing.content_key.startsWith('horoscope/') && (generation?.active||generation?.batch?.status==='running'||generation?.weeklyEditorial?.pending||generation?.dailyEditorial?.pending)) {
+    throw new GeneratedContentRequestError('Finish or explicitly release the saved horoscope request or batch review before deleting this edition.', 409);
   }
   if (existing.content_key.startsWith("studio-lunation/")) throw new GeneratedContentRequestError("Manage dated drafts in Calendar Write-ups → New & Full Moons & Eclipses.");
   if (existing.content_key.startsWith(libs().STUDIO_VARIABLE_PREFIX)) throw new GeneratedContentRequestError("Manage this definition in Variables.");
@@ -3505,20 +3973,60 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       if(contentKey&&!/^horoscope\/[a-zA-Z0-9_./+-]+$/u.test(contentKey))throw new AdminHttpError(400,'Choose a horoscope edition.');
       const detail=Boolean(id||contentKey);
       const inventoryOnly=!detail&&query.get('editionInventory')==='true';
+      const pagedInventory=query.get('editionInventoryPage')==='true';
+      if(pagedInventory&&!inventoryOnly)throw new AdminHttpError(400,'Use edition inventory to browse pages.');
+      const startsAt=query.get('articleStartsAt'),endsAt=query.get('articleEndsAt'),cursor=query.get('cursor');
+      if((startsAt!==null||endsAt!==null||cursor!==null)&&!pagedInventory)throw new AdminHttpError(400,'Use paged edition inventory for an article period or cursor.');
+      if(startsAt!==null||endsAt!==null){
+        const canonical=(value:string|null)=>typeof value==='string'&&/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/u.test(value)
+          &&Number.isFinite(Date.parse(value))&&new Date(value).toISOString()===value;
+        if(!canonical(startsAt)||!canonical(endsAt)||Date.parse(startsAt!)>=Date.parse(endsAt!))throw new AdminHttpError(400,'Choose a valid complete article period.');
+      }
       // Recovery compares the complete document returned by horoscope-writing.
       // The generic detail projection omits storage fields and falsely looks
       // like an outside edit after a provider checkpoint advances updated_at.
       // Browsing needs no provider history, prompt snapshots or duplicate body.
       // Opt in so already-open clients still receive complete documents.
       // Project in storage, before transferring and parsing the result.
-      const params=new URLSearchParams({content_key:contentKey?`eq.${contentKey}`:"like.horoscope/*",mode:"eq.article",
-        select:versionOnly?'id,updated_at':inventoryOnly?'id,content_key,headline,status,sections,updated_at':'*',order:"updated_at.desc",limit:detail?'1':'30'});
+      const params=new URLSearchParams({content_key:contentKey?`eq.${contentKey}`:"like.horoscope/*",
+        or:'(mode.eq.article,and(mode.eq.studio-draft,event_type.eq.horoscope-edition-revision))',
+        select:versionOnly?'id,updated_at':pagedInventory?'id,content_key,headline,status,event_type,updated_at,horoscope_window:sections->horoscopeEdition->window':inventoryOnly?'id,content_key,headline,status,event_type,sections,updated_at':'*',
+        order:pagedInventory?'updated_at.desc,id.desc':'updated_at.desc',limit:detail?'1':pagedInventory?'31':'30'});
+      // Completed private revisions stay in history, but must not obscure the
+      // current published edition when opening its dates or browsing the list.
+      const filters:string[]=[];
+      if(!id)filters.push('or(event_type.neq.horoscope-edition-revision,event_type.is.null,status.neq.ARCHIVED)');
+      if(pagedInventory&&cursor){
+        if(cursor.length>512)throw new AdminHttpError(400,'cursor is invalid.');
+        const decoded=decodeGeneratedContentCursor(cursor);
+        if(!/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/iu.test(decoded.id)
+          ||!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?(?:Z|[+-]\d{2}:\d{2})$/u.test(decoded.updatedAt))throw new AdminHttpError(400,'cursor is invalid.');
+        params.set('updated_at',`lte.${decoded.updatedAt}`);
+        filters.push(`or(updated_at.lt.${decoded.updatedAt},and(updated_at.eq.${decoded.updatedAt},id.lt.${decoded.id}))`);
+      }
+      if(filters.length)params.set('and',`(${filters.join(',')})`);
+      if(startsAt&&endsAt){
+        // Horoscope windows are stored as validated canonical UTC ISO strings.
+        // Compare before limiting the page, with half-open interval boundaries.
+        params.set('sections->horoscopeEdition->window->>startsAt',`lt.${endsAt}`);
+        params.set('sections->horoscopeEdition->window->>endsAt',`gt.${startsAt}`);
+      }
       if(id)params.set('id',`eq.${id}`);
       // Full saved documents retain the writer's bounded read budget. They can
       // contain many complete historical requests; opening must not truncate them.
       const result = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params}`,{headers:adminHeaders()},detail?30_000:adminStorageTimeoutMs);
       if (!result.ok || !Array.isArray(result.payload)) throw new AdminHttpError(502, "Horoscope editions could not load.");
-      sendJson(res, 200, {ok:true,rows:inventoryOnly?result.payload.map(row=>({...row,inventory_only:true})):result.payload});
+      const page=pagedInventory?result.payload.slice(0,30):result.payload;
+      const nextCursor=pagedInventory&&result.payload.length>30?encodeGeneratedContentCursor(page.at(-1)):null;
+      if(pagedInventory&&result.payload.length>30&&!nextCursor)throw new AdminHttpError(502,'The horoscope edition page could not be verified.');
+      let inventoryRows;
+      try {
+        inventoryRows=pagedInventory?page.map(row=>({id:row.id,content_key:row.content_key,headline:row.headline,
+          status:row.status,event_type:row.event_type,updated_at:row.updated_at,
+          horoscope_window:validateHoroscopeWindow(row.horoscope_window),inventory_only:true}))
+          :inventoryOnly?page.map(row=>({...row,inventory_only:true})):page;
+      } catch { throw new AdminHttpError(502,'The horoscope edition page could not be verified.'); }
+      sendJson(res, 200, {ok:true,rows:inventoryRows,...(pagedInventory?{nextCursor}:{})});
       return;
     }
     if (new URL(req.url ?? "/", "http://localhost").searchParams.get("writingProfiles") === "true") {
@@ -3527,6 +4035,14 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     }
     if (new URL(req.url ?? "/", "http://localhost").searchParams.get("variables") === "true") {
       sendJson(res, 200, await handleStudioVariables(req, studioVariableStorage));
+      return;
+    }
+    if (new URL(req.url ?? "/", "http://localhost").searchParams.get("variables") === "export") {
+      if (req.method !== 'GET') throw new StudioVariableError('Use GET to export variables.', 405);
+      const { studioVariableExportPage } = await import('../_lib/studio-variable-export.js');
+      sendJson(res, 200, await studioVariableExportPage(studioVariableStorage,
+        new URL(req.url ?? '/', 'http://localhost').searchParams.get('cursor') ?? '0',
+        new URL(req.url ?? '/', 'http://localhost').searchParams.get('sourceKey') ?? undefined));
       return;
     }
     if (req.method === "GET") {
@@ -3548,8 +4064,17 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         }
         if (!atomicPublicationActions.has(action) || !id) throw new GeneratedContentRequestError("Select the saved publication to check.");
         requireCallerVersion(version);
+        const scheduledRow = await fetchExistingRowById(id);
+        const savedSchedule = scheduledRow ? skyPublicationRecord(scheduledRow) : {};
+        if (scheduledRow?.status === 'DRAFT' && savedSchedule.state === 'scheduled'
+          && savedSchedule.action === action && savedSchedule.requestedVersion === version) {
+          sendJson(res, 200, { ok: true, found: true, rows: [scheduledRow],
+            publicationReceipt: { targetId: id, currentStatus: 'DRAFT', currentPublicationState: 'scheduled' } });
+          return;
+        }
         const context: PublicationContext = { actor: (await getContentAdminPrincipal(req))!, dependencies: new Map() };
-        identifyPublicationOperation({ id, ownerAction: action as GeneratedContentWriteBody["ownerAction"], expectedUpdatedAt: version }, context);
+        identifyPublicationOperation({ id, ownerAction: action as GeneratedContentWriteBody["ownerAction"], expectedUpdatedAt: version,
+          horoscopeValidationOverride:requestUrl.searchParams.get('horoscopeValidationOverride')==='true' }, context);
         const result = await publicationContext.run(context, async () => {
           const receipt = await readPublicationReceipt();
           return receipt ? { found: true, rows: await rowsFromPublicationReceipt(receipt), publicationReceipt: context.receipt } : { found: false, rows: [] };

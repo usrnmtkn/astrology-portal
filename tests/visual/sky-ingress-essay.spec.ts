@@ -12,7 +12,7 @@ for (const format of ['ingress-essay-v2', 'ingress-essay-v3']) for (const [width
  const fields = narrative ? ingressArticleFields() : skyIngressEssayFields;
  const finalField = narrative ? 'articleBody' : 'closingBody';
  test(`Ingress essay draft saves, reopens and compiles without a horoscope companion at ${width} ${theme} ${format}`, async ({ page }) => {
-  await page.clock.install();
+  await page.clock.install({ time: new Date('2026-10-09T11:00:00Z') });
   const temporary = mkdtempSync(path.join(tmpdir(), 'ingress-browser-'));
   const fixture = path.join(temporary, 'rows.json');
   writeFileSync(fixture, JSON.stringify([{ id: 'aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa', content_key: 'sky/article-template/sun/libra',
@@ -75,6 +75,7 @@ for (const format of ['ingress-essay-v2', 'ingress-essay-v3']) for (const [width
       calculationSource: 'synthetic browser fixture', generatedAt: '2026-10-09T12:00:00Z', referenceTimeZone: 'America/New_York',
       planet: 'sun', sign: 'libra', entryYear: 2026, validFrom: '2026-09-22', validTo: '2026-10-23',
       transitStartInstant: '2026-09-23T00:05:14Z', transitEndInstant: '2026-10-23T09:37:57Z',
+      eventCoverage: { start: '2026-09-23T00:05:14Z', end: '2026-10-23T09:37:57Z', complete: true }, events: [],
       slotValues: { articleTitle: 'Libra Season 2026', when: 'September 22, 2026 at 8:05 PM ET to October 23, 2026 at 5:37 AM ET' } };
     await route.fulfill({ json: { ok: true, facts: articleFacts } });
     return true;
@@ -88,7 +89,8 @@ for (const format of ['ingress-essay-v2', 'ingress-essay-v3']) for (const [width
    if (!narrative) await editor.getByLabel('Sky article format').selectOption(format);
    const loadFacts = editor.getByRole('button', { name: 'Load calculated facts', exact: true });
    await expect(loadFacts).toBeEnabled();
-   await page.clock.pauseAt(await page.evaluate(() => Date.now() + 100));
+   // Use a deterministic future point; an RPC round trip can exceed a 100 ms offset.
+   await page.clock.pauseAt(new Date('2026-10-09T12:00:00Z'));
    await loadFacts.click();
    const loadedNotice = editor.getByRole('status').filter({hasText: /^Loaded the calculated/});
    await expect(loadedNotice).toBeVisible();

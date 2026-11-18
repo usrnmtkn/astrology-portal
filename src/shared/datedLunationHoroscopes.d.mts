@@ -1,0 +1,11 @@
+export type MoonEvent={id?:string;startsAt:string;sign:string;phase?:string;title?:string;eclipseType?:string|null;timeZone?:string};
+export type MoonHoroscopePassage={risingSign:string;house:number;heading:string;body:string};
+export type MoonHoroscopeSection={schema:string;heading:string;introduction:string;passages:MoonHoroscopePassage[]};
+export const MOON_HOROSCOPE_PREFIX:string;
+export const MOON_HOROSCOPE_SIGNS:string[];
+export function moonHoroscopeKey(event:{startsAt:string;sign?:string;phase?:string;title?:string;eclipseType?:string|null}):string;
+export function moonHoroscopeHouse(sign:string,risingSign:string):number;
+export function moonHoroscopeBody(section:MoonHoroscopeSection):string;
+export function parseMoonHoroscopes(text:string,event:MoonEvent):MoonHoroscopeSection;
+export function assertMoonHoroscopeSection(section:MoonHoroscopeSection,event:MoonEvent):MoonHoroscopeSection;
+export function assertMoonHoroscopeRow(row:Record<string,any>):void;

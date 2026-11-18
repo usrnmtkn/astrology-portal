@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import './test-article-horoscope-comparison.mjs';
 import {articleHoroscopeSection, articleTemplateWithHoroscopes, separateArticleHoroscopeRow} from '../apps/web/src/content/skyArticleHoroscopes.mjs';
 import {compileSkyArticleEdition} from '../apps/web/src/content/skyArticleTemplateCompiler.ts';
 

@@ -1,7 +1,9 @@
+import {hasStudioOwnerWording} from "./studioOwnerWording.mjs";
+import {isMoonHoroscopeReaderRow,MOON_HOROSCOPE_PREFIX} from '../../../../src/shared/datedMoonIdentity.mjs';
 import { isReaderFacingCopy } from "./readerSafety.js";
 import { horoscopeEditionFromRow } from './horoscopeEditions.mjs';
 import { skyArticleEditionRecord, hasExactSkyArticleOwnerApproval } from "./skyArticleTemplateCompiler.js";
-import { isSkyIngressEssay } from "./skyIngressEssay.mjs";
+import { approvedSkyArticleReaderEdition } from './skyArticleEditionReader.js';
 import { approvedSkySeasonFallback, SKY_SEASON_FALLBACK_PREFIX } from "./skySeasonFallback.js";
 type GeneratedContentRow = { content_key: string; provider?: string | null; source_snapshot?: Record<string, unknown> | null; facts?: Record<string, unknown> | null; flags?: string[] | null };
 function isRecord(value: unknown): value is Record<string, unknown> { return Boolean(value) && typeof value === "object" && !Array.isArray(value); }
@@ -92,6 +94,25 @@ export function generatedRowPackageRole(row: Pick<GeneratedContentRow, "facts" |
   };
 }
 
+function readerSourceMetadata(row: Pick<GeneratedContentRow, "content_key" | "source_snapshot"> & {
+  status?: string | null; lane?: string | null; review_state?: string | null;
+}) {
+  const snapshot = row.source_snapshot ?? {};
+  if (row.status !== 'LIVE' || row.lane !== 'serving' || row.review_state) return snapshot;
+  if (!/^cms\/lunation-article\/\d{4}-\d{2}-\d{2}\/(?:new-moon|full-moon)\/[a-z]+$/u.test(row.content_key)) return snapshot;
+  const metadata = { ...snapshot };
+  for (const field of ['lunationPublicationCheck', 'lunationWorkspace']) {
+    const check = isRecord(snapshot[field]) ? snapshot[field] : null;
+    const lint = check && isRecord(check.lint) ? check.lint : null;
+    // The current validator calls its default profile "legacy". That label
+    // describes the validator, not the article's source or publication state.
+    if (lint?.validationProfile === 'legacy') {
+      metadata[field] = { ...check, lint: { ...lint, validationProfile: undefined } };
+    }
+  }
+  return metadata;
+}
+
 export function isReaderServableGeneratedContentRow(
   row: Pick<GeneratedContentRow, "content_key" | "facts" | "flags" | "provider" | "source_snapshot"> & {
     status?: string | null;
@@ -104,6 +125,7 @@ export function isReaderServableGeneratedContentRow(
   }
 ) {
   const normalizedContentKey = row.content_key.trim().toLowerCase();
+  if(normalizedContentKey.startsWith(MOON_HOROSCOPE_PREFIX))return isMoonHoroscopeReaderRow(row);
   if (normalizedContentKey.startsWith('horoscope/')) return Boolean(horoscopeEditionFromRow(row));
   if (normalizedContentKey.startsWith("sky/article-template/") || normalizedContentKey.startsWith("sky-article-template/")) {
     return false;
@@ -122,7 +144,7 @@ export function isReaderServableGeneratedContentRow(
   const metadataText = [
     row.content_key,
     row.provider,
-    JSON.stringify(row.source_snapshot ?? {}),
+    JSON.stringify(readerSourceMetadata(row)),
     JSON.stringify(facts ?? {}),
     ...(Array.isArray(row.flags) ? row.flags : [])
   ].join(" ").toLowerCase();
@@ -152,7 +174,7 @@ export function isReaderServableGeneratedContentRow(
   if (blockedPackageRoles.has(packageRole)) return false;
   if (packageReviewStatus && !approvedPackageReviews.has(packageReviewStatus)) return false;
   if (unsafeMetadataMarkers.some((marker) => metadataText.includes(marker))) return false;
-  if (copyValues.some((value) => value && !isReaderFacingCopy(value))) return false;
+  if (!hasStudioOwnerWording(row) && copyValues.some((value) => value && !isReaderFacingCopy(value))) return false;
 
   if (!store) {
     return true;
@@ -177,20 +199,20 @@ export function isReaderServableGeneratedContentRow(
   if (isLegacyLiveWritingRow(row)) return false;
   if (flags.has("REFERENCE_ONLY_NEVER_SERVE_VERBATIM")) return false;
   if (flags.has("PARAPHRASE_PENDING")) return false;
-  if (flags.has("BLOCKLIST_MATCH")) return false;
+  if (flags.has("BLOCKLIST_MATCH") && !hasStudioOwnerWording(row)) return false;
 
   return true;
 }
 
 type GeneratedContentReaderBoundaryRow = { content_key: string; event_type?: string | null; surface?: string | null;
-  source_snapshot?: Record<string, unknown> | null; sections?: unknown; status?: string | null; lane?: string | null; review_state?: string | null };
+  source_snapshot?: Record<string, unknown> | null; sections?: unknown; status?: string | null; lane?: string | null; review_state?: string | null;
+  headline?: string | null; summary?: string | null; body?: string | null };
 export function isGeneratedContentReaderBoundaryAllowed(row: GeneratedContentReaderBoundaryRow) {
   if (row.content_key.startsWith(SKY_SEASON_FALLBACK_PREFIX)) return Boolean(approvedSkySeasonFallback(row));
-  // Dated ingress editions have a separate explicit authoring and approval
-  // contract. Keep legacy placement workspaces excluded from this reader path.
+  // Both compiled formats require the exact saved edition and owner approval.
+  // Legacy placement workspaces remain excluded from this reader path.
   if (row.event_type === "sky-article-edition") {
-    const edition = skyArticleEditionRecord(isRecord(row.sections) ? row.sections.skyArticleEdition : null);
-    return isSkyIngressEssay(edition?.format) && isReaderServableGeneratedContentRow(row);
+    return Boolean(approvedSkyArticleReaderEdition(row)) && isReaderServableGeneratedContentRow(row);
   }
   const contentType = typeof row.source_snapshot?.contentType === "string"
     ? row.source_snapshot.contentType

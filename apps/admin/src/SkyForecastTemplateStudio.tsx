@@ -24,7 +24,7 @@ export default function SkyForecastTemplateStudio({ period, rows, busy, onOpen, 
       <p>Publish your Monthly edition in Horoscopes. Calendar Month uses its TLDR and links to the complete reading.</p>
       <a className="admin-source-action" href="#horoscopes">Open Monthly horoscopes</a>
       <p className="admin-field-hint">Earlier Calendar monthly passages remain in Content Library.</p>
-    </> : <Suspense fallback={<PageLoading message="Loading assembled passage editor…" />}><CalendarPassageEditor key={`${period}|${readerEntry?.sourceKey ?? ''}|${readerEntry?.date ?? ''}|${readerEntry?.timeZone ?? ''}`} period={period} loadRows={loadRows} secret={secret} onEditSource={onEditSource} readerEntry={readerEntry} /></Suspense>}
+    </> : <Suspense fallback={<PageLoading message="Loading assembled passage editor…" />}><CalendarPassageEditor key={`${period}|${readerEntry?.sourceKey ?? ''}|${readerEntry?.date ?? ''}|${readerEntry?.timeZone ?? ''}`} period={period} loadRows={loadRows} secret={secret} onEditSource={onEditSource} readerEntry={readerEntry} sourceEditor={editor} sourceDraft={draft} /></Suspense>}
     <details><summary>Reference templates and source previews</summary>
     <header className="admin-section-heading-row">
       <div>
@@ -40,6 +40,6 @@ export default function SkyForecastTemplateStudio({ period, rows, busy, onOpen, 
     <Suspense fallback={<PageLoading message="Loading template preview…" />}><CalendarTemplatePreview period={period} rows={rows} loadRows={loadRows} draft={draft} onEditSource={onEditSource} onEditOverview={onEditOverview} onBrowseSeasonTransitions={onBrowseSeasonTransitions} /></Suspense>
     <p className="admin-field-hint">Previewing or saving a template does not publish an overview.</p>
     </details>
-    {editor}
+    {period === 'monthly-sky' && editor}
   </section>;
 }

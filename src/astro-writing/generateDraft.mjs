@@ -21,6 +21,7 @@ import {composeMonthlyHoroscopeDraft} from './monthlyHoroscopeFormat.mjs';
 import { LUNATION_EDITORIAL_AUTHORITY } from './lunationEditorialConstraints.mjs';
 import {buildHellenisticMeaningSupport,hellenisticMeaningPrompt} from './hellenisticMeaningSupport.mjs';
 import {HOROSCOPE_PROSE_INSTRUCTIONS_VERSION,usesRefinedHoroscopeProse,horoscopeProseInstructions,renderHoroscopeProseAppendices} from './horoscopeProseInstructions.mjs';
+import {usesWeeklyFromSamples,WEEKLY_FROM_SAMPLES_AUTHORITY} from './weeklyFromSamples.mjs';
 
 export const PLACEMENT_DRAFT_SCHEMA = Object.freeze({
   type: "object",
@@ -198,7 +199,7 @@ function unapprovedDraft(value) {
   };
 }
 
-export async function generateDraft({
+export function prepareDraftRequest({
   plan,
   context,
   task,
@@ -211,14 +212,11 @@ export async function generateDraft({
   argumentSource = null,
   argumentOutline,
   spine,
-  modelClient,
   schema = null,
   writingProfile = null
 }) {
-  if (typeof modelClient !== "function") throw new Error("generateDraft requires an injected modelClient; no implicit billed call is allowed.");
   const resolvedTarget = assertSurfaceRegisterContract(target, { surface, register });
   if (family === 'lunations') assertLunationWritingFacts(engineFacts, { plan, target: resolvedTarget });
-  assertArgumentOutlineApproved(argumentOutline, { plan, family, surface });
   if (!spine || spine.status !== "recorded") throw new Error(`RECORDED_CONTENT_SPINE_REQUIRED:${family}`);
   const role = isCardWritingSurface({ surface, family }) ? "CARD_WRITER_V3" : "WRITER";
   const resolvedSchema = schema ?? (family === 'lunations' ? LUNATION_DRAFT_SCHEMA : family === 'lunation-article' ? LUNATION_ARTICLE_SCHEMA : family === 'horoscope' ? horoscopeDraftSchema(engineFacts?.risingSign,engineFacts?.window) : family === "fast-mover-article"
@@ -240,12 +238,13 @@ export async function generateDraft({
     ? {context,task,engineFacts,argumentOutline,writingProfile,meaningSupport,approvedStyleReference,proseInstructionsVersion:HOROSCOPE_PROSE_INSTRUCTIONS_VERSION}:null;
   const draftInput=buildDraftInput({ plan, context, task, target: resolvedTarget, family, register, surface, familyContext, engineFacts, argumentSource, argumentOutline, spine, writingProfile });
   const refined=family==='horoscope'&&usesRefinedHoroscopeProse(engineFacts?.window?.period);
-  const input=seasonalPreparation?draftInput:refined?[draftInput,renderHoroscopeProseAppendices({meaningSupport,approvedStyleReference})].filter(Boolean).join('\n\n')
+  const weeklyFromSamples=family==='horoscope'&&usesWeeklyFromSamples(writingProfile?.profile);
+  const input=weeklyFromSamples?draftInput:seasonalPreparation?draftInput:refined?[draftInput,renderHoroscopeProseAppendices({meaningSupport,approvedStyleReference})].filter(Boolean).join('\n\n')
     :[draftInput,hellenisticMeaningPrompt({facts:engineFacts??{},plan,family,surface}),renderApprovedVoiceStyleReference(approvedStyleReference)].filter(Boolean).join('\n\n');
   const ownerEvidence=family==='horoscope'&&engineFacts?.window?.period==='weekly'
     ?assertHoroscopeEvidenceDelivered(horoscopeEvidenceReceipt(context,writingProfile),input):null;
-  const instructions=refined?horoscopeProseInstructions(engineFacts.window.period):withGhostwritingSkill(effectiveRulePrompt(baseInstructions, { surface, family }));
-  const value = await modelClient({
+  const instructions=weeklyFromSamples?WEEKLY_FROM_SAMPLES_AUTHORITY:refined?horoscopeProseInstructions(engineFacts.window.period):withGhostwritingSkill(effectiveRulePrompt(baseInstructions, { surface, family }));
+  const request = {
     stage: "draft",
     role,
     instructions,
@@ -261,7 +260,19 @@ export async function generateDraft({
       ...(ownerEvidence?{rejectedExamples:context.rejectedExamples??[],ownerEvidence:{version:ownerEvidence.version,route:ownerEvidence.route,
         inputSha256:ownerEvidence.inputSha256,passages:ownerEvidence.passages.map(({id,sourcePath,sha256,role})=>({id,sourcePath,sha256,role}))}}: {})
     }}:{})
-  });
+  };
+  return {request,meaningSupport,approvedStyleReference,ownerEvidence,resolvedSchema};
+}
+
+export async function generateDraft(options) {
+  const {plan,context,argumentOutline,spine,modelClient,writingProfile=null,family="sky-placement",surface="card",register="collective",engineFacts=null,target}=options;
+  if (typeof modelClient !== "function") throw new Error("generateDraft requires an injected modelClient; no implicit billed call is allowed.");
+  const resolvedTarget=assertSurfaceRegisterContract(target,{surface,register});
+  if(family==='lunations')assertLunationWritingFacts(engineFacts,{plan,target:resolvedTarget});
+  assertArgumentOutlineApproved(argumentOutline,{plan,family,surface});
+  const {request,meaningSupport,approvedStyleReference,ownerEvidence,resolvedSchema}=prepareDraftRequest(options);
+  const {role,instructions,input}=request;
+  const value=await modelClient(request);
   if (!value || typeof value !== "object") throw new Error("Writer returned no structured draft.");
   const readerValue = family==='horoscope' && engineFacts?.risingSign==='overview' && engineFacts?.window?.period==='monthly'
     ? composeMonthlyHoroscopeDraft(value) : value;

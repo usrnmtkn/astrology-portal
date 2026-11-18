@@ -26,6 +26,8 @@ export function calendarSeasonTransitionEndsBridge(fromSign: string, toSign: str
   return calendarSeasonTransitionEndsBridges[calendarSeasonTransitionPair(fromSign, toSign)] ?? "";
 }
 
+export { calendarSeasonTransitionSummaryKey } from './calendarSeasonTransitionSummaryKey.js';
+
 export function calendarSeasonTransitionKey(fromSign: string, toSign: string, variant = 1) {
   const from = fromSign.toLowerCase().trim();
   const to = toSign.toLowerCase().trim();

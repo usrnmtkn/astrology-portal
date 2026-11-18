@@ -1,4 +1,7 @@
 import { calendarPassageIdentity, calendarPassageErrors } from '../../src/calendar-writing/passageContract.js';
+import { isLunationHoroscopeKey } from '../../src/shared/lunationHoroscopeIdentity.js';
+import { createHash } from 'node:crypto';
+import { isLunationEclipseSectionKey, isStudioLunationRevision } from '../../apps/web/src/content/fallbackArchitectureV3/resolver/lunationStudioRevision.mjs';
 import { calendarTransitionPhraseRecordForKey } from "./calendar-transition-phrase-sources.js";
 import { isCalendarMoonIngressContentKey } from "./calendar-moon-ingress-sources.js";
 import coreManifest from "../../apps/web/src/content/fallbackArchitectureV3/bundled-core-manifest-v3.json" with { type: "json" };
@@ -6,6 +9,7 @@ import skyManifest from "../../apps/web/src/content/fallbackArchitectureV3/bundl
 import { isFallbackDashboardRecordAllowed } from "../../apps/web/src/content/fallbackArchitectureV3/dashboardExtensions.js";
 import lunarJournalIndex from "../../apps/web/src/features/calendar/data/lunar-journal.index.json" with { type: "json" };
 import { isConnectionSourceKey, connectionSourceErrors, CONNECTION_ACTIVATION_PREFIX } from "../../apps/web/src/content/connectionTransit.js";
+import { SKY_PLACEMENT_ASPECT_BRIDGE_PREFIX, SKY_PLACEMENT_ASPECT_BRIDGE_POLICY, skyPlacementAspectBridgeErrors } from '../../apps/web/src/content/skyPlacementAspectBridge.js';
 
 const keys = (manifest: { keys: string[] }) => new Set(manifest.keys.map(key => key.slice(key.indexOf(":") + 1)));
 const coreKeys = keys(coreManifest);
@@ -18,14 +22,24 @@ const object = (value: unknown): Record<string, any> => value && typeof value ==
 export function packagePublicationAdmissionIssue(row: Record<string, any>): string | null {
   if (row.status !== "LIVE") return null;
   const record = object(object(row.sections).packageRecord);
+  const key = String(row.content_key ?? "");
   const snapshot = object(row.source_snapshot);
   const facts = object(row.facts);
   const isPackage = row.provider === "tldrastro-fallback-architecture-v3"
     || row.provider === "tldrastro-fallback-architecture-v3-sky-placement"
     || snapshot.sourcePackage === "tldrastro-fallback-architecture-v3" || facts.fallbackArchitectureV3 === true;
   if (!isPackage) return null;
-  const key = String(row.content_key ?? "");
   if (record.contentKey && record.contentKey !== key) return "The source and publication have different content keys. Reopen the correct source before publishing.";
+  if (isLunationEclipseSectionKey(key) || isLunationHoroscopeKey(key) && record.studio_lunation_revision) {
+    if (!isStudioLunationRevision(record) || typeof record.body !== 'string'
+      || createHash('sha256').update(record.body).digest('hex') !== record.protected_content?.body_sha256
+      || row.body !== record.body) return 'Publish this complete lunation revision with its explicit owner action and matching integrity receipt.';
+    return null;
+  }
+  if (key.startsWith(SKY_PLACEMENT_ASPECT_BRIDGE_PREFIX)) {
+    if (record.content_role !== 'fallback_hook' || record.render_policy !== SKY_PLACEMENT_ASPECT_BRIDGE_POLICY) return 'Reopen this house × aspect bridge before publishing.';
+    return skyPlacementAspectBridgeErrors(key, typeof record.body === 'string' ? record.body : '').join(' ') || null;
+  }
   if (isConnectionSourceKey(key)) {
     const body = key.startsWith(CONNECTION_ACTIVATION_PREFIX) ? record.body_you : record.body;
     return connectionSourceErrors(key, typeof body === "string" ? body : "").join(" ") || null;
@@ -44,6 +58,7 @@ export function packagePublicationAdmissionIssue(row: Record<string, any>): stri
     && key === `sky.aspect.${exact.a}.${exact.aspect}.${exact.b}`) return null;
   // Compatibility has a separate dynamically keyed loader.
   if (key.startsWith("authored/compat-pair/")) return null;
+  if (isLunationHoroscopeKey(key)) return null;
   // Calendar leftover season transitions have a dedicated leftover reader, not the fallback package loader.
   if (key.startsWith("authored/calendar-season-transition/")) return null;
   if (isRegisteredLunarJournalKey(key)) return null;

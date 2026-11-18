@@ -1,16 +1,18 @@
+import { expectSkyAspectBody } from "../helpers/sky-aspect-reading";
 import fs from 'node:fs';
 import { expect, test } from '@playwright/test';
 import { bundledPublications } from '../helpers/bundled-publications';
 
 // Synthetic event facts exercise every approved identity on the real reader
 // route. They are confined to this test and never enter production code.
-test('Calendar renders all 21 approved refinements in full and after reload', async ({ page }) => {
+const packet = JSON.parse(fs.readFileSync('packages/astro-knowledge/review/calendar-collective-pressure-pass-2026-09-07/candidate-payloads.json', 'utf8'));
+const entries = Object.entries(packet.entries) as [string, { summary: string; body: string }][];
+
+for (const [contentKey, copy] of entries) test(`Calendar renders approved ${contentKey} in full and after reload`, async ({ page }) => {
   test.setTimeout(120_000);
   // This corpus fixture needs an explicitly resolved publication plane, just
   // like other bundled-reader tests; an unavailable service is not an empty one.
   await bundledPublications(page);
-  const packet = JSON.parse(fs.readFileSync('packages/astro-knowledge/review/calendar-collective-pressure-pass-2026-09-07/candidate-payloads.json', 'utf8'));
-  const entries = Object.entries(packet.entries) as [string, { summary: string; body: string }][];
   const dateKey = '2026-09-12';
   const events = entries.map(([key]) => {
     const [, , a, aspect, b] = key.split('.');
@@ -25,15 +27,11 @@ test('Calendar renders all 21 approved refinements in full and after reload', as
   } }));
   await page.goto(`/#calendar?view=day&date=${dateKey}`);
   for (let load = 0; load < 2; load++) {
-    for (const [key, copy] of entries) {
-      const [, , a, aspect, b] = key.split('.');
-      const verb = { conjunction: 'conjoins', opposition: 'opposes', square: 'squares', trine: 'trines', sextile: 'sextiles' }[aspect];
-      await page.getByRole('button', { name: new RegExp(`^${a}(?: Rx)? ${verb} ${b}(?: Rx)?$`, 'i') }).click();
-      const region = page.getByRole('dialog', { name: 'Event detail' });
-      // Exact full-body equality protects both opening and final sentence.
-      await expect(region.locator('.calendar-reading__body')).toHaveText(copy.body, { timeout: 30_000 });
-      await region.getByRole('button', { name: 'Close', exact: true }).click();
-    }
+    const [, , a, aspect, b] = contentKey.split('.');
+    const verb = { conjunction: 'conjoins', opposition: 'opposes', square: 'squares', trine: 'trines', sextile: 'sextiles' }[aspect];
+    await page.getByRole('button', { name: new RegExp(`^${a}(?: Rx)? ${verb} ${b}(?: Rx)?$`, 'i') }).click();
+    await expectSkyAspectBody(page, copy.body);
+    await page.getByRole('button', { name: 'Close detail', exact: true }).click();
     if (load === 0) await page.reload();
   }
 });

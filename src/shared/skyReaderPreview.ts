@@ -1,5 +1,5 @@
 import type { CompiledSkyArticleEdition } from '../../apps/web/src/content/skyArticleTemplateCompiler';
-import type { LocationInput } from './types';
+import type { LocationInput, SkySnapshot } from './types';
 
 export const skyReaderPreviewPath = '/studio/sky-reader-preview';
 export const skyReaderPreviewProtocol = 'studio-sky-reader-preview/v1';
@@ -11,6 +11,9 @@ export type SkyReaderPreviewRequest = {
   planet: string;
   sign: string;
   date: string;
+  instant?: string;
+  captureArticle?: boolean;
+  readerSky?: SkySnapshot;
   location: LocationInput;
   mode: 'published' | 'draft';
   theme: 'light' | 'dark';
@@ -33,6 +36,12 @@ export type SkyReaderPreviewResult = {
   displayed: SkyReaderPreviewSource;
   draftSelected: boolean;
   draftError: string | null;
+  article?: SkyReaderArticleCopy;
+};
+
+export type SkyReaderArticleCopy = {
+  title: string; summary: string; body: string;
+  sourceKeys: string[]; versions: string[]; instant: string; timeZone: string; readerUrl: string;
 };
 
 export function isSkyReaderPreviewDate(value: string) {

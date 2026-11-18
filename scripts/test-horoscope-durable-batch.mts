@@ -22,7 +22,7 @@ async function create(date:string){
 }
 async function approve(id:string){
  const plan=await action(id,'prepare',{writerChoice:'gemini'});assert.equal(plan.status,200,JSON.stringify(plan.payload));
- const start=await action(id,'start-batch',{approvedPlanHash:plan.payload.plan.planHash});assert.equal(start.status,202,JSON.stringify(start.payload));return plan.payload.plan.planHash;
+ const start=await action(id,'start-batch',{approvedPlanHash:plan.payload.plan.planHash});assert.equal(start.status,202,JSON.stringify(start.payload));await runWeeklyHoroscopeBatch(id,{maxSteps:2,wait:async()=>{}});assert.equal(latest(id).source_snapshot.horoscopeGeneration.weeklyEditorial.plan.status,'passed');return plan.payload.plan.planHash;
 }
 const worker=(id:string,maxSteps=100)=>runWeeklyHoroscopeBatch(id,{maxSteps,wait:async()=>{}});
 const id=await create('2026-10-05');
@@ -49,7 +49,8 @@ assert.equal(result.state,'complete',JSON.stringify(result));
 let row=latest(id),generation=row.source_snapshot.horoscopeGeneration;
 assert.equal(generation.batch.status,'complete');assert.equal(generation.batch.attempted.length,12);
 assert(row.sections.horoscopeEdition.passages.every((p:any)=>p.body.trim()&&p.headline.trim()));
-assert.equal(transport.requests.length,12);assert.equal(writerFixture.reviewCalls,12);
+assert.equal(transport.requests.length,12);assert.equal(writerFixture.reviewCalls,12);assert.equal(writerFixture.batchCalls,2);assert.equal(generation.weeklyEditorial.review.status,'passed');
+assert(transport.requests.slice(0,12).every(({request}:any)=>request.input.includes('SHARED WEEKLY CONCERNS\n')&&request.input.includes('CURRENT SIGN CONCERN\n')),'Native Gemini requests receive the shared concerns');
 assert.equal(row.status,'DRAFT');assert.equal(row.published_at??null,null);
 assert.deepEqual(generation.failures,[retainedHistory],'Every original history field survives the complete batch');
 assert(Buffer.byteLength(JSON.stringify(store.rows.get(id)))<2_000_000);
@@ -94,7 +95,7 @@ row=latest(recovery);generation=row.source_snapshot.horoscopeGeneration;
 await worker(recovery,2);
 row=latest(recovery);generation=row.source_snapshot.horoscopeGeneration;
 generation.batch.planHash='changed-plan';store.rows.set(recovery,row);
-assert.equal((await worker(recovery)).state,'paused');
+assert.equal((await worker(recovery)).state,'needs_attention');
 assert.match(latest(recovery).source_snapshot.horoscopeGeneration.batch.error,/plan|sources/i);
 
 // A pending request cannot hold all other signs indefinitely.

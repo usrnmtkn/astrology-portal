@@ -1,9 +1,9 @@
+import {fromRow,isReaderServableGeneratedContent} from './generatedContentRendering.js';
+export {renderGeneratedContentTemplate,generatedContentParagraphs,generatedContentSections} from './generatedContentRendering.js';
 import type { FallbackArchitectureV3MirrorMetadata } from "./fallbackArchitectureV3MirrorValidation";
 import { isSkyArticleDashboardRow, isSkyDashboardRow, isSkyListDashboardRow } from "./skyDashboardScope";
-import { loadReaderRows, ReaderAdmissionError } from "./readerContentClient";
+import { loadReaderRows, ReaderAdmissionError, withReaderNavigation } from "./readerContentClient";
 import { isRecord, isApprovedFallbackArchitectureV3Row, isSkyPlacementFallbackPartitionKey, packageAuthoredCardFromRow, packageHookRowFromRow, packageVocabRowFromRow, packageTemplateRowFromRow, packageFallbackArchitectureV3CoreRows } from "./fallbackArchitectureV3CorePackaging";
-// @ts-ignore Exact owner-requested source versions, shared with package materialization.
-import { correctedReaderSummary } from "../content/fallbackArchitectureV3/readerSummaryReferenceCorrections.mjs";
 import { publicationLedgerKey, publicationLedgerReady, publicationAllowsContent, contentPublication, contentPublicationRecords, contentPublicationGeneration, type ContentPublication } from "../content/contentPublicationState";
 import { contentPublicationsAvailableOnline, refreshContentPublications, refreshSkyListPublications, skyListPublicationReadStarted } from "./contentPublications";
 import { isSkyListPublicationKey } from "../content/skyListPublicationScope";
@@ -28,26 +28,7 @@ export async function loadContentStudioLastKnownGoodRows(): Promise<GeneratedCon
   return loadedLastKnownGoodRows;
 }
 
-import {
-  hasMissingTemplateSlots,
-  hasTemplateSlots,
-  interpolateTemplateString,
-  type TemplateSlotValues
-} from "./templateInterpolation";
 import { generatedContentAliases } from "./generatedContentKeys";
-import { isReaderFacingCopy } from "../content/readerSafety";
-import {
-  hasExactSkyArticleOwnerApproval,
-  skyArticleEditionRecord
-} from "../content/skyArticleTemplateCompiler";
-import {
-  noProseSourceFiles,
-  servedFieldInstructionMarkers,
-  servedFieldInternalBlacklist,
-  servedFieldLabels,
-  servedFieldsContract,
-  type ServedFieldSurface
-} from "../content/servedFieldsContract";
 import {
   fallbackArchitectureV3BundledManifestSummary,
   loadFallbackArchitectureV3BundledCoreManifest,
@@ -128,6 +109,7 @@ export type GeneratedContentRow = {
   judge_gate?: string | null;
   model: string | null;
   updated_at: string;
+  published_at?: string | null;
 };
 
 const fallbackArchitectureV3Provider = "tldrastro-fallback-architecture-v3";
@@ -136,7 +118,7 @@ const fallbackArchitectureV3BundleCacheKey = "tldrastro:fallbackArchitectureV3:d
 const fallbackArchitectureV3BundleVersionKey = "tldrastro:fallbackArchitectureV3:dashboardBundleVersion";
 // Admission changes can make an old overlay incomplete even when the database
 // revision is unchanged. Refetch sources previously excluded by the key gate.
-const fallbackArchitectureV3BundleCacheSchema = "fallback-architecture-v3-dashboard-overlay-cache-v9";
+const fallbackArchitectureV3BundleCacheSchema = "fallback-architecture-v3-dashboard-overlay-cache-v10";
 const fallbackArchitectureV3SkyPlacementBundleCacheKey = "tldrastro:fallbackArchitectureV3:skyPlacementDashboardBundle";
 const fallbackArchitectureV3SkyPlacementBundleVersionKey = "tldrastro:fallbackArchitectureV3:skyPlacementDashboardBundleVersion";
 const fallbackArchitectureV3SkyPlacementBundleCacheSchema = "fallback-architecture-v3-sky-placement-dashboard-cache-v3";
@@ -327,354 +309,6 @@ export type GeneratedContentDrilldown = {
   timingNote?: string;
 };
 
-function interpolateOptionalString(
-  value: string | null,
-  context: TemplateSlotValues,
-  options: { contentKey: string; field: string; missingSlotBehavior?: "empty" | "preserve"; capitalizeSentenceStart?: boolean }
-) {
-  if (value === null) {
-    return null;
-  }
-
-  return interpolateTemplateString(value, context, options);
-}
-
-function interpolateSections(
-  value: unknown,
-  context: TemplateSlotValues,
-  contentKey: string,
-  fieldPath = "sections",
-  missingSlotBehavior: "empty" | "preserve" = "empty"
-): unknown {
-  if (typeof value === "string") {
-    return interpolateTemplateString(value, context, {
-      contentKey,
-      field: fieldPath,
-      missingSlotBehavior,
-      capitalizeSentenceStart: true
-    });
-  }
-
-  if (Array.isArray(value)) {
-    return value.map((item, index) => interpolateSections(item, context, contentKey, `${fieldPath}.${index}`, missingSlotBehavior));
-  }
-
-  if (value && typeof value === "object") {
-    return Object.fromEntries(
-      Object.entries(value as Record<string, unknown>)
-        .map(([key, item]) => [key, interpolateSections(item, context, contentKey, `${fieldPath}.${key}`, missingSlotBehavior)] as const)
-    );
-  }
-
-  return value;
-}
-
-function shouldInterpolateGeneratedContent(content: LiveGeneratedContent) {
-  const contentType = content.sourceSnapshot?.contentType;
-
-  return contentType === "template" || contentType === "mustache-template" || contentType === "synastry-kb-seed";
-}
-
-function hasGeneratedContentTemplateSlots(content: LiveGeneratedContent) {
-  return Boolean(
-    (content.headline && hasTemplateSlots(content.headline))
-    || (content.summary && hasTemplateSlots(content.summary))
-    || hasTemplateSlots(content.body)
-    || hasTemplateSlots(JSON.stringify(content.sections ?? {}))
-  );
-}
-
-function hasUnresolvedTemplateSlots(content: LiveGeneratedContent) {
-  return Boolean(
-    (content.headline && hasTemplateSlots(content.headline))
-    || (content.summary && hasTemplateSlots(content.summary))
-    || hasTemplateSlots(content.body)
-    || hasTemplateSlots(JSON.stringify(content.sections ?? {}))
-  );
-}
-
-function hasMissingGeneratedContentTemplateSlots(content: LiveGeneratedContent, slots: TemplateSlotValues) {
-  return Boolean(
-    (content.headline && hasMissingTemplateSlots(content.headline, slots))
-    || (content.summary && hasMissingTemplateSlots(content.summary, slots))
-    || hasMissingTemplateSlots(content.body, slots)
-    || hasMissingTemplateSlots(JSON.stringify(content.sections ?? {}), slots)
-  );
-}
-
-function hasReaderSafeRenderedTemplateOutput(content: LiveGeneratedContent) {
-  const bodyParagraphs = content.body
-    .split(/\n{2,}/)
-    .map((paragraph) => paragraph.trim())
-    .filter(Boolean);
-  const sectionBodies = Array.isArray(content.sections)
-    ? content.sections.flatMap((section) => {
-      if (!section || typeof section !== "object") return [];
-      const body = (section as Record<string, unknown>).body;
-      return typeof body === "string" && body.trim() ? [body.trim()] : [];
-    })
-    : [];
-
-  return [
-    content.summary,
-    ...bodyParagraphs,
-    ...sectionBodies
-  ].some((value) => isReaderFacingCopy(value));
-}
-
-function sourceFileStem(value: unknown) {
-  if (typeof value !== "string") {
-    return "";
-  }
-
-  return value
-    .split("/")
-    .pop()
-    ?.replace(/\.json$/i, "")
-    .trim()
-    ?? "";
-}
-
-function generatedContentSourceFileStem(content?: LiveGeneratedContent | null) {
-  const sourceSnapshot = content?.sourceSnapshot ?? {};
-  const fields = [
-    sourceSnapshot.record_file,
-    sourceSnapshot.recordFile,
-    sourceSnapshot.file,
-    sourceSnapshot.sourceFile
-  ];
-
-  for (const field of fields) {
-    const stem = sourceFileStem(field);
-
-    if (stem) {
-      return stem;
-    }
-  }
-
-  return "";
-}
-
-function generatedContentServedSurface(content: LiveGeneratedContent): ServedFieldSurface {
-  if (content.surface === "sky") {
-    return "sky";
-  }
-
-  if (content.contentKey.includes("horoscope") || content.eventType?.includes("horoscope")) {
-    return "horoscope";
-  }
-
-  return "natal";
-}
-
-function servedFieldValue(record: Record<string, unknown>, path: string) {
-  const parts = path.split(".");
-  let value: unknown = record;
-
-  for (const part of parts) {
-    if (!value || typeof value !== "object" || Array.isArray(value)) {
-      return "";
-    }
-
-    value = (value as Record<string, unknown>)[part];
-  }
-
-  return typeof value === "string" ? value.trim() : "";
-}
-
-function servedFieldNamesForContent(content: LiveGeneratedContent) {
-  const file = generatedContentSourceFileStem(content);
-  const spec = servedFieldsContract[file];
-
-  if (!spec) {
-    return [];
-  }
-
-  return [
-    ...(spec.readerBySurface?.[generatedContentServedSurface(content)] ?? []),
-    ...(spec.reader ?? []),
-    ...(spec.extras ?? [])
-  ];
-}
-
-function servedFieldSections(content: LiveGeneratedContent): GeneratedContentSection[] {
-  const sections = content.sections;
-
-  if (!sections || typeof sections !== "object" || Array.isArray(sections)) {
-    return [];
-  }
-
-  const record = sections as Record<string, unknown>;
-
-  return servedFieldNamesForContent(content).flatMap((field) => {
-    if (servedFieldInternalBlacklist.has(field)) {
-      return [];
-    }
-
-    const body = servedFieldValue(record, field);
-
-    if (!body || !isReaderFacingCopy(body) || containsBlockedScaffoldCopy(body)) {
-      return [];
-    }
-
-    return [{
-      heading: servedFieldLabels[field] ?? "",
-      body
-    }];
-  });
-}
-
-function isNoProseGeneratedContent(content: LiveGeneratedContent) {
-  return noProseSourceFiles.has(generatedContentSourceFileStem(content));
-}
-
-function containsSingleBraceSlot(value: string) {
-  return /(?<!\{)\{[A-Za-z][^{}\n]{0,80}\}(?!\})/.test(value);
-}
-
-function containsInstructionMarker(value: string) {
-  const normalized = value.toLowerCase();
-
-  return servedFieldInstructionMarkers.some((marker) => normalized.includes(marker.toLowerCase()));
-}
-
-function isReaderServableGeneratedContent(content: LiveGeneratedContent) {
-  if (isNoProseGeneratedContent(content)) {
-    return false;
-  }
-
-  const arraySectionBodies = Array.isArray(content.sections)
-    ? content.sections.flatMap((section) => {
-      if (!section || typeof section !== "object") return [];
-      const body = (section as Record<string, unknown>).body;
-      return typeof body === "string" ? [body] : [];
-    })
-    : [];
-  const visibleText = [
-    content.headline,
-    content.summary,
-    content.body,
-    ...servedFieldSections(content).map((section) => section.body),
-    ...arraySectionBodies
-  ].filter(Boolean).join("\n");
-
-  if (containsInstructionMarker(visibleText)) {
-    return false;
-  }
-
-  if (content.blockType === "fallback_template" && containsSingleBraceSlot(visibleText)) {
-    return false;
-  }
-
-  return true;
-}
-
-function fromRow(
-  row: GeneratedContentRow
-): LiveGeneratedContent {
-  return {
-    id: row.id,
-    contentKey: row.content_key,
-    surface: row.surface,
-    status: row.status ?? undefined,
-    lane: row.lane,
-    reviewState: row.review_state,
-    mode: row.mode,
-    eventType: row.event_type,
-    targetDate: row.target_date,
-    headline: row.headline,
-    summary: correctedReaderSummary(row.content_key, row.summary),
-    body: row.body,
-    sections: row.sections ?? {},
-    blockType: row.block_type ?? null,
-    sourceSnapshot: row.source_snapshot ?? null,
-    judgeScore: row.judge_score ?? null,
-    judgeGate: row.judge_gate ?? null,
-    provider: row.provider ?? null,
-    model: row.model,
-    updatedAt: row.updated_at
-  };
-}
-
-export function renderGeneratedContentTemplate(
-  content: LiveGeneratedContent | null | undefined,
-  slots?: TemplateSlotValues
-): LiveGeneratedContent | null {
-  if (!content || !publicationAllowsContent(content.contentKey, content.id, content.updatedAt, content.targetDate)) {
-    return null;
-  }
-
-  if (!shouldInterpolateGeneratedContent(content)) {
-    return content;
-  }
-
-  if (!slots) {
-    if (content.sourceSnapshot?.contentType === "synastry-kb-seed" && !hasGeneratedContentTemplateSlots(content)) {
-      return content;
-    }
-
-    return null;
-  }
-
-  const requiresAllTemplateSlots = content.sourceSnapshot?.contentType === "template"
-    || content.sourceSnapshot?.contentType === "mustache-template";
-
-  if (requiresAllTemplateSlots && hasMissingGeneratedContentTemplateSlots(content, slots)) {
-    return null;
-  }
-
-  const preserveMissingSlots = content.sourceSnapshot?.contentType === "synastry-kb-seed";
-  const headline = interpolateOptionalString(content.headline, slots, {
-    contentKey: content.contentKey,
-    field: "headline",
-    missingSlotBehavior: preserveMissingSlots ? "preserve" : "empty",
-    capitalizeSentenceStart: true
-  });
-  const summary = interpolateOptionalString(content.summary, slots, {
-    contentKey: content.contentKey,
-    field: "summary",
-    missingSlotBehavior: preserveMissingSlots ? "preserve" : "empty",
-    capitalizeSentenceStart: true
-  });
-  const body = interpolateTemplateString(content.body, slots, {
-    contentKey: content.contentKey,
-    field: "body",
-    missingSlotBehavior: preserveMissingSlots ? "preserve" : "empty",
-    capitalizeSentenceStart: true
-  });
-  const sections = interpolateSections(
-    content.sections ?? {},
-    slots,
-    content.contentKey,
-    "sections",
-    preserveMissingSlots ? "preserve" : "empty"
-  );
-
-  if (
-    content.sourceSnapshot?.contentType === "synastry-kb-seed"
-    && hasGeneratedContentTemplateSlots(content)
-    && (!body || (content.summary && hasTemplateSlots(content.summary) && !summary))
-  ) {
-    return null;
-  }
-
-  const rendered = {
-    ...content,
-    headline,
-    summary,
-    body,
-    sections
-  };
-
-  if (requiresAllTemplateSlots) {
-    if (hasUnresolvedTemplateSlots(rendered) || !hasReaderSafeRenderedTemplateOutput(rendered)) {
-      return null;
-    }
-  }
-
-  return rendered;
-}
-
 function shouldReplaceAlias(alias: string, current: LiveGeneratedContent, next: LiveGeneratedContent) {
   if (current.contentKey === alias) {
     return false;
@@ -707,122 +341,6 @@ function isEmergencyFloorGeneratedRow(row: Pick<GeneratedContentRow, "content_ke
     || row.event_type === "fallback-hook"
     || row.event_type === "vocabulary"
     || row.block_type === "fallback_template";
-}
-
-export function generatedContentParagraphs(content?: LiveGeneratedContent | null) {
-  if (content && isNoProseGeneratedContent(content)) {
-    return [];
-  }
-
-  const servedSections = content ? servedFieldSections(content) : [];
-
-  if (servedSections.length > 0) {
-    return readerUniqueParagraphs(servedSections.map((section) => section.body));
-  }
-
-  if (!content?.body) {
-    return [];
-  }
-
-  return readerUniqueParagraphs(content.body
-    .split(/\n{2,}/)
-    .map((paragraph) => paragraph.trim()));
-}
-
-const blockedScaffoldCopyPatterns = [
-  /\bAt work this reads as\b/i,
-  /\bLuck favors\b/i,
-  /\bWatch:\s*/i,
-  /\boverplaying the drama\b/i,
-  /\bthe fuller story of this\b/i,
-  /\bfollows .+ to wherever it sits\b/i,
-  /\bmoves through\b.+\btone\b/i,
-  /\bgives\b.+\bquality right now\b/i,
-  /\bshows up in\b.+\bthe bigger picture\b/i,
-  /\bBeing themselves and\b/i
-];
-
-function containsBlockedScaffoldCopy(text: string) {
-  return blockedScaffoldCopyPatterns.some((pattern) => pattern.test(text));
-}
-
-function readerUniqueParagraphs(values: string[]) {
-  const seen = new Set<string>();
-
-  return values.filter((value) => {
-    const paragraph = value.trim();
-    const normalized = paragraph.replace(/\s+/g, " ").toLowerCase();
-
-    if (
-      !paragraph
-      || seen.has(normalized)
-      || !isReaderFacingCopy(paragraph)
-      || containsBlockedScaffoldCopy(paragraph)
-      || containsInstructionMarker(paragraph)
-    ) {
-      return false;
-    }
-
-    seen.add(normalized);
-    return true;
-  });
-}
-
-function normalizeSection(value: unknown): GeneratedContentSection | null {
-  if (!value || typeof value !== "object") {
-    return null;
-  }
-
-  const section = value as Record<string, unknown>;
-  const heading = typeof section.heading === "string"
-    ? section.heading.trim()
-    : typeof section.title === "string"
-      ? section.title.trim()
-      : "";
-  const body = typeof section.body === "string"
-    ? section.body.trim()
-    : typeof section.text === "string"
-      ? section.text.trim()
-      : "";
-
-  if (!heading || !body) {
-    return null;
-  }
-
-  if (!isReaderFacingCopy(body) || containsBlockedScaffoldCopy(body)) {
-    return null;
-  }
-
-  return { heading, body };
-}
-
-export function generatedContentSections(content?: LiveGeneratedContent | null): GeneratedContentSection[] {
-  if (!content || isNoProseGeneratedContent(content)) {
-    return [];
-  }
-
-  const contractSections = servedFieldSections(content);
-
-  if (contractSections.length > 0) {
-    return contractSections;
-  }
-
-  const sections = content?.sections;
-
-  if (Array.isArray(sections)) {
-    return sections.map(normalizeSection).filter((section): section is GeneratedContentSection => Boolean(section));
-  }
-
-  if (sections && typeof sections === "object") {
-    const record = sections as Record<string, unknown>;
-    const nestedSections = record.sections;
-
-    if (Array.isArray(nestedSections)) {
-      return nestedSections.map(normalizeSection).filter((section): section is GeneratedContentSection => Boolean(section));
-    }
-  }
-
-  return [];
 }
 
 function stringField(record: Record<string, unknown>, key: string) {
@@ -870,6 +388,11 @@ const dashboardCacheKey = (key: string, scope: DashboardScope) => scope === "all
 export function clearCachedFallbackArchitectureV3Bundle(scope?: DashboardScope) {
   if (scope) pendingDashboardBundles.delete(scope);
   else for (const key of pendingDashboardBundles.keys()) if (!key.startsWith("placement:")) pendingDashboardBundles.delete(key);
+  evictCachedFallbackArchitectureV3Bundle(scope);
+}
+
+// Rejecting stored bytes must not cancel the fresh replacement already in flight.
+function evictCachedFallbackArchitectureV3Bundle(scope?: DashboardScope) {
   if (typeof window === "undefined") {
     return;
   }
@@ -999,13 +522,13 @@ export function readCachedFallbackArchitectureV3Bundle(scope: DashboardScope = "
       || !bundle?.rowsFile
       || !bundle?.templatesFile
     ) {
-      clearCachedFallbackArchitectureV3Bundle(scope);
+      evictCachedFallbackArchitectureV3Bundle(scope);
       return null;
     }
 
     return { version, bundle };
   } catch {
-    clearCachedFallbackArchitectureV3Bundle(scope);
+    evictCachedFallbackArchitectureV3Bundle(scope);
     return null;
   }
 }
@@ -1198,12 +721,19 @@ export function prefetchColdSkyPlacementRows(selection: string, publications: Pr
 }
 
 export async function loadFallbackArchitectureV3DashboardBundle(scope: DashboardScope = "all", earlyRead?: ColdSkyArticleRead): Promise<FallbackArchitectureV3Bundle | null> {
-  await (scope === "sky-list" ? refreshSkyListPublications() : refreshContentPublications());
-  return shareDashboardBundle(scope, canCache => {
-    const earlyRows = scope === "sky-article" && !readCachedFallbackArchitectureV3Bundle(scope) ? earlyRead?.consume() : undefined;
-    earlyRead?.discard();
-    return readFallbackArchitectureV3DashboardBundle(scope, canCache, earlyRows);
-  }, () => earlyRead?.discard());
+  let unclaimed = earlyRead;
+  const discard = () => { const read = unclaimed; unclaimed = undefined; read?.discard(); };
+  try {
+    return await withReaderNavigation(async navigation => {
+      await (scope === "sky-list" ? refreshSkyListPublications() : refreshContentPublications());
+      navigation.throwIfAborted();
+      return shareDashboardBundle(scope, canCache => {
+        const earlyRows = scope === "sky-article" && !readCachedFallbackArchitectureV3Bundle(scope) ? earlyRead?.consume() : undefined;
+        discard();
+        return readFallbackArchitectureV3DashboardBundle(scope, canCache, navigation, earlyRows);
+      }, discard);
+    });
+  } finally { discard(); }
 }
 
 function shareDashboardBundle(key: string, read: (canCache: () => boolean) => Promise<FallbackArchitectureV3Bundle | null>, joining: () => void) {
@@ -1220,10 +750,13 @@ function shareDashboardBundle(key: string, read: (canCache: () => boolean) => Pr
 async function readFallbackArchitectureV3DashboardBundle(
   scope: DashboardScope,
   canCache: () => boolean,
+  navigation: AbortSignal,
   earlyRows?: ReturnType<typeof loadReaderRows>
 ): Promise<FallbackArchitectureV3Bundle | null> {
   const anonymous = scope === "sky-list" || scope === "sky-article" ? await anonymousReader() : null;
+  navigation.throwIfAborted();
   const supabase = anonymous ? null : await getSupabaseClient();
+  navigation.throwIfAborted();
   const cached = readCachedFallbackArchitectureV3Bundle(scope);
   const recoverUnavailableOverlay = (error: unknown) => {
     if (scope === "sky-list" && !(publicationLedgerReady() && loadedLastKnownGoodRows.length)) throw new Error("Current Sky content did not load.");
@@ -1246,6 +779,7 @@ async function readFallbackArchitectureV3DashboardBundle(
   const { data: runtimeRevision, error: runtimeRevisionError } = anonymous
     ? await anonymous.readAnonymousRuntimeRevision(fallbackArchitectureV3Provider)
     : await supabase!.rpc("content_runtime_revision", { p_provider: fallbackArchitectureV3Provider });
+  navigation.throwIfAborted();
   let dashboardVersion = typeof runtimeRevision === "string" ? Date.parse(runtimeRevision) : 0;
 
   if (runtimeRevisionError || !Number.isFinite(dashboardVersion)) {
@@ -1253,17 +787,20 @@ async function readFallbackArchitectureV3DashboardBundle(
     // This fallback cannot detect every demotion, so it is used only when the revision
     // RPC is unavailable.
     const { data: versionRows, error: versionError } = await loadReaderRows({ provider: fallbackArchitectureV3Provider, latestVersion: true });
+    navigation.throwIfAborted();
     if (versionError) return recoverUnavailableOverlay(versionError);
     dashboardVersion = fallbackArchitectureV3DashboardVersionFromRows(versionRows ?? []);
   }
   if (cached && dashboardVersion && cached.version === dashboardVersion) return cached.bundle;
 
   let result = await (coldArticleRows ?? loadReaderRows({ provider: fallbackArchitectureV3Provider, ...(scope !== "all" ? { scope } : {}) }));
+  navigation.throwIfAborted();
   // An initial live ledger can reveal edits or new keys absent from the early
   // snapshot. Discard it and use the unchanged post-ledger request once.
   if (earlyRows && result.error instanceof ReaderAdmissionError) {
     result = await loadReaderRows({ provider: fallbackArchitectureV3Provider, scope: "sky-article" });
   }
+  navigation.throwIfAborted();
   const { data, error } = result;
   if (error) return recoverUnavailableOverlay(error);
   const rows = data ?? [];
@@ -1275,6 +812,7 @@ async function readFallbackArchitectureV3DashboardBundle(
     console.warn("Fallback architecture V3 current key manifest failed to load; cached/local copy remains active.", error);
     return cached?.bundle ?? null;
   }
+  navigation.throwIfAborted();
   const bundle = packageFallbackArchitectureV3CoreRows(rows, currentCoreManifest);
   if (!bundle) {
     if (canCache()) clearCachedFallbackArchitectureV3Bundle(scope);
@@ -1549,12 +1087,11 @@ async function readLiveGeneratedContentForSurfaces(
   if (!supabase) {
     return loadLastKnownGoodGeneratedContentForSurfaces(surfaces, targetDate, previewMode);
   }
-  // The publication ledger has its own deadline. Give the content request its
-  // full budget instead of expiring it while it is still waiting for that ledger.
-  const requestSignal = AbortSignal.timeout(8000);
-
+  // Surface inventories span many pages. Use the transport's per-page deadline
+  // so healthy progress can finish the complete collection. Stalled pages and
+  // non-advancing or excessive pagination remain bounded by the transport.
   const { data, error } = await loadReaderRows({ surfaces, ...(vocabularyOnly ? { vocabularyOnly: true } : {}),
-    ...(targetDate ? { targetDate } : {}) }, requestSignal);
+    ...(targetDate ? { targetDate } : {}) });
   if (error) {
     console.warn("Content surface read failed.", error);
     return loadLastKnownGoodGeneratedContentForSurfaces(surfaces, targetDate, previewMode);
@@ -1564,7 +1101,9 @@ async function readLiveGeneratedContentForSurfaces(
   return generatedContentMapFromRows(sortGeneratedRowsNewestFirst(rows), previewMode);
 }
 
-export async function loadLiveGeneratedContentForKeys(contentKeys: string[], options: { requireFresh?: boolean } = {}) {
+type TargetedReadOptions = { requireFresh?: boolean; retryKey?: number; parallelBatches?: boolean };
+
+export async function loadLiveGeneratedContentForKeys(contentKeys: string[], options: TargetedReadOptions = {}) {
   await (skyListPublicationReadStarted() && contentKeys.every(isSkyListPublicationKey)
     ? refreshSkyListPublications() : refreshContentPublications());
   const keys = [...new Set(contentKeys.map((key) => key.trim()).filter(Boolean))].sort();
@@ -1574,13 +1113,14 @@ export async function loadLiveGeneratedContentForKeys(contentKeys: string[], opt
   }
 
   // Several mounted readers can request the same keys during publication
-  // hydration. Share only in-flight work for the same revision/freshness policy;
+  // hydration. An explicit retry must not join an older failed read while its
+  // offline fallback is pending. Peers in the same attempt still share work;
   // settled requests and later revisions always revalidate.
-  return sharePendingReaderContent(["keys", contentPublicationGeneration, options.requireFresh === true, keys],
+  return sharePendingReaderContent(["keys", contentPublicationGeneration, options.requireFresh === true, options.retryKey ?? 0, keys],
     () => readLiveGeneratedContentForKeys(keys, options));
 }
 
-async function readLiveGeneratedContentForKeys(keys: string[], options: { requireFresh?: boolean }) {
+async function readLiveGeneratedContentForKeys(keys: string[], options: TargetedReadOptions) {
   const supabase = await publicReaderAvailable();
 
   if (!supabase) {
@@ -1592,18 +1132,22 @@ async function readLiveGeneratedContentForKeys(keys: string[], options: { requir
   const rows: GeneratedContentRow[] = [];
   const batchSize = 50;
 
-  for (let index = 0; index < keys.length; index += batchSize) {
-    const batch = keys.slice(index, index + batchSize);
-    const { data, error } = await loadReaderRows({ keys: batch }, requestSignal);
-
-    if (error) {
-      // A refresh must distinguish confirmed removals from an offline snapshot.
-      if (options.requireFresh) throw error;
-      console.warn("Targeted content read failed.", error);
-      return loadLastKnownGoodGeneratedContentForKeys(keys);
+  // A Calendar week spans several exact-key requests. Overlap two at a time
+  // under the same deadline, and wait for the whole selection before rendering.
+  const stride = options.parallelBatches ? batchSize * 2 : batchSize;
+  for (let index = 0; index < keys.length; index += stride) {
+    const requests = [];
+    for (let start = index; start < Math.min(index + stride, keys.length); start += batchSize) {
+      requests.push(loadReaderRows({ keys: keys.slice(start, start + batchSize) }, requestSignal));
     }
-
-    rows.push(...(data ?? []));
+    for (const { data, error } of await Promise.all(requests)) {
+      if (error) {
+        if (options.requireFresh) throw error;
+        console.warn("Targeted content read failed.", error);
+        return loadLastKnownGoodGeneratedContentForKeys(keys);
+      }
+      rows.push(...(data ?? []));
+    }
   }
 
   return generatedContentMapFromRows(sortGeneratedRowsNewestFirst(rows));

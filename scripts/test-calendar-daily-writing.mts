@@ -38,6 +38,13 @@ for(const action of ['publish','retire'])assert.equal((await invoke({action,id:r
 assert.equal((await store.invoke('PATCH',{id:row.id,status:'LIVE'})).status,400);
 const call=(action:string,extra:any={})=>invoke({action,...selection,expectedUpdatedAt:row.updated_at,...extra});
 let prep=(await call('prepare')).prepared;
+const exportBefore=JSON.stringify([...store.rows]);
+const exported=await call('export');assert.equal(exported.status,200,JSON.stringify(exported));
+assert(exported.writingExport.text.includes(prep.instructions));assert(exported.writingExport.text.includes(prep.request.input));
+assert.equal(exported.writingExport.providerCalls,0);assert.equal(exported.writingExport.published,false);
+assert.equal(JSON.stringify([...store.rows]),exportBefore,'Copying the Daily input cannot reserve a writer or save content');
+assert.equal((await invoke({action:'export',...selection,expectedUpdatedAt:row.updated_at},'wrong')).status,401);
+assert.equal((await invoke({action:'export',...selection,expectedUpdatedAt:'stale'})).status,409);
 assert.equal(prep.facts.mainSign,'Virgo');assert.equal(prep.facts.transition,null);assert.equal(prep.facts.signs[0].hours,24);
 assert.equal(calls,0);
 assert.equal((await call('generate',{requestHash:prep.requestHash})).status,409);
@@ -49,6 +56,10 @@ const race=await Promise.all([call('generate',{requestHash:prep.requestHash,auth
 assert.deepEqual(race.map(v=>v.status).sort(),[202,409]);row=race.find(v=>v.status===202).row;assert.equal(calls,1);
 assert.deepEqual(request,{...prep.request,instructions:prep.instructions});assert(request.input.includes('Latest edit.'));assert(!request.instructions.includes('SPINE'));
 assert(request.instructions.includes(GHOSTWRITING_SKILL_INSTRUCTIONS));
+assert(request.instructions.includes('Today events and next-day events are separate'));
+assert(request.instructions.includes('current owner writing rules remain authoritative'));
+assert(!request.instructions.includes('Write one paragraph'));
+assert(request.input.includes(JSON.stringify(prep.facts,null,2)));
 assert.equal((await call('save',{workspace})).status,409);assert.equal((await call('generate',{requestHash:prep.requestHash,authorizeWriterCall:true})).status,409);
 row=(await call('poll')).row;assert.equal(polls,1);assert.equal(calls,1);
 const result=row.sections.run.results[0];assert.equal(result.candidate,candidate);assert.equal(result.outputHash,digest(candidate));assert.equal(result.ownerApproved,false);assert.equal(result.promotionAuthorized,false);assert.equal(result.status,'needs_review');
@@ -62,5 +73,26 @@ row=(await call('save',{workspace:{...workspace,thought:'Synthetic uncertain tra
 assert.equal((await call('generate',{requestHash:prep.requestHash,authorizeWriterCall:true})).ok,false);row=(await invoke({action:'load',...selection})).row;assert(row.sections.run.active);assert.equal((await call('poll')).status,409);assert.equal((await call('generate',{requestHash:prep.requestHash,authorizeWriterCall:true})).status,409);assert.equal(calls,3);
 const late=await dailyFacts('2026-10-06','America/New_York');assert.equal(late.mainSign,'Leo');assert.equal(late.transition?.to,'Virgo');assert.match(late.transition!.localTime,/10:52 PM/);assert(late.signs[1].hours<2);
 for(const [date,zone,hours] of [['2026-11-01','America/New_York',25],['2026-03-08','America/New_York',23],['2026-10-07','Pacific/Kiritimati',24]] as const){const facts=await dailyFacts(date,zone);assert.equal(facts.signs.reduce((sum,v)=>sum+v.hours,0),hours);assert.equal(facts.date,date);}
+// A full daily brief needs the calculated events, not facts borrowed from a style example.
+const november17=await dailyFacts('2026-11-17','America/New_York');
+const november18=await dailyFacts('2026-11-18','America/New_York');
+assert(november17.events.some(event=>event.type==='lunation'&&event.title.startsWith('First Quarter Moon')));
+assert.equal(november17.transition?.from,'Aquarius');assert.equal(november17.transition?.to,'Pisces');
+const sunJupiter=(events:any[])=>events.find(event=>event.type==='aspect'&&event.planets?.includes('Sun')&&event.planets?.includes('Jupiter')&&event.aspect==='square');
+assert(!sunJupiter(november17.events));assert(sunJupiter(november17.nextDay.events));assert(sunJupiter(november18.events));
+assert.deepEqual(november17.nextDay.events,november18.events);
+assert.equal(november18.mainSign,'Pisces');
+assert(november18.positions.every(position=>!('house' in position)));
+assert(november18.positions.some(position=>position.planet==='Saturn'&&position.motion==='retrograde'));
+assert(!november18.events.some(event=>event.type==='lunation'),'A reference phase label is not a new phase event');
+for(const facts of [november17,november18]){
+  assert.equal(facts.referenceAt,`${facts.date}T17:00:00.000Z`);
+  assert(facts.events.every(event=>event.dateKey===facts.date));
+  assert(facts.nextDay.events.every(event=>event.dateKey===facts.nextDay.date));
+  assert(facts.events.every(event=>event.localTime.length>0));
+  assert(facts.events.every(event=>event.phase!=='retrograde-passage'));
+  assert(facts.nextDay.events.every(event=>event.phase!=='retrograde-passage'));
+  assert(facts.aspects.every(aspect=>Number.isFinite(aspect.orb)));
+}
 assert.notEqual(responses.instructionsForRole('WRITER','',{surface:'calendar-lunation',family:'lunations'}),prep.instructions);
 console.log('PASS daily Calendar: owner auth, private CRUD, stale writes, dynamic Swiss facts and DST, exact latest references, explicit one-call approval, race prevention, untouched durable output, invalid preservation, uncertain hold, no publication; mock provider only.');

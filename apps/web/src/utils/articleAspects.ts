@@ -47,7 +47,7 @@ export function articleAspectGlyphPartsFromHeading(heading: string) {
   };
 }
 
-export type SkyActiveChartAspect = { key: string; heading: string; body: string | null };
+export type SkyActiveChartAspect = { key: string; heading: string; body: string | null; bridge?: string | null; timing?: string | null };
 export type SkyActiveChartEvent = { key: string; heading: string; members: SkyActiveChartAspect[] };
 
 // Group only mirrored contacts to the same natal node axis. Original passages,

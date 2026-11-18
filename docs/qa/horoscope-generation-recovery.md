@@ -27,6 +27,8 @@ projection during lost acknowledgements and all twelve sign transitions.
 
 ### Weekly batch continuation
 
+New batch approvals also use the [shared Weekly editorial gate](weekly-batch-editorial-gate.md): twelve distinct concerns before writing and a comparison of all twelve finished readings. Its two shared calls are included in the displayed budget. Failed checks preserve drafts and require an explicit edit and recheck. Existing in-flight batches retain their pinned stage contract.
+
 An explicitly approved Weekly batch continues through all remaining available
 signs, including after **Retry [sign] and continue**. The displayed cost covers
 every remaining reading. This Weekly behavior supersedes single-sign retry for

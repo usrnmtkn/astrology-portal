@@ -1,8 +1,11 @@
+import {validateHoroscopeWindow} from '../../src/shared/horoscopeWindow.mjs';
 import {hasExactStudioOwnerApproval} from './studio-owner-publication.js';
+import {weeklyEditorialIssue} from '../../src/astro-writing/weeklyBatchEditorial.mjs';
+import {dailyEditorialIssue} from '../../src/astro-writing/dailyBatchEditorial.mjs';
 import {createHash,createHmac, timingSafeEqual} from 'node:crypto';
 import {AdminHttpError} from './admin-http.js';
 import {zonedDateTimeToUtc} from '../../apps/web/src/services/timezones.js';
-import {HOROSCOPE_PERIODS, HOROSCOPE_SIGNS, HOROSCOPE_EDITION_PREFIX, validateHoroscopeEdition, validateHoroscopeWindow, isHoroscopeEditionKey, horoscopeEditionBody, horoscopeCanonicalJson, canonicalHoroscopeTimeZone} from '../../apps/web/src/content/horoscopeEditions.mjs';
+import {HOROSCOPE_PERIODS, HOROSCOPE_SIGNS, HOROSCOPE_EDITION_PREFIX, validateHoroscopeEdition, isHoroscopeEditionKey, horoscopeEditionBody, horoscopeCanonicalJson, canonicalHoroscopeTimeZone} from '../../apps/web/src/content/horoscopeEditions.mjs';
 
 import {validateHoroscopeReading,horoscopeValidationVersion} from '../../src/astro-writing/horoscopeValidation.mjs';
 import {horoscopePunctuationFindings,horoscopeVocabularyFindings} from '../../src/astro-writing/horoscopeEditorialConstraints.mjs';
@@ -60,6 +63,10 @@ export function horoscopePublicationIssues(row:Record<string,any>, ownerFinal = 
   const edition=validateHoroscopeEdition(row.sections?.horoscopeEdition);
   const generation=row.source_snapshot?.horoscopeGeneration;
   const issues:{sign:string|null;category:string;detail:string}[]=[];
+  const batchIssue=weeklyEditorialIssue(row);
+  if(batchIssue&&!ownerFinal)issues.push({sign:null,category:'weekly_batch_editorial',detail:batchIssue});
+  const dailyIssue=dailyEditorialIssue(row);
+  if(dailyIssue&&!ownerFinal)issues.push({sign:null,category:'daily_batch_editorial',detail:dailyIssue});
   if(generation?.active||generation?.batch?.status==='running')issues.push({sign:null,category:'generation_active',detail:'Pause generation and finish the saved request before publishing.'});
   for(const passage of edition.passages) {
     if(!passage.headline.trim()||!passage.body.trim()) {
@@ -72,7 +79,7 @@ export function horoscopePublicationIssues(row:Record<string,any>, ownerFinal = 
     // Recompute current facts without mutating historical receipts. Other
     // recorded checks still apply only to the exact text they reviewed.
     const recorded=receipt?.bodyHash===bodyHash?receipt?.lint?.violations??[]:[];
-    for(const issue of [...lint.violations,...recorded.filter((issue:any)=>issue.category!=='horoscope_fact_boundary'||receipt?.lint?.version===horoscopeValidationVersion)].filter((issue:any)=>!ownerFinal||issue.category==='horoscope_fact_boundary')) {
+    for(const issue of [...lint.violations,...recorded.filter((issue:any)=>issue.category!=='horoscope_fact_boundary'||receipt?.lint?.version===horoscopeValidationVersion)].filter(()=>!ownerFinal)) {
       if(!issues.some(existing=>existing.sign===passage.sign&&existing.detail===issue.detail))issues.push({sign:passage.sign,category:issue.category,detail:issue.detail});
     }
   }
@@ -89,7 +96,7 @@ export function assertHoroscopeRow(row: Record<string,any>, {enforcePunctuation=
     const edition = validateHoroscopeEdition(row.sections?.horoscopeEdition,row.status === 'LIVE');
     for(const passage of edition.passages){
       const held=row.source_snapshot?.horoscopeGeneration?.candidateHolds?.[passage.sign];
-      if(!ownerFinal&&held&&(row.status==='LIVE'||passage.headline===held.candidate.headline&&passage.body===held.candidate.body))throw new Error(`${passage.sign}: This generated reading is held for prose review. Edit or reject its saved candidate before continuing.`);
+      if(!ownerFinal&&held&&row.status==='LIVE')throw new Error(`${passage.sign}: This generated reading is held for prose review. Edit or reject its saved candidate before continuing.`);
     }
     // Keep paid drafts editable and let the remaining signs finish. Publication
     // always checks current text, including imports with no generation receipt.
@@ -108,7 +115,8 @@ export function assertHoroscopeRow(row: Record<string,any>, {enforcePunctuation=
     if (typeof packet?.signature !== 'string' || !/^[a-f0-9]{64}$/u.test(packet.signature)
       || !timingSafeEqual(Buffer.from(expected),Buffer.from(packet.signature))) throw new Error('Prepare calculated dates and facts before saving this edition.');
     if (JSON.stringify(edition.window) !== JSON.stringify(validateHoroscopeWindow(packet.brief.window))
-      || !isHoroscopeEditionKey(row.content_key,edition.window) || row.surface !== 'sky' || row.mode !== 'article'
+      || !isHoroscopeEditionKey(row.content_key,edition.window) || row.surface !== 'sky'
+      || !(row.mode === 'article' || row.mode === 'studio-draft' && row.event_type === 'horoscope-edition-revision' && row.lane === 'reference' && row.status !== 'LIVE')
       || row.body !== horoscopeEditionBody(edition)) throw new Error('The edition must preserve its calculated dates, identity and complete passages.');
     if(row.status==='LIVE') {
       const issue=horoscopePublicationIssues(row).find(issue=>!hasHoroscopeValidationOverride(row)||issue.category!=='horoscope_fact_boundary');

@@ -124,12 +124,18 @@ for(const width of [390,1440])for(const theme of ['light','dark']){
    await studio.getByLabel('Complete reading',{exact:true}).fill(edited);
    await studio.getByRole('button',{name:'Save edition draft',exact:true}).click();
    await expect(studio.getByRole('status')).toContainText('Saved edition draft.');
+   const revision=(await call({method:'rows'})).find((row:any)=>row.event_type==='horoscope-edition-revision');
+   expect(revision.id).not.toBe(published.id);expect(revision.status).toBe('DRAFT');
+   expect((await call({method:'rows'})).find((row:any)=>row.id===published.id)).toEqual(published);
+   expect((await call({method:'reader',body:{ids:[published.id]}})).payload.rows[0].sections.horoscopeEdition).toEqual(published.sections.horoscopeEdition);
+   await expect(page).toHaveURL(new RegExp(`edition=${revision.id}$`));
    await page.reload();
    await studio.getByRole('button',{name:'3 · Review',exact:true}).click();
    await expect(studio.getByLabel('Complete reading',{exact:true})).toBeVisible();
    await studio.getByRole('button',{name:'1 · Dates',exact:true}).click();
    await studio.getByText(/^Continue a saved edition/).click();
-   await table.getByRole('button',{name:/October 5, 2026.*Review \/ Edit/}).click();
+   await expect(table.getByRole('row').filter({hasText:'October 5, 2026'})).toHaveCount(2);
+   await table.getByRole('row').filter({hasText:'Draft revision'}).getByRole('button',{name:/October 5, 2026.*Review \/ Edit/}).click();
    await expect(studio.getByLabel('Complete reading',{exact:true})).toHaveValue(edited);
    await studio.getByRole('button',{name:'4 · Publish',exact:true}).click();
    await studio.getByLabel('I have reviewed and approve the exact wording of every saved reading in this edition.').check();
@@ -138,6 +144,7 @@ for(const width of [390,1440])for(const theme of ['light','dark']){
    const saved=(await call({method:'rows'})).find((row:any)=>row.id===published.id);
    expect(saved.status).toBe('LIVE');expect(saved.sections.horoscopeEdition.passages[0].body).toBe(edited);
    expect(saved.sections.horoscopeEdition.passages.slice(1)).toEqual(published.sections.horoscopeEdition.passages.slice(1));
+   expect((await call({method:'rows'})).find((row:any)=>row.id===revision.id).status).toBe('ARCHIVED');
    const reader=await call({method:'reader',body:{ids:[published.id]}});
    expect(reader.status).toBe(200);expect(reader.payload.rows[0].sections.horoscopeEdition).toEqual(saved.sections.horoscopeEdition);
    expect((await call({method:'writer-state'})).calls).toBe(0);
@@ -165,13 +172,15 @@ for(const width of [390,1440])for(const theme of ['light','dark']){
    // Library deep link A -> setup -> saved B must reload B, with no content mutation.
    const monthly=initialRows.find((row:any)=>row.sections?.horoscopeEdition?.window.period==='monthly');
    await page.goto(`/admin/content#horoscopes?edition=${daily.id}`);
+   await expect(studio.getByText('This edition is archived. Its saved readings are preserved.',{exact:true})).toBeVisible();
+   await studio.getByRole('button',{name:'Review archived readings',exact:true}).click();
    await expect(studio.getByLabel('Complete reading',{exact:true})).toHaveValue(daily.sections.horoscopeEdition.passages[0].body);
    await studio.getByRole('button',{name:'1 · Dates',exact:true}).click();
    await expect(page).toHaveURL(/#horoscopes$/);
    await studio.getByText(/^Continue a saved edition/).click();
    await studio.getByRole('button',{name:'Reset view',exact:true}).click();
    await expect(filters.getByLabel('Publication status')).toHaveValue('all');
-   await table.getByRole('button',{name:/October 1, 2026/}).click();
+   await table.getByRole('button',{name:/October 1, 2026.*Review \/ Edit/}).click();
    await expect.poll(()=>new URL(page.url()).hash).toBe(`#horoscopes?edition=${monthly.id}`);
    await page.reload();
    await expect(studio.getByLabel('Complete reading',{exact:true})).toHaveValue(monthly.sections.horoscopeEdition.passages[0].body);
@@ -184,10 +193,52 @@ for(const width of [390,1440])for(const theme of ['light','dark']){
    await studio.getByText(/^Continue a saved edition/).click();
    const beforeDeclinedUrl=page.url();
    page.once('dialog',dialog=>dialog.dismiss());
-   await table.getByRole('button',{name:/November 2, 2026/}).click();
+   await table.getByRole('button',{name:/November 2, 2026.*Review \/ Edit/}).click();
    await expect(page).toHaveURL(beforeDeclinedUrl);
    await studio.getByRole('button',{name:'3 · Review',exact:true}).click();
    await expect(studio.getByLabel('Complete reading',{exact:true})).toHaveValue(unsaved);
+   expect((await call({method:'rows'})).find((row:any)=>row.id===monthly.id)).toEqual(monthly);
+   // Presentation navigation retains the edition; an explicit close still
+   // requires a decision before discarding its complete unsaved passage.
+   const drawer=page.getByRole('dialog',{name:'Edit horoscopes',exact:true});
+   await expect(drawer).toBeVisible();
+   expect(await drawer.evaluate(node=>node.matches(':modal'))).toBe(false);
+   if(width===390){
+    const mountedEdition=await studio.elementHandle();
+    await drawer.getByRole('button',{name:'Minimize',exact:true}).click();
+    await expect(drawer).toHaveCount(0);
+    const resume=page.getByRole('button',{name:'Resume editing horoscopes',exact:true});
+    await expect(resume).toBeFocused();
+    for(const destination of ['Review Queue','Horoscopes']){
+     const navigation=page.getByRole('button',{name:'Open Content Studio navigation',exact:true});
+     await expect(navigation).toBeVisible();await navigation.click();
+     await page.locator('#admin-content-navigation').getByRole('button',{name:destination,exact:true}).click();
+     if(destination==='Review Queue')await expect(page.getByRole('heading',{name:'Review Queue',exact:true})).toBeVisible();
+    }
+    await expect(resume).toBeFocused();await resume.click();
+    expect(await mountedEdition!.evaluate(node=>node.isConnected)).toBe(true);
+    await expect(studio.getByLabel('Complete reading',{exact:true})).toHaveValue(unsaved);
+    expect((await call({method:'rows'})).find((row:any)=>row.id===monthly.id)).toEqual(monthly);
+   }
+   const beforeCloseUrl=page.url();
+   page.once('dialog',dialog=>dialog.dismiss());
+   await drawer.getByRole('button',{name:'Close Edit horoscopes',exact:true}).click();
+   await expect(drawer).toBeVisible();
+   await expect(page).toHaveURL(beforeCloseUrl);
+   await expect(studio.getByLabel('Complete reading',{exact:true})).toHaveValue(unsaved);
+   expect((await call({method:'rows'})).find((row:any)=>row.id===monthly.id)).toEqual(monthly);
+   const beforeUnloadPrompt=page.waitForEvent('dialog');
+   await page.close({runBeforeUnload:true});
+   const unload=await beforeUnloadPrompt;
+   expect(unload.type()).toBe('beforeunload');
+   await unload.dismiss();
+   expect(page.isClosed()).toBe(false);
+   await expect(studio.getByLabel('Complete reading',{exact:true})).toHaveValue(unsaved);
+   page.once('dialog',dialog=>dialog.accept());
+   await drawer.getByRole('button',{name:'Close Edit horoscopes',exact:true}).click();
+   await expect(drawer).toHaveCount(0);
+   await expect(page).toHaveURL(/#horoscopes$/);
+   await expect(studio.getByRole('heading',{name:'Choose your horoscopes',exact:true})).toBeFocused();
    expect((await call({method:'rows'})).find((row:any)=>row.id===monthly.id)).toEqual(monthly);
    // Reset the independently proven dirty session before the late-detail scenario.
    await page.goto(`/admin/content#horoscopes?edition=${monthly.id}`);
@@ -196,7 +247,7 @@ for(const width of [390,1440])for(const theme of ['light','dark']){
    await studio.getByRole('button',{name:'1 · Dates',exact:true}).click();
    await studio.getByText(/^Continue a saved edition/).click();
    holdDetail=true;detailStarted=false;
-   await table.getByRole('button',{name:/November 2, 2026/}).click();
+   await table.getByRole('button',{name:/November 2, 2026.*Review \/ Edit/}).click();
    await expect.poll(()=>detailStarted).toBe(true);
    await page.evaluate(()=>{window.location.hash='connection';});
    await expect(page.getByLabel('CONTENT_GENERATION_SECRET',{exact:true})).toBeVisible();

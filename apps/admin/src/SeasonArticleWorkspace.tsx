@@ -9,7 +9,7 @@ import { subscribeToContentUpdates } from "../../web/src/services/contentUpdateS
 
 type Props = {
   sign?: string;
-  loadRows: (keys: string[]) => Promise<Row[]>;
+  loadRows: (keys: string[], excludeArchivedArticleRevisions?: boolean) => Promise<Row[]>;
   onOpen: (row: Row) => void;
   onCreate: (sign: string, year: number) => void;
 };
@@ -29,7 +29,7 @@ export default function SeasonArticleWorkspace({ sign: selectedSign, loadRows, o
   useEffect(() => {
     if (!key) return;
     let active = true;
-    void load.current([key]).then(rows => {
+    void load.current([key], true).then(rows => {
       if (active) setResult({ key, attempt: retry, rows });
     }).catch(() => {
       if (active) setResult({ key, attempt: retry, rows: [], error: "The saved article could not load. Retry before creating or editing it." });

@@ -1,10 +1,18 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 import { studioApiStore } from '../helpers/studio-api-store';
 import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
-import { readStudioCsv, writeStudioCsv } from '../../apps/admin/src/studioCsv';
+import { csvRecordForRow, readStudioCsv, writeStudioCsv } from '../../apps/admin/src/studioCsv';
 import { fixtures as calendarFixtures } from '../helpers/calendar-review-api.mjs';
 import { skyPlacementSourceFixture } from '../helpers/sky-placement-source-fixture.mts';
+
+async function closeCsvFixture(page: Page, store: Awaited<ReturnType<typeof studioApiStore>>) {
+  // Publication refreshes can still own an IPC request after the assertions.
+  // Detach routing before killing its API child so teardown cannot reject a
+  // background handler into the following test.
+  await page.unrouteAll({ behavior: 'ignoreErrors' });
+  store.close();
+}
 
 async function routeCsvInventoryApi(page: Parameters<typeof routeStudioInventoryApi>[0], options: Parameters<typeof routeStudioInventoryApi>[1]) {
   await routeStudioInventoryApi(page, { ...options, answer: async (route, url) => {
@@ -26,11 +34,120 @@ const fixtures = Array.from({ length: 31 }, (_, index) => ({
 }));
 test.use({ actionTimeout: 15_000 });
 
+for (const width of [390,1440]) for (const theme of ['light','dark']) {
+  test(`missing natal Friend field edits, publishes and reloads ${width} ${theme}`, async ({ page, context }) => {
+    test.setTimeout(120_000);
+    const key = 'fallback-hook/natal-aspect-lived/lilith/quincunx/sun';
+    const you = 'You may explain your decision carefully. You can keep the final answer clear.';
+    const friend = '{{Name}} may take time to explain a decision.\n\nThey can keep their answer clear without repeating the explanation.';
+    const source = { ...fixtures[0], content_key: key, body: you, headline: 'Lilith quincunx Sun', summary: '',
+      event_type: 'fallback-system', mode: 'feed', provider: 'fallback-system-reference', review_state: 'fallback-system-reference',
+      sections: { packageRecord: { contentKey: key, content_role: 'fallback_hook', grammar_frame: 'complete_sentence',
+        reader_only: true, render_policy: 'reader-only-exact-lived-v1', review_status: 'approved', body: you } },
+      facts: { fallbackArchitectureV3: true }, source_snapshot: { sourcePackage: 'tldrastro-fallback-architecture-v3', review_status: 'approved' } };
+    const store = await studioApiStore([source]);
+    try {
+      await page.setViewportSize({ width, height: 1000 });
+      await context.addInitScript(theme => {
+        localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture');
+        localStorage.setItem('tldrastro:studio-theme',theme);
+      }, theme);
+      await routeCsvInventoryApi(page, { call: store.call, actualDocumentRoute: true });
+      const open = async () => {
+        await page.getByRole('button',{name:'Edit source',exact:true}).click();
+        const dialog = page.getByRole('dialog',{name:'Generated content editor'});
+        await expect(dialog.locator('[data-sky-field="body_they"]')).toBeVisible();
+        return dialog;
+      };
+      await page.goto('/admin/content#exact-content?category=Natal+Aspects&first=lilith&aspect=quincunx&second=sun');
+      let dialog = await open();
+      await expect(dialog.locator('[data-sky-field="body_they"]')).toHaveValue('');
+      await expect(dialog.getByRole('textbox',{name:'Reader phrase · You',exact:true})).toHaveValue(you);
+      await dialog.locator('[data-sky-field="body_they"]').fill(friend);
+      await dialog.getByRole('button',{name:'Save & publish',exact:true}).click();
+      await expect.poll(async () => {
+        const rows = await store.call({method:'rows'});
+        return rows.find((row: any) => row.id === source.id)?.status;
+      }).toBe('LIVE');
+      const rows = await store.call({method:'rows'});
+      const saved = rows.find((row: any) => row.id === source.id);
+      expect(saved.body).toBe(you);
+      expect(saved.sections.packageRecord.body).toBe(you);
+      expect(saved.sections.packageRecord.body_they).toBe(friend);
+      expect(saved.sections.packageRecord.body_they_review_status).toBe('approved');
+      expect(saved.sections.packageRecord.body_they_approval.approvalLevel).toBe('exact_owner_approved');
+      await page.reload();
+      dialog = await open();
+      await expect(dialog.locator('[data-sky-field="body_they"]')).toHaveValue(friend);
+      await expect(dialog.getByRole('textbox',{name:'Reader phrase · You',exact:true})).toHaveValue(you);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      await dialog.screenshot({path:`test-results/studio-natal-friend-${width}-${theme}.png`});
+    } finally { await closeCsvFixture(page,store); }
+  });
+}
+
+const standaloneCsvCases = [
+  ...[390, 1440].flatMap(width => ['manual', 'guide'].map(kind => ({ width, kind, conflict: false }))),
+  { width: 390, kind: 'manual', conflict: true }
+];
+for (const { width, kind, conflict } of standaloneCsvCases) test(`CSV standalone ${kind} revision preserves its published edition ${width}${conflict ? ' conflict' : ''}`, async ({ page }) => {
+  test.setTimeout(120_000);
+  const source = { ...fixtures[0], content_key: `article/${kind}/csv-standalone-fixture`, mode: 'article',
+    status: 'LIVE', lane: 'serving', review_state: null };
+  const revised = 'Complete offline article opening.\n\nComplete offline article final paragraph — café.';
+  const concurrent = 'Complete newer published opening.\n\nComplete newer published final paragraph.';
+  const store = await studioApiStore([source], { uuidIds: true });
+  let readerDuringPublication: string | undefined;
+  try {
+    await page.setViewportSize({ width, height: 1000 });
+    await page.addInitScript(() => localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture'));
+    await routeCsvInventoryApi(page, { call: async request => {
+      if (request.method === 'PATCH' && (request.body as any)?.ownerAction?.startsWith('publish-')) {
+        const rows = await store.call({ method: 'rows' });
+        expect(rows.find((row: any) => row.id === source.id)).toEqual(source);
+        const before = await store.call({ method: 'POST', url: '/api/content-reader', body: { keys: [source.content_key] } });
+        readerDuringPublication = before.payload.rows[0]?.body;
+        if (conflict) {
+          const newer = await store.call({ method: 'PATCH', body: { id: source.id, expectedUpdatedAt: source.updated_at,
+            ownerAction: 'save-and-publish-owner-content', body: concurrent } });
+          expect(newer.status).toBe(200);
+        }
+      }
+      return store.call(request);
+    }, actualDocumentRoute: true, answer: async (route, url) => {
+      if (url.pathname !== '/api/content-reader') return false;
+      const result = await store.call({ method: 'POST', url: url.pathname, body: route.request().postDataJSON() });
+      await route.fulfill({ status: result.status, json: result.payload }); return true;
+    } });
+    await page.goto('/admin/content#articles-guides');
+    await page.getByRole('button', { name: 'Export sources for bulk editing', exact: true }).click();
+    const panel = page.getByRole('region', { name: 'CSV offline editing' });
+    await page.getByLabel('Import Content Studio CSV', { exact: true }).setInputFiles({ name: 'article-revision.csv',
+      mimeType: 'text/csv', buffer: Buffer.from(writeStudioCsv([{ ...csvRecordForRow(source), body: revised, publish: 'yes' }])) });
+    await expect(panel).toContainText('1 changed');
+    await panel.getByRole('button', { name: 'Save & publish', exact: true }).click();
+    await expect(panel).toContainText(conflict ? '1 edit saved; 0 rows published.' : '1 edit saved; 1 row published.');
+    if (conflict) await expect(panel).toContainText('This edit was saved as a draft; publication was not confirmed.');
+    expect(readerDuringPublication).toBe(source.body);
+    const rows = await store.call({ method: 'rows' });
+    expect(rows.find((row: any) => row.id === source.id)?.body).toBe(conflict ? concurrent : revised);
+    const privateRevision = rows.find((row: any) => row.event_type === 'standalone-article-revision');
+    expect(privateRevision?.status).toBe(conflict ? 'DRAFT' : 'ARCHIVED');
+    expect(privateRevision?.body).toBe(revised);
+    await page.goto(`/#articles/${encodeURIComponent(source.content_key)}`);
+    const reader = page.getByRole('region', { name: 'Articles & Guides', exact: true }).locator('.learn-article-body');
+    await expect.poll(() => reader.innerText()).toBe(conflict ? concurrent : revised);
+    await page.reload(); await expect.poll(() => reader.innerText()).toBe(conflict ? concurrent : revised);
+  } finally { await closeCsvFixture(page, store); }
+});
+
 for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
   test(`CSV picker excludes dedicated editions and exports supported sources at ${width} ${theme}`, async ({ page, context }) => {
     test.setTimeout(120_000);
     const fixture = await skyPlacementSourceFixture();
-    const editions = [{ ...fixture.active, headline: 'Unavailable CSV edition' }, { ...fixture.pending, headline: 'Unavailable CSV revision' }];
+    const editions = [{ ...fixture.active, headline: 'Unavailable CSV edition' }, { ...fixture.pending, headline: 'Unavailable CSV revision' },
+      { ...fixtures[1], content_key: 'cms/lunation-horoscopes/2026-11-09/new-moon/scorpio', event_type: 'lunation-horoscopes',
+        headline: 'Unavailable CSV Moon set', sections: { articleHoroscopes: { schema: 'sky-article-horoscopes-v1', passages: [] } } }];
     const store = await studioApiStore([fixtures[0], ...editions]);
     const writes: unknown[] = [], errors: string[] = [];
     page.on('pageerror', error => errors.push(error.message));
@@ -49,7 +166,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       await page.goto('/admin/content#exact-content');
       await page.getByRole('button', { name: 'Export sources for bulk editing', exact: true }).click();
       const panel = page.getByRole('region', { name: 'CSV offline editing' });
-      await expect(panel).toContainText('1 available for CSV editing · 2 excluded.');
+      await expect(panel).toContainText('1 available for CSV editing · 3 excluded.');
       const types = panel.getByLabel('CSV content type', { exact: true });
       await expect(types.locator('option')).toHaveText(['Choose a content type', 'essay (1)']);
       await panel.getByText('Choose rows for this export', { exact: true }).click();
@@ -64,20 +181,20 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       expect(records[0].body).toBe(fixtures[0].body);
       await expect(panel).toContainText('Exported 1 rows.');
       await page.getByRole('searchbox', { name: 'Search content', exact: true }).fill('Unavailable');
-      await expect(panel).toContainText('0 available for CSV editing · 2 excluded.');
+      await expect(panel).toContainText('0 available for CSV editing · 3 excluded.');
       await expect(types.locator('option')).toHaveText(['Choose a content type']);
       await expect(panel.getByRole('button', { name: 'Download CSV', exact: true })).toBeDisabled();
       const typography = (element: Element) => {
         const style = getComputedStyle(element);
         return [style.fontFamily, style.fontSize, style.fontWeight, style.lineHeight, style.letterSpacing];
       };
-      expect(await panel.getByText('0 available for CSV editing · 2 excluded. Open structured articles in their dedicated editor.', { exact: true }).evaluate(typography))
+      expect(await panel.getByText('0 available for CSV editing · 3 excluded. Open structured articles in their dedicated editor.', { exact: true }).evaluate(typography))
         .toEqual(await panel.locator('.admin-field-hint').first().evaluate(typography));
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       await panel.screenshot({ path: `test-results/studio-csv-eligibility-${width}-${theme}.png` });
       expect(writes).toEqual([]);
       expect(errors).toEqual([]);
-    } finally { store.close(); }
+    } finally { await closeCsvFixture(page, store); }
   });
 
   test(`CSV export, offline edit, preview, save and reload at ${width} ${theme}`, async ({ page, context }) => {
@@ -178,7 +295,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       const editor = page.getByRole('dialog', { name: 'Generated content editor' });
       await expect(editor.getByLabel('Full passage / body', { exact: true })).toHaveValue(edited.body);
       expect(errors).toEqual([]);
-    } finally { store.close(); }
+    } finally { await closeCsvFixture(page, store); }
   });
 }
 
@@ -215,7 +332,7 @@ test('CSV stops on a mid-batch conflict and reports confirmed saves', async ({ p
     expect(saved.find((row: any) => row.id === fixtures[2].id).body).toBe(fixtures[2].body);
     expect(writes).toHaveLength(2);
     await expect(panel.getByRole('button', { name: /^Save \d+ drafts?$/ })).toBeDisabled();
-  } finally { store.close(); }
+  } finally { await closeCsvFixture(page, store); }
 });
 
 test('CSV empty state and failed reads recover without partial exports or writes', async ({ page, context }) => {
@@ -256,7 +373,7 @@ test('CSV empty state and failed reads recover without partial exports or writes
     const download = page.waitForEvent('download');
     await panel.getByRole('button', { name: 'Download CSV', exact: true }).click();
     expect(readStudioCsv(await readFile((await (await download).path())!, 'utf8'))).toHaveLength(2);
-  } finally { store.close(); }
+  } finally { await closeCsvFixture(page, store); }
 });
 
 for (const failure of ['validation', 'race', 'lost-response']) {
@@ -309,7 +426,7 @@ for (const failure of ['validation', 'race', 'lost-response']) {
       expect(saved.find((row: any) => row.id === rows[2].id).body).toBe(rows[2].body);
       expect(writes).toHaveLength(4);
       await expect(panel.getByRole('button', { name: /^(Save & publish|Save \d+ drafts?)$/ })).toBeDisabled();
-    } finally { store.close(); }
+    } finally { await closeCsvFixture(page, store); }
   });
 }
 
@@ -351,7 +468,7 @@ test('CSV publishes a separately saved package revision and reloads the exact li
     await panel.getByRole('button', { name: 'Download CSV', exact: true }).click();
     const reopened = readStudioCsv(await readFile((await (await exported).path())!, 'utf8'));
     expect(reopened[0].Body).toBe(records[0].Body); expect(reopened[0].publish).toBe('no');
-  } finally { store.close(); }
+  } finally { await closeCsvFixture(page, store); }
 });
 
 
@@ -381,7 +498,7 @@ test('CSV author publication accepts exact Sky wording without a model verdict',
     expect(saved.source_snapshot.studioOwnerApproval.action).toBe('publish-owner-content');
     const reader=await store.call({method:'POST',url:'/api/content-reader',body:{keys:[row.content_key]}});
     expect(reader.payload.rows[0].body).toBe(row.body);
-  } finally {store.close();}
+  } finally { await closeCsvFixture(page, store); }
 });
 
 test('Editable export stops when publication status is unavailable and recovers without a partial file', async ({ page, context }) => {
@@ -410,5 +527,27 @@ test('Editable export stops when publication status is unavailable and recovers 
     expect(exported).toHaveLength(2);
     expect(exported.every(row => row.publication_status === 'DRAFT')).toBe(true);
     expect(writes).toEqual([]);
-  } finally { store.close(); }
+  } finally { await closeCsvFixture(page, store); }
+});
+
+
+test('CSV fixture cleanup handles an in-flight background reader request', async ({ page }) => {
+  const store = await studioApiStore([]);
+  let readStarted!: () => void;
+  const reading = new Promise<void>(resolve => { readStarted = resolve; });
+  await page.route('**/__csv-cleanup-fixture', route => route.fulfill({
+    contentType: 'text/html', body: '<!doctype html><title>Synthetic CSV cleanup</title>'
+  }));
+  await page.route('**/__csv-background-read', async route => {
+    const result = store.call({ method: 'POST', url: '/api/content-reader', body: { keys: ['content/manual/synthetic-cleanup'] } });
+    readStarted();
+    await route.fulfill({ json: await result });
+  });
+  try {
+    await page.goto('/__csv-cleanup-fixture');
+    // The browser may abort this read on close; its Node handler must not leave
+    // an unhandled IPC rejection after the owning test has ended.
+    void page.evaluate(() => fetch('/__csv-background-read').catch(() => null)).catch(() => {});
+    await reading;
+  } finally { await closeCsvFixture(page, store); }
 });

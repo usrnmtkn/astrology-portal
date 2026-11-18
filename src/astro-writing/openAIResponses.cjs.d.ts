@@ -2,6 +2,7 @@ export type AstrologyProseRole = "COLD_REVIEWER" | "MEANING_PLANNER" | "WRITER" 
 
 export function instructionsForRole(role: AstrologyProseRole, taskInstructions?: string, context?: {surface?: string; family?: string}): string;
 export function governedInstructionsForRole(role: AstrologyProseRole, options?: {taskInstructions?:string;governedInstructions?:string;surface?:string;family?:string}): string;
+export function inferredPromptContext(request:Record<string,unknown>,context?:{surface?:string;family?:string}):{surface:string;family:string};
 
 export function callOpenAIResponses<T = {status?: string; id?: unknown; [key: string]: unknown}>(options: {
   apiKey: string;

@@ -13,7 +13,7 @@ for (const group of SKY_WRITING_LIBRARY_GROUPS) for (const field of group.fields
 for (const field of skyDailySummaryFields) for (const name of field.allowedSlots) assert(variables.some(variable => variable.token === `{${name}}` && variable.usages.some(usage => usage.key === field.key)));
 for (const name of ['zodiacSeason', 'zodiacSeasonPolarAxis']) {
   const result = filterStudioVariables(variables, `{{${name}}}`, 'editable', 'Natal');
-  assert(result.some(variable => variable.name === name && variable.sources.length === 12));
+  assert(result.some(variable => variable.name === name && new Set(variable.sources.map(source => source.key)).size === 12));
   assert(result.some(variable => variable.usages.some(usage => usage.surface === 'Compatibility')));
 }
 assert(filterStudioVariables(variables, 'entryDate', 'readonly', 'Sky').some(variable => variable.name === 'entryDate'));
@@ -21,13 +21,13 @@ assert.equal(filterStudioVariables(variables, 'entryDate', 'editable', 'Sky').le
 assert.equal(filterStudioVariables(variables, 'no-such-variable-fixture', '', '').length, 0);
 const polar = variables.find(variable => variable.name === 'zodiacSeasonPolarAxis');
 assert(polar);
-assert.equal(matchingVariableSources(polar, '{{zodiacSeasonPolarAxis}}').length, 12);
-assert.equal(matchingVariableSources(polar, 'zodiacSeasonPolarAxis virgo').length, 1);
+assert.equal(new Set(matchingVariableSources(polar, '{{zodiacSeasonPolarAxis}}').map(source => source.key)).size, 12);
+assert.equal(new Set(matchingVariableSources(polar, 'zodiacSeasonPolarAxis virgo').map(source => source.key)).size, 1);
 assert.equal(matchingVariableSources(polar, 'zodiacSeasonPolarAxis virgo')[0].key, 'fallback-hook/zodiac-season-polar-axis/virgo');
 const planetFunction = variables.find(variable => variable.name === 'planetFunction');
 assert(planetFunction && planetFunction.sources.length >= 12);
 assert.equal(matchingVariableSources(planetFunction, 'planetFunction').length, planetFunction.sources.length);
-assert.equal(matchingVariableSources(planetFunction, 'planetFunction sun').length, 1);
+assert.equal(new Set(matchingVariableSources(planetFunction, 'planetFunction sun').map(source => source.key)).size, 1);
 assert.equal(matchingVariableSources(planetFunction, 'planetFunction sun')[0].key, 'fallback-vocab/planet-function/sun');
 const openingHook = variables.find(variable => variable.name === 'openingHook');
 assert(openingHook && openingHook.sources.length > 12);
@@ -38,5 +38,16 @@ assert(variables.filter(variable => variable.kind === 'readonly').every(variable
 assert.throws(() => decodeStudioVariableCatalog({...encoded, usages: []}), /incomplete/);
 console.log(`PASS ${variables.length} variable definitions, contract coverage, source scopes, syntax, filters, and shipped catalog parity`);
 
-for (const name of ["articleBody", "articleHeadline", "angleIntro", "allWord", "aRef"]) assert(!variables.some(variable => variable.name === name), `${name} must not be offered as reusable writing`);
+for (const name of ["articleBody", "articleHeadline", "angleIntro", "allWord", "aRef"]) assert(variables.some(variable => variable.name === name), `${name} must be visible with its provider and field contract`);
 assert(variables.every(variable => variable.kind !== "unmapped"));
+assert(variables.filter(variable=>variable.name==='modifierSentences').every(variable=>variable.sources.every(source=>source.key!=='fallback-template/natal.modifier.retrograde')),'The retired shared retrograde sentence is no longer an active modifier provider');
+const retroName=variables.find(variable=>variable.name==='ownerName');
+assert.deepEqual(retroName?.usages.find(usage=>usage.key==='fallback-hook/natal-retrograde-modifier/saturn/4')?.fields,['body_they'],'Scoped retrograde additions license ownerName only in the Friend field');
+for (const name of ['planetTopic','planetCore','planetProductive']) {
+  const variable = variables.find(variable => variable.name === name && variable.source === 'Planet vocabulary');
+  assert(variable?.sources.some(source => source.key.endsWith('/saturn')));
+  assert(variable?.usages.some(usage => usage.key === 'fallback-hook/house-meaning/4'));
+  assert.deepEqual(variable?.usages.find(usage => usage.key === 'fallback-hook/house-meaning/4')?.fields, ['body_they', 'body_you']);
+}
+assert(variables.some(variable=>variable.token==='{{#hasFullMoon}}…{{/hasFullMoon}}'));
+for(const surface of ['Chart wheel tooltips','Friction and flow','Sky dignity']) assert(variables.some(variable=>variable.usages.some(usage=>usage.surface===surface)));

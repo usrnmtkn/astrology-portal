@@ -107,7 +107,8 @@ test('owner access leads to a configured sign-in screen and preserves the memory
   await expect(page.getByText('Add VITE_SUPABASE_URL and a Supabase publishable key to enable live sign-on.')).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Continue with Google', exact: true })).toBeEnabled();
   await expect(page.getByLabel('Email', { exact: true })).toBeEnabled();
-  await expect(page.getByRole('textbox', { name: 'Password Show password', exact: true })).toBeEnabled();
+  await expect(page.getByLabel('Password', { exact: true })).toBeEnabled();
+  await expect(page.getByLabel('Password', { exact: true })).toHaveAttribute('type', 'password');
 });
 
 
@@ -133,6 +134,12 @@ test('Content Studio Operations opens the graph using the existing admin credent
   await page.addInitScript(() => localStorage.setItem('tldrastro:contentAdminSecret', 'memory-browser-fixture'));
   await page.goto('/admin/content');
   const operations = page.locator('details').filter({has:page.locator('summary', {hasText:'Operations'})});
+  if (!await operations.evaluate(element => (element as HTMLDetailsElement).open)) await operations.locator('summary').click();
+  await operations.getByRole('button',{name:'Writing standard',exact:true}).click();
+  await expect(page).toHaveURL(/\/admin\/content\/memory\?view=writing-standard$/);
+  await expect(page.getByRole('article',{name:'Writing standard'}).getByRole('heading',{level:1})).toHaveText('TLDR Astro: Planetary Aspect Writing Standard');
+  await expect(page.getByRole('article').getByText('And if the reader has to work to understand what a sentence means, rewrite the sentence.',{exact:true})).toBeVisible();
+  await page.getByRole('link',{name:'Back to Content Studio',exact:true}).click();
   if (!await operations.evaluate(element => (element as HTMLDetailsElement).open)) await operations.locator('summary').click();
   await operations.getByRole('button',{name:'Memory graph',exact:true}).click();
   await expect(page).toHaveURL(/\/admin\/content\/memory$/);

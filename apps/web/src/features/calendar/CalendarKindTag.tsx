@@ -2,6 +2,7 @@ import { PLANET_GLYPHS, SIGN_GLYPHS, aspectGlyph, normalizeGlyphKey } from "../.
 import type { LunarCalendarEvent } from "../../services/ephemeris";
 import { AstroGlyph } from "./AstroGlyph";
 import { calendarKindClass, calendarKindFromEvent, calendarKindLabel, type CalendarEventKind } from "./calendarKinds";
+import { AspectBadge } from "../../components/charts/AspectBadge";
 
 export function eventGlyphText(event: LunarCalendarEvent) {
   if (event.type === "lunation") {
@@ -13,11 +14,9 @@ export function eventGlyphText(event: LunarCalendarEvent) {
   if (event.eclipseType === "solar") return "◉";
   if (event.eclipseType === "lunar") return "◍";
   const planet = event.planet ? PLANET_GLYPHS[normalizeGlyphKey(event.planet)] : "";
-  const fromPlanet = event.planets?.[0] ? PLANET_GLYPHS[normalizeGlyphKey(event.planets[0])] : planet;
-  const toPlanet = event.planets?.[1] ? PLANET_GLYPHS[normalizeGlyphKey(event.planets[1])] : "";
   const sign = SIGN_GLYPHS[normalizeGlyphKey(event.toSign ?? event.sign ?? "")];
   if (event.type === "aspect" && event.aspect) {
-    return `${fromPlanet}${aspectGlyph(event.aspect)}${toPlanet}`;
+    return aspectGlyph(event.aspect);
   }
   if (event.type === "ingress") {
     return `${planet}→${sign}`;
@@ -80,6 +79,8 @@ export function CalendarKindTag({
 }) {
   const text = glyph ?? (kind === "void" ? "VOC" : event ? eventGlyphText(event) : "");
   const moonEmoji = text === "🌑" || text === "🌕";
+
+  if (event?.type === "aspect" && event.aspect) return <AspectBadge aspect={event.aspect} className={calendarKindClass(kind)} />;
 
   return (
     <span className={`${calendarKindClass(kind)}${moonEmoji ? " calendar-kind--bare" : ""}`}>

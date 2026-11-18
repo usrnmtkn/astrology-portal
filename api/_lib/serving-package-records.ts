@@ -22,6 +22,7 @@ const readerPartitions = [
   require("../../apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-house-rows-v3.json"),
   require("../../apps/web/src/content/fallbackArchitectureV3/bundled-initial-reader-rows-v3.json"),
   require("../../apps/web/src/content/fallbackArchitectureV3/bundled-lunation-book-cards-v3.json"),
+  require("../../apps/web/src/content/fallbackArchitectureV3/owner-overrides/lunation-astrology-boundary-overrides-v1.json"),
   require("../../apps/web/src/content/fallbackArchitectureV3/bundled-lunation-eclipse-sections-v3.json"),
   require("../../apps/web/src/content/fallbackArchitectureV3/bundled-lunation-eclipse-house-layers-v3.json"),
 ];

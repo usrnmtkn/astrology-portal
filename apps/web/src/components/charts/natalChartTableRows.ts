@@ -1,6 +1,7 @@
 import type { PlanetPosition, SkySnapshot } from "../../types";
 import { zodiacSigns } from "../../services/chartMath";
 import { isDisplayRetrograde } from "../../services/astrologyDisplay";
+import { emptyNatalHouseNumbers } from "../../services/natalHouseCards";
 import { formatPlanetDegree } from "../../features/sky/skyHelpers";
 import type { NatalChartDataTableRow } from "./NatalChartDataTable";
 import { placementPlanetOrder, type SocialPlacementRow } from "./PlacementRows";
@@ -93,13 +94,7 @@ export function natalChartTableRowFromSocial(row: SocialPlacementRow): NatalChar
 }
 
 export function completeNatalChartTableRows(sky: SkySnapshot, rows: NatalChartDataTableRow[]) {
-  const occupiedHouses = new Set(
-    rows
-      .map((row) => row.house)
-      .filter((house): house is number => typeof house === "number" && house >= 1 && house <= 12)
-  );
-  const emptyHouseRows: NatalChartDataTableRow[] = Array.from({ length: 12 }, (_, index) => index + 1)
-    .filter((house) => !occupiedHouses.has(house))
+  const emptyHouseRows: NatalChartDataTableRow[] = (sky.birthTimeKnown === false ? [] : emptyNatalHouseNumbers(rows.map(row => ({ planet: row.label, house: row.house }))))
     .map((house) => ({
       id: `natal-table-empty-house-${house}`,
       degree: "",

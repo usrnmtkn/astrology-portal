@@ -4,6 +4,13 @@ Owner-authorized separation, October 15, 2026. Scope: Friends chart Transits,
 `detail=connection-transit-*`. This changes the detail assembly, not the approved
 Between You Two list openings, their publication identities or other consumers.
 
+The October 29 mobile correction keeps the complete, already admitted Between
+You Two card opening and its calculated context at the start of the opened
+article. The independent personal-transit unit remains intact below, labeled
+Personal transit. Opening a relationship card must not silently replace its
+relationship reading with that separate personal reading. Neither source gains
+new approval or publication eligibility through this presentation change.
+
 Calculated evidence is also shown under “Why this involves [friend]”, independently
 of those prose sources. It identifies the natal endpoint receiving the transit
 and lists that endpoint's actual grouped synastry contacts, including aspect type

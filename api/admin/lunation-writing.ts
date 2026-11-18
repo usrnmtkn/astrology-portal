@@ -1,5 +1,4 @@
 import type {IncomingMessage,ServerResponse} from 'node:http';
-import {assertCleanReaderCopy} from '../../apps/web/src/content/editorialCopyBoundary.mjs';
 import {validateCmsTemplate} from '../../apps/web/src/content/cmsTemplateValidation.js';
 import {randomUUID} from 'node:crypto';
 import {getContentAdminPrincipal,requireContentAdmin} from '../_lib/admin-auth.js';
@@ -7,7 +6,7 @@ import {loadLocalWebEnv} from '../_lib/local-env.js';
 import {AdminHttpError,adminFetchJson,adminStorageRows,readAdminJsonBody,sendAdminJson,sendAdminMethodNotAllowed,adminErrorStatus} from '../_lib/admin-http.js';
 import {studioStorage} from '../_lib/sky-studio-sources.js';
 import {calculateLunationArticleFacts,lunationArticleEvents} from '../_lib/lunation-article-facts.js';
-import {prepareLunationArticle,writeLunationArticle,lunationArticleHash as hash} from '../../src/astro-writing/lunationArticleWriting.mjs';
+import {prepareLunationArticle,writeLunationArticle,lunationArticleWritingExport,lunationArticleHash as hash} from '../../src/astro-writing/lunationArticleWriting.mjs';
 import {LUNATION_ARTICLE_PROTOCOL_VERSION} from '../../src/astro-writing/lunationArticleInput.mjs';
 import {validateLunationArticle} from '../../src/astro-writing/lunationArticleValidation.mjs';
 import {loadLunarProfile,lunarFeedback} from '../_lib/calendar-lunation-studio.js';
@@ -50,34 +49,49 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
       const params=new URL(req.url??'','http://studio').searchParams;
       if(params.has('month'))return sendAdminJson(res,200,{ok:true,events:await lunationArticleEvents(params.get('month')!,params.get('timeZone')??'America/New_York')});
       const id=params.get('id');
+      const listing=params.get('listing');
+      if(listing!==null&&(listing!=='true'||id))throw new AdminHttpError(400,'Choose a saved draft or the draft list.');
       if(params.has('id')&&(!id||!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)))throw new AdminHttpError(400,'Choose a valid saved draft.');
-      const rows=await read({content_key:`like.${prefix}*`,mode:'eq.article',select:'*',order:'updated_at.desc',limit:id?'1':'100',...(id?{id:`eq.${id}`}:{})});
+      const select=listing?'id,content_key,mode,target_date,status,lane,headline,updated_at,event:facts->lunationArticle->event,authoring_source:source_snapshot->lunationWriting->authoringSource,request_id:source_snapshot->lunationWriting->active->id,response_id:source_snapshot->lunationWriting->active->responseId':'*';
+      const saved=await read({content_key:`like.${prefix}*`,mode:'eq.article',select,order:'updated_at.desc',limit:id?'1':'100',...(id?{id:`eq.${id}`}:{})});
+      const rows=listing?saved.map(row=>({id:row.id,content_key:row.content_key,mode:row.mode,target_date:row.target_date,status:row.status,lane:row.lane,headline:row.headline,updated_at:row.updated_at,body:'',
+        facts:{lunationArticle:{event:row.event}},source_snapshot:{lunationWriting:{listing:true,direction:'',authoringSource:row.authoring_source,active:row.request_id||row.response_id?{id:row.request_id,responseId:row.response_id}:null}}})):saved;
       if(id&&!rows.length)throw new AdminHttpError(404,'This saved lunar draft is unavailable. Refresh saved drafts and try again.');
       return sendAdminJson(res,200,{ok:true,rows});
     }
     const input=await readAdminJsonBody<Record<string,any>>(req,96000);
-    const allowed:Record<string,string[]>={prepare:['action','month','timeZone','eventId','direction'],review:['action','id','expectedUpdatedAt','direction'],reject:['action','id','expectedUpdatedAt','reason'],generate:['action','id','expectedUpdatedAt','approvedPlanHash'],poll:['action','id','expectedUpdatedAt'],save:['action','id','expectedUpdatedAt','headline','body'],release:['action','id','expectedUpdatedAt','acknowledgeUnknownOutcome'],stage:['action','id','expectedUpdatedAt']};
+    const allowed:Record<string,string[]>={archive:['action','id','expectedUpdatedAt'],restore:['action','id','expectedUpdatedAt'],export:['action','id','expectedUpdatedAt'],'create-manual':['action','month','timeZone','eventId'],prepare:['action','month','timeZone','eventId','direction'],review:['action','id','expectedUpdatedAt','direction'],reject:['action','id','expectedUpdatedAt','reason'],generate:['action','id','expectedUpdatedAt','approvedPlanHash'],poll:['action','id','expectedUpdatedAt'],save:['action','id','expectedUpdatedAt','headline','body'],release:['action','id','expectedUpdatedAt','acknowledgeUnknownOutcome'],stage:['action','id','expectedUpdatedAt']};
     if(!allowed[input.action]||Object.keys(input).some(k=>!allowed[input.action].includes(k)))throw new AdminHttpError(400,'Choose a supported lunation writing action.');
-    if(input.action==='prepare') {
-      if(typeof input.month!=='string'||typeof input.timeZone!=='string'||typeof input.eventId!=='string'||typeof input.direction!=='string'||input.direction.length>6000)throw new AdminHttpError(400,'Choose an event and keep the writing direction under 6,000 characters.');
+    if(input.action==='prepare'||input.action==='create-manual') {
+      const manual=input.action==='create-manual';
+      if(typeof input.month!=='string'||typeof input.timeZone!=='string'||typeof input.eventId!=='string'||!manual&&(typeof input.direction!=='string'||input.direction.length>6000))throw new AdminHttpError(400,'Choose an event and keep the writing direction under 6,000 characters.');
       const facts=await calculateLunationArticleFacts(input.month,input.timeZone,input.eventId);
       const key=`${prefix}${facts.event.startsAt.slice(0,10)}/${facts.event.phase}/${facts.event.sign.toLowerCase()}`;
-      const existing=await read({content_key:`eq.${key}`,mode:'eq.article',target_date:'is.null',select:'*',limit:'1'});
-      if(existing.length)return sendAdminJson(res,200,{ok:true,rows:existing,existing:true});
-      const prepared=await prepareSharedArticle(facts,input.direction);
+      const existing=await read({content_key:`eq.${key}`,mode:'eq.article',target_date:'is.null',select:manual?'id':'*',limit:'1'});
+      if(existing.length){
+        if(manual)throw new AdminHttpError(409,'A draft already exists for this event. Open it from Saved drafts; its writing has not changed.');
+        return sendAdminJson(res,200,{ok:true,rows:existing,existing:true});
+      }
+      const writing=manual?{version:LUNATION_ARTICLE_PROTOCOL_VERSION,authoringSource:'manual',direction:'',active:null}
+        :await prepareSharedArticle(facts,input.direction).then(prepared=>({version:LUNATION_ARTICLE_PROTOCOL_VERSION,direction:input.direction,planHash:prepared.planHash,preview:prepared.preview,active:null}));
       const result=await adminFetchJson(url,{method:'POST',headers:{...headers,prefer:'return=representation'},body:JSON.stringify({
         content_key:key,mode:'article',target_date:null,surface:'sky',event_type:'lunation-article-draft',block_type:'sky_article',provider:'manual-admin',
         status:'DRAFT',lane:'reference',review_state:'owner-review-required',headline:facts.event.title,summary:'',body:'',sections:{},facts:{lunationArticle:facts},
-        source_snapshot:{lunationWriting:{version:LUNATION_ARTICLE_PROTOCOL_VERSION,direction:input.direction,planHash:prepared.planHash,preview:prepared.preview,active:null}},updated_at:new Date().toISOString()
+        source_snapshot:{lunationWriting:writing},updated_at:new Date().toISOString()
       })});
       if(!result.ok)throw new AdminHttpError(result.status===409?409:503,'The draft could not be created. Reload saved drafts before retrying.');
-      const rows=adminStorageRows(result.payload);
+      const rows=adminStorageRows<Record<string,any>>(result.payload);
       if(rows.length!==1)throw new AdminHttpError(503,'Storage did not confirm the draft. Reload saved drafts before retrying.');
+      if(manual&&(rows[0].content_key!==key||rows[0].body!==''||rows[0].status!=='DRAFT'||rows[0].lane!=='reference'
+        ||typeof rows[0].id!=='string'||!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(rows[0].id)||!Number.isFinite(Date.parse(rows[0].updated_at))
+        ||rows[0].headline!==facts.event.title||hash(rows[0].facts)!==hash({lunationArticle:facts})||hash(rows[0].sections)!==hash({})
+        ||hash(rows[0].source_snapshot)!==hash({lunationWriting:writing})))throw new AdminHttpError(503,'Storage did not confirm the manual draft. Reload saved drafts before retrying.');
       return sendAdminJson(res,200,{ok:true,rows});
     }
     if(typeof input.id!=='string'||typeof input.expectedUpdatedAt!=='string')throw new AdminHttpError(400,'Open a saved draft first.');
+    const lifecycle=input.action==='archive'||input.action==='restore';
     let row=(await read({id:`eq.${input.id}`,select:'*',limit:'1'}))[0];
-    if(!row||!row.content_key?.startsWith(prefix)||row.mode!=='article'||row.status!=='DRAFT'||row.lane!=='reference')throw new AdminHttpError(404,'Lunation draft not found.');
+    if(!row||!row.content_key?.startsWith(prefix)||row.mode!=='article'||(row.status!=='DRAFT'&&(!lifecycle||row.status!=='ARCHIVED'))||row.lane!=='reference')throw new AdminHttpError(404,'Lunation draft not found.');
     if(row.updated_at!==input.expectedUpdatedAt)throw new AdminHttpError(409,'This draft changed. Reload it before continuing; your open text has been preserved.');
     const persist=async(patch:Record<string,unknown>)=>{
       const result=await adminFetchJson(`${url}?${new URLSearchParams({id:`eq.${row.id}`,updated_at:`eq.${row.updated_at}`})}`,{method:'PATCH',headers:{...headers,prefer:'return=representation'},body:JSON.stringify({...patch,updated_at:new Date(Math.max(Date.now(),Date.parse(row.updated_at)+1)).toISOString()})});
@@ -88,6 +102,18 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
     const state=()=>row.source_snapshot.lunationWriting;
     const persistState=async(value:Record<string,unknown>,patch:Record<string,unknown>={})=>persist({...patch,source_snapshot:{...row.source_snapshot,lunationWriting:{...state(),...value}}});
     let operation=state().active;
+    if(lifecycle) {
+      if(operation)throw new AdminHttpError(409,'Retrieve or release the running request before archiving or restoring this draft.');
+      const status=input.action==='archive'?'ARCHIVED':'DRAFT';
+      if(row.status!==(input.action==='archive'?'DRAFT':'ARCHIVED'))throw new AdminHttpError(409,'This draft is already in that state. Reload it before continuing.');
+      const preserved=(value:Record<string,unknown>)=>Object.fromEntries(Object.entries(value).filter(([key])=>key!=='status'&&key!=='updated_at'));
+      const before=hash(preserved(row));
+      await persist({status});
+      if(row.status!==status||hash(preserved(row))!==before)throw new AdminHttpError(502,'The archive or restore could not be confirmed. Reopen this draft before continuing.');
+      return sendAdminJson(res,200,{ok:true,rows:[row]});
+    }
+    if(state().authoringSource==='manual'&&!['save','stage'].includes(input.action))throw new AdminHttpError(409,'This is a manual draft. Save your writing and use Review & publish when ready.');
+    if(input.action==='export')return sendAdminJson(res,200,{ok:true,writingExport:lunationArticleWritingExport(await prepareSharedArticle(row.facts.lunationArticle,state().direction,state().rejections))});
     if(input.action==='reject') {
       if(operation)throw new AdminHttpError(409,'Retrieve or release the running request before rejecting this draft.');
       if(typeof input.reason!=='string'||!input.reason.trim()||input.reason.length>6000)throw new AdminHttpError(400,'Enter a reason for rejection under 6,000 characters.');
@@ -114,7 +140,6 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
       if(!contentKey)throw new AdminHttpError(409,'The saved article has no verified event identity.');
       const existing=await read({content_key:`eq.${contentKey}`,mode:'eq.article',target_date:'is.null',select:'id',limit:'1'});
       if(!existing.length){
-        try{assertCleanReaderCopy({headline:row.headline,body:row.body});}catch{throw new AdminHttpError(422,'Remove internal drafting notes before creating a reader draft.');}
         const validation=validateCmsTemplate({allowedSlots:[],headline:row.headline,summary:'',body:row.body});
         if(validation.errors.length)throw new AdminHttpError(422,`Reader draft cannot be created: ${validation.errors.join(' ')}`);
         const saved=await adminFetchJson(url,{method:'POST',headers:{...headers,prefer:'return=representation'},body:JSON.stringify({

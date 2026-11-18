@@ -1,5 +1,7 @@
+import { writeupHoroscopes, writeupHoroscopeMarkdown, type WriteupHoroscope } from '../../../../src/shared/skyWriteupHoroscopes.js';
 import { isSkyIngressEssay, skyIngressTemplateForFormat, type SkyArticleFormat } from "./skyIngressEssay.mjs";
 import { resolveSkyArticleVariableFields, type SkyArticleVariableDraft } from '../../../../src/shared/skyArticleVariableDraft.js';
+import { skyMoonDatedDayBounds } from '../../../../src/shared/skyMoonDatedScope.js';
 
 export const SKY_ARTICLE_TEMPLATE_SCHEMA = "tldrastro-sky-article-template-v1";
 export const SKY_ARTICLE_EDITION_SCHEMA = "tldrastro-sky-article-edition-v2";
@@ -32,9 +34,11 @@ export type SkyArticleSection = {
 
 export type CompileSkyArticleEditionInput = {
   format?: SkyArticleFormat;
+  scope?: "day";
   aspectPassages?: SkyArticleAspectPassage[];
   entryYear: number;
   housePassages: SkyArticleHousePassage[];
+  writeupHoroscopes?: WriteupHoroscope[];
   planet: string;
   sign: string;
   slotValues: Record<string, string>;
@@ -50,6 +54,7 @@ export type CompileSkyArticleEditionInput = {
 
 export type CompiledSkyArticleEdition = {
   format?: SkyArticleFormat;
+  scope?: "day";
   articleSections: SkyArticleSection[];
   aspectPassages: SkyArticleAspectPassage[];
   body: string;
@@ -60,6 +65,7 @@ export type CompiledSkyArticleEdition = {
   fixedProseHash: string;
   headline: string;
   housePassages: SkyArticleHousePassage[];
+  writeupHoroscopes?: WriteupHoroscope[];
   planet: string;
   schema: typeof SKY_ARTICLE_EDITION_SCHEMA;
   sign: string;
@@ -82,6 +88,7 @@ export type SkyArticleEditableFields = {
   body: string;
   headline: string;
   housePassages: SkyArticleHousePassage[];
+  writeupHoroscopes?: WriteupHoroscope[];
   tldr: string;
 };
 
@@ -225,13 +232,55 @@ function passageMarkdown(edition: Pick<CompiledSkyArticleEdition, "housePassages
     .join("\n\n");
 }
 
+function readerHoroscopeBlocks(edition: CompiledSkyArticleEdition) {
+  const match = edition.compiledMarkdown.match(/^## ([^\n]*\bHoroscopes\b[^\n]*)$([\s\S]*)/imu);
+  if (!match) return null;
+  const tail = match[2];
+  const headings = [...tail.matchAll(/^### (?:([A-Za-z]+)(?: & \1)? Rising|([1-9]|1[0-2])(?:st|nd|rd|th) House)[ \t]*$/gmu)];
+  return { heading: match[1], introduction: tail.slice(0, headings[0]?.index ?? tail.length).trim(),
+    passages: headings.map((heading, index) => ({ risingSign: heading[1]?.toLowerCase(), house: Number(heading[2]),
+      body: tail.slice(heading.index! + heading[0].length, headings[index + 1]?.index).trim() })) };
+}
+
+export function skyArticleReaderHoroscopeIntroduction(edition: CompiledSkyArticleEdition) {
+  const section = edition.housePassages.length ? readerHoroscopeBlocks(edition) : null;
+  return section?.introduction ? { heading: section.heading, body: section.introduction } : null;
+}
+
+/** Reader projections must agree with the complete stored compilation. */
+export function skyArticleReaderCopyIsConsistent(edition: CompiledSkyArticleEdition) {
+  if (edition.body !== withoutFirstHeading(articleBodyBeforeHoroscopes(edition.compiledMarkdown))) return false;
+  const sections = markdownSections(edition.body);
+  if (sections.length !== edition.articleSections.length || sections.some((section, index) =>
+    // Earlier compilers labeled the unheaded opening Overview. Preserve that
+    // stored presentation while requiring the same complete compiled prose.
+    (section.heading !== edition.articleSections[index].heading
+      && !(index === 0 && section.heading === '' && edition.articleSections[index].heading === 'Overview'))
+    || section.body !== edition.articleSections[index].body)) return false;
+  if (edition.writeupHoroscopes) {
+    if (edition.housePassages.length) return false;
+    const expected = compactBlankLines(writeupHoroscopeMarkdown(edition.writeupHoroscopes));
+    const start = edition.compiledMarkdown.search(/^## [^\n]*\bHoroscopes\b[^\n]*$/imu);
+    return expected ? start >= 0 && edition.compiledMarkdown.slice(start).trim() === expected.trim() : start < 0;
+  }
+  if (!edition.housePassages.length) return true;
+  const section = readerHoroscopeBlocks(edition);
+  const seen = new Set();
+  return section?.passages.length === edition.housePassages.length && section.passages.every(block => {
+    const passage = edition.housePassages.find(passage => passage.risingSign ? passage.risingSign === block.risingSign : passage.house === block.house);
+    if (!passage || seen.has(passage.house) || block.body !== passage.body.trim()) return false;
+    seen.add(passage.house); return true;
+  });
+}
+
 export function skyArticleEditableFields(edition: CompiledSkyArticleEdition): SkyArticleEditableFields {
   return {
     headline: edition.headline,
     tldr: edition.tldr,
     body: edition.body,
     housePassages: edition.housePassages.map((passage) => ({ ...passage })),
-    aspectPassages: edition.aspectPassages.map((passage) => ({ ...passage }))
+    aspectPassages: edition.aspectPassages.map((passage) => ({ ...passage })),
+    ...(edition.writeupHoroscopes ? { writeupHoroscopes: writeupHoroscopes(edition.writeupHoroscopes) } : {})
   };
 }
 
@@ -248,6 +297,9 @@ export function skyArticleEditionFieldChanges(
   add("tldr", "TL;DR", base.tldr, fields.tldr);
   add("body", "General article", base.body, fields.body);
 
+  for (const passage of writeupHoroscopes(fields.writeupHoroscopes) ?? []) {
+    add(`writeup:${passage.sign}`, `${titleCaseToken(passage.sign)} horoscope`, base.writeupHoroscopes?.find(old => old.sign === passage.sign)?.body ?? '', passage.body);
+  }
   base.housePassages.forEach((passage) => {
     const revised = fields.housePassages.find((candidate) => candidate.contentKey === passage.contentKey);
     add(`house:${passage.house}`, `House ${passage.house}`, passage.body, revised?.body ?? "");
@@ -297,13 +349,17 @@ export async function reviseSkyArticleEdition(
   const body = compactBlankLines(fields.body);
   const housePassages = fields.housePassages.map((passage) => ({ ...passage, body: compactBlankLines(passage.body) }));
   const aspectPassages = fields.aspectPassages.map((passage) => ({ ...passage, body: compactBlankLines(passage.body) }));
-  const changes = skyArticleEditionFieldChanges(base, { headline, tldr, body, housePassages, aspectPassages });
+  const manualHoroscopes = writeupHoroscopes(fields.writeupHoroscopes);
+  const changes = skyArticleEditionFieldChanges(base, { headline, tldr, body, housePassages, aspectPassages, writeupHoroscopes: manualHoroscopes });
+  const horoscopeSection = readerHoroscopeBlocks(base);
   const compiledMarkdown = compactBlankLines([
     `# ${headline}`,
     body,
-    ...(housePassages.length ? ["## Horoscopes", passageMarkdown({ housePassages })] : [])
+    ...(housePassages.length ? [`## ${horoscopeSection?.heading ?? 'Horoscopes'}`, horoscopeSection?.introduction ?? '', passageMarkdown({ housePassages })] : []),
+    writeupHoroscopeMarkdown(manualHoroscopes)
   ].join("\n\n"));
-  const compiledHash = await sha256(JSON.stringify({ tldr, compiledMarkdown, housePassages, aspectPassages }));
+  const compiledHash = await sha256(JSON.stringify({ tldr, compiledMarkdown, housePassages, aspectPassages,
+    ...(manualHoroscopes ? { writeupHoroscopes: manualHoroscopes } : {}) }));
 
   return {
     ...base,
@@ -313,6 +369,7 @@ export async function reviseSkyArticleEdition(
     articleSections: markdownSections(body),
     housePassages,
     aspectPassages,
+    ...(manualHoroscopes ? { writeupHoroscopes: manualHoroscopes } : {}),
     compiledMarkdown,
     compiledHash,
     revision: {
@@ -352,6 +409,13 @@ function assertEditionInput(input: CompileSkyArticleEditionInput) {
   if (!Number.isFinite(transitStart) || !Number.isFinite(transitEnd) || transitStart >= transitEnd) {
     throw new Error("Sky article transit instants must be an ordered ephemeris window.");
   }
+  if (input.scope === "day") {
+    const bounds = skyMoonDatedDayBounds(input.validFrom);
+    if (input.planet !== "moon" || !isSkyIngressEssay(input.format) || input.validTo !== bounds.nextDay
+      || transitStart < Date.parse(bounds.start) || transitEnd > Date.parse(bounds.end)) {
+      throw new Error("A day-specific edition must describe only the calculated Moon visit within one Eastern civil day.");
+    }
+  }
   if (!/^sky\/article-template\//u.test(input.templateKey)) {
     throw new Error("Sky article editions must be compiled from a sky/article-template/* row.");
   }
@@ -377,8 +441,9 @@ async function sha256(value: string) {
   return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
-export function skyArticleEditionContentKey(input: Pick<CompileSkyArticleEditionInput, "planet" | "sign" | "entryYear" | "validFrom" | "format">) {
+export function skyArticleEditionContentKey(input: Pick<CompileSkyArticleEditionInput, "planet" | "sign" | "entryYear" | "validFrom" | "format" | "scope">) {
   const base = `sky-article/${input.planet}/${input.sign}/${input.entryYear}`;
+  if (input.scope === "day") return `${base}/day/${input.validFrom}`;
   return isSkyIngressEssay(input.format) ? `${base}/${input.validFrom}` : base;
 }
 
@@ -432,7 +497,8 @@ export async function compileSkyArticleEdition(input: CompileSkyArticleEditionIn
   const tldr = compactBlankLines(replaceTemplateTokens(normalizeNewlines(input.tldr), slotValues));
   if (!tldr) throw new Error("Sky article editions require an explicitly written TL;DR.");
 
-  const compiledMarkdown = compactBlankLines(replaceTemplateTokens(templateBody, slotValues));
+  const manualHoroscopes = writeupHoroscopes(input.writeupHoroscopes);
+  const compiledMarkdown = compactBlankLines([replaceTemplateTokens(templateBody, slotValues), writeupHoroscopeMarkdown(manualHoroscopes)].filter(Boolean).join('\n\n'));
   const unresolved = balancedMustacheTokens(compiledMarkdown).map((token) => placeholderFromToken(token).name);
   if (unresolved.length) {
     throw new Error(`Sky article edition still contains unresolved placeholders: ${unresolved.join(", ")}.`);
@@ -445,11 +511,13 @@ export async function compileSkyArticleEdition(input: CompileSkyArticleEditionIn
   if (input.housePassages.some(passage => balancedMustacheTokens(passage.body).length)) throw new Error("Sky article horoscopes contain unresolved placeholders.");
   const housePassages = uniqueByContentKey(input.housePassages).sort((left, right) => left.house - right.house);
   const aspectPassages = uniqueByContentKey(input.aspectPassages ?? []);
-  const compiledHash = await sha256(JSON.stringify({ tldr, compiledMarkdown, housePassages, aspectPassages }));
+  const compiledHash = await sha256(JSON.stringify({ tldr, compiledMarkdown, housePassages, aspectPassages,
+    ...(manualHoroscopes ? { writeupHoroscopes: manualHoroscopes } : {}) }));
 
   return {
     schema: SKY_ARTICLE_EDITION_SCHEMA,
     ...(ingress ? { format: input.format } : {}),
+    ...(input.scope === "day" ? { scope: "day" as const } : {}),
     contentKey: skyArticleEditionContentKey(input),
     templateKey: input.templateKey,
     templateHash: await sha256(normalizeNewlines(articleTemplateWithHoroscopes(input.templateBody, input.templateSections))),
@@ -468,6 +536,7 @@ export async function compileSkyArticleEdition(input: CompileSkyArticleEditionIn
     articleSections: markdownSections(generalMarkdown),
     housePassages,
     aspectPassages,
+    ...(manualHoroscopes ? { writeupHoroscopes: manualHoroscopes } : {}),
     slotValues,
     compiledMarkdown
   };
@@ -520,6 +589,18 @@ export function assertCompiledSkyArticleEdition(value: unknown) {
   if (!isSkyIngressEssay(edition.format) && (houses.size !== 12 || Array.from({ length: 12 }, (_, index) => index + 1).some((house) => !houses.has(house)))) {
     throw new Error("Sky article edition must contain approved horoscopes for all 12 houses.");
   }
+  if (edition.scope === "day") {
+    const bounds = skyMoonDatedDayBounds(edition.validFrom);
+    if (edition.planet !== "moon" || !isSkyIngressEssay(edition.format)
+      || edition.validTo !== bounds.nextDay || edition.contentKey !== skyArticleEditionContentKey(edition)
+      || transitStart < Date.parse(bounds.start) || transitEnd > Date.parse(bounds.end)) {
+      throw new Error("The Moon day article is outside its approved one-day scope.");
+    }
+  } else if (edition.scope !== undefined) {
+    throw new Error("Unknown Sky article coverage.");
+  }
+  writeupHoroscopes(edition.writeupHoroscopes);
+  if (edition.writeupHoroscopes && (!isSkyIngressEssay(edition.format) || edition.housePassages.length)) throw new Error('Manual write-up horoscopes belong to an ingress article and cannot replace saved companion passages.');
   if (isSkyIngressEssay(edition.format) && (edition.housePassages.length || edition.aspectPassages.length)) {
     throw new Error("Ingress essay companions must remain separate from the article.");
   }
@@ -567,5 +648,6 @@ export function selectActiveSkyArticleEdition(
       && new Date(edition.transitEndInstant).getTime() > activeInstant
       ? [{ content, edition }]
       : [];
-  }).sort((left, right) => right.edition.validFrom.localeCompare(left.edition.validFrom))[0] ?? null;
+  }).sort((left, right) => Number(right.edition.scope === "day") - Number(left.edition.scope === "day")
+    || right.edition.validFrom.localeCompare(left.edition.validFrom))[0] ?? null;
 }

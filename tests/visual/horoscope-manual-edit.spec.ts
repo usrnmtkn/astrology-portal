@@ -9,8 +9,10 @@ import {horoscopeEditionBody} from '../../apps/web/src/content/horoscopeEditions
 test.use({timezoneId:'America/New_York'});
 for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dark']] as const){
  test(`External Monthly rewrite saves, reconciles conflicts and publishes unchanged ${width} ${theme}`,async({page})=>{
+  test.setTimeout(90000);
   const child=fork(path.resolve('tests/helpers/sky-article-save-api.mts'),[],{env:{...process.env,HOROSCOPE_WRITER_FIXTURE:'1'},execArgv:['--import','tsx'],stdio:['ignore','pipe','pipe','ipc']});
   let sequence=0,stderr='',loseResponse=false;const pending=new Map<number,{resolve:(v:any)=>void;reject:(e:Error)=>void}>();
+  const publicationRequests:{method:string;url?:string;body?:any}[]=[];
   child.stderr?.on('data',v=>stderr+=v);
   const ready=new Promise<void>((resolve,reject)=>{child.on('message',(m:any)=>{if(m.ready)return resolve();const p=pending.get(m.id);if(p){pending.delete(m.id);m.error?p.reject(new Error(m.error)):p.resolve(m.result);}});child.on('exit',code=>{const e=new Error(`Fixture exited ${code}: ${stderr}`);reject(e);pending.forEach(p=>p.reject(e));});});
   const call=(m:any)=>new Promise<any>((resolve,reject)=>{const id=++sequence;pending.set(id,{resolve,reject});child.send({...m,id});});
@@ -23,6 +25,8 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await page.setViewportSize({width,height:1000});
    await page.addInitScript(theme=>{localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture');localStorage.setItem('tldrastro:studio-theme',theme);localStorage.setItem('tldrastro:theme',theme);},theme);
    await routeStudioInventoryApi(page,{call:async m=>{
+    const ownerAction=(m.body as {ownerAction?:string}|undefined)?.ownerAction;
+    if(ownerAction?.startsWith('publish-')||m.url?.includes('publicationAction='))publicationRequests.push({method:m.method,url:m.url,body:m.body});
     const result=await call(m);
     if(loseResponse&&m.method==='PATCH'){loseResponse=false;expect(result.status).toBe(200);return {status:503,payload:{ok:false,error:'Synthetic lost save response'}};}
     return result;
@@ -80,10 +84,56 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    const link=studio.getByRole('link',{name:'Read published edition',exact:true});await expect(link).toBeVisible();
    const row=await current();expect(row.status).toBe('LIVE');expect(row.sections.horoscopeEdition.passages[0].body).toBe(monthlyManualBody);
    expect((await call({method:'writer-state'})).calls).toBe(0);
-   await page.goto((await link.getAttribute('href'))!);
+   const readerHref=(await link.getAttribute('href'))!;
+   await page.goto(readerHref);
    const overview=page.getByRole('article',{name:'Monthly overview',exact:true});
    await expect(overview).toContainText('You can read the external monthly fixture opening.');await expect(overview).toContainText('Your external monthly fixture ends here.');
    await page.reload();await expect(overview).toContainText('Your external monthly fixture ends here.');
+   // Editing a live edition creates a separate, recoverable private revision.
+   await page.goto(`/admin/content#horoscopes?edition=${id}`);
+   await studio.getByRole('button',{name:'3 · Review',exact:true}).click();
+   const publishedBefore=structuredClone(await current());
+   const revisedCopy=monthlyManualBody+'\n\nComplete revised monthly ending.';
+   await reading.fill(revisedCopy);loseResponse=true;
+   await studio.getByRole('button',{name:'Save edition draft',exact:true}).click();
+   await expect(studio.getByRole('status')).toContainText('Your draft is saved.');
+   expect(await current()).toEqual(publishedBefore);
+   let revision=(await call({method:'rows'})).find((r:any)=>r.event_type==='horoscope-edition-revision');
+   expect(revision.id).not.toBe(id);expect(revision.status).toBe('DRAFT');
+   await expect(page).toHaveURL(new RegExp(`edition=${revision.id}$`));
+   await page.reload();await expect(reading).toHaveValue(revisedCopy);
+   await studio.getByRole('button',{name:'Archive draft revision',exact:true}).click();
+   await expect(studio.getByText('This edition is archived. Its saved readings are preserved.')).toBeVisible();
+   expect(await current()).toEqual(publishedBefore);
+   await studio.getByRole('button',{name:'Restore as draft',exact:true}).click();
+   await expect(reading).toHaveValue(revisedCopy);
+   const revisionUrl=page.url();
+   // Use the actual reader route, not only the private source response.
+   await page.goto(readerHref);
+   await expect(overview).toContainText('Your external monthly fixture ends here.');
+   await expect(overview).not.toContainText('Complete revised monthly ending.');
+   await page.goto(revisionUrl);await expect(reading).toHaveValue(revisedCopy);
+   await studio.getByRole('button',{name:'Continue to publish',exact:true}).click();
+   await studio.getByLabel('I have reviewed and approve the exact wording of every saved reading in this edition.').check();
+   const revisionBeforePublication=(await call({method:'rows'})).find((r:any)=>r.id===revision.id);
+   const publicationRequestsBefore=publicationRequests.length;
+   loseResponse=true;
+   await studio.getByRole('button',{name:'Publish edition',exact:true}).click();
+   await expect(studio.getByRole('status')).toContainText('Published the complete edition.');
+   const recoveredPublication=publicationRequests.slice(publicationRequestsBefore);
+   expect(recoveredPublication.map(request=>request.method)).toEqual(['PATCH','GET']);
+   expect(recoveredPublication[0].body).toMatchObject({id:revisionBeforePublication.id,expectedUpdatedAt:revisionBeforePublication.updated_at,ownerAction:'publish-horoscope-edition-revision'});
+   const confirmation=new URL(recoveredPublication[1].url!,'http://localhost');
+   expect(confirmation.searchParams.get('id')).toBe(revisionBeforePublication.id);
+   expect(confirmation.searchParams.get('expectedUpdatedAt')).toBe(revisionBeforePublication.updated_at);
+   expect((await current()).id).toBe(id);expect((await current()).body).toContain('Complete revised monthly ending.');
+   revision=(await call({method:'rows'})).find((r:any)=>r.id===revision.id);expect(revision.status).toBe('ARCHIVED');
+   await expect(page).toHaveURL(new RegExp(`edition=${id}$`));
+   expect((await call({method:'writer-state'})).calls).toBe(0);
+   await page.goto((await link.getAttribute('href'))!);
+   await expect(overview).toContainText('You can read the external monthly fixture opening.');
+   await expect(overview).toContainText('Complete revised monthly ending.');
+   await page.reload();await expect(overview).toContainText('Complete revised monthly ending.');
   }finally{await page.unrouteAll({behavior:'wait'});child.kill();}
  });
 }

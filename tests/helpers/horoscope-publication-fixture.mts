@@ -84,5 +84,21 @@ export async function createWeeklyContextPublicationFixture(call:(message:any)=>
  return call({method:'POST',body:{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',status:'DRAFT',lane:'serving',headline:'Synthetic weekly context publication',body:horoscopeEditionBody(edition),sections:{horoscopeEdition:edition},facts:{horoscopeBrief:{brief:packet.payload.brief,signature:packet.payload.signature}},sourceSnapshot:{}}});
 }
 
+// Synthetic November grammar cases; no saved owner passage is reproduced.
+export async function createWeeklyGrammarPublicationFixture(call:(message:any)=>Promise<any>){
+ const packet=await call({method:'GET',url:'/api/admin/generated-content?horoscopeBrief=true&period=weekly&date=2026-11-02&timeZone=America/New_York'});
+ if(packet.status!==200)throw new Error('Fixture facts unavailable');
+ const edition=emptyHoroscopeEdition(packet.payload.brief.window);
+ const sunHouses=[8,7,6,5,4,3,2,1,12,11,10,9],venusHouses=[7,6,5,4,3,2,1,12,11,10,9,8],jupiterHouses=[5,4,3,2,1,12,11,10,9,8,7,6];
+ const ordinal=(n:number)=>`${n}${n<4?['','st','nd','rd'][n]:'th'}`;
+ edition.passages.forEach((p,index)=>{
+  const ruler=['gemini','virgo'].includes(p.sign)?'your ruling planet, ':'';
+  p.headline=`${p.sign} grammar fixture`;
+  p.body=`You can review the complete grammar fixture. The Sun meets ${ruler}retrograde Mercury in your ${ordinal(sunHouses[index])} house on Wednesday. Venus retrograde in your ${ordinal(venusHouses[index])} house also sextiles Jupiter in your ${ordinal(jupiterHouses[index])} house. Maybe you kept the task because you always did it before. Your complete grammar fixture ends here.`;
+ });
+ const readings=Object.fromEntries(edition.passages.map(p=>[p.sign,{bodyHash:createHash('sha256').update(horoscopeCanonicalJson({headline:p.headline,body:p.body})).digest('hex'),lint:{version:'horoscope-facts/v14',violations:['aries','gemini','leo','virgo','scorpio'].includes(p.sign)?[{category:'horoscope_fact_boundary',detail:'Synthetic obsolete grammar warning.'}]:[]}}]));
+ return call({method:'POST',body:{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',status:'DRAFT',lane:'serving',headline:'Synthetic weekly grammar publication',body:horoscopeEditionBody(edition),sections:{horoscopeEdition:edition},facts:{horoscopeBrief:{brief:packet.payload.brief,signature:packet.payload.signature}},sourceSnapshot:{horoscopeGeneration:{readings}}}});
+}
+
 // External-editor regression uses synthetic prose with the owner's claim shapes.
 export const monthlyManualBody='You can read the external monthly fixture opening. The Sun provides the monthly reference.\n\nVenus retrograde squares Mars on October 10. Venus retrograde squares Pluto on October 20.\n\nMercury turning retrograde on October 24 gives you a date to review, while the Taurus Full Moon on October 26 gives you another date to review. Your external monthly fixture ends here.';

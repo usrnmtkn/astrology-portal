@@ -1,10 +1,15 @@
+import { LunationTransitSection } from "../../components/LunationTransitSection";
+import type { WeeklyHoroscopeAssembly } from "../../services/weeklyHoroscope";
+import type { ReactNode } from "react";
 import { FormattedProse } from "../../components/FormattedProse";
 import { CardReadMore } from "../../components/CardReadMore";
 import { ReportGenerationBeam } from "../../components/reports/ReportGenerationBeam";
 import { useEffect, useState } from "react";
 import type { NatalAspectPatternActivationTimingWindow } from "../../services/natalAspectPatterns";
 import { loadUserGeneratedInterpretation } from "../../services/userGeneratedContent";
-import { DailyMoonContextTags } from "../../components/DailyMoonContextTags";
+import { FriendProfileForecast } from "./FriendProfileForecast";
+import { PersonalTransitIcon } from "../../components/PersonalTransitCard";
+import { ChevronRight } from "lucide-react";
 import { pointGlyph } from "../../components/charts/chartAssets";
 import { NatalAspectPatternActivationsSection } from "../you/NatalAspectPatternsSection";
 import type {
@@ -12,35 +17,36 @@ import type {
   FriendTransitsBrief
 } from "./friendTransitsBrief";
 import { PageLoading } from "../../components/PageLoading";
+import { AspectBadge } from "../../components/charts/AspectBadge";
 
 const queuedReadingPollMs = 5_000;
 
 function FriendPersonalTransitCard({
   onOpen,
-  transit
+  transit,
+  shortTerm
 }: {
   onOpen: (id: string) => void;
   transit: FriendPersonalTransitView;
+  shortTerm: boolean;
 }) {
   return (
     <button
       aria-label={`Open full entry for ${transit.title}`}
-      className="updates-aspect-row friend-transit-row"
+      className="updates-aspect-row friend-transit-row reading-story-card personal-transit-card"
       onClick={() => onOpen(transit.id)}
       type="button"
     >
+      <PersonalTransitIcon aspect={transit.evidence.aspect} planet={transit.evidence.transitPlanet} />
       <span className="updates-aspect-row__content">
         <h3 className="updates-aspect-row__title">{transit.title}</h3>
         <span className="updates-aspect-row__meta-line" aria-label={transit.timingLabel}>
-          <span>{transit.rangeLabel}</span>
+          <span>{shortTerm ? transit.timingLabel : transit.rangeLabel} · {transit.orb}</span>
         </span>
-        <FormattedProse className="updates-aspect-row__description transit-card-preview" text={transit.summary} />
-        <CardReadMore />
+        <FormattedProse className="updates-aspect-row__description transit-card-preview reading-story-card__preview" text={transit.summary} />
+        <CardReadMore appearance="icon" />
       </span>
-      <span className="updates-aspect-row__meta" aria-label={`${transit.timingLabel}, ${transit.orb} orb`}>
-        <span className="updates-aspect-row__dot" aria-hidden="true" />
-        <span className="updates-aspect-row__orb">{transit.orb}</span>
-      </span>
+
     </button>
   );
 }
@@ -83,9 +89,13 @@ export function FriendTransitsTab({
   readingAvailable = false,
   readingSubjectId = "",
   readingTargetDate = "",
-  patternTimingOverrides
+  patternTimingOverrides,
+  lunationAssembly,
+  lunationCard
 }: {
   brief: FriendTransitsBrief;
+  lunationAssembly?: WeeklyHoroscopeAssembly | null;
+  lunationCard?: ReactNode;
   isLoading?: boolean;
   onGenerateReading?: () => void;
   onOpenBondTransit: (id: string) => void;
@@ -108,6 +118,8 @@ export function FriendTransitsTab({
     activePatterns,
     hasAnyTransit
   } = brief;
+  const [shortExpanded, setShortExpanded] = useState(false);
+  const [longExpanded, setLongExpanded] = useState(false);
   const persistedIdentity = persistedFriendTransitReadingIdentity(readingSubjectId, readingTargetDate);
   const persistedIdentityKey = persistedIdentity
     ? `${persistedIdentity.subjectId}|${persistedIdentity.targetDate}`
@@ -230,24 +242,42 @@ export function FriendTransitsTab({
             {effectiveReadingStatus === "loading" ? <ReportGenerationBeam /> : null}
           </article>
         ) : null}
-        {!isLoading && daily?.forecast ? (
-          <section className="daily-horoscope-summary friend-daily-forecast" aria-label={`Daily forecast for ${friendName}`}>
-            <h3>{daily.forecast.headline}</h3>
-            <FormattedProse text={daily.forecast.body} />
-            <DailyMoonContextTags context={daily.forecast.moonContext} />
+        {!isLoading && daily ? <div className="friend-profile-intro">
+          {daily.forecast ? <FriendProfileForecast eyebrow={`Today for ${friendName} · ${brief.dateLabel}`} headline={daily.forecast.headline} body={daily.forecast.body} ariaLabel={`Daily forecast for ${friendName}`} /> : null}
+          {daily.doItems.length > 0 || daily.dontItems.length > 0 ? <section className="friend-transit-guidance" aria-label={`${friendName}'s do and don't`}>
+            <div className="daily-dodont friend-transit-dodont">
+              <div><span className="friend-profile-eyebrow">Do</span><ul>{daily.doItems.map(item => <li key={item}>{item}</li>)}</ul></div>
+              <div><span className="friend-profile-eyebrow">Don&apos;t</span><ul>{daily.dontItems.map(item => <li key={item}>{item}</li>)}</ul></div>
+            </div>
+          </section> : null}
+        </div> : null}
+        {!isLoading && primaryThemes.length > 0 ? (
+          <section className="friend-transit-group" aria-label="Short-term themes">
+            <div className="friend-profile-section-heading"><h2>Short-term transits</h2>{primaryThemes.length > 3 ? <button type="button" className="friend-profile-see-all" aria-expanded={shortExpanded} onClick={() => setShortExpanded(!shortExpanded)}>{shortExpanded ? "Show less" : `See all ${primaryThemes.length}`}<ChevronRight size={16} aria-hidden="true" /></button> : null}</div>
+            <div className="updates-aspect-list friend-transit-list">
+              {(shortExpanded ? primaryThemes : primaryThemes.slice(0, 3)).map((transit) => (
+                <FriendPersonalTransitCard
+                  key={transit.id}
+                  onOpen={onOpenPersonalTransit}
+                  transit={transit}
+                  shortTerm
+                />
+              ))}
+            </div>
           </section>
         ) : null}
-        {!isLoading && daily && daily.doItems.length === 3 && daily.dontItems.length === 3 ? (
-          <section className="friend-transit-guidance" aria-label={`${friendName}'s do and don't`}>
-            <div className="daily-dodont friend-transit-dodont">
-              <div>
-                <span className="eyebrow section-label">Do</span>
-                <ul>{daily.doItems.map((item) => <li key={item}>{item}</li>)}</ul>
-              </div>
-              <div>
-                <span className="eyebrow section-label">Don&apos;t</span>
-                <ul>{daily.dontItems.map((item) => <li key={item}>{item}</li>)}</ul>
-              </div>
+        {!isLoading && longerCycles.length > 0 ? (
+          <section className="friend-transit-group" aria-label="Long-term themes">
+            <div className="friend-profile-section-heading"><h2>Long-term transits</h2>{longerCycles.length > 3 ? <button type="button" className="friend-profile-see-all" aria-expanded={longExpanded} onClick={() => setLongExpanded(!longExpanded)}>{longExpanded ? "Show less" : `See all ${longerCycles.length}`}<ChevronRight size={16} aria-hidden="true" /></button> : null}</div>
+            <div className="updates-aspect-list friend-transit-list">
+              {(longExpanded ? longerCycles : longerCycles.slice(0, 3)).map((transit) => (
+                <FriendPersonalTransitCard
+                  key={transit.id}
+                  onOpen={onOpenPersonalTransit}
+                  transit={transit}
+                  shortTerm={false}
+                />
+              ))}
             </div>
           </section>
         ) : null}
@@ -258,41 +288,31 @@ export function FriendTransitsTab({
               {relationshipActivations.map((card) => (
                 <button
                   aria-label={card.detailAvailable ? `Open full entry for ${card.headline}` : card.headline}
-                  className="updates-aspect-row friend-transit-row"
+                  className="updates-aspect-row friend-transit-row reading-story-card"
                   key={card.id}
                   disabled={!card.detailAvailable}
                   onClick={() => onOpenBondTransit(card.id)}
                   type="button"
                 >
+                  {card.aspect ? <AspectBadge aspect={card.aspect} /> : null}
                   <span className="updates-aspect-row__content">
                     <h3 className="updates-aspect-row__title">{card.headline}</h3>
+                    <div className={card.detailAvailable ? "reading-story-card__preview" : undefined}>
                     <p className="updates-aspect-row__description">{card.effectBody}</p>
                     {card.activationBody.split("\n\n").filter(Boolean).map((paragraph) => (
                       <p className="updates-aspect-row__description friend-bond-transit-activation" key={paragraph}>
                         {paragraph}
                       </p>
                     ))}
-                    {card.detailAvailable ? <CardReadMore /> : null}
+                    </div>
+                    {card.detailAvailable ? <CardReadMore appearance="icon" /> : null}
                   </span>
                 </button>
               ))}
             </div>
           </section>
         )}
-        {!isLoading && primaryThemes.length > 0 ? (
-          <section className="friend-transit-group" aria-label="Short-term themes">
-            <span className="eyebrow section-label friend-section-label">Active for {friendName}</span>
-            <div className="updates-aspect-list friend-transit-list">
-              {primaryThemes.map((transit) => (
-                <FriendPersonalTransitCard
-                  key={transit.id}
-                  onOpen={onOpenPersonalTransit}
-                  transit={transit}
-                />
-              ))}
-            </div>
-          </section>
-        ) : null}
+        {!isLoading ? <LunationTransitSection assembly={lunationAssembly}>{lunationCard}</LunationTransitSection> : null}
         {!isLoading && houseContext.length > 0 && (
           <section className="friend-transit-group" aria-label="House transits">
             <span className="eyebrow section-label friend-section-label">Where it lands</span>
@@ -300,7 +320,7 @@ export function FriendTransitsTab({
               {houseContext.map((card) => (
                 <button
                   aria-label={`Open full entry for ${card.title}`}
-                  className="updates-aspect-row updates-aspect-row--house"
+                  className="updates-aspect-row updates-aspect-row--house reading-story-card"
                   key={card.id}
                   onClick={() => onOpenHouseTransit(card.id)}
                   type="button"
@@ -314,33 +334,19 @@ export function FriendTransitsTab({
                       {card.timingRange ? <span>{card.timingRange}</span> : null}
                     </span>
                     {card.rowSummary ? (
-                      <span className="updates-aspect-row__description transit-card-preview">{card.rowSummary}</span>
+                      <span className="updates-aspect-row__description transit-card-preview reading-story-card__preview">{card.rowSummary}</span>
                     ) : null}
-                    <CardReadMore />
+                    <CardReadMore appearance="icon" />
                   </span>
                   <span className="updates-aspect-row__meta" aria-label={card.houseLabel}>
                     <span className="updates-aspect-row__dot" aria-hidden="true" />
-                    <span className="updates-aspect-row__orb">{card.house}</span>
+                    <span className="updates-aspect-row__orb">{card.houseLabel}</span>
                   </span>
                 </button>
               ))}
             </div>
           </section>
         )}
-        {!isLoading && longerCycles.length > 0 ? (
-          <section className="friend-transit-group" aria-label="Long-term themes">
-            <span className="eyebrow section-label friend-section-label">Longer cycles</span>
-            <div className="updates-aspect-list friend-transit-list">
-              {longerCycles.map((transit) => (
-                <FriendPersonalTransitCard
-                  key={transit.id}
-                  onOpen={onOpenPersonalTransit}
-                  transit={transit}
-                />
-              ))}
-            </div>
-          </section>
-        ) : null}
         {!isLoading ? (
           <NatalAspectPatternActivationsSection
             items={activePatterns}

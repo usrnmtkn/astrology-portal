@@ -1,3 +1,5 @@
+import { isPendingPackageRevision } from "./generatedContentClient";
+import { isNatalRetrogradeModifierKey } from '../../web/src/content/natalRetrogradeModifier.js';
 import { useEffect, useRef, useState } from "react";
 import { StudioButton, StudioTabs } from "./StudioControls";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
@@ -11,6 +13,7 @@ import { natalPlacementReaderHref, openContextualReaderHref } from "./adminReade
 import { emptyHouseRulers, emptyHouseSourceKeys } from "./emptyHouseSources";
 import {
   natalPlacementHouses,
+  isNatalPlacementAngle,
   natalPlacementLabel,
   natalPlacementMotionIsFixed,
   natalPlacementMotions,
@@ -28,6 +31,7 @@ import { Grid, Stack, Text } from "./studio-ds/primitives";
 import { metricGrid } from "./studio-ds/recipes";
 
 type PreviewRow = {
+  event_type?: string | null;
   id?: string | null;
   inventory_only?: boolean;
   updated_at?: string | null;
@@ -38,6 +42,11 @@ type PreviewRow = {
   status: string;
   summary: string | null;
 };
+
+function editableSource(rows: PreviewRow[], key: string) {
+  const candidates = rows.filter(row => row.content_key === key);
+  return candidates.find(isPendingPackageRevision) ?? candidates.find(row => row.status !== "ARCHIVED") ?? candidates[0];
+}
 
 type Props = {
   house: NatalPlacementHouse | "";
@@ -153,12 +162,13 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
   const [emptyHouseRulerHouse, setEmptyHouseRulerHouse] = useState(2);
   const selectionKey = `${planet}/${sign}/${house}/${motion}`;
   const signSelectionComplete = Boolean(planet && sign);
+  const placementSelectionComplete = Boolean(signSelectionComplete || (planet && house && !isNatalPlacementAngle(planet)));
   const fullSelectionComplete = Boolean(signSelectionComplete && house);
   const readerHref = fullSelectionComplete
     ? natalPlacementReaderHref(planet, sign, house)
     : "";
-  const groups = signSelectionComplete
-    ? natalPlacementSourceGroups(planet as NatalPlacementPlanet, sign as NatalPlacementSign, house, motion)
+  const groups = placementSelectionComplete
+    ? natalPlacementSourceGroups(planet as NatalPlacementPlanet, sign, house, motion)
     : [];
   const emptyHouseRuler = emptyHouseRulers[emptyHouseSign] ?? "";
   const emptyHouseKeys = emptyHouseSourceKeys(emptyHouse, emptyHouseSign, emptyHouseRulerHouse);
@@ -198,7 +208,8 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
       if (!rows.some((row) => row.content_key === source.key) && rows.some((row) => row.content_key === preferredKey)) source = { ...source, key: preferredKey };
       if (!rows.some((row) => row.content_key === source.key)) return null;
     }
-    const savedRow = rows.find((row) => row.content_key === source.key);
+    const savedRow = editableSource(rows, source.key);
+    const isRetrogradeModifier = isNatalRetrogradeModifierKey(source.key);
     const isOptionalExactOverride = source.key.startsWith("fallback-hook/natal-you-placement-complete-final/") || source.key.startsWith("fallback-hook/natal-you-placement-sign-final/");
     const preview = previewFromRow(savedRow, source.key);
     return (
@@ -206,7 +217,7 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
         <div className="admin-natal-source-card-copy">
           <div className="admin-natal-source-card-heading">
             <h4>{source.label}</h4>
-            {(!isOptionalExactOverride || savedRow) && (
+            {((!isOptionalExactOverride && !isRetrogradeModifier) || savedRow) && (
               <ContentLiveStatusBadge row={studioServingStatusRow(savedRow, source.key)} />
             )}
           </div>
@@ -214,11 +225,13 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
           <p className="admin-natal-source-key"><span>Source key</span><code>{source.key}</code></p>
           {preview && (previewTemplate || savedRow?.inventory_only) && <blockquote>{preview}</blockquote>}
           {isOptionalExactOverride && !savedRow && <p className="admin-field-hint">No exact override is saved. The reader currently receives the composed preview shown above.</p>}
+          {isRetrogradeModifier && !savedRow && <p className="admin-field-hint">No modifier is saved.</p>}
         </div>
         {savedRow && !savedRow.inventory_only && !previewTemplate && (
           <NatalPlacementSourceEditor row={savedRow} onDirtyChange={onDirtyChange} label={source.label} disabled={isLoading} onSave={onSaveSource} />
         )}
-        {(!isOptionalExactOverride || savedRow) && (
+        {isRetrogradeModifier && !savedRow && <StudioButton type="button" disabled={isLoading} onClick={() => onCreateOverride(source.key, source.label, "")}>Create retrograde modifier</StudioButton>}
+        {((!isOptionalExactOverride && !isRetrogradeModifier) || savedRow) && (
           <StudioButton type="button" onClick={() => onOpenSource(source.key, source.label, previewTemplate)} disabled={isLoading}>
             {previewTemplate ? savedRow ? "Preview template" : "Load preview" : savedRow ? "Edit source" : "Load and edit"}
           </StudioButton>
@@ -228,7 +241,7 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
   };
 
   const renderEmptyHouseSource = (contentKey: string) => {
-    const savedRow = rows.find((row) => row.content_key === contentKey);
+    const savedRow = editableSource(rows, contentKey);
     const label = emptyHouseSourceLabel(contentKey, emptyHouse, emptyHouseSign, emptyHouseRuler, emptyHouseRulerHouse);
     const preview = previewFromRow(savedRow, contentKey);
     return (
@@ -315,15 +328,15 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
               </AdminSelect>
             </label>
           </div>
-          {signSelectionComplete && (
+          {placementSelectionComplete && (
             <Grid className={metricGrid} aria-label="Selected natal placement">
               <MetricCard label="Planet or point" value={natalPlacementPointLabel(planet as NatalPlacementPlanet)} />
-              <MetricCard label="Sign" value={titleFromKey(sign)} />
+              <MetricCard label="Sign" value={sign ? titleFromKey(sign) : "Not selected"} />
               <MetricCard label="House" value={house || "Not selected"} />
               <MetricCard label="Motion" value={titleFromKey(motion)} />
             </Grid>
           )}
-          {signSelectionComplete && (
+          {placementSelectionComplete && (
             <NatalPlacementReaderPreview
               key={selectionKey}
               house={house}
@@ -333,7 +346,7 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
               planet={planet as NatalPlacementPlanet}
               rows={rows}
               secret={secret}
-              sign={sign as NatalPlacementSign}
+              sign={sign}
             />
           )}
           {groups.filter((group) => group.key !== "structure").map((group) => (

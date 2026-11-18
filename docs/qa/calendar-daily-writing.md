@@ -9,6 +9,15 @@ or the public bundle.
 Choose a date and time zone, save its thought and exclusions, then preview the
 complete writer input. The server computes Moon sign durations and exact ingress
 timing using Swiss Ephemeris and binds the request to the saved profile version.
+The brief also includes the shared Calendar's exact events for the selected
+local day and, separately, the next local day. Reference placements carry their
+instant and exclude houses. The writer must distinguish an event exact today
+from an approaching event exact tomorrow, and obey the saved length/output
+contract and current owner rules. The underlying event scan and other writers
+are unchanged.
+Daily retrograde status rows do not become timed events: their direction remains
+in reference placements, and their synthetic midnight starts are excluded.
+The reference Moon phase label likewise does not establish a new phase event.
 The owner explicitly authorizes one call from that preview. No planner, evaluator,
 retry, alternate candidate or automatic publication follows. Request reservations
 prevent concurrent dispatch; an uncertain response remains reserved. Retrieval

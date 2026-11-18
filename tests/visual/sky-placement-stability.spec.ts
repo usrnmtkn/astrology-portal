@@ -133,7 +133,7 @@ test('Placement reader offers retry when its canonical package fails', async ({ 
  await page.route('**/canonical-sky-reader-transport-v1*.json', async route => (await page.evaluate(() => (window as any).__canonicalRetryClicked))
   ? route.continue() : route.fulfill({ status:503, body:'Unavailable' }));
  await page.goto('/?date=2026-09-10#sky/placement/sun/virgo');
- await expect(page.getByText('The placement reading could not load. Please try again.')).toBeVisible({ timeout:60_000 });
+ await expect(page.getByRole('alert').getByText('This placement could not load. Check your connection and try again.', {exact: true})).toBeVisible({ timeout:60_000 });
  await expect(page.locator('#sky-detail-title')).toHaveCount(0);
  await page.getByRole('button', { name:/retry|try again/i }).click();
  await expect(page.locator('.article-body-inner').first()).toContainText('The Sun in Virgo makes the systems', { timeout:60_000 });

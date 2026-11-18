@@ -1,4 +1,6 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
+import { readFileSync } from "node:fs";
 import { natalEditorialDraftForKey, natalEditorialIdentity, natalEditorialSelection, natalSectPlanets, type NatalEditorialSelection } from "../apps/admin/src/natalEditorialLibrary.ts";
 import { createApiStore } from "../tests/helpers/calendar-review-api.mjs";
 
@@ -78,5 +80,89 @@ assert.match(badSlot.payload.error, /CMS template cannot be published/u);
 for (const key of ["cms/natal-twelfth-ruler/you/ruler-house/0", "cms/natal-twelfth-ruler/you/ruler-house/13", "cms/natal-planet-sect/you/neptune/night", "cms/natal-planet-sect/friend/saturn/night", "cms/natal-chart-context/you/sect/any"]) assert.equal(natalEditorialDraftForKey(key), null);
 assert.equal(natalEditorialSelection("rulership", "#exact-content?natalPassage=bogus").passage, "introduction");
 assert.equal(natalEditorialSelection("day-night", "#exact-content?natalAudience=they&natalPassage=saturn&natalSect=night").passage, "saturn");
+const genericBefore = JSON.stringify([...api.rows.values()]);
+const scopedKeys = new Set<string>();
+for (const audience of ["you", "they"] as const) for (const sect of ["day", "night"] as const) {
+  for (const placementCase of [{ planet: "jupiter", sign: "leo", house: 3 }, { planet: "saturn", sign: "aries" }] as const) {
+    const { planet, sign } = placementCase;
+    const house = "house" in placementCase ? placementCase.house : undefined;
+    const selection: NatalEditorialSelection = { area: "day-night", audience, passage: planet, sect, placement: { sign, ...(house ? { house } : {}) } };
+    const identity = natalEditorialIdentity(selection);
+    const expectedKey = `cms/natal-planet-sect/${audience}/${planet}/${sign}${house ? `/house-${house}` : ""}/${sect}`;
+    scopedKeys.add(expectedKey);
+    assert.equal(identity.contentKey, expectedKey);
+    assert.equal(identity.title.includes("House"), house !== undefined);
+    assert.deepEqual(natalEditorialSelection("day-night", `#exact-content?natalAudience=${audience}&natalPassage=${planet}&natalSect=${sect}&natalSign=${sign}${house ? `&natalHouse=${house}` : ""}`), selection);
+    const draft = natalEditorialDraftForKey(identity.contentKey)!;
+    assert(draft);
+    assert.deepEqual(draft.facts, { audience, scope: "editorial_library", planet, sect, sign, ...(house ? { house } : {}), houseSystem: "whole-sign" });
+    const { id: _contextId, ...fields } = draft;
+    const body = `${audience === "you" ? "You" : "{{ownerName}}"} scoped fixture opening.
+
+Complete scoped fixture ending.`;
+    const created = await api.invoke("POST", { ...fields, body });
+    assert.equal(created.status, 200, JSON.stringify(created.payload));
+    let saved = created.payload.rows[0];
+    let reader = await api.invoke("POST", { keys: [identity.contentKey] }, "/api/content-reader");
+    assert.deepEqual(reader.payload.rows, [], "A saved scoped draft never serves");
+    const reopened = await api.invoke("GET", null, `/api/admin/generated-content?contentKey=${encodeURIComponent(expectedKey)}`);
+    assert.equal(reopened.status, 200, JSON.stringify(reopened.payload));
+    assert.equal(reopened.payload.rows[0].body, body);
+    const revised = await api.invoke("PATCH", { id: saved.id, expectedUpdatedAt: saved.updated_at, body: `${body}
+
+Retained scoped revision.`, status: "DRAFT" });
+    assert.equal(revised.status, 200, JSON.stringify(revised.payload));
+    assert.equal((await api.invoke("PATCH", { id: saved.id, expectedUpdatedAt: saved.updated_at, body: "Stale overwrite.", status: "DRAFT" })).status, 409);
+    saved = revised.payload.rows[0];
+    const reviewed = await api.invoke("PATCH", { id: saved.id, expectedUpdatedAt: saved.updated_at, status: "REVIEWED", sourceSnapshot: { ...saved.source_snapshot, review_status: "approved", ownerApproved: true } });
+    assert.equal(reviewed.status, 200, JSON.stringify(reviewed.payload));
+    saved = reviewed.payload.rows[0];
+    const published = await api.invoke("PATCH", { id: saved.id, expectedUpdatedAt: saved.updated_at, status: "LIVE" });
+    assert.equal(published.status, 200, JSON.stringify(published.payload));
+    reader = await api.invoke("POST", { keys: [identity.contentKey] }, "/api/content-reader");
+    assert.equal(reader.payload.rows[0].body, revised.payload.rows[0].body);
+    for (const changed of [{ sign: sign === "leo" ? "virgo" : "taurus" }, { planet: planet === "jupiter" ? "saturn" : "jupiter" }, { house: 4 }, { house: "3" }, { sect: sect === "day" ? "night" : "day" }, { houseSystem: "quadrant" }, { audience: audience === "you" ? "they" : "you" }]) {
+      const rejected = await api.invoke("POST", { ...fields, body, facts: { ...draft.facts, ...changed }, status: "LIVE", reviewState: null });
+      assert.equal(rejected.status, 400, JSON.stringify({ changed, result: rejected.payload }));
+    }
+  }
+}
+assert.equal(scopedKeys.size, 8);
+assert.equal(JSON.stringify([...api.rows.values()].filter(row => keys.includes(row.content_key))), genericBefore, "All 46 existing sources remain byte-identical");
+for (const suffix of ["leo/house-0/day", "leo/house-13/day", "unknown/house-3/day", "leo/house-03/day", "leo/house-3/any", "leo/house-/day", "leo/day/extra"]) {
+  assert.equal(natalEditorialDraftForKey(`cms/natal-planet-sect/you/jupiter/${suffix}`), null);
+}
+assert.equal(natalEditorialSelection("day-night", "#exact-content?natalPassage=saturn&natalSign=aries&natalHouse=").passage, "overview");
+
+// Private opt-in acceptance uses the exact approved bodies without committing prose.
+// The actual handlers use an isolated in-memory store, never hosted storage.
+if (process.env.NATAL_APPROVED_PILOT_SOURCE) {
+  const approved = JSON.parse(readFileSync(process.env.NATAL_APPROVED_PILOT_SOURCE, "utf8"));
+  assert.equal(approved.ownerApproved, true);
+  assert.equal(approved.publicationApproved, false);
+  assert.equal(approved.entries.length, 8);
+  const isolated = await createApiStore([]);
+  for (const entry of approved.entries) {
+    const body = entry.body;
+    assert.equal(createHash("sha256").update(body).digest("hex"), entry.sha256);
+    const audience = entry.title.endsWith("Friend") ? "they" : "you";
+    const planet = entry.title.startsWith("Jupiter") ? "jupiter" : "saturn";
+    const sect = /Night/iu.test(entry.title) ? "night" : "day";
+    const key = `cms/natal-planet-sect/${audience}/${planet}/${planet === "jupiter" ? "leo/house-3" : "aries"}/${sect}`;
+    assert(scopedKeys.has(key), key);
+    const { id: _id, ...fields } = natalEditorialDraftForKey(key)!;
+    const saved = await isolated.invoke("POST", { ...fields, body });
+    assert.equal(saved.status, 200, JSON.stringify(saved.payload));
+    const reopened = await isolated.invoke("GET", null, `/api/admin/generated-content?contentKey=${encodeURIComponent(key)}`);
+    assert.equal(reopened.payload.rows[0].body, body);
+    assert.equal(reopened.payload.rows[0].status, "DRAFT");
+    assert.equal(createHash("sha256").update(reopened.payload.rows[0].body).digest("hex"), entry.sha256);
+    const reader = await isolated.invoke("POST", { keys: [key] }, "/api/content-reader");
+    assert.deepEqual(reader.payload.rows, []);
+  }
+  isolated.close();
+  console.log("PASS private opt-in: eight exact approved bodies create/reopen as unpublished drafts; public reader remains empty. No provider or live storage calls.");
+}
+
 api.close();
-console.log("PASS natal editorial library: 46 identities; actual draft/review/publication and reader retrieval, stale-write protection, exact paragraphs, Friend slots; personal/test and malformed sources remain blocked. No provider or live storage calls.");
+console.log("PASS natal editorial library: 46 generic and 8 scoped identities; actual draft/review/publication and reader retrieval, stale-write protection, exact paragraphs, Friend slots; personal/test and malformed sources remain blocked. No provider or live storage calls.");

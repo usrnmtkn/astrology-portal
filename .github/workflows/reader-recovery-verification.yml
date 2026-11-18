@@ -26,12 +26,21 @@ jobs:
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.deployment.sha || github.sha }}
       - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
       - run: npm ci
+      - run: npm run build:knowledge
       - run: npx playwright install --with-deps chromium
+      - name: Verify deployed Studio editing when optional downloads fail
+        env:
+          STUDIO_PRODUCTION_ENTRY: "1"
+          PLAYWRIGHT_BASE_URL: https://tldrastro.vercel.app
+        # Frontend assets are deployed; every API request uses the isolated real-handler fixture.
+        run: npx playwright test -c playwright.studio-recovery.config.ts --grep 'aspect editing survives|new unsaved guide survives' --output=test-results/production-studio-recovery
       - name: Inspect the deployed guest Sky page without modifying content
         run: node scripts/verify-production-sky-summary.mjs && node scripts/verify-production-sky-placement.mjs
       - uses: actions/upload-artifact@v6
@@ -39,6 +48,7 @@ jobs:
         with:
           name: production-sky-summary-verification
           path: |
+            test-results/production-studio-recovery/
             test-results/production-sky-summary/
             test-results/production-sky-placement/
           retention-days: 7

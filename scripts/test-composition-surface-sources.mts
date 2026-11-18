@@ -6,7 +6,8 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
-import { compositionSurfaceFamilies, compositionSourcesForSurface } from "../apps/admin/src/compositionSurfaceSources";
+import { compositionSurfaceFamilies, compositionSourcesForSurface, isCompositionSurfaceSourceKey } from "../apps/admin/src/compositionSurfaceSources";
+import { servingPackageRecords } from "../api/_lib/serving-package-records";
 import { writingSurfaceSourceMap } from "../apps/admin/src/writingSurfaceSourceMap";
 import { buildCompositionMap, buildCompositionTemplate, type CompositionMapRow } from "../apps/admin/src/compositionMap";
 const target = path.join(os.tmpdir(), `composition-sources-${process.pid}.json`);
@@ -15,6 +16,18 @@ try {
   const rows: CompositionMapRow[] = JSON.parse(fs.readFileSync(target, "utf8")).rows.map((row: CompositionMapRow) => ({ ...row, id: row.content_key }));
   assert.deepEqual(Object.keys(compositionSurfaceFamilies).sort(), writingSurfaceSourceMap.map((item) => item.id).sort());
   const maps = buildCompositionMap(rows);
+  // The old hook-only catalog hid complete reader sources when no DB mirror existed.
+  const completeSources = [...servingPackageRecords.values()].filter(record =>
+    /^(?:house-horoscope-core\/|authored\/book-ritual-and-the-moon\/lunation-horoscope\/(?:new-moon|full-moon)\/|sky-lunation\/)/u.test(record.contentKey));
+  assert.ok(completeSources.length >= 1200);
+  for (const record of completeSources) {
+    const row = { id: `package:${record.contentKey}`, content_key: record.contentKey } as CompositionMapRow;
+    const surface = record.contentKey.startsWith('sky-lunation/') ? 'sky-calendar-event-cards' : 'sky-horoscopes';
+    assert.equal(isCompositionSurfaceSourceKey(record.contentKey), true, record.contentKey);
+    assert.deepEqual(compositionSourcesForSurface(surface, [row], []), [row], record.contentKey);
+    if (record.contentKey.startsWith('house-horoscope-core/'))
+      assert.deepEqual(compositionSourcesForSurface('sky-placement-detail', [row], []), [row], record.contentKey);
+  }
   const coverage = new Set(writingSurfaceSourceMap.flatMap((surface) => compositionSourcesForSurface(surface.id, rows, maps).map((row) => row.content_key)));
   const hooks = rows.filter((row) => row.content_key.startsWith("fallback-hook/"));
   const planetMeanings = hooks.filter((row) => row.content_key.startsWith("fallback-hook/planet-lived/"));

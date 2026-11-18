@@ -87,7 +87,7 @@ for (const width of [390, 1440]) test(`Complete direct placement does not wait f
     await expect(page.locator('.sky-detail-id .article-duration').first()).toHaveText('August 22 to September 22, 2026');
     expect(skyReturned).toBe(false);
     expect(await page.evaluate(()=>(window as any).__fullSkyFallbacks)).toBe(0);
-    const article=page.locator('.sky-detail-article');
+    const article=page.locator('.sky-detail-article .sky-detail-card');
     const complete=await article.textContent();
     const fullResponse=page.waitForResponse(response=>new URL(response.url()).pathname==='/api/sky');
     release();
@@ -101,7 +101,7 @@ for (const width of [390, 1440]) test(`Complete direct placement does not wait f
       {at:sky.generatedAt,latitude:sky.location.latitude,longitude:sky.location.longitude})).toBe(true);
     const frames=await page.evaluate(()=>new Promise<string[]> (resolve=>{
       const states:string[]=[];
-      const observe=()=>{states.push(document.querySelector('.sky-detail-article')?.textContent??'');
+      const observe=()=>{states.push(document.querySelector('.sky-detail-article .sky-detail-card')?.textContent??'');
         if(states.length===30)resolve(states);else requestAnimationFrame(observe);};
       requestAnimationFrame(observe);
     }));
@@ -165,6 +165,7 @@ for (const [width,theme] of [[390,'dark'],[1440,'light']] as const) {
     await page.clock.setFixedTime(new Date('2026-10-12T16:00:00Z'));
     await page.addInitScript(theme=>{
       localStorage.setItem('tldrastro:theme',theme);
+      localStorage.setItem('tldrastro:pageAnimations','off');
       localStorage.setItem('tldrastro:selectedLocation',JSON.stringify({label:'Synthetic New York',latitude:40.7128,longitude:-74.006,timeZone:'America/New_York'}));
     },theme);
     await page.route('**/api/**',route=>route.fulfill({status:503,json:{error:'Isolated offline source'}}));
@@ -172,7 +173,7 @@ for (const [width,theme] of [[390,'dark'],[1440,'light']] as const) {
     await bundledPublications(page);
     await page.goto('/?date=2026-10-11');
     const parent=page.url();
-    const sun=page.locator('.planet-placement-row:has(.card-read-more)').filter({hasText:'Sun in Libra'}).first();
+    const sun=page.locator('button.planet-placement-row').filter({hasText:'Sun in Libra'}).first();
     await expect(sun).toBeVisible({timeout:45000});
     await sun.click();
     const article=page.locator('.sky-detail-page');

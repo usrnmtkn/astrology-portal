@@ -15,6 +15,9 @@ const manualChartsController = read("apps/web/src/features/friends/useManualChar
 const readerSurfaces = `${app}\n${manualChartsPanel}`;
 const page = read("apps/web/src/features/you/YouPage.tsx");
 const component = read("apps/web/src/features/you/NatalAspectPatternsSection.tsx");
+const combinedSection = read("apps/web/src/features/you/NatalPatternsInsights.tsx");
+const insightCard = read("apps/web/src/components/NatalInsightCard.tsx");
+const insightStyles = read("apps/web/src/styles/profile-overview.css");
 const labels = read("apps/web/src/features/you/natalAspectPatternLabels.ts");
 const chartPatternPill = read("apps/web/src/features/friends/ChartPatternPill.tsx");
 const friendChartsList = read("apps/web/src/features/friends/FriendChartsList.tsx");
@@ -52,17 +55,20 @@ assert.match(readerSurfaces, /activationCopy:\s*item\.activationCopy\s*\?\s*nata
 assert.match(readerSurfaces, /createNatalGeneratedCopyForOwnerConverter\(ownerName,\s*ownerKind,\s*ownerPronouns,\s*false\)/, "Pattern copy must retain the first generated owner-name mention instead of collapsing it back to a pronoun.");
 assert.match(readerSurfaces, /\|leave\|leaves\|left\) you/, "Pattern object clauses such as “leave [name] out” must use object grammar.");
 assert.match(readerSurfaces, /patternTitle=\{`Patterns in \$\{possessiveLabel\(selectedChart\.displayName\)\} chart`\}/, "Friends natal patterns must derive the section label from the chart owner's name.");
-assert.match(friendNatalTab, /<NatalAspectPatternsSection[\s\S]*title=\{patternTitle\}/, "The deferred Friends natal tab must forward its owner-aware section title.");
+assert.match(friendNatalTab, /<NatalPatternsInsights[\s\S]*ownerName=\{friendName\}/, "Friends must use the combined section with the selected chart owner's name.");
 assert.match(manualChartsPanel, /selectedFriendNatalAspectPatternStatus/, "Friends natal charts must compute an explicit reader status.");
 assert.match(manualChartsPanel, /<FriendNatalTab[\s\S]*onOpenPattern=\{openFriendNatalAspectPatternDetail\}[\s\S]*patternItems=\{selectedFriendNatalAspectPatternItems\}[\s\S]*patternStatus=\{selectedFriendNatalAspectPatternStatus\}/, "App must pass owner-aware pattern data and actions into the deferred Friends natal tab.");
-assert.match(friendNatalTab, /<NatalAspectPatternsSection\s+items=\{patternItems\}\s+onOpenDetail=\{onOpenPattern\}\s+status=\{patternStatus\}\s+title=\{patternTitle\}/s, "The deferred Friends natal tab must render the shared pattern preview with a detail action.");
+assert.match(friendNatalTab, /<NatalPatternsInsights[^>]*items=\{patternItems\}[^>]*status=\{patternStatus\}[^>]*onOpenPattern=\{onOpenPattern\}/s, "Friends must preserve pattern data, loading status and detail actions in the combined section.");
 assert.match(service, /natalAspectPatternPillSummary/, "Friends lists must derive compact pattern summaries from stored snapshots.");
 assert.match(service, /confidence === "exact" \|\| pattern\.geometry\.confidence === "strong"/, "Pattern pills must remain limited to exact and strong detections.");
 assert.match(chartPatternPill, /confirmed chart/, "Pattern pills must expose their complete contents to assistive technology.");
 assert.match(friendChartsList, /<ChartPatternPill summary=\{patternSummary\}/, "Saved-chart rows must surface confirmed pattern summaries.");
 assert.match(socialFriendsPanel, /showPatternPills && chartAvailable[\s\S]*natalAspectPatternPillSummary\(friend\.natalChart\)/, "Circle rows must surface summaries only for shared, available snapshots.");
 assert.doesNotMatch(`${friendChartsList}\n${socialFriendsPanel}`, /fetchNatalAspectPatternsWithCopy|\bfetch\(/, "Friends lists must not trigger per-row pattern requests.");
-assert.match(page, /NatalAspectPatternsSection/, "YouPage must render the natal pattern section via a dedicated component.");
+assert.match(page, /NatalPatternsInsights/, "YouPage must use the same combined section as Friends.");
+assert.match(combinedSection, /Patterns &amp; Insights/, "The handoff's combined heading must be present.");
+assert.match(combinedSection, /<NatalAspectPatternsSection[^>]*cardsOnly/, "The combined section must avoid a duplicate pattern heading.");
+assert.match(combinedSection, /presentation="insights" showHeading=\{false\}/, "Insights must share the combined heading.");
 
 assert.match(service, /includeAspectPatterns:\s*"true"/, "Reader data request must opt into aspect patterns.");
 assert.match(service, /includeAspectPatternCopy:\s*"true"/, "Reader data request must ask for governed resolver copy; the astro-knowledge resolver is the canonical copy system.");
@@ -95,8 +101,10 @@ assert.match(component, /primary = topLevel\[0\]/, "Highest-ranked independent i
 assert.match(component, /topLevel\.slice\(1\)/, "Additional independent items should remain available as compact previews.");
 assert.match(component, /childPatternIds/, "Contained patterns must be nested under parents.");
 assert.match(component, /parentPatternIds/, "Parent links must be respected for nesting.");
-assert.match(component, /onOpenDetail\?\.\(item, nestedItems\)/, "Contained patterns must travel with their parent into the detail reader.");
-assert.match(component, /<CardReadMore \/>/, "Every pattern preview must provide the shared Read More action.");
+assert.match(component, /onOpenDetail\(item, nestedItems\)/, "Contained patterns must travel with their parent into the detail reader.");
+assert.match(component, /<NatalInsightCard/, "Pattern previews must share the handoff card with natal insights.");
+assert.match(insightCard, /<CardReadMore appearance="icon"\/>/, "Every preview must provide the handoff's shared chevron cue.");
+assert.match(insightCard, /<FormattedText text=\{body\}/, "Preview clipping must preserve the complete saved body in the DOM.");
 assert.doesNotMatch(component, /<details className="natal-pattern-card/, "Permanent natal pattern copy must not expand inline.");
 assert.match(component, /Active chart patterns/, "Activation contacts must be labeled as a transit/update section, not natal copy.");
 assert.match(component, /item\.activationCopy\?\.content/, "Activation rendering must read resolved activation copy content only.");
@@ -139,6 +147,6 @@ assert.match(component, /section\.id !== "timing" && activationSectionLabel\(sec
 assert.match(labels, /confidence_note: "Reading note"/, "Confidence qualifications must keep a reader-facing label.");
 assert.match(types, /aspectPatterns\?: import\("@tldr\/astro-knowledge\/aspect-pattern-engine"\)\.AspectPatternDetectionResult/, "SkySnapshot must carry canonical aspect pattern data.");
 assert.match(styles, /natal-patterns-section/);
-assert.match(styles, /natal-pattern-card__details-button/);
+assert.match(insightStyles, /\.natal-insight-card:focus-visible/, "The complete card must expose keyboard focus.");
 
 console.log("Natal aspect-pattern reader contract tests passed.");

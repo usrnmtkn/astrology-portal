@@ -30,11 +30,6 @@
   text-align: center;
 }
 
-/* Route-level fallbacks sit below the same fixed navigation as page shells. */
-.app-shell > .app-loading--centered {
-  margin-top: var(--page-top);
-}
-
 .app-loading--compact {
   min-height: 0;
   margin: 0;

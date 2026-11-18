@@ -1,3 +1,4 @@
+import { expectSkyAspectBody } from "../helpers/sky-aspect-reading";
 import { readerResponse } from '../helpers/reader-response';
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
@@ -71,10 +72,9 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
       const trigger = card.locator('.calendar-day-events').getByRole('button', { name: title });
       await expect(trigger).toHaveCount(1);
       await trigger.click();
-      const reading = page.getByRole('dialog', { name: 'Event detail', exact: true });
       const copy = JSON.parse(readFileSync(`packages/astro-knowledge/data/transits/${from.toLowerCase()}-${event.aspect}-${to.toLowerCase()}.json`, 'utf8')).readerCopy;
-      await expect(reading).toContainText(copy.body);
-      await reading.getByRole('button', { name: 'Close', exact: true }).click();
+      await expectSkyAspectBody(page, copy.body);
+      await page.getByRole('button', { name: 'Close detail', exact: true }).click();
     }
     expect(await card.locator('.calendar-sky-card__body').evaluate(el => [...el.querySelectorAll('section')].map(child => child.getAttribute('aria-label') || child.getAttribute('aria-labelledby'))))
       .toEqual(expect.arrayContaining(['Sun in season']));
@@ -151,7 +151,8 @@ for (const scenario of [
     await expect(card).toBeVisible({ timeout: 90_000 });
     await expect(card.locator('.calendar-stoic-card__excerpt')).toHaveText(expected);
     const guidance = page.getByRole('region', { name: 'Moon guidance', exact: true });
-    await expect(guidance).toHaveText(expected);
+    await expect(guidance).toContainText(expected);
+    expect((await guidance.innerText()).trim().length).toBeGreaterThan(expected.length);
     await expect(guidance).not.toContainText('before it enters Aquarius tomorrow');
     expect(await card.locator('.calendar-stoic-card__excerpt').evaluate(el => ({
       clipped: el.scrollHeight > el.clientHeight + 1, clamp: getComputedStyle(el).webkitLineClamp
@@ -160,10 +161,11 @@ for (const scenario of [
     await expect(strip.locator(`[data-calendar-date="${scenario.date}"] .is-enter .astro-glyph__mask`)).toHaveCSS("mask-image", /aquarius/);
     await card.screenshot({ path: `test-results/calendar-moon-ingress-${scenario.width}-${scenario.zone.replace('/', '-')}.png` });
     await card.click();
-    const detail = page.getByRole('dialog', { name: 'Event detail', exact: true });
-    await expect(detail.locator('.calendar-reading__body')).toHaveText(expected);
-    await expect(detail.locator('.calendar-reading__meta')).toHaveText(scenario.meta);
-    await detail.getByRole('button', { name: 'Close', exact: true }).click();
+    const detail = page.locator('.sky-detail-article');
+    await expect(detail.locator('#sky-detail-title')).toHaveText('Moon enters Aquarius');
+    await expect(detail.locator('.sky-detail-body')).toContainText(expected);
+    await expect(detail).toContainText(scenario.zone === 'Asia/Tokyo' ? 'September 22, 2026 at 2:14 AM' : 'September 21, 2026 at 1:14 PM');
+    await page.getByRole('button', { name: 'Close detail', exact: true }).click();
     await page.reload();
     await expect(card.locator('.calendar-stoic-card__excerpt')).toHaveText(expected, { timeout: 60_000 });
     await strip.locator(`[data-calendar-date="${scenario.wrongDate}"]`).click();
@@ -173,19 +175,67 @@ for (const scenario of [
     await expect(group.getByRole('button', { name: /Moon enters Aquarius/ })).toBeVisible();
     await expect(page.locator(`#calendar-day-group-${scenario.wrongDate}`).getByRole('button', { name: /Moon enters Aquarius/ })).toHaveCount(0);
     await group.getByRole('button', { name: /Moon enters Aquarius/ }).click();
-    await expect(card.locator('.calendar-stoic-card__excerpt')).toHaveText(expected);
-    await card.click();
-    await expect(detail.locator('.calendar-reading__body')).toHaveText(expected);
-    await expect(detail.locator('.calendar-reading__meta')).toHaveText(scenario.meta);
-    await detail.getByRole('button', { name: 'Close', exact: true }).click();
+    await expect(detail.locator('#sky-detail-title')).toHaveText('Moon enters Aquarius');
+    await expect(detail.locator('.sky-detail-body')).toContainText(expected);
+    await expect(detail).toContainText(scenario.zone === 'Asia/Tokyo' ? 'September 22, 2026 at 2:14 AM' : 'September 21, 2026 at 1:14 PM');
+    await page.getByRole('button', { name: 'Close detail', exact: true }).click();
     await page.getByRole('tab', { name: 'Month', exact: true }).click();
     const monthDay = page.locator(`.lunar-calendar-day[data-calendar-date="${scenario.date}"]`);
     await expect(monthDay.locator('.is-enter .astro-glyph__mask')).toHaveCSS("mask-image", /aquarius/, { timeout: 60_000 });
     await monthDay.click();
     await expect(card.locator('.calendar-stoic-card__excerpt')).toHaveText(expected);
     await card.click();
-    await expect(detail.locator('.calendar-reading__body')).toHaveText(expected);
-    await expect(detail.locator('.calendar-reading__meta')).toHaveText(scenario.meta);
+    await expect(detail.locator('#sky-detail-title')).toHaveText('Moon enters Aquarius');
+    await expect(detail.locator('.sky-detail-body')).toContainText(expected);
+    await expect(detail).toContainText(scenario.zone === 'Asia/Tokyo' ? 'September 22, 2026 at 2:14 AM' : 'September 21, 2026 at 1:14 PM');
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  });
+}
+
+for (const scenario of [
+  { date: '2026-10-27', nextDate: '2026-10-28', sign: 'Taurus', glyph: '♉', nextSign: 'Gemini', nextGlyph: '♊' },
+  { date: '2026-10-29', nextDate: '2026-10-30', sign: 'Gemini', glyph: '♊', nextSign: 'Cancer', nextGlyph: '♋' }
+]) for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const) {
+  test(`Calendar keeps Moon-sign details before a late sign change ${scenario.sign} ${width} ${theme}`, async ({ page }) => {
+    test.setTimeout(120_000);
+    const dateKey = scenario.date;
+    const record = JSON.parse(readFileSync('apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json', 'utf8'))
+      .authoredCards.find((row: any) => row.contentKey === `authored/calendar-weekly-moon/${scenario.sign.toLowerCase()}`);
+    const transitionKey = 'authored/calendar-moon-context/lateIngress';
+    const transitionBody = 'The emotional tone shifts overnight as the Moon changes signs, so you will likely feel the difference by tomorrow.';
+    const event = { id: 'qa-late-moon-ingress', type: 'ingress', planet: 'Moon', fromSign: scenario.sign, toSign: scenario.nextSign, sign: scenario.nextSign,
+      title: `Moon enters ${scenario.nextSign}`, startsAt: `${scenario.nextDate}T01:10:00Z`, dateKey, glyph: '', primary: false };
+    const day = { date: `${dateKey}T16:00:00Z`, dateKey, inMonth: true, moonSign: scenario.sign, moonSignGlyph: scenario.glyph,
+      moonPhase: 'Waning Gibbous', illumination: 97, activeAspects: [], events: [event] };
+    const nextDay = { ...day, date: `${scenario.nextDate}T16:00:00Z`, dateKey: scenario.nextDate, moonSign: scenario.nextSign, moonSignGlyph: scenario.nextGlyph, illumination: 94, events: [] };
+    await page.clock.setFixedTime(new Date(`${dateKey}T13:44:00Z`));
+    await page.setViewportSize({ width, height: 1000 });
+    await page.addInitScript(({ location, theme }) => {
+      localStorage.setItem('tldrastro:selectedLocation', JSON.stringify(location));
+      localStorage.setItem('tldrastro:theme', theme);
+    }, { location, theme });
+    await bundledPublications(page);
+    await page.route('**/api/calendar?**', route => route.fulfill({ json: { ok: true,
+      calendar: { month: '2026-10', timeZone: location.timeZone, location, days: [day, nextDay], events: [event] } } }));
+    const rows = [record, { contentKey: transitionKey, content_role: 'full_copy', review_status: 'approved_reuse', body: transitionBody }]
+      .map((source: any, index: number) => ({ id: `qa-moon-detail-${index}`, content_key: source.contentKey, updated_at: '2026-10-27T12:00:00Z', status: 'LIVE', lane: 'serving', review_state: null,
+        surface: 'sky', mode: 'in_depth', event_type: 'fallback-hook', provider: 'tldrastro-fallback-architecture-v3', body: source.body,
+        sections: { packageRecord: source }, source_snapshot: { sourcePackage: 'tldrastro-fallback-architecture-v3', content_role: 'full_copy', review_status: 'approved_reuse' } }));
+    await page.route('**/api/content-reader', route => {
+      const keys = new Set(route.request().postDataJSON().keys ?? []);
+      return route.fulfill({ json: readerResponse(rows.filter(row => keys.has(row.content_key))) });
+    });
+    const errors: string[] = [];
+    page.on('pageerror', error => errors.push(error.message));
+    await page.goto(`/?date=${dateKey}#calendar?view=day&date=${dateKey}`);
+    const guidance = page.getByRole('region', { name: 'Moon guidance', exact: true });
+    for (let load = 0; load < 2; load++) {
+      await expect(guidance).toHaveText(`The Moon stays in ${scenario.sign} for most of today and enters ${scenario.nextSign} at 9:10 PM EDT. ${record.body} ${transitionBody}`, { timeout: 60_000 });
+      await expect(page.getByRole('heading', { name: `Waning Gibbous Moon in ${scenario.sign}`, exact: true })).toBeVisible();
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
+      if (load === 0) await page.reload();
+    }
+    expect(errors).toEqual([]);
+    await page.getByLabel('Selected lunar day', { exact: true }).screenshot({ path: `test-results/calendar-moon-sign-before-transition-${scenario.sign}-${width}-${theme}.png` });
   });
 }

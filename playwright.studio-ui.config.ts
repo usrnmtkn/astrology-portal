@@ -13,11 +13,16 @@ export default defineConfig({
   metadata: { anonymousReaderFixture: true },
   testDir: './tests/visual',
   testMatch: [
+    'content-library-navigation.spec.ts',
+    'studio-fallback-catalog.spec.ts',
+    'studio-editor-scroll-containment.spec.ts',
     'calendar-passage-editor.spec.ts', 'calendar-workspace.spec.ts',
     'reader-passage-edit.spec.ts', 'review-calendar-workspace.spec.ts',
     'sky-reader-csv.spec.ts', 'sky-reader-preview.spec.ts',
     'sky-placement-sources.spec.ts', 'sky-placement-variables.spec.ts',
     'sky-writing-library-tables.spec.ts',
+    'studio-shared-wording.spec.ts', 'sky-placement-article-phrases.spec.ts',
+    'sky-saved-template-reader.spec.ts',
     'studio-csv.spec.ts', 'studio-wide-readability.spec.ts'
   ],
   outputDir: './test-results/studio-ui-release',

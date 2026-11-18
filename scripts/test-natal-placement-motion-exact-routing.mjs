@@ -39,7 +39,7 @@ const nodeRetrogradeFallback = renderNodePlacement({ ...nodeFacts, voice: "you",
 assert.equal(nodeDirect.templateKey, nodeDirectKey, "Node resolver must keep the existing exact key for Direct placements.");
 assert.notEqual(nodeRetrogradeFallback.templateKey, nodeDirectKey, "Node resolver must never let Direct exact copy mask Retrograde.");
 assert.notEqual(nodeRetrogradeFallback.body, nodeDirect.body, "Node Direct and Retrograde output must diverge when only Direct exact copy exists.");
-assert.match(nodeRetrogradeFallback.body, /retrograde in the birth chart/u, "Node Retrograde fallback must keep the shared modifier.");
+assert.doesNotMatch(nodeRetrogradeFallback.body, /retrograde in the birth chart/u, "Missing planet-and-house copy must not use the shared modifier.");
 
 const facts = { planet: "mercury", sign: "virgo", house: 6 };
 const directKey = "fallback-hook/natal-you-placement-complete-final/mercury/virgo/6";
@@ -87,7 +87,7 @@ for (const [name, createRenderer, motionExactKey] of [
   const retrogradeFallback = directOnlyRenderer.renderNatalPlacement({ ...facts, voice: "you", isRetrograde: true });
   assert.notEqual(retrogradeFallback.templateKey, directKey, `${name}: Retrograde inherited Direct exact copy.`);
   assert.notEqual(retrogradeFallback.body, "DIRECT EXACT SENTINEL.");
-  assert.match(retrogradeFallback.body, /retrograde in the birth chart/u, `${name}: missing Rx exact row did not compose with the shared modifier.`);
+  assert.doesNotMatch(retrogradeFallback.body, /retrograde in the birth chart/u, `${name}: missing planet-and-house modifier reused shared copy.`);
 
   const bothMotionsRenderer = createRenderer(templates, {
     ...baseRows,

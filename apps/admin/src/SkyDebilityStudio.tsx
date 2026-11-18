@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
+import { studioLazy } from "./studioLazy";
 import { StudioButton, StudioTextarea } from "./StudioControls";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import ContentLiveStatusBadge from "./ContentLiveStatus";
@@ -6,6 +7,7 @@ import type { SkySummaryField } from "../../web/src/content/skyDailySummaryCatal
 import { skyDebilityField, skyDebilityLegacyNames, skyDebilityTemplateErrors, skyDebilityTemplateSlots } from "../../web/src/content/skyDebilityCatalog";
 import { skyDebilityInterpretationKey } from "../../web/src/content/skyDebilityInterpretation";
 import { SkyDebilityCompositionMap } from "./SkyDebilityCompositionMap";
+import { SkyDebilityReviewDrafts } from "./SkyDebilityReviewDrafts";
 import { buildSkyDebilityComposition } from "./skyDebilityComposition";
 import {
   skyDebilityConditionLabel, skyDebilityPhraseGuidance, skyDebilityPhraseKey,
@@ -27,10 +29,13 @@ const templateGuidance: Record<string, string> = {
   exampleOrder: "List all seven planets once, separated by commas. This selects examples only."
 };
 const rowSignature = (row?: SummaryCompositionRow) => JSON.stringify([row?.id, row?.updated_at, row?.status, row?.body]);
+const SkyDebilityDatePreview = studioLazy(() => import("./SkyDebilityDatePreview").then(module => ({ default: module.SkyDebilityDatePreview })));
 
-export function SkyDebilityStudio({ rows, onEdit, busy }: {
+export function SkyDebilityStudio({ rows, onEdit, onOpenDraft, secret, busy }: {
   rows: SummaryCompositionRow[];
   onEdit: (field: SkySummaryField, initialBody?: string) => void;
+  onOpenDraft: (row: SummaryCompositionRow & { id: string }) => void;
+  secret: string;
   busy: boolean;
 }) {
   const [selection, setSelection] = useState<Record<string, string>>({ Venus: "Scorpio", Mars: "Cancer", Saturn: "Aries" });
@@ -131,11 +136,16 @@ export function SkyDebilityStudio({ rows, onEdit, busy }: {
       </div>
     </header>
 
+    <Suspense fallback={<p role="status">Loading date preview…</p>}>
+      <SkyDebilityDatePreview rows={rows} secret={secret} onOpen={onOpenDraft} busy={busy} />
+    </Suspense>
+    <SkyDebilityReviewDrafts rows={rows} secret={secret} onOpen={onOpenDraft} busy={busy} />
+
     <SkyDebilityCompositionMap composition={composition} read={read} onSelectSource={selectSource} busy={busy} hasUnsaved={hasUnsaved} positions={previewPositions} />
 
     <details className="admin-workspace-details">
       <AdminDisclosureSummary>Complete interpretation for these placements</AdminDisclosureSummary>
-      <p>Write the heading and complete card together. This version applies only when every qualifying planet, sign, and motion matches the preview. Use {"{planetList}"} once, or use {"{detrimentPlanetList}"} and {"{fallPlanetList}"} for the applicable categories. Each list displays the calculated placements as links.</p>
+      <p>Write the heading and complete card together. This version applies only when every qualifying planet, sign, and motion matches the preview. Use {"{planetList}"} once, or use {"{detrimentPlanetList}"} and {"{fallPlanetList}"} for the applicable categories. To keep an existing sentence's order, use an individual placement variable for every qualifying planet, such as {"{sunPlacementSentence}"} and {"{marsPlacement}"}. Sentence variants capitalize the first word. Each placement displays as a calculated link.</p>
       <p>{interpretationRow ? <ContentLiveStatusBadge row={interpretationRow} /> : "No complete interpretation is saved for this combination. The existing phrase template supplies the reader card."}</p>
       {interpretationRow?.inventory_only && <p role="status">Saved interpretation is loading.</p>}
       <StudioButton type="button" disabled={busy || !interpretationKey || interpretationRow?.inventory_only} onClick={() => {

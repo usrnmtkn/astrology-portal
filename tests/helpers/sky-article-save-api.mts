@@ -1,3 +1,6 @@
+import {weeklyBatchFixtureResult} from './weekly-editorial-result.mts';
+import {dailyBatchFixtureResult} from './daily-editorial-result.mts';
+export {weeklyBatchFixtureResult} from './weekly-editorial-result.mts';
 import horoscopeWriter from '../../api/admin/horoscope-writing';
 import {applyCheckpointFixture} from './horoscope-checkpoint-fixture.mts';
 import {decodeWeeklyHistoryRow} from '../../api/_lib/horoscope-history-storage';
@@ -7,7 +10,7 @@ import {lunarSavedWritingFixtures} from './lunar-saved-writing-fixture.mjs';
 import { readerRouteResponse, fixturePublications } from './content-reader-route.mjs';
 import { servingPackageRecords } from "../../api/_lib/content-live-status";
 // Actual handler, isolated storage, realistic latest-first/limit-one reads.
-import { createApiStore } from './calendar-review-api.mjs';
+import { createApiStore, matchesStoredInventory } from './calendar-review-api.mjs';
 import { skyPlacementSourceRecords } from '../../api/_lib/sky-placement-sources';
 const key = 'sky-placement/article/sun/virgo';
 const record = { ...structuredClone(skyPlacementSourceRecords.get(key)), placementArticle: 'During this transit, fixture existing article.',
@@ -31,9 +34,11 @@ if(process.env.LUNAR_WRITER_FIXTURE==='1')for(const row of lunarSavedWritingFixt
 let versionSequence = 0;
 const nextVersion = () => new Date(Date.now() + ++versionSequence).toISOString();
 const matches = (row: any, params: URLSearchParams) => [...params].every(([field, value]) => {
+ if(field==='or'||field==='and')return matchesStoredInventory(row,new URLSearchParams([[field,value]]));
  if (['select', 'order', 'limit', 'offset', 'on_conflict'].includes(field)) return true;
  if (field.startsWith('sections->horoscopeEdition->window->>')) {
   const actual = row.sections?.horoscopeEdition?.window?.[field.split('->>').at(-1)!];
+  if (value.startsWith('in.(')) return value.slice(4, -1).split(',').includes(String(actual));
   return typeof actual === 'string' && (value.startsWith('lte.') ? actual <= value.slice(4) : value.startsWith('gt.') ? actual > value.slice(3) : value.startsWith('eq.') ? actual === value.slice(3) : false);
  }
  if(field==='source_snapshot->horoscopeGeneration->batch->>status')return row.source_snapshot?.horoscopeGeneration?.batch?.status===value.slice(3);
@@ -103,6 +108,7 @@ globalThis.fetch = async (input: any, options: any = {}) => {
  if (url.pathname !== '/rest/v1/generated_interpretations') throw new Error(`Unexpected storage path ${url.pathname}`);
  const found = [...store.rows.values()].filter(row => matches(row, url.searchParams));
  if (!options.method || options.method === 'GET') {
+  if(url.searchParams.get('order')?.startsWith('sections->horoscopeEdition->window->>startsAt.desc'))found.sort((a:any,b:any)=>b.sections.horoscopeEdition.window.startsAt.localeCompare(a.sections.horoscopeEdition.window.startsAt)||b.updated_at.localeCompare(a.updated_at)||a.id.localeCompare(b.id));
   if (url.searchParams.get('order')?.startsWith('updated_at.desc')) found.sort((a: any, b: any) => b.updated_at.localeCompare(a.updated_at));
   const offset = Number(url.searchParams.get('offset') ?? 0);
   const selected=found.slice(offset, offset + Number(url.searchParams.get('limit') ?? found.length));
@@ -137,7 +143,7 @@ function storageOrder(row:any) {
  return ordered(row);
 }
 export function fixtureMonthlySynthesis(facts:any){return {thesis:'The synthetic monthly concern develops across the supplied facts.',stories:facts.planetaryArcs.filter((arc:any)=>arc.developmentIds.length>=2).slice(0,2).map((arc:any)=>({planet:arc.planet,humanConcern:'A connected synthetic concern.',development:arc.developmentIds.slice(0,2).map((factId:string,i:number)=>({factId,changes:`The synthetic concern changes at step ${i+1}.`}))})),readingMovement:'Follow each connected concern and its changes.',endingChange:'The reader understands the synthetic concern differently.'};}
-export const writerFixture={calls:0,reviewCalls:0,reviewRequests:new Map<string,any>(),polls:0,pendingPolls:0,rejectSeasonalVoice:false,terminalNext:false,failNext:false,unknownNext:false,nextResult:null as any,nextReviewResult:null as any,startResult:null as any,requests:new Map<string,any>()};
+export const writerFixture={batchCalls:0,batchRequests:new Map<string,any>(),nextBatchResult:null as any,batchPendingPolls:0,batchUnknownNext:false,calls:0,reviewCalls:0,reviewRequests:new Map<string,any>(),polls:0,pendingPolls:0,rejectSeasonalVoice:false,terminalNext:false,failNext:false,unknownNext:false,nextResult:null as any,nextReviewResult:null as any,startResult:null as any,requests:new Map<string,any>()};
 export function fixtureMonthlyContext(facts:any){
  const plan=fixtureMonthlySynthesis(facts);
  const mars=plan.stories.find((s:any)=>s.planet==='mars');
@@ -180,8 +186,14 @@ export function installHoroscopeWriterFixture(){
    const url=String(input);
    if(!url.startsWith('https://api.openai.com/'))return storageFetch(input,options);
    if(url==='https://api.openai.com/v1/responses'&&options.method==='POST'){
-     if(![...store.rows.values()].some(row=>row.source_snapshot?.horoscopeGeneration?.active?.requestHash))throw new Error('No durable request reservation before provider call');
-     const request=JSON.parse(options.body),review=request.instructions.startsWith('SHARED SEMANTIC RHETORICAL REVIEW');
+     if(![...store.rows.values()].some(row=>(row.source_snapshot?.horoscopeGeneration?.active?.requestHash||row.source_snapshot?.horoscopeGeneration?.weeklyEditorial?.pending?.requestHash||row.source_snapshot?.horoscopeGeneration?.dailyEditorial?.pending?.requestHash)))throw new Error('No durable request reservation before provider call');
+     const request=JSON.parse(options.body);
+     if(request.instructions.includes('WEEKLY BATCH PLANNING AUTHORITY')||request.instructions.includes('WEEKLY BATCH REVIEW AUTHORITY')||request.instructions.includes('DAILY BATCH REVIEW AUTHORITY')){
+       writerFixture.batchCalls++;
+       if(writerFixture.batchUnknownNext){writerFixture.batchUnknownNext=false;throw new Error('Fixture connection lost');}
+       const id=`resp_batch_fixture_${writerFixture.batchCalls}`;writerFixture.batchRequests.set(id,request);return Response.json({id,status:'queued'});
+     }
+     const review=request.instructions.startsWith('SHARED SEMANTIC RHETORICAL REVIEW');
      if(review)writerFixture.reviewCalls++;else writerFixture.calls++;
      if(writerFixture.unknownNext){writerFixture.unknownNext=false;throw new Error('Fixture connection lost');}
      if(writerFixture.failNext){writerFixture.failNext=false;return Response.json({error:{code:'insufficient_quota',message:'Fixture quota'}},{status:429});}
@@ -194,15 +206,24 @@ export function installHoroscopeWriterFixture(){
      return Response.json({id,status:'queued'});
    }
    const cancel=url.endsWith('/cancel');
-   const id=url.split('/').at(cancel?-2:-1)!,request=writerFixture.requests.get(id)??writerFixture.reviewRequests.get(id);
+   const id=url.split('/').at(cancel?-2:-1)!,request=writerFixture.requests.get(id)??writerFixture.reviewRequests.get(id)??writerFixture.batchRequests.get(id);
    if(!request)throw new Error('Unrecognized fixture response');writerFixture.polls++;
    if(cancel)return Response.json({id,status:'cancelled'});
+   if(writerFixture.batchRequests.has(id)){
+     if(writerFixture.batchPendingPolls>0){writerFixture.batchPendingPolls--;return Response.json({id,status:'in_progress'});}
+     if(writerFixture.nextBatchResult){const result=writerFixture.nextBatchResult;writerFixture.nextBatchResult=null;return Response.json({id,...result});}
+     const input=JSON.parse(request.input),planning=input.stage==='planning';
+     const value=input.stage==='daily-batch-review'?dailyBatchFixtureResult(input):weeklyBatchFixtureResult(input);
+     return Response.json({id,status:'completed',output:[{type:'message',content:[{type:'output_text',text:JSON.stringify(value)}]}]});
+   }
    if(writerFixture.pendingPolls>0){writerFixture.pendingPolls--;return Response.json({id,status:'in_progress'});}
    if(writerFixture.nextResult){const result=writerFixture.nextResult;writerFixture.nextResult=null;return Response.json({id,...result});}
    if(writerFixture.terminalNext){writerFixture.terminalNext=false;return Response.json({id,status:'failed',error:{message:'Fixture provider could not finish this reading.'}});}
    if(request.instructions.startsWith('SHARED SEMANTIC RHETORICAL REVIEW')){
      if(writerFixture.nextReviewResult){const value=writerFixture.nextReviewResult;writerFixture.nextReviewResult=null;return Response.json({id,...value});}
-     return Response.json({id,status:'completed',usage:{input_tokens:60,output_tokens:10},output:[{type:'message',content:[{type:'output_text',text:JSON.stringify({checks:['CORRECTIO','TRICOLON','PURPLE_PROSE'].map(label=>({label,outcome:'pass',reason:'Synthetic transport fixture.'})),findings:[]})}]}]});
+     const paragraph=JSON.parse(request.input).candidate.body.split(/\n\s*\n/u).at(-1);
+     const weeklyDirection=request.text.format.schema.properties.weeklyDirection?{weeklyDirection:Object.fromEntries(['concern','stakes','observation','ending'].map(key=>[key,{outcome:'pass',quote:paragraph,paragraph,reason:'Synthetic transport fixture, not a prose-quality judgment.'}]))}:{};
+     return Response.json({id,status:'completed',usage:{input_tokens:60,output_tokens:10},output:[{type:'message',content:[{type:'output_text',text:JSON.stringify({checks:['CORRECTIO','TRICOLON','PURPLE_PROSE'].map(label=>({label,outcome:'pass',reason:'Synthetic transport fixture.'})),findings:[],...weeklyDirection})}]}]});
    }
    if(request.instructions.startsWith('SEASONAL PRIVATE EDITORIAL AUTHORITY')){
      const input=JSON.parse(request.input),required=request.text.format.schema.required;
@@ -269,8 +290,8 @@ if (process.send) process.on('message', async ({ id, method, body, url, headers 
     process.send!({id,result:await seedCompletedReviewHold(store,writerFixture)});return;
   }
   if (method === 'writer-state') {
-    for(const key of ['pendingPolls','terminalNext','unknownNext','nextResult','nextReviewResult','startResult','rejectSeasonalVoice'] as const)if(body?.[key]!==undefined)(writerFixture as any)[key]=body[key];
-    process.send!({id,result:{calls:writerFixture.calls,reviewCalls:writerFixture.reviewCalls,polls:writerFixture.polls,responseIds:[...writerFixture.requests.keys()]}});return;
+    for(const key of ['pendingPolls','batchPendingPolls','terminalNext','unknownNext','batchUnknownNext','nextResult','nextReviewResult','nextBatchResult','startResult','rejectSeasonalVoice'] as const)if(body?.[key]!==undefined)(writerFixture as any)[key]=body[key];
+    process.send!({id,result:{calls:writerFixture.calls,reviewCalls:writerFixture.reviewCalls,batchCalls:writerFixture.batchCalls,polls:writerFixture.polls,responseIds:[...writerFixture.requests.keys()]}});return;
   }
   if (method === 'interrupted-horoscope-start') {
     const row=store.rows.get(body.id),generation=row.source_snapshot.horoscopeGeneration;

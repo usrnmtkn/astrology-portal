@@ -102,7 +102,7 @@ export function PublishedSkySummary({ facts, events, factsReady, factsError, onR
   return <div ref={body} className="sky-daily-summary__body" aria-label="Daily sky summary" aria-busy={loading}
     style={loading || failed ? { minHeight: height } : undefined}>
     {failed ? <PageLoadError message="The daily summary could not load. Your published writing has not changed." onRetry={retry} />
-      : loading ? <PageLoading message="Loading the daily sky summary…" announce={false} />
+      : loading ? <PageLoading layout="prose" message="Loading the daily sky summary…" announce={false} />
       : children(skyDailySummaryParts({ ...facts, ...skySummaryEventFacts(events, displayed.content) }, displayed.content, { sunSummaryLength: "short" }))}
   </div>;
 }

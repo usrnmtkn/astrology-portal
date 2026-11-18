@@ -21,7 +21,7 @@ export function CitySuggestions({
   if (!mapboxEnabled) {
     return (
       <p className="city-picker-note">
-        Add VITE_MAPBOX_ACCESS_TOKEN to enable suggested city search.
+        City search is unavailable right now. Please try again later.
       </p>
     );
   }

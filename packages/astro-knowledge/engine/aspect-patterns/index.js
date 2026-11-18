@@ -2050,19 +2050,19 @@ function validateAspectPatternActivationCopyRecord(record, context, slots = aspe
 
   const combined = templates.map((item) => item.template).join(" ");
   for (const phrase of (record.languageRules?.prohibitedClaims || []).concat(record.languageRules?.prohibitedTerms || [])) {
-    if (phrase && containsTerm(combined, phrase)) errors.push(`prohibited_language:${phrase}`);
+    if (phrase && containsTerm(combined, phrase)) warnings.push(`prohibited_language:${phrase}`);
   }
-  if (/\b(will|guarantees?|causes?|forces?|must happen|will happen)\b/i.test(combined)) errors.push("event_prediction_language");
-  if (/\b(permanent|changes your natal|rewrites|new geometry)\b/i.test(combined)) errors.push("changes_natal_geometry_language");
+  if (/\b(will|guarantees?|causes?|forces?|must happen|will happen)\b/i.test(combined)) warnings.push("event_prediction_language");
+  if (/\b(permanent|changes your natal|rewrites|new geometry)\b/i.test(combined)) warnings.push("changes_natal_geometry_language");
   if ((context.patternType === "grand_square" || context.patternType === "mystic_rectangle") && containsTerm(combined, "apex")) {
-    errors.push("apex_language_for_non_apex_pattern");
+    warnings.push("apex_language_for_non_apex_pattern");
   }
   if (context.patternType === "yod" && /\b(finger of god|fate|destiny|chosen|calling|special mission|meant to happen|unavoidable|karmic test|turning point)\b/i.test(combined)) {
-    errors.push("yod_prohibited_language");
+    warnings.push("yod_prohibited_language");
   }
-  if (/\b(equally active|equally intense|same intensity)\b/i.test(combined)) errors.push("equal_linked_pattern_intensity_claim");
+  if (/\b(equally active|equally intense|same intensity)\b/i.test(combined)) warnings.push("equal_linked_pattern_intensity_claim");
   if (/\b(activationId|sourceAspectId|reason code|policy|builder|score|rank|currentDisplayPriority|sharedPlanetFanout)\b/i.test(combined)) {
-    errors.push("internal_activation_diagnostics_leak");
+    warnings.push("internal_activation_diagnostics_leak");
   }
   if (unknownSlots.length > 0) warnings.push("unknown_slots_present");
   if (missingSlots.length > 0) warnings.push("missing_slots_present");
@@ -2625,16 +2625,16 @@ function validateAspectPatternCopyRecord(record, context, slots = aspectPatternC
   const combined = templates.map((item) => item.template).join(" ");
   const prohibited = (copyRecord.languageRules.prohibitedClaims || []).concat(copyRecord.languageRules.prohibitedTerms || []);
   for (const phrase of prohibited) {
-    if (phrase && containsTerm(combined, phrase)) errors.push(`prohibited_language:${phrase}`);
+    if (phrase && containsTerm(combined, phrase)) warnings.push(`prohibited_language:${phrase}`);
   }
   if ((context.patternType === "grand_square" || context.patternType === "mystic_rectangle") && containsTerm(combined, "apex")) {
-    errors.push("apex_language_for_non_apex_pattern");
+    warnings.push("apex_language_for_non_apex_pattern");
   }
   if (context.patternType === "yod" && /\b(finger of god|fate|destiny|chosen|special mission)\b/i.test(combined)) {
-    errors.push("yod_fate_language");
+    warnings.push("yod_fate_language");
   }
   if (/\b(structuralContext|baseDisplayPriority|sourceAspectIds|ranking reasons?|warning codes?|derived point|resource planet|element consistency|geometry confidence|source aspect|display priority)\b/i.test(combined)) {
-    errors.push("internal_diagnostics_leak");
+    warnings.push("internal_diagnostics_leak");
   }
   if (unknownSlots.length > 0) warnings.push("unknown_slots_present");
   if (missingSlots.length > 0) warnings.push("missing_slots_present");

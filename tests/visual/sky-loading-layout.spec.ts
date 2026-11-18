@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from '../helpers/polish-test';
 import skyHandler from '../../api/sky';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 
@@ -22,10 +22,10 @@ async function installObservation(page: Page, theme: string) {
       const summary = document.querySelector('[aria-label="Daily sky summary"]');
       const frame = {
         hero: box(document.querySelector('.today-hero')),
-        loading: box(document.querySelector('.sky-reading-layout__loading')),
+        loading: box(document.querySelector('.sky-summary-loading')),
         summary: box(summary),
         summaryBusy: summary?.getAttribute('aria-busy'),
-        transits: box(document.querySelector('.sky-reading-layout__content [aria-label="Transits"]')),
+        transits: box(document.querySelector('.sky-reading-layout__content [aria-label="Placements"]')),
         cards: [...document.querySelectorAll('.planet-placement-row--sky')].map(el => ({
           title: el.getAttribute('aria-label'), box: box(el), busy: el.getAttribute('aria-busy'),
         })).filter(card => card.box)
@@ -111,6 +111,13 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     await page.getByRole('button', { name: 'Close detail', exact: true }).click();
     await expect(page.locator('.sky-reading-layout__loading')).toBeVisible();
     await page.waitForFunction(() => (window as any).__skyLayout.frames.some((sample: any) => sample.frame.loading));
+    await expect(page.locator('.sky-detail-article')).toBeHidden();
+    await page.waitForFunction(() => !document.documentElement.hasAttribute('data-page-transition'));
+    expect(await page.locator('.sky-reading-layout__loading .sky-angle-group .card-skeleton-bar').evaluateAll(bars=>bars.length===4&&bars.every(bar=>bar.getBoundingClientRect().width>0))).toBe(true);
+    await expect(page.locator('.sky-angle-group button.card-skeleton').first()).toBeDisabled();
+    await expect(page.locator('.sky-placement-group .planet-placement-row__glyph > .card-skeleton-disc').first()).toHaveCSS('width',width===390?'52px':'48px');
+    await page.evaluate(() => scrollTo(0, 0));
+    await page.screenshot({ path: testInfo.outputPath('return-loading.png'), fullPage: true });
     await page.evaluate(() => {
       delete (document.fonts as any).status;
       document.fonts.dispatchEvent(new Event('loadingdone'));

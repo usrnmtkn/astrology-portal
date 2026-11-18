@@ -58,6 +58,17 @@ assert.throws(() => preloadPlugin.transformIndexHtml.handler("", { bundle: {} })
 const { "assets/placements.js": _placements, ...withoutPlacements } = bundle;
 assert.throws(() => preloadPlugin.transformIndexHtml.handler("", { bundle: withoutPlacements }), /placement rows/);
 
+const pinnedPlugin = skyEntryPreloadPlugin({ VERCEL_SKEW_PROTECTION_ENABLED: "1", VERCEL_DEPLOYMENT_ID: "dpl_sky_fixture" });
+const [pinnedHint, , pinnedBootstrap] = pinnedPlugin.transformIndexHtml.handler("", { bundle });
+const pinnedLinks = [], pinnedListeners = [];
+runInNewContext(pinnedHint.children, { location: { pathname: "/", hash: "#sky" }, window: {
+  addEventListener(_name, listener) { pinnedListeners.push(listener); }
+}, document: { querySelectorAll: () => pinnedLinks, createElement: () => ({ getAttribute(name) { return this[name]; } }),
+  head: { appendChild: link => pinnedLinks.push(link) } } });
+pinnedListeners.forEach(listener => listener());
+assert(pinnedLinks.length > 0 && pinnedLinks.every(link => link.href.endsWith("?dpl=dpl_sky_fixture")), "Custom Sky preloads and styles retain their deployment identity.");
+assert(pinnedBootstrap.children.includes('/assets/bootstrap.js?dpl=dpl_sky_fixture'), "The independent Sky import uses the same deployment.");
+
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const appSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
 const signupViewSource = fs.readFileSync(
@@ -84,6 +95,9 @@ const reportFixtureEntrySource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/components/reports/ReportArticleFixtureEntry.tsx"),
   "utf8"
 );
+const reportArticleSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/components/reports/ReportArticle.tsx"), "utf8");
+const keyDatesPanelSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/components/KeyDatesPanel.tsx"), "utf8");
+const articlePanelStylesSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/styles/article-panels.css"), "utf8");
 const friendsStylesSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/styles/friends.css"), "utf8");
 const friendDetailStylesSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/styles/friends-detail.css"), "utf8");
 const friendChartModalStylesSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/styles/friends-chart-modal.css"), "utf8");
@@ -212,7 +226,9 @@ const startupSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/startup.
 assert.match(startupSource, /vite:preloadError/u, "Startup import failures must have a visible recovery path.");
 assert.match(startupSource, /addEventListener\("unhandledrejection"/u, "Rejected startup imports must show an error.");
 assert.match(startupSource, /The page could not load/u, "Startup failures must explain the problem.");
-assert.match(startupSource, /querySelector\("button"\)\?\.addEventListener\("click", \(\) => location\.reload\(\)\)/u, "Reloading must remain an explicit user action.");
+// The explicit click may await failed module refresh before reloading. Verify
+// the real handler and its bounded body completion, rather than callback syntax.
+await import("./test-reader-deployment-recovery.mjs");
 assert.doesNotMatch(startupSource, /sessionStorage|document\.body\.innerHTML/u, "Recovery must preserve form state and avoid destructive automatic reloads.");
 assert.doesNotMatch(mainSource, /setInterval\s*\(/u, "Blank-restore recovery must not keep a lifetime polling interval.");
 assert.match(mainSource, /for \(const delay of \[1000, 5000, 15000\]\)/u, "Startup must keep bounded blank-mount checks.");
@@ -332,16 +348,27 @@ assert.doesNotMatch(
   /report-article\.css/u,
   "Report-only CSS must not remain in the reader startup stylesheet."
 );
-assert.match(
-  reportRouteSource,
-  /import "\.\.\/styles\/report-article\.css";/u,
-  "The lazy report route must own its production article stylesheet."
-);
-assert.match(
-  reportFixtureEntrySource,
-  /import "\.\.\/\.\.\/styles\/report-article\.css";/u,
-  "The standalone report fixture must explicitly own its article stylesheet."
-);
+assert.doesNotMatch(readerStylesSource, /article-panels\.css/u,
+  "Shared article-panel CSS must remain outside the reader startup stylesheet.");
+for (const entry of ["ReportDeliveryView", "ReportVanityDeliveryView"]) {
+  assert.match(reportRouteSource, new RegExp(`const ${entry} = lazy\\(\\(\\) =>\\s*import\\("\\.\\./components/reports/${entry}"\\)`, "u"),
+    `${entry} must remain deferred behind the report route.`);
+}
+assert.match(reportFixtureEntrySource, /import \{ ReportArticleFixtureHarness \} from "\.\/ReportArticleFixtureHarness";/u,
+  "The standalone fixture must load the real article renderer through its harness.");
+for (const entry of ["ReportDeliveryView", "ReportVanityDeliveryView", "ReportArticleFixtureHarness"]) {
+  const source = fs.readFileSync(path.join(repoRoot, `apps/web/src/components/reports/${entry}.tsx`), "utf8");
+  assert.match(source, /import \{ ReportArticle\b[^}]*\} from "\.\/ReportArticle";/u,
+    `${entry} must retain the shared article renderer and its stylesheet dependency.`);
+}
+assert.match(reportArticleSource, /import \{ KeyDatesPanel \} from "\.\.\/KeyDatesPanel";/u,
+  "ReportArticle must retain the shared disclosure and its stylesheet dependency.");
+assert.match(keyDatesPanelSource, /import "\.\.\/styles\/article-panels\.css";/u,
+  "The shared disclosure must own its deferred article stylesheet.");
+for (const stylesheet of ["report-article", "sky-placement-article"]) {
+  assert.match(articlePanelStylesSource, new RegExp(`@import url\\("\\./${stylesheet}\\.css"\\);`, "u"),
+    `The shared article stylesheet must include ${stylesheet} styles.`);
+}
 assert.match(
   readerStylesSource,
   /styles\/responsive\.css/u,
@@ -414,8 +441,8 @@ assert.match(
 );
 assert.match(
   friendProfileChartRailSource,
-  /import \{ FriendNatalViewControl/u,
-  "The deferred profile chart rail must own its segmented control."
+  /import \{ ChartFullscreenButton \} from "\.\.\/\.\.\/components\/charts\/ChartFullscreenButton"/u,
+  "The deferred profile chart rail must own the chart fullscreen renderer."
 );
 assert.match(
   appSource,
@@ -474,9 +501,13 @@ assert.match(
 );
 assert.doesNotMatch(
   appSource,
-  /(?:AppearanceToggle|HouseSignLabelToggle|SwitchControl|CalculationMethodSettingsGroup)/u,
+  /(?:HouseSignLabelToggle|SwitchControl|CalculationMethodSettingsGroup)/u,
   "Settings-only controls must not remain static application-shell dependencies."
 );
+assert.doesNotMatch(appSource, /import\s+(?!type\b)[^;]+from\s+["']\.\/components\/SettingsControls["']/u, "Global theme controls must not import Settings form controls into startup.");
+const themeControlsSource=fs.readFileSync(path.join(repoRoot,"apps/web/src/components/ThemeControls.tsx"),"utf8");
+assert.match(themeControlsSource,/export function ThemeToggleButton[\s\S]*export function AppearanceToggle/u,"Standalone surfaces, the menu, and Settings must retain the shared accessible theme controls.");
+assert.doesNotMatch(themeControlsSource,/(?:HouseSignLabelToggle|SwitchControl|CalculationMethodSettingsGroup|from ["']\.\/SettingsControls)/u,"Shared theme chrome must stay independent of Settings-only controls.");
 assert.doesNotMatch(
   appSource,
   /function (?:GuestSettingsView|SettingsView|MemberSettingsView)/u,
@@ -608,8 +639,8 @@ assert.doesNotMatch(
 );
 assert.match(
   friendProfileChartRailSource,
-  /import \{ NatalChartDataTable \}/u,
-  "The deferred profile chart rail must own its natal table renderer."
+  /import \{ InteractiveZodiacWheel \} from "\.\.\/\.\.\/components\/charts\/LazyInteractiveZodiacWheel"/u,
+  "The deferred profile chart rail must keep the interactive natal wheel behind its lazy renderer."
 );
 assert.doesNotMatch(
   appSource,
@@ -663,8 +694,8 @@ assert.match(
 );
 assert.match(
   friendSynastryTabSource,
-  /import \{ SynastryPlacementsComparison \}/u,
-  "The deferred Synastry tab must own its placement comparison."
+  /import \{ CardReadMore \}[\s\S]*export function FriendSynastryTab[\s\S]*friend-profile-dynamics/u,
+  "The deferred Synastry tab must own its Dynamics cards and reading controls."
 );
 assert.match(
   manualChartsPanelSource,
@@ -673,8 +704,8 @@ assert.match(
 );
 assert.match(
   friendNatalTabSource,
-  /import \{ FriendPlacementTable \}/u,
-  "The deferred Natal tab must own its placement table."
+  /import \{ NatalPlacementSections \}[\s\S]*<NatalPlacementSections[\s\S]*<PlacementTableRow/u,
+  "The deferred Natal tab must own the shared placement sections and their interactive rows."
 );
 assert.match(
   manualChartsPanelSource,
@@ -803,7 +834,7 @@ assert.match(
 );
 assert.match(
   manualChartsPanelSource,
-  /if \(!friendProfileWork\.natal \|\| !selectedFriendReadyNatalChart\)/u,
+  /if \(!friendProfileWork\.natal \|\| !selectedChart \|\| !selectedFriendReadyNatalChart\)/u,
   "Friends natal row calculation must remain scoped to its active tab."
 );
 assert.match(
@@ -837,10 +868,11 @@ assert.match(
   "The lazy FriendDetail stylesheet must own relationship explainer CSS."
 );
 assert.match(
-  friendDetailStylesSource,
-  /@media \(max-width: 800px\)[\s\S]*\.app-shell\.mode-friends \.friend-profile-panel\.friend-chart-page[\s\S]*grid-template-columns: minmax\(0, 1fr\)/u,
-  "The lazy FriendDetail stylesheet must preserve the mobile one-column layout after its CSS chunk loads."
+  fs.readFileSync(path.join(repoRoot, "apps/web/src/styles/profile-overview.css"), "utf8"),
+  /@media \(max-width: 800px\)[\s\S]*\.friend-chart-page\.relationship-detail-layout[\s\S]*grid-template-columns: minmax\(0, 1fr\)/u,
+  "The shared lazy profile stylesheet must preserve the mobile one-column layout after FriendDetail loads."
 );
+assert.match(fs.readFileSync(path.join(repoRoot,"apps/web/src/features/friends/FriendDetail.tsx"),"utf8"),/import ["']\.\.\/\.\.\/styles\/profile-overview\.css["']/u,"FriendDetail must load the shared responsive profile layout.");
 assert.doesNotMatch(
   friendsStylesSource,
   /(?:^|\n)\.friend-chart-legend\s*\{/u,
@@ -853,14 +885,16 @@ assert.match(
 );
 assert.doesNotMatch(
   friendsStylesSource,
-  /(?:^|\n)\.friend-placement-column\s*\{/u,
-  "Friends placement and aspect-row CSS must not remain in the eager Friends/profile stylesheet."
+  /(?:^|\n)\.friend-chart-page\.friend-profile-view \.friend-dynamic-card\s*\{/u,
+  "Friends Dynamics CSS must not remain in the eager Friends/profile stylesheet."
 );
 assert.match(
-  friendDetailStylesSource,
-  /(?:^|\n)\.friend-placement-column\s*\{/u,
-  "The lazy FriendDetail stylesheet must own Friends placement and aspect-row CSS."
+  fs.readFileSync(path.join(repoRoot, "apps/web/src/styles/friend-profile-refined.css"), "utf8"),
+  /(?:^|\n)\.friend-chart-page\.friend-profile-view \.friend-dynamic-card\s*\{/u,
+  "The refined Friend profile stylesheet must own its Dynamics cards."
 );
+assert.match(friendDetailSource, /import "\.\.\/\.\.\/styles\/friend-profile-refined\.css";/u,
+  "The refined Friend profile stylesheet must load through the deferred detail shell.");
 assert.doesNotMatch(
   friendsStylesSource,
   /(?:^|\n)\.add-chart-field,/u,

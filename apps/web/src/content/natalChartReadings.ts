@@ -1,18 +1,26 @@
 import type { SkySnapshot } from "../types";
+import { isContentRetired } from "./contentPublicationState";
 import { natalSectForSnapshot } from "../../../../src/shared/solarHorizon.js";
 import { emptyHouseRulersBySystem } from "./emptyHouseRulership";
+import { natalSectPlacementKey, type NatalSectPlacement } from "../../../../src/shared/natalSectPlacement";
 import { renderGeneratedContentTemplate, type LiveGeneratedContent } from "../services/generatedContent";
 
 const signs = ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"];
 const sectPlanets = new Set(["jupiter", "venus", "mars", "saturn"]);
 export type NatalReadingAudience = "you" | "they";
-export type NatalReading = { contentKey: string; label: string };
+export type NatalReading = { contentKey: string; label: string; preferredContentKey?: string; signContentKey?: string };
 export type NatalPlanetReadingContext = {
   snapshot: SkySnapshot;
   audience: NatalReadingAudience;
   ownerName?: string;
   planet: string;
 };
+
+/** The established traditional ruler also supplies the insight card's glyph. */
+export function natalTwelfthRuler(snapshot: SkySnapshot | null | undefined) {
+  const ascendant = signs.indexOf(snapshot?.ascendant.toLowerCase() ?? "");
+  return ascendant < 0 ? undefined : emptyHouseRulersBySystem.traditional[signs[(ascendant + 11) % 12]];
+}
 
 /** Fixed natal facts select complete published units; current transits never enter. */
 export function natalChartReadings(snapshot: SkySnapshot | null | undefined, audience: NatalReadingAudience, planet?: string): NatalReading[] {
@@ -21,15 +29,22 @@ export function natalChartReadings(snapshot: SkySnapshot | null | undefined, aud
   const chartLabel = sect === "day" ? "Day chart" : "Night chart";
   if (planet) {
     const key = planet.toLowerCase();
-    return sect && sectPlanets.has(key) && snapshot.positions.some(position => position.planet.toLowerCase() === key)
-      ? [{ contentKey: `cms/natal-planet-sect/${audience}/${key}/${sect}`, label: chartLabel }] : [];
+    const position = snapshot.positions.find(position => position.planet.toLowerCase() === key);
+    if (!sect || !sectPlanets.has(key) || !position) return [];
+    const sign = position.sign.toLowerCase();
+    const signIndex = signs.indexOf(sign);
+    const ascendant = signs.indexOf(snapshot.ascendant.toLowerCase());
+    const preferredContentKey = signIndex >= 0 && ascendant >= 0
+      ? natalSectPlacementKey({ audience, planet: key as NatalSectPlacement["planet"], sign, house: ((signIndex - ascendant + 12) % 12) + 1, sect }) : undefined;
+    return [{ contentKey: `cms/natal-planet-sect/${audience}/${key}/${sect}`, label: chartLabel,
+      ...(preferredContentKey ? { preferredContentKey } : {}),
+      ...(signIndex >= 0 ? { signContentKey: natalSectPlacementKey({ audience, planet: key as NatalSectPlacement["planet"], sign, sect }) } : {}) }];
   }
   const readings: NatalReading[] = sect
     ? [{ contentKey: `cms/natal-chart-context/${audience}/sect/${sect}`, label: chartLabel }] : [];
   const ascendant = signs.indexOf(snapshot.ascendant.toLowerCase());
   if (ascendant < 0) return readings;
-  const twelfthSign = signs[(ascendant + 11) % 12];
-  const ruler = emptyHouseRulersBySystem.traditional[twelfthSign];
+  const ruler = natalTwelfthRuler(snapshot);
   const rulerPosition = snapshot.positions.find(position => position.planet.toLowerCase() === ruler);
   const rulerSign = signs.indexOf(rulerPosition?.sign.toLowerCase() ?? "");
   if (rulerSign < 0) return readings;
@@ -38,6 +53,20 @@ export function natalChartReadings(snapshot: SkySnapshot | null | undefined, aud
     { contentKey: `cms/natal-twelfth-ruler/${audience}/introduction`, label: "Understanding Undoing" },
     { contentKey: `cms/natal-twelfth-ruler/${audience}/ruler-house/${rulerHouse}`, label: `Twelfth-house ruler in the ${rulerHouse}${rulerHouse === 1 ? "st" : rulerHouse === 2 ? "nd" : rulerHouse === 3 ? "rd" : "th"} house` }
   ];
+}
+
+export function natalReadingKeys(readings: NatalReading[]): string[] {
+  return [...new Set(readings.flatMap(reading => [reading.preferredContentKey, reading.signContentKey, reading.contentKey].filter((key): key is string => Boolean(key))))];
+}
+
+export function selectedNatalReadingBody(reading: NatalReading, rows: Map<string, LiveGeneratedContent>, audience: NatalReadingAudience, ownerName?: string): string | null {
+  for (const key of [reading.preferredContentKey, reading.signContentKey, reading.contentKey]) {
+    if (!key) continue;
+    if (isContentRetired(key)) return null;
+    const body = natalReadingBody(rows.get(key), audience, ownerName);
+    if (body) return body;
+  }
+  return null;
 }
 
 /** Preserve the saved body, including repeated paragraphs. Only declared slots change. */

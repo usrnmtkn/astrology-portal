@@ -29,7 +29,9 @@ const surfaceLayouts = {
 
 function authoredUnit(card, surface) {
   const layout = surfaceLayouts[surface];
-  let body = card.body_you ?? card.body;
+  // Some approved contacts are Friends-only. They are reader units in that
+  // audience, rather than empty You passages.
+  let body = card.body_you ?? card.body ?? card.body_they;
   if (surface === "aspect" && typeof body === "string") {
     const selector = String(card.contentKey ?? "").split("/")[4];
     const aspect = selector === "soft" ? "trine" : selector === "hard" ? "square" : selector === "any" ? "conjunction" : selector;
@@ -114,16 +116,49 @@ async function transitHouseUnitsFromPackage(transitLibrary, templates, sourceRow
   ));
 }
 
-async function skyPlacementUnitsFromPackage(transitLibrary, templates, sourceRows) {
+async function skyPlacementUnitsFromPackage() {
   const { createTransitSynastryRenderer } = await import(
     "../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js"
   );
-  const renderer = createTransitSynastryRenderer(transitLibrary, templates, sourceRows);
+  // Match the app's initial and deferred serving packages. The raw fallback
+  // source file alone predates the continuous Sky articles and omits their
+  // approved sign copy, education and house sources.
+  const bundles = [
+    "bundled-initial-reader-rows-v3",
+    "bundled-sky-core-rows-v3",
+    "bundled-deferred-core-rows-v3",
+    "bundled-sky-placement-rows-v3",
+    "bundled-sky-placement-house-rows-v3",
+    "bundled-calendar-rows-v3",
+    "bundled-shared-placement-rows-v3"
+  ].map((name) => readJson(`apps/web/src/content/fallbackArchitectureV3/${name}.json`));
+  const renderer = createTransitSynastryRenderer(
+    { authoredCards: bundles.flatMap((bundle) => bundle.authoredCards ?? []) },
+    { templates: bundles.flatMap((bundle) => bundle.templates ?? []) },
+    {
+      hookRows: bundles.flatMap((bundle) => bundle.hookRows ?? []),
+      vocabularyRows: bundles.flatMap((bundle) => bundle.vocabularyRows ?? [])
+    }
+  );
   const planets = ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto"];
   const signs = ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"];
 
-  return planets.flatMap((planet) => signs.map((sign) => {
-    const rendered = renderer.renderSkyPlacement({ planet, sign });
+  return planets.flatMap((planet) => signs.map((sign, signIndex) => {
+    // Explicit test facts fill the same calculated-date slots as the app.
+    // These values are contract fixtures, never production placement data.
+    const rendered = renderer.renderSkyPlacement({
+      planet,
+      sign,
+      events: [],
+      asOfDate: "2026-03-21T12:00:00Z",
+      entryDate: "March 20, 2026",
+      exitDate: "April 19, 2026",
+      priorSign: signs[(signIndex + 11) % signs.length],
+      priorSignEntryDate: "February 18, 2026",
+      priorSignExitDate: "March 20, 2026",
+      previousResidencyEntryDate: "March 20, 2000",
+      previousResidencyExitDate: "April 19, 2000"
+    });
 
     return {
       key: `sky.${planet}.${sign}`,
@@ -159,7 +194,7 @@ export default async function loadUnits() {
     "tldr-astro-phrasebank/phrasebank/moon-compatibility-library.json"
   );
   const houses = await transitHouseUnitsFromPackage(transitLibrary, fallbackTemplates, fallbackSourceRows);
-  const skyPlacements = await skyPlacementUnitsFromPackage(transitLibrary, fallbackTemplates, fallbackSourceRows);
+  const skyPlacements = await skyPlacementUnitsFromPackage();
   const aspects = transitLibrary.authoredCards
     .filter((card) => card.contentKey.startsWith("authored/transit-aspect/"))
     .filter(selectableTransitAspectCard)
@@ -189,6 +224,15 @@ export default async function loadUnits() {
       const body = record.contentKey.startsWith("authored/week-opener/")
         ? record.body.replaceAll("{{signTitle}}", "Leo")
         : record.body;
+      let headline = record.headline;
+      if (!headline && record.contentKey.startsWith("authored/weekly-transit-aspect/")) {
+        const [, , transiting, , , natal, aspect] = record.contentKey.split("/");
+        const title = (value) => value.replace(/-/g, " ").replace(/\b\w/g, (character) => character.toUpperCase());
+        const relation = { conjunction: "conjunct", opposition: "opposite", square: "square", trine: "trine", sextile: "sextile" }[aspect];
+        // weeklyHoroscope.renderContact supplies this calculated label when the
+        // authored row deliberately has no title. Its body remains verbatim.
+        headline = `${title(transiting)} ${relation} your ${title(natal)}`;
+      }
 
       return {
         key: record.contentKey.replaceAll("/", "."),
@@ -197,7 +241,7 @@ export default async function loadUnits() {
         version: "author-final",
         declaredSlots: ["headline", "body"],
         fields: {
-          headline: record.headline,
+          headline,
           body
         }
       };

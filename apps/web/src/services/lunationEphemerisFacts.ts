@@ -1,5 +1,5 @@
 import { SourceGapError } from "../content/fallbackArchitectureV3Runtime";
-import type { SkySnapshot } from "../types";
+import type { PlanetPosition, SkySnapshot } from "../types";
 
 import { traditionalSignRulers as signRulers } from "../content/skySunSeason";
 const signs = Object.keys(signRulers);
@@ -10,6 +10,15 @@ const skyBodyClaimPattern = new RegExp(
 
 function normalizeId(value: string) {
   return value.trim().toLowerCase().replace(/\s+/g, "-");
+}
+
+/** A nearby true node can lie across a sign boundary from the eclipse Moon. */
+export function lunationNodeRelation(positions: Pick<PlanetPosition, "planet" | "longitude">[]) {
+  const moon = positions.find(position => normalizeId(position.planet) === "moon")?.longitude;
+  const north = positions.find(position => normalizeId(position.planet) === "north-node")?.longitude;
+  if (typeof moon !== "number" || typeof north !== "number" || !Number.isFinite(moon) || !Number.isFinite(north)) return null;
+  const distance = Math.abs(((moon - north + 540) % 360) - 180);
+  return distance < 90 ? "north-node" : distance > 90 ? "south-node" : null;
 }
 
 export function wholeSignHouse(sign: string, risingSign: string) {

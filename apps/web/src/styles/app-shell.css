@@ -25,18 +25,11 @@
   overflow: visible;
 }
 
-.portal-grid.signup-layout {
-  display: block;
-  width: 100vw;
-  max-width: none;
-  margin: 0;
-  padding: 0;
-}
-
+.portal-grid.signup-layout,
 .signup-layout .detail-panel {
   display: block;
-  width: 100vw;
-  max-width: none;
+  width: 100%;
+  max-width: 100%;
   margin: 0;
   padding: 0;
 }

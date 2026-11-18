@@ -1,0 +1,21 @@
+import assert from 'node:assert/strict';
+import { adjacentHoroscopeReference, nextHoroscopeRefresh, horoscopeNavigationLabel } from '../apps/web/src/features/horoscopes/horoscopeRefresh.ts';
+
+assert.equal(adjacentHoroscopeReference('daily', '2026-03-08T16:00:00Z', 'America/New_York', -1), '2026-03-07T17:00:00.000Z');
+assert.equal(adjacentHoroscopeReference('daily', '2026-11-01T17:00:00Z', 'America/New_York', -1), '2026-10-31T16:00:00.000Z');
+assert.equal(adjacentHoroscopeReference('weekly', '2026-01-01T17:00:00Z', 'America/New_York', -1), '2025-12-25T17:00:00.000Z');
+assert.equal(adjacentHoroscopeReference('monthly', '2026-03-31T16:00:00Z', 'America/New_York', -1), '2026-02-01T17:00:00.000Z');
+assert.equal(adjacentHoroscopeReference('monthly', '2026-12-31T01:00:00Z', 'Australia/Sydney', 1), '2027-01-01T01:00:00.000Z');
+assert.equal(adjacentHoroscopeReference('seasonal', '2026-10-25T16:00:00Z', 'America/New_York', -1), null);
+assert.equal(new Date(nextHoroscopeRefresh('America/New_York', undefined, Date.parse('2026-03-08T05:00:00Z'))).toISOString(), '2026-03-09T04:00:00.000Z');
+const compact=(value:string)=>value.replace(/\s+/gu,' ');
+assert.equal(horoscopeNavigationLabel('daily','2026-10-13T00:00:00.000Z','America/New_York'),'Oct 12','Labels use the reading zone, not UTC dates.');
+assert.equal(compact(horoscopeNavigationLabel('weekly','2026-01-01T17:00:00.000Z','America/New_York')),'Dec 29, 2025 – Jan 4, 2026');
+const sundayWeek={period:'weekly' as const,audience:'rising' as const,timeZone:'America/New_York',startsAt:'2026-03-08T05:00:00.000Z',endsAt:'2026-03-15T04:00:00.000Z'};
+assert.equal(compact(horoscopeNavigationLabel('weekly','2026-03-08T04:59:59.999Z',sundayWeek.timeZone,sundayWeek)),'Mar 1 – 7','Published Sunday weeks retain their own boundaries across DST.');
+assert.equal(compact(horoscopeNavigationLabel('weekly',sundayWeek.endsAt,sundayWeek.timeZone,sundayWeek)),'Mar 15 – 21');
+assert.equal(horoscopeNavigationLabel('monthly','2027-01-01T01:00:00.000Z','Australia/Sydney'),'January');
+const season={...sundayWeek,period:'seasonal' as const,seasonSign:'pisces'};
+assert.equal(horoscopeNavigationLabel('seasonal',season.endsAt,season.timeZone,season),'Aries season');
+assert.equal(horoscopeNavigationLabel('seasonal',null,season.timeZone,null),'','An unknown season must not acquire a made-up destination.');
+console.log('Horoscope civil-period navigation passed: DST, month/year boundaries, selected zone, and no invented seasonal window.');

@@ -4,7 +4,7 @@ const now='2026-10-23T16:00:00.000Z';const RealDate=Date;
 class FixedDate extends RealDate{constructor(...args){super(...(args.length?args:[now]));}static now(){return new RealDate(now).getTime();}}
 const ny={label:'Synthetic New York',latitude:40.7128,longitude:-74.006,timeZone:'America/New_York'};
 function harness(href='https://fixture.test/?date=2026-10-23#sky',location=ny,savedMode=null){
- let clock=0;const calls=[],timers=[],events=[];const window={location:new URL(href),localStorage:{getItem:key=>key==='tldrastro:selectedLocation'?location&&JSON.stringify(location):savedMode},sessionStorage:{getItem:()=>null,setItem(){},removeItem(){}},dispatchEvent:event=>events.push(event.type)};
+ let clock=0;const calls=[],timers=[],events=[],target=new EventTarget();const window={location:new URL(href),localStorage:{getItem:key=>key==='tldrastro:selectedLocation'?location&&JSON.stringify(location):savedMode},sessionStorage:{getItem:()=>null,setItem(){},removeItem(){}},addEventListener:target.addEventListener.bind(target),removeEventListener:target.removeEventListener.bind(target),dispatchEvent:event=>{events.push(event.type);return target.dispatchEvent(event)}};
  const context={window,module:{exports:{}},URL,URLSearchParams,Intl,Date:FixedDate,performance:{now:()=>clock},AbortController,DOMException,Event,setTimeout:(fn,ms)=>{timers.push({fn,ms});return timers.length},clearTimeout(){},fetch:(url,options)=>{calls.push({url,options});return new Promise(()=>{})}};
  runInNewContext(built,context);return {api:context.module.exports,window,calls,timers,events,advance:ms=>clock=ms};
 }
@@ -23,4 +23,16 @@ for(const mode of ['profile','friends','calendar','horoscopes','account','settin
  h.timers[0].fn();assert.equal(h.calls[0].options.signal.aborted,true,'The original eight-second deadline includes the inline transport.');
 }
 for(const [day,location,at]of [['2026-11-01',ny,'2026-11-01T17:00:00.000Z'],['2026-11-01',{label:'Synthetic Tokyo',latitude:35.6762,longitude:139.6503,timeZone:'Asia/Tokyo'},'2026-11-01T03:00:00.000Z']]){const h=harness('https://fixture.test/?date='+day+'#sky',location);h.api.primeInitialSkyTransport();assert.equal(new URL(h.calls[0].url,'https://fixture.test').searchParams.get('at'),at);assert(h.api.matchingInitialSkyTransport(day,location,false));}
+for(const event of ['beforeunload','pagehide']){
+ const h=harness();h.api.primeInitialSkyTransport();
+ const initial=h.api.matchingInitialSkyTransport('2026-10-23',ny,true);
+ const cancelled=assert.rejects(initial.request,{name:'AbortError'});
+ h.window.dispatchEvent(new Event(event));await cancelled;
+ assert.equal(h.calls[0].options.signal.aborted,true);
+ assert.equal(h.api.matchingInitialSkyTransport('2026-10-23',ny,true),null,'Cancelled inline transport cannot be adopted later.');
+ h.api.primeInitialSkyTransport();assert.equal(h.calls.length,2,'A later request on the same page gets a fresh transport.');
+ const later=h.api.matchingInitialSkyTransport('2026-10-23',ny,true);
+ const settled=assert.rejects(later.request,{name:'AbortError'});
+ h.window.dispatchEvent(new Event(event));await settled;
+}
 console.log('PASS: actual inline transport selection, single ownership, matching/adoption, wrong date/location/zone/clock rejection, eight-second total expiry, root/defaults, saved destinations, auth/route guards and DST/local-noon parity.');

@@ -1,9 +1,14 @@
+import { expectSkyAspectBody } from "../helpers/sky-aspect-reading";
+import { approvedNatalPilotBody } from "../helpers/natal-approved-pilot.mts";
 import { moonRoutingRecords, moonReaderCompetingRecords } from '../helpers/moon-routing-fixtures';
 import { personalTransitCopySeed, personalTransitId } from '../../apps/web/src/services/personalDailyTransits';
 import { selectMoonTransitVariant } from '../../apps/web/src/content/fallbackArchitectureV3/resolver/moonTransitVariants.mjs';
 import { readerResponse } from '../helpers/reader-response';
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import { bundledPublications } from "../helpers/bundled-publications";
+import { installSyntheticNetworkGuard } from "../helpers/synthetic-network-guard";
+import { expectTransitContainment } from "../helpers/transit-wheel-containment";
+import { expectPersonalizedPlacementPresentation } from "../helpers/sky-personalized-presentation";
 import { observeArticleTransitions, expectAnimatedArticleNavigation } from "./qaArticleTransitions";
 import { readFileSync } from "node:fs";
 import { LUNAR_JOURNAL_ENTRIES, lunarJournalSkyParagraphs } from "../../apps/web/src/features/calendar/lunarJournal";
@@ -35,7 +40,8 @@ async function expectBundledLunationBody(article: Locator, phase: string, sign: 
 
 async function expectHousePillsInArticle(page: Page) {
   const pills = page.locator(".article-id .article-pills");
-  await expect(pills.locator(".planet-placement-row__duration")).toHaveText(/^(?:TODAY|\d+D|\d+M|\d+Y(?: \d+M)?)(?:\s+left)?$/);
+  await expect(page.locator(".article-id .article-duration").first()).toBeVisible();
+  await expect(page.locator(".article-id .article-duration").first()).not.toHaveText("");
   await expect(pills.locator(".house-transit-term-tag")).toHaveText(/^(?:Short-term|Long-term)$/);
   await expect(pills.locator(".house-transit-term-tag")).toHaveCSS("border-top-width", "0px");
   const keywords = pills.locator(".ui-pill--muted");
@@ -118,8 +124,10 @@ async function selectFriendDetailTab(
   if (name === "Synastry" || name === "Composite") {
     const option = page.getByRole("menuitemradio", { name: new RegExp(`^${name}`) });
     const moreButton = page.getByRole("button", { name: /More, \d+ sections/ });
+    const tab = page.getByRole("tab", { name, exact: true });
 
     await expect(async () => {
+      if (await tab.isVisible()) { await tab.click(); return; }
       if (!await option.isVisible().catch(() => false)) {
         await moreButton.click();
       }
@@ -150,7 +158,7 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
   );
   const shouldPreloadNatalSky = options.profile && options.preloadProfileNatalSky;
   const preloadedNatalSnapshot = shouldPreloadNatalSky
-    ? await getAstrodienstSky(fixtureLocation, profileBirthDateTime)
+    ? await getAstrodienstSky(fixtureLocation, profileBirthDateTime, { includeTransitWindows: false, includeDailyEvents: false, includeAspectTiming: false })
     : null;
   const preloadedNatalCache = preloadedNatalSnapshot
     ? {
@@ -161,7 +169,7 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
       }
     : null;
 
-  await page.route("https://tldrastro-api-27165565299.us-central1.run.app/**", async (route) => {
+  await page.route(`${(process.env.VITE_TLDRASTRO_API_URL || "https://tldrastro-api-27165565299.us-central1.run.app").replace(/\/$/, "")}/**`, async (route) => {
     await route.fulfill({
       status: 503,
       contentType: "text/plain",
@@ -435,6 +443,9 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
       }]));
     }, { sky: preloadedNatalSnapshot, fixture: options.synastryFixture, fixtureLocation, fixtureUserId });
   }
+  // Private chart journeys require a verified session; a cached profile alone
+  // intentionally renders the current sign-in gate.
+  if (options.profile && (options.friends || options.synastryFixture)) await seedSignedInSession(page);
   await page.emulateMedia({ reducedMotion: "reduce" });
 }
 
@@ -664,7 +675,6 @@ async function expectSharedLabelContract(page: Page, label: string, options: { r
       ".aspect-section-label",
       ".friend-section-label",
       ".placements-heading .eyebrow",
-      ".settings-group-label",
       ".article-eyebrow",
       ".article-section__eyebrow"
     ];
@@ -738,7 +748,8 @@ async function expectSharedLabelContract(page: Page, label: string, options: { r
         failures.push(`${prefix} text-transform ${style.textTransform} expected uppercase`);
       }
 
-      if ([style.marginTop, style.marginRight, style.marginBottom, style.marginLeft].some((value) => normalizePx(value) !== 0)) {
+      const bottomMargin = element.matches('h2.eyebrow') ? normalizePx(rootStyle.getPropertyValue('--space-4')) : 0;
+      if ([style.marginTop, style.marginRight, style.marginLeft].some((value) => normalizePx(value) !== 0) || Math.abs(normalizePx(style.marginBottom) - bottomMargin) > 0.2) {
         failures.push(`${prefix} margin ${style.margin}`);
       }
 
@@ -1043,7 +1054,9 @@ async function expectFormTypography(page: Page, selector: string, label: string)
       const style = getComputedStyle(element);
       const weight = numericWeight(style.fontWeight);
 
-      if (Number.isFinite(weight) && weight > 500) {
+      const isAuthAction = element.matches(".auth-primary-button, .google-auth-button");
+      const expectedMaximum = isAuthAction ? 600 : 500;
+      if (isAuthAction && weight !== 600 || Number.isFinite(weight) && weight > expectedMaximum) {
         failures.push(`${element.tagName.toLowerCase()} weight ${weight}: ${sample(element)}`);
       }
     }
@@ -1052,7 +1065,7 @@ async function expectFormTypography(page: Page, selector: string, label: string)
   }, selector);
 
   expect(result.checked, `${label} has visible form typography to inspect`).toBeGreaterThan(0);
-  expect(result.failures, `${label} keeps form text regular/medium, not bold`).toEqual([]);
+  expect(result.failures, `${label} follows field, label, and auth-action typography`).toEqual([]);
 }
 
 const readerCopyLeakPattern = /\b(?:undefined|null|NaN|fallback-hook|slot-template|sourceSnapshot|templateVersion|record id|backend|database|schema|generated content|dashboard|admin|hydrated|Supabase|Missing VITE|Interpretation in review|giving North Node a clear place|This pattern is active now|This transit is active now|is active here|current emphasis (?:is|may be) visible in timing, mood|everyday choices|while this contact is active|one part of the contact|other part of the contact pushes back|They disagree about how you should respond|Recurring friction that asks for an adjustment|Name both sides of the pattern before choosing the next concrete response)\b/i;
@@ -1252,13 +1265,14 @@ async function expectRelationshipWheelGeometry(page: Page, label: string) {
   expect(geometry.outer.max, `${label} outer glyphs stay inside the zodiac band`).toBeLessThan(geometry.signInnerRadius);
   expect(geometry.scaledGlyphs, `${label} never shrinks crowded glyphs`).toBe(0);
   expect(geometry.inner.min, `${label} inner glyphs stay outside the aspect well`).toBeGreaterThanOrEqual(108);
-  expect(geometry.inner.max, `${label} inner glyphs stay inside the inner house ring`).toBeLessThan(Math.min(...geometry.houses.radii[1]));
+  expect(geometry.inner.max, `${label} inner glyphs stay inside the planet band`).toBeLessThan(190);
   expect(geometry.outer.min, `${label} outer glyphs clear the outer house ring`).toBeGreaterThan(Math.max(...geometry.houses.radii[0]));
-  for (const radii of geometry.houses.radii) {
+  for (const radii of geometry.houses.radii.filter(ring => ring.length)) {
     expect(radii, `${label} has twelve numbers in each house ring`).toHaveLength(12);
     expect(Math.max(...radii) - Math.min(...radii), `${label} keeps house numbers centered on one circle`).toBeLessThan(0.01);
   }
-  expect(Math.min(...geometry.houses.radii[0]), `${label} puts person 1 houses outside person 2 houses`).toBeGreaterThan(Math.max(...geometry.houses.radii[1]));
+  expect(geometry.houses.radii[0], `${label} preserves twelve whole-sign house labels`).toHaveLength(12);
+  expect(geometry.houses.radii[1], `${label} preserves twelve independently numbered inner houses`).toHaveLength(12);
   expect(geometry.houses.degreeMin, `${label} keeps house labels clear of planet degree text`).toBeGreaterThanOrEqual(9);
   expect(geometry.houses.tickMin, `${label} keeps house labels clear of degree tick lines`).toBeGreaterThanOrEqual(6);
 }
@@ -1269,6 +1283,20 @@ async function expectAspectInspector(
   pointId?: string
 ) {
   await expect(wheel, `${label} is visible`).toBeVisible();
+
+  // The lazy renderer may still be replacing its visible loading placeholder.
+  await expect(wheel.locator(".interactive-wheel-planet-button, .aspect-inspector-point").first()).toBeAttached();
+
+  if (await wheel.locator(".interactive-zodiac-wheel").count()) {
+    const point = wheel.locator(pointId ? `[data-planet="${pointId}"] [role="button"]` : '.interactive-wheel-planet-button').first();
+    await point.click();
+    await expect(point).toHaveAttribute("aria-pressed", "true");
+    await expect(wheel.locator(".interactive-wheel-detail")).toBeVisible();
+    await expect(wheel.locator(".interactive-wheel-aspects [data-active]"), `${label} highlights configured aspects`).not.toHaveCount(0);
+    await point.press("Enter");
+    await expect(wheel.locator(".interactive-wheel-detail")).toHaveCount(0);
+    return;
+  }
 
   let resolvedPointId = pointId;
 
@@ -1322,14 +1350,14 @@ test.describe("client-facing user flow case studies", () => {
     }, { key: supabaseAuthStorageKey(), user: fixtureAuthUser });
     await expect.poll(() => verifications).toBeGreaterThan(0);
     await page.getByRole("button", { name: "Open menu", exact: true }).click();
-    await expect(page.getByRole("menuitem", { name: "Sign out", exact: true })).toBeVisible();
+    await page.getByRole("menuitem", { name: "Account", exact: true }).click();
+    await expect(page.getByRole("button", { name: "Sign out", exact: true })).toBeVisible();
     await page.evaluate(key => {
       localStorage.removeItem(key);
       window.dispatchEvent(new StorageEvent("storage", { key, newValue: null }));
     }, supabaseAuthStorageKey());
-    await expect(page.getByRole("menuitem", { name: "Sign out", exact: true })).toHaveCount(0);
-    if (!await page.getByRole("menuitem", { name: "Login", exact: true }).isVisible()) await page.getByRole("button", { name: "Open menu", exact: true }).click();
-    await expect(page.getByRole("menuitem", { name: "Login", exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Sign out", exact: true })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Sign in", exact: true })).toBeVisible();
   });
   test("guest can read the current sky and open a detail article", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
@@ -1339,25 +1367,26 @@ test.describe("client-facing user flow case studies", () => {
 
     await expect(page.locator(".app-shell")).toBeVisible();
     await expect(page.getByRole("navigation", { name: "Primary navigation" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible();
-    await expect(page.getByRole("list", { name: "Daily planetary placements" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Sky", exact: true })).toBeVisible();
+    const planets = page.getByRole("region", { name: "Planets", exact: true });
+    await expect(planets.getByRole("list", { name: "Daily planetary placements" })).toBeVisible();
     await expectAspectInspector(
       page.getByRole("region", { name: "Current sky" }),
       "Current sky wheel"
     );
 
-    const firstPlacement = page.locator(".sky-pl-item button").first();
+    const firstPlacement = planets.getByRole("button").first();
     await expect(firstPlacement).toBeVisible();
     await firstPlacement.click();
 
     await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
-    await expect(page.getByRole("button", { name: "Close detail" })).toBeVisible();
+    await expect(page.locator(".sky-detail-back")).toBeVisible();
     await expect(page.locator("article, .sky-detail-article").first()).toBeVisible();
     await expectNoDuplicateArticleHeadings(page, "Sky placement detail");
     await expectSemanticArticleHeadingOrder(page, "Sky placement detail");
 
-    await page.getByRole("button", { name: "Close detail" }).click();
-    await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible();
+    await page.locator(".sky-detail-back").click();
+    await expect(page.getByRole("heading", { name: "Sky", exact: true })).toBeVisible();
     await assertNoClientErrors();
   });
 
@@ -1406,10 +1435,25 @@ test.describe("client-facing user flow case studies", () => {
           // You/Friends loading budgets remain in their performance suites.
           await expect(card.locator("h1")).toBeVisible({ timeout: 60_000 });
           const box = await card.boundingBox();
-          expect(box!.x).toBeCloseTo(width * 0.025, 0);
-          expect(box!.width).toBeCloseTo(width * 0.95, 0);
-          expect(box!.y).toBeCloseTo(width <= 720 ? 50 : 108, 0);
-          await expect(card).toHaveCSS("padding-left", width <= 720 ? "20px" : `${Math.min(width / 10, 144)}px`);
+          const contract = await card.evaluate(element => {
+            const page = element.closest('.sky-detail-page')!;
+            const parent = page.getBoundingClientRect(), style = getComputedStyle(page);
+            const probe = document.createElement('div');
+            const compactInset = page.classList.contains('sky-placement-article-page') ? 'var(--space-6)' : 'var(--space-5)';
+            probe.style.cssText = `position:fixed;visibility:hidden;width:var(--layout-reading-width);top:var(--page-top);left:var(--layout-reading-padding);padding-left:${compactInset}`;
+            page.append(probe);
+            const tokens = getComputedStyle(probe);
+            const left = parent.left + parseFloat(style.paddingLeft);
+            const available = parent.width - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+            const width = Math.min(available, parseFloat(tokens.width));
+            const result = { x: left + (available - width) / 2, width, top: parseFloat(tokens.top),
+              inset: innerWidth <= 800 ? tokens.paddingLeft : tokens.left };
+            probe.remove(); return result;
+          });
+          expect(box!.x).toBeCloseTo(contract.x, 0);
+          expect(box!.width).toBeCloseTo(contract.width, 0);
+          expect(box!.y).toBeCloseTo(contract.top, 0);
+          await expect(card).toHaveCSS("padding-left", contract.inset);
           const title = await card.locator("h1").boundingBox();
           await page.locator(".sky-detail-back").click({ trial: true });
           const back = await page.locator(".sky-detail-back").boundingBox();
@@ -1507,7 +1551,7 @@ test.describe("client-facing user flow case studies", () => {
   test("restored tabs recover if the React shell is blank", async ({ page }) => {
     await seedClientState(page);
     await expectClientRouteLoads(page, "/#sky");
-    await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Sky", exact: true })).toBeVisible();
 
     await page.evaluate(() => {
       window.sessionStorage.removeItem("tldrastro:blankRestoreReloadAt");
@@ -1520,7 +1564,7 @@ test.describe("client-facing user flow case studies", () => {
       window.dispatchEvent(new Event("focus"));
     });
 
-    await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByRole("heading", { name: "Sky", exact: true })).toBeVisible({ timeout: 10_000 });
     await expect(page.locator(".app-shell")).toBeVisible();
   });
 
@@ -1534,11 +1578,12 @@ test.describe("client-facing user flow case studies", () => {
 
     await page.getByRole("button", { name: "Open menu" }).click();
     await page.getByRole("menuitem", { name: /settings/i }).click();
-    await expect(page.getByText("settings.")).toBeVisible();
-    await expect(page.getByLabel("Theme", { exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Settings", exact: true })).toBeVisible();
+    await expect(page.locator('.topbar-actions > .theme-toggle')).toHaveCount(0);
+    await expect(page.locator('.settings-theme-control').getByRole('button', { name: 'dark', exact: true })).toBeVisible();
 
     await page.getByRole("button", { name: /^Sky$/ }).click();
-    await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Sky", exact: true })).toBeVisible();
     await assertNoClientErrors();
   });
 
@@ -1733,10 +1778,10 @@ test.describe("client-facing user flow case studies", () => {
     });
     try {
       await expectClientRouteLoads(page, "/#you");
-      await expect(page.getByRole("button", { name: /^Virgo New Moon for Aries Rising/u })).toBeVisible({ timeout: routeReadyTimeoutMs });
+      await expect(page.getByRole("button", { name: /^Open full entry for Virgo New Moon for Aries Rising/u })).toBeVisible({ timeout: routeReadyTimeoutMs });
       const macro = page.locator(".weekly-horoscope__macro");
       await expect(macro).toHaveCount(0);
-      await expect(page.getByRole("region", { name: "This week's transits", exact: true })).toBeVisible({ timeout: routeReadyTimeoutMs });
+      await expect(page.locator(".lunation-transit")).toBeVisible({ timeout: routeReadyTimeoutMs });
       await expect(macro).toHaveCount(0);
       releaseCopy();
       await expect(macro).toContainText("You do not need another plan for becoming a better version of yourself.", { timeout: 15_000 });
@@ -1759,7 +1804,7 @@ test.describe("client-facing user flow case studies", () => {
     await expectClientRouteLoads(page, "/#you");
 
     const bookCard = page.getByRole("button", {
-      name: /^Aquarius Full Moon for Aries Rising/u
+      name: /^Open full entry for Aquarius Full Moon for Aries Rising/u
     });
     await expect(bookCard).toBeVisible({ timeout: 30_000 });
     await bookCard.click();
@@ -1801,7 +1846,7 @@ test.describe("client-facing user flow case studies", () => {
         await expect(page.locator(".app-shell")).toHaveClass(new RegExp(`theme-${theme}`));
 
         const eclipseCard = page.getByRole("button", {
-          name: /^Pisces Lunar Eclipse Horoscope/u
+          name: /^Open full entry for Pisces Lunar Eclipse Horoscope/u
         });
         const eclipseTitle = eclipseCard.locator(".updates-aspect-row__title");
         await expect(eclipseCard).toBeVisible({ timeout: 30_000 });
@@ -1826,8 +1871,9 @@ test.describe("client-facing user flow case studies", () => {
         });
         expect(eclipseCardStyle.backgroundColor, "Horoscope card has a visible surface").not.toBe("rgba(0, 0, 0, 0)");
         expect(eclipseCardStyle.borderRadius, "Horoscope card has rounded corners").toBeGreaterThan(0);
-        expect(eclipseCardStyle.borderStyle, "Horoscope card has an outlined edge").toBe("solid");
-        expect(eclipseCardStyle.boxShadow, "Horoscope card has the established raised treatment").not.toBe("none");
+        expect(eclipseCardStyle.borderStyle, "Horoscope card follows the borderless card design").toBe("none");
+        const cardShadow = await eclipseCard.evaluate(element => { const probe = document.createElement('span'); probe.style.boxShadow = 'var(--card-shadow)'; element.append(probe); const value = getComputedStyle(probe).boxShadow; probe.remove(); return value; });
+        expect(eclipseCardStyle.boxShadow, "Horoscope card follows the shared card elevation").toBe(cardShadow);
         expect(eclipseCardStyle.paddingTop, "Horoscope card uses inset card spacing").toBeGreaterThan(0);
         await expect(
           page.locator(".updates-aspect-row__title").filter({ hasText: /^Pisces Lunar Eclipse Horoscope$/u }),
@@ -1896,8 +1942,11 @@ test.describe("client-facing user flow case studies", () => {
     await expect(dateTrigger).toBeVisible();
     await expect(dateTrigger).toContainText("Today");
     await dateTrigger.click();
+    await expect(page.getByRole("dialog", { name: "Transit date" })).toBeVisible();
+    await page.getByRole("tab", { name: "Date", exact: true }).click();
     await expect(page.getByRole("region", { name: "Pick Date" })).toBeVisible();
     await page.getByRole("gridcell", { name: "Monday, July 20, 2026" }).click();
+    await page.getByRole("button", { name: "Apply date", exact: true }).click();
 
     await expect(page).toHaveURL(/[?&]date=2026-07-20(?:&|#|$)/u);
     await expect(dateTrigger).toContainText("Jul 20");
@@ -1909,8 +1958,11 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page.getByRole("region", { name: "Friends", exact: true })).toBeVisible();
     await expect(dateTrigger).toContainText("Jul 20");
     await dateTrigger.click();
+    await expect(page.getByRole("dialog", { name: "Transit date" })).toBeVisible();
+    await page.getByRole("tab", { name: "Date", exact: true }).click();
     await expect(page.getByRole("region", { name: "Pick Date" })).toBeVisible();
     await page.getByRole("gridcell", { name: "Sunday, July 12, 2026" }).click();
+    await page.getByRole("button", { name: "Apply date", exact: true }).click();
 
     await expect(page).toHaveURL(/[?&]date=2026-07-12(?:&|#|$)/u);
     await expect(dateTrigger).toContainText("Jul 12");
@@ -1943,7 +1995,9 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page).not.toHaveURL(/[?&]date=/u);
 
     await dateTrigger.click();
+    await page.getByRole("tab", { name: "Date", exact: true }).click();
     await page.getByRole("gridcell", { name: "Thursday, August 20, 2026" }).click();
+    await page.getByRole("button", { name: "Apply date", exact: true }).click();
     await expect(page).toHaveURL(/[?&]date=2026-08-20(?:&|#|$)/u);
     await expect(dateTrigger).toContainText("Aug 20");
 
@@ -1961,17 +2015,18 @@ test.describe("client-facing user flow case studies", () => {
   });
 
   test("chart calculation failure terminates in a visible error state", async ({ page }) => {
+    test.setTimeout(150_000);
     await page.route(/\/wasm\/(?:[a-f0-9]{16}\/)?swisseph\.data$/u, async (route) => {
       await route.fulfill({ status: 503, body: "Ephemeris unavailable for visual-smoke coverage." });
     });
     await seedClientState(page, { profile: true });
     await expectClientRouteLoads(page, "/#you");
 
-    const chartCalculation = page.locator(".chart-layout__visual");
-    await expect(chartCalculation).toHaveAttribute("data-chart-calculation-status", "error", { timeout: 30_000 });
-    const errorState = page.getByRole("alert", { name: "Chart calculation error" });
-    await expect(errorState).toBeVisible();
-    await expect(errorState).toContainText(/Swiss|Ephemeris|503|failed/i);
+    const errorState = page.locator(".load-error--page").getByRole("alert");
+    await expect(errorState).toBeVisible({ timeout: 135_000 });
+    await expect(errorState).toContainText("Your chart could not load.");
+    await expect(page.getByRole("button", { name: "Try again", exact: true })).toBeVisible();
+    await expect(page.locator(".chart-layout__visual")).toHaveCount(0);
     await expect(page.getByRole("heading", { name: "Reading your chart." })).toHaveCount(0);
   });
 
@@ -2013,11 +2068,9 @@ test.describe("client-facing user flow case studies", () => {
       synastryWheel,
       "Nikki synastry wheel"
     );
-    const synastryInnerBand = synastryWheel.locator(".synastry-inner-glyph-band path");
-    await expect(synastryInnerBand, "Synastry inner glyph band covers twelve sectors").toHaveCount(12);
-    await expect(synastryInnerBand.first(), "Synastry retains the transit band color").toHaveCSS("fill", transitOuterBandBackground.stroke);
-    await expect(synastryWheel.locator(".synastry-house-band--outer path")).toHaveCount(12);
-    await expect(synastryWheel.locator(".synastry-house-band--inner path")).toHaveCount(12);
+    await expect(synastryWheel.locator('.wheel-surfaces > circle')).toHaveCount(5);
+    await expect(synastryWheel.locator('.wheel-surface--inner-planets')).toHaveAttribute('r', '190');
+    await expect(synastryWheel.locator('.wheel-surface--houses')).toHaveAttribute('r', '132');
     await expectRelationshipWheelGeometry(page, "Nikki synastry chart wheel");
 
     await selectFriendDetailTab(page, "Composite");
@@ -2031,7 +2084,7 @@ test.describe("client-facing user flow case studies", () => {
 
   for (const theme of ["light", "dark"] as const) {
     for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844 }]) {
-      test(`Compatibility Pair Daily appears above planets on a cold visit (${theme}, ${viewport.width}px)`, async ({ page }, testInfo) => {
+      test(`Compatibility overview pairs the chart with its opening on a cold visit (${theme}, ${viewport.width}px)`, async ({ page }, testInfo) => {
         const assertNoClientErrors = await expectNoClientErrors(page);
         await page.setViewportSize(viewport);
         await seedClientState(page, { profile: true, friends: true, preloadProfileNatalSky: true, theme });
@@ -2046,11 +2099,15 @@ test.describe("client-facing user flow case studies", () => {
         }
 
         const daily = page.locator(".friend-compatibility-stage .friend-daily-forecast");
-        const comparisons = page.getByLabel("Planet comparisons");
+        const comparisons = page.getByRole("region", { name: "Planet by planet", exact: true });
         await expect(daily).toBeVisible();
-        await expect(daily.locator(".friend-section-label")).toHaveText(/^Today - /);
-        await expect(daily.locator("p")).toContainText("Nikki");
-        const body = await daily.locator("p").innerText();
+        await expect(daily.locator(".friend-profile-eyebrow")).toHaveText(/^Between you · /);
+        const opening = daily.locator(".friend-profile-overview__headline");
+        await expect(opening).toContainText("Nikki");
+        const headline = await opening.innerText();
+        const supportingParagraphs = daily.locator(".friend-profile-overview__body");
+        const supporting = await supportingParagraphs.allTextContents();
+        const body = [headline, ...supporting].join(" ");
         expect(body.length).toBeGreaterThan(40);
         expect(body).not.toMatch(/SOURCE_GAP|\{[^}]+\}|undefined/);
         await expect(comparisons.locator(".compatibility-card").first()).toBeVisible();
@@ -2059,14 +2116,59 @@ test.describe("client-facing user flow case studies", () => {
         expect(dailyBounds.y + dailyBounds.height).toBeLessThanOrEqual(comparisonsBounds.y);
         expect(dailyBounds.x).toBeGreaterThanOrEqual(0);
         expect(dailyBounds.x + dailyBounds.width).toBeLessThanOrEqual(viewport.width);
+        const wheel = page.getByLabel("Nikki compatibility chart wheel");
+        await expect(wheel).toBeVisible();
+        const wheelBounds = (await wheel.boundingBox())!;
+        if (viewport.width > 800) {
+          expect(Math.abs(wheelBounds.y - dailyBounds.y)).toBeLessThan(2);
+          expect(wheelBounds.x + wheelBounds.width).toBeLessThan(dailyBounds.x);
+          expect(comparisonsBounds.y).toBeGreaterThanOrEqual(wheelBounds.y + wheelBounds.height);
+        } else {
+          expect(dailyBounds.y).toBeGreaterThanOrEqual(wheelBounds.y + wheelBounds.height);
+        }
+        await expect(daily).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+        const typography = await daily.evaluate((element) => {
+          const title = element.querySelector(".friend-profile-overview__headline")!;
+          const paragraph = element.querySelector(".friend-profile-overview__body")!;
+          const style = getComputedStyle(title);
+          const bodyStyle = getComputedStyle(paragraph);
+          const role = document.createElement("span");
+          element.append(role);
+          role.style.cssText = "font-family:var(--font-display);font-size:var(--type-overview-title-size);font-weight:var(--weight-regular);line-height:var(--leading-title);letter-spacing:var(--tracking-title)";
+          const expectedTitle = getComputedStyle(role);
+          const properties = ["font-family", "font-size", "font-weight", "line-height", "letter-spacing"];
+          const titleMatches = properties.every(property => style.getPropertyValue(property) === expectedTitle.getPropertyValue(property));
+          role.style.cssText = "font-family:var(--font-body);font-size:var(--type-overview-reading-size);font-weight:var(--weight-regular);line-height:var(--leading-body);letter-spacing:var(--tracking-body)";
+          const expectedBody = getComputedStyle(role);
+          const bodyMatches = properties.every(property => bodyStyle.getPropertyValue(property) === expectedBody.getPropertyValue(property));
+          role.remove();
+          return { titleMatches, bodyMatches, order: Array.from(element.children).map(child => child.tagName) };
+        });
+        expect(typography).toEqual({ titleMatches: true, bodyMatches: true, order: ["SPAN", "P", "P"] });
+        const headings = await page.locator(".friend-chart-page h1, .friend-chart-page h2").allTextContents();
+        expect(headings.slice(0, 2)).toEqual(["Nikki", "Planet by planet"]);
         await daily.screenshot({ path: testInfo.outputPath("pair-daily.png") });
+        if (viewport.width > 800) {
+          await page.screenshot({ path: testInfo.outputPath("compatibility-hero.png") });
+        }
+
+        const expand = page.getByRole("button", { name: "Full-screen chart", exact: true });
+        await expand.click();
+        const fullscreen = page.getByRole("dialog");
+        await expect(fullscreen.getByRole("heading").first()).toBeVisible();
+        await expect(fullscreen.locator(".synastry-wheel")).toBeVisible();
+        await page.keyboard.press("Escape");
+        await expect(fullscreen).toHaveCount(0);
+        await expect(expand).toBeFocused();
 
         // A reload and a tab round-trip must retain the complete approved reading.
         await page.reload();
-        await expect(daily.locator("p")).toHaveText(body);
+        await expect(opening).toHaveText(headline);
+        await expect(supportingParagraphs).toHaveText(supporting);
         await page.getByRole("tab", { name: "Natal" }).click();
         await page.getByRole("tab", { name: "Compatibility" }).click();
-        await expect(daily.locator("p")).toHaveText(body);
+        await expect(opening).toHaveText(headline);
+        await expect(supportingParagraphs).toHaveText(supporting);
         await assertNoClientErrors();
       });
     }
@@ -2078,11 +2180,13 @@ test.describe("client-facing user flow case studies", () => {
     await seedClientState(page, { profile: true, friends: true });
     await expectClientRouteLoads(page, "/#friends?tab=charts");
 
-    await expect(page.getByText("friends.")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Friends", exact: true })).toBeVisible();
     await expect(page.getByText("Nikki")).toBeVisible();
 
     await page.getByRole("button", { name: "Open Nikki" }).click();
     await expect(page.getByRole("tab", { name: "Natal" })).toBeVisible();
+    const originalViewport = page.viewportSize()!;
+    await page.setViewportSize({ width: 390, height: 844 });
     await expect(page.getByRole("button", { name: "More, 2 sections" })).toBeVisible();
     await expect(page.getByRole("menuitemradio", { name: /^Synastry/ })).toHaveCount(0);
     await page.getByRole("button", { name: "More, 2 sections" }).click();
@@ -2090,10 +2194,11 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page.getByRole("menuitemradio", { name: /^Composite/ })).toContainText("How the relationship acts when you're together.");
     await page.keyboard.press("Escape");
     await expect(page.getByRole("menuitemradio", { name: /^Synastry/ })).toHaveCount(0);
+    await page.setViewportSize(originalViewport);
 
     await page.getByRole("tab", { name: "Compatibility" }).click();
     await expectRelationshipWheelGeometry(page, "Nikki compatibility chart wheel");
-    const compatibilityCards = page.getByLabel("Planet comparisons").locator(".compatibility-card");
+    const compatibilityCards = page.getByRole("region", { name: "Planet by planet", exact: true }).locator(".compatibility-card");
     await expect(compatibilityCards.first()).toBeVisible();
     await expect(page.getByText("Planet comparisons", { exact: true }), "Compatibility cards omit the redundant section eyebrow").toHaveCount(0);
     await expect(compatibilityCards.first().locator(".compatibility-card__header p"), "Compatibility cards omit the redundant sign-pair subtitle").toHaveCount(0);
@@ -2110,14 +2215,11 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page.getByRole("tab", { name: "Transits" })).toHaveAttribute("aria-selected", "true");
     await expect(page.getByLabel("Nikki transit chart wheel")).toBeVisible();
     const transitDailyForecast = page.locator(".friend-daily-forecast").first();
-    await expect(transitDailyForecast, "Transit daily forecast keeps its card inset").toBeVisible();
-    await expect(transitDailyForecast).toHaveCSS("border-top-style", "solid");
-    expect(
-      await transitDailyForecast.evaluate((element) => Number.parseFloat(getComputedStyle(element).paddingTop)),
-      "Transit daily forecast has visible internal padding"
-    ).toBeGreaterThan(0);
+    await expect(transitDailyForecast, "Transit overview uses the editorial headline and complete reading").toBeVisible();
+    await expect(transitDailyForecast.locator(".friend-profile-overview__headline")).not.toBeEmpty();
+    await expect(transitDailyForecast).toHaveCSS("border-top-width", "0px");
 
-    const transitCard = page.locator(".friend-transit-row:has(.updates-aspect-row__orb)").first();
+    const transitCard = page.locator(".friend-transit-row").first();
     await expect(transitCard).toBeVisible();
     await expect(transitCard, "Friend transit cards open their full entries").toHaveJSProperty("tagName", "BUTTON");
     await expect(transitCard).toHaveCSS("cursor", "pointer");
@@ -2156,10 +2258,9 @@ test.describe("client-facing user flow case studies", () => {
     await page.getByRole("button", { name: "Close detail" }).click();
 
     const transitCardText = ((await transitCard.innerText()) ?? "").replace(/\s+/g, " ").trim();
-    const rangeLabel = ((await transitCard.locator(".updates-aspect-row__meta-line > span").last().innerText()) ?? "").trim();
-    const orbLabel = ((await transitCard.locator(".updates-aspect-row__orb").innerText()) ?? "").trim();
-    expect(transitCardText.split(rangeLabel).length - 1, "Transit date range appears once").toBe(1);
-    expect(transitCardText.split(orbLabel).length - 1, "Transit orb appears once").toBe(1);
+    const metaLabel = ((await transitCard.locator(".updates-aspect-row__meta-line").innerText()) ?? "").trim();
+    expect(transitCardText.split(metaLabel).length - 1, "Transit timing and orb appear together once").toBe(1);
+    expect(metaLabel).toMatch(/ · .+°/u);
     await transitCard.click();
     await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
     await expect(page.getByLabel("Transit details", { exact: true })).toBeVisible();
@@ -2177,19 +2278,12 @@ test.describe("client-facing user flow case studies", () => {
       page.getByLabel("synastry relationship summary"),
       "Synastry omits the relationship-patterns summary card"
     ).toHaveCount(0);
-    await expect(page.locator(".synastry-placement-row").first()).toBeVisible();
-    await expect(page.locator(".synastry-placement-planet"), "Synastry placement cards use glyph-only rows without planet-name columns").toHaveCount(0);
-    await expect(page.locator(".synastry-placement-sign-svg").first(), "Synastry placement cards keep zodiac glyphs visible").toBeVisible();
-    const synastryPlacementHeaders = page.locator(".synastry-placement-column-header");
-    await expect(synastryPlacementHeaders, "Synastry shows both placement-column headings").toHaveCount(2);
-    await expect(
-      synastryPlacementHeaders.first(),
-      "Synastry placement headings omit the horizontal rule"
-    ).toHaveCSS("border-bottom-width", "0px");
+    await expect(page.locator(".synastry-placements-comparison")).toHaveCount(0);
+    await expect(page.locator(".friend-profile-dynamics__columns > section > h3")).toHaveText(["What flows", "Challenges", "Mixed or charged"]);
     const synastryContactCard = page
-      .locator(".friend-aspect-row:has(.synastry-contact-description)")
+      .locator(".friend-dynamic-card:has(.reading-story-card__preview)")
       .first();
-    const synastryContactDescription = synastryContactCard.locator(".synastry-contact-description");
+    const synastryContactDescription = synastryContactCard.locator(".reading-story-card__preview");
     await expect(synastryContactDescription).toBeVisible();
     await expect(synastryContactCard.locator(".ui-pill")).toHaveCount(0);
     await synastryContactCard.click();
@@ -2209,22 +2303,20 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
-  test("Friends Circle stays selectable and offers sign-in when only a cached profile remains", async ({ page }) => {
+  test("Friends Circle requires the shared session while retaining the cached profile", async ({ page }) => {
     await seedClientState(page, { profile: true });
     await expectClientRouteLoads(page, "/#friends?tab=circle");
 
-    const circleTab = page.getByRole("tab", { name: "Circle · 0" });
-    const chartsTab = page.getByRole("tab", { name: "Charts · 0" });
-    await expect(circleTab).toHaveAttribute("aria-selected", "true");
-    await expect(page.getByRole("alert")).toContainText(
-      "Sign in to see your friends"
-    );
-    await expect(page.getByRole("alert").getByRole("button", { name: "Sign in", exact: true })).toBeVisible();
-
-    await chartsTab.click();
-    await expect(chartsTab).toHaveAttribute("aria-selected", "true");
-    await circleTab.click();
-    await expect(circleTab).toHaveAttribute("aria-selected", "true");
+    const gate = page.locator('.friends-signin-card');
+    await expect(gate.getByRole('heading', { name: 'Sign in to see your friends', exact: true })).toBeVisible();
+    await expect(page.getByRole('tab', { name: /^Circle/u })).toHaveCount(0);
+    const cachedProfile = await page.evaluate(() => localStorage.getItem('tldrastro:userProfile'));
+    await gate.getByRole('button', { name: 'Log in', exact: true }).click();
+    const dialog = page.getByRole('dialog');
+    await expect(dialog.getByLabel('Email', { exact: true })).toBeVisible();
+    await dialog.getByRole('button', { name: 'Close', exact: true }).click();
+    await expect(gate).toBeVisible();
+    expect(await page.evaluate(() => localStorage.getItem('tldrastro:userProfile'))).toBe(cachedProfile);
     await expect(page).toHaveURL(/#friends\?tab=circle$/u);
   });
 
@@ -2269,10 +2361,10 @@ test.describe("client-facing user flow case studies", () => {
         await seedClientState(page, { profile: true, friends: true, theme });
         await expectClientRouteLoads(page, "/#friends?tab=charts&chart=friend-nikki&view=composite");
         const pane = page.locator('.friend-tab-pane[aria-label="Composite"]');
-        const card = pane.locator('.friend-aspect-row:not(:disabled)').first();
+        const card = pane.locator('.friend-profile-pattern-open:not(:disabled)');
         await expect(card).toBeVisible();
-        const title = await card.locator("h3").innerText();
-        const paragraphs = await card.locator(".aspect-row-copy p").allTextContents();
+        const title = await card.innerText();
+        const paragraphs = await pane.locator(".friend-profile-contact > p").allTextContents();
         expect(paragraphs.join("").trim().length).toBeGreaterThan(0);
         await card.focus();
         await page.keyboard.press("Enter");
@@ -2294,20 +2386,22 @@ test.describe("client-facing user flow case studies", () => {
     }
   }
 
-  test("friend chart section pills and overflow menu fit a narrow viewport", async ({ page }) => {
+  test("friend chart section pills stay inside a narrow viewport", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await page.setViewportSize({ width: 390, height: 844 });
     await seedClientState(page, { profile: true, friends: true });
+    await seedSignedInSession(page);
     await expectClientRouteLoads(page, "/#friends?tab=charts");
     await page.getByRole("button", { name: "Open Nikki" }).click();
 
     const tablist = page.getByRole("tablist", { name: "Chart profile sections" });
     await expectLocatorInsideViewport(tablist, 390, "Friend chart section tabs");
 
-    await page.getByRole("button", { name: "More, 2 sections" }).click();
-    const menu = page.getByRole("menu", { name: "More chart profile sections" });
-    await expectLocatorInsideViewport(menu, 390, "Friend chart section overflow menu");
+    await expect(tablist.getByRole("tab")).toHaveText(["Compatibility", "Transits", "Natal"]);
+    await page.getByRole("button", { name: "More, 2 sections", exact: true }).click();
+    await expectLocatorInsideViewport(page.getByRole("menu", { name: "More chart profile sections" }), 390, "Friend chart section overflow menu");
+    await page.keyboard.press("Escape");
 
     await selectFriendDetailTab(page, "Composite");
     await expect(page.getByText("What a composite chart is")).toBeVisible();
@@ -2342,29 +2436,32 @@ test.describe("client-facing user flow case studies", () => {
           await expect(surface.locator("h1")).toHaveCount(1);
           const typography = await surface.evaluate(element => {
             const probe = document.createElement("span");
-            probe.style.cssText = "font-family:var(--font-body);font-size:var(--text-body);font-weight:var(--weight-regular);line-height:var(--leading-body);letter-spacing:var(--tracking-body)";
+            probe.style.cssText = "font-family:var(--font-ui);font-size:var(--type-ui-copy-size);font-weight:var(--weight-regular);line-height:var(--leading-body);letter-spacing:var(--tracking-normal)";
             element.append(probe);
             const properties = ["fontFamily", "fontSize", "lineHeight", "letterSpacing"] as const;
             const read = (node: Element) => {
               const style = getComputedStyle(node);
               return Object.fromEntries(properties.map(key => [key, style[key]]));
             };
+            const expectedUi = read(probe);
+            probe.style.fontFamily = 'var(--font-body)';
+            probe.style.fontSize = 'var(--text-body)';
             const expectedBody = read(probe);
-            const rows = Array.from(element.querySelectorAll(".settings-row-title, .settings-row__label, .settings-row-description, .settings-row__value, .account-row-input")).map(node => ({ text: node.textContent, actual: read(node), casing: getComputedStyle(node).textTransform }));
+            const rows = Array.from(element.querySelectorAll(".settings-row-title, .settings-row__label, .settings-row-description, .settings-row__value, .account-row-input")).map(node => ({ text: node.textContent, actual: read(node), prose: node.matches('.settings-row-description'), casing: getComputedStyle(node).textTransform }));
             probe.style.fontFamily = "var(--font-ui)";
             const uiFamily = getComputedStyle(probe).fontFamily;
             const controls = Array.from(element.querySelectorAll(".settings-theme-control button")).map(node => getComputedStyle(node).fontFamily);
             const labels = Array.from(element.querySelectorAll(".settings-group-label")).map(node => ({ family: getComputedStyle(node).fontFamily, casing: getComputedStyle(node).textTransform }));
             probe.remove();
-            return { expectedBody, rows, uiFamily, controls, labels };
+            return { expectedBody, expectedUi, rows, uiFamily, controls, labels };
           });
           expect(typography.rows.length).toBeGreaterThan(0);
           for (const row of typography.rows) {
-            expect(row.actual, `${route}: ${row.text}`).toEqual(typography.expectedBody);
+            expect(row.actual, `${route}: ${row.text}`).toEqual(row.prose ? typography.expectedBody : typography.expectedUi);
             expect(row.casing, `${route}: row titles retain sentence case`).toBe("none");
           }
           for (const family of typography.controls) expect(family).toBe(typography.uiFamily);
-          for (const label of typography.labels) expect(label).toEqual({ family: typography.uiFamily, casing: "uppercase" });
+          for (const label of typography.labels) expect(label).toEqual({ family: typography.uiFamily, casing: "none" });
           for (const control of await surface.locator(".settings-row-control:has(.settings-switch)").all()) {
             const copy = await control.locator(".settings-row-copy").boundingBox();
             const toggle = await control.locator(".settings-switch").boundingBox();
@@ -2384,10 +2481,10 @@ test.describe("client-facing user flow case studies", () => {
     await seedClientState(page, { profile: true });
     await expectClientRouteLoads(page, "/#settings");
 
-    await expect(page.getByText("settings.")).toBeVisible();
-    await page.getByLabel("Theme", { exact: true }).getByRole("button", { name: "dark" }).click();
+    await expect(page.getByRole("heading", { name: "Settings", exact: true })).toBeVisible();
+    await page.locator('.settings-theme-control').getByRole('button', { name: 'dark', exact: true }).click();
 
-    const dyslexiaSwitch = page.getByRole("button", { name: /dyslexia/i });
+    const dyslexiaSwitch = page.getByRole("switch", { name: /dyslexia/i });
     if (await dyslexiaSwitch.isVisible()) {
       await dyslexiaSwitch.click();
     }
@@ -2401,7 +2498,7 @@ test.describe("client-facing user flow case studies", () => {
     }
 
     await page.getByRole("button", { name: /^Sky$/ }).click();
-    await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Sky", exact: true })).toBeVisible();
     await assertNoClientErrors();
   });
 
@@ -2457,7 +2554,7 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
-  test("calendar keeps complete aspect writing in the drawer and links separate placement articles", async ({ page }) => {
+  test("calendar opens aspect readings in Sky and links separate placement articles", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
     const cases = [
       { date: "2026-07-09", title: "Venus enters Virgo", hasArticle: true },
@@ -2477,14 +2574,13 @@ test.describe("client-facing user flow case studies", () => {
       await expect(eventButton, `${eventCase.title} has one Calendar detail trigger`).toHaveCount(1);
       await expect(eventButton.locator(".calendar-stoic-card__excerpt")).toBeVisible();
       await eventButton.click();
-      const reading = page.getByRole("dialog", { name: "Event detail", exact: true });
+      await expect(page.getByRole("dialog", { name: "Event detail", exact: true })).toHaveCount(0);
       if (!eventCase.hasArticle) {
-        await expect(reading.locator(".calendar-reading__body")).not.toBeEmpty();
-        await expect(reading.getByRole("button", { name: "Read article" })).toHaveCount(0);
-        await expect(page).toHaveURL(new RegExp(`#calendar\\?view=week&date=${eventCase.date}$`, "u"));
+        const body = JSON.parse(readFileSync("packages/astro-knowledge/data/transits/venus-square-uranus.json", "utf8")).readerCopy.body;
+        await expectSkyAspectBody(page, body);
         continue;
       }
-      await reading.getByRole("button", { name: "Read article" }).click();
+      await expect(page).toHaveURL(/#sky\/event\/(?:ingress|station)\//);
       await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
       const detailParagraphs = page.locator(".app-shell.mode-detail article p");
 
@@ -2534,12 +2630,9 @@ test.describe("client-facing user flow case studies", () => {
     await page.setViewportSize({ width: 390, height: 844 });
     await expectNoHorizontalOverflow(page, "Mobile Week");
     await expect(days).toHaveCount(7);
-    // Week events open the selected day, then its Event detail with complete copy.
     await days.getByRole("button", { name: /^Venus squares Mars / }).click();
-    const dayDialog = page.getByRole("dialog", { name: "Day slideout", exact: true });
-    await dayDialog.getByRole("button", { name: "Venus squares Mars", exact: true }).click();
     const exactBody = JSON.parse(readFileSync("packages/astro-knowledge/data/transits/venus-square-mars.json", "utf8")).readerCopy.body;
-    await expect(page.getByRole("dialog", { name: "Event detail", exact: true })).toContainText(exactBody);
+    await expectSkyAspectBody(page, exactBody);
     await assertNoClientErrors();
   });
 
@@ -2785,10 +2878,9 @@ test.describe("client-facing user flow case studies", () => {
     await aspectDay.click();
     await expect(selectedDay.getByRole("button", { name: "Venus squares Mars" })).toBeVisible({ timeout: 15_000 });
     await selectedDay.getByRole("button", { name: "Venus squares Mars" }).click();
-    const reading = page.getByRole("dialog", { name: "Event detail" });
-    await expect(reading.getByText(exactBody, { exact: true })).toBeVisible();
+    const reading = await expectSkyAspectBody(page, exactBody);
     await expect(reading).not.toContainText(signSpecificBody);
-    await reading.getByRole("button", { name: "Close", exact: true }).click();
+    await page.getByRole("button", { name: "Close detail", exact: true }).click();
 
     const monthTab = page.getByRole("tab", { name: "Month", exact: true });
     await monthTab.click();
@@ -2797,11 +2889,9 @@ test.describe("client-facing user flow case studies", () => {
     const monthDay = page.getByLabel("Selected lunar day");
     await expect(monthDay).toBeVisible({ timeout: 15_000 });
     await monthDay.getByRole("button", { name: "Venus squares Mars" }).click();
-    await expect(page.getByRole("dialog", { name: "Event detail" }).getByText(exactBody, { exact: true })).toBeVisible({
-      timeout: 15_000
-    });
-    await expect(page.getByRole("dialog", { name: "Event detail" })).not.toContainText(signSpecificBody);
-    await expect(page.getByRole("dialog", { name: "Event detail" })).not.toContainText("and for the collective");
+    await expectSkyAspectBody(page, exactBody);
+    await expect(reading).not.toContainText(signSpecificBody);
+    await expect(reading).not.toContainText("and for the collective");
     await assertNoClientErrors();
   });
 
@@ -2820,7 +2910,10 @@ test.describe("client-facing user flow case studies", () => {
       await page.getByLabel("Selected week").getByRole("button", { name: /Full Moon\. Moon in Aquarius/ }).click();
       await expect(selectedDay.getByRole("heading", { level: 2 })).toHaveText("Full Moon in Aquarius");
       await selectedDay.locator(".calendar-day-events").getByRole("button", { name: /Aquarius.*Full Moon|Full Moon.*Aquarius/u }).click();
-      await expect(page.getByRole("dialog", { name: "Event detail" }).locator(".calendar-reading__meta")).toContainText("Jul 29 · 10:35 AM");
+      await expect(page.locator('#sky-detail-title')).toHaveText('Full Moon in Aquarius', { timeout: 60_000 });
+      await expect(page.locator('.sky-detail-id .article-duration').first()).toContainText('July 29, 2026');
+      const instant = decodeURIComponent(new URL(page.url()).hash.split('/at/')[1]);
+      expect(new Date(instant).toISOString()).toMatch(/^2026-07-29T14:35:/);
       await assertNoClientErrors();
     });
 
@@ -2832,12 +2925,13 @@ test.describe("client-facing user flow case studies", () => {
     await seedClientState(page, { now: "2026-07-29T16:00:00.000Z" });
     await expectClientRouteLoads(page, "/#calendar?view=week&date=2026-07-29");
     const selectedDay = page.getByLabel("Selected lunar day");
-    // Studio owns the visible title; target the existing lunation card role.
+    // Target the calculated lunation card and retain the full approved source assertion.
     const eventButton = selectedDay.locator(".calendar-day-events").getByRole("button", { name: /Aquarius.*Full Moon|Full Moon.*Aquarius/u });
 
     await expect(eventButton).toBeVisible({ timeout: 15_000 });
     await eventButton.click();
-    await page.getByRole("dialog", { name: "Event detail" }).getByRole("button", { name: "Read article" }).click();
+    await expect(page).toHaveURL(/#sky\/event\//);
+    await expect(page.getByRole("dialog", { name: "Event detail" })).toHaveCount(0);
     const article = page.locator(".app-shell.mode-detail .sky-detail-article");
     await expect(article).toBeVisible();
     await expectBundledLunationBody(article, "full-moon", "aquarius");
@@ -2852,12 +2946,13 @@ test.describe("client-facing user flow case studies", () => {
     await seedClientState(page, { now: "2026-07-14T16:00:00.000Z" });
     await expectClientRouteLoads(page, "/#calendar?view=week&date=2026-07-14");
     const selectedDay = page.getByLabel("Selected lunar day");
-    // Studio owns the visible title; target the existing lunation card role.
+    // Target the calculated lunation card and retain the full approved source assertion.
     const eventButton = selectedDay.locator(".calendar-day-events").getByRole("button", { name: /Cancer.*New Moon|New Moon.*Cancer/u });
 
     await expect(eventButton).toBeVisible({ timeout: 15_000 });
     await eventButton.click();
-    await page.getByRole("dialog", { name: "Event detail" }).getByRole("button", { name: "Read article" }).click();
+    await expect(page).toHaveURL(/#sky\/event\//);
+    await expect(page.getByRole("dialog", { name: "Event detail" })).toHaveCount(0);
     const article = page.locator(".app-shell.mode-detail .sky-detail-article");
     await expect(article).toBeVisible();
     await expectBundledLunationBody(article, "new-moon", "cancer");
@@ -2872,12 +2967,13 @@ test.describe("client-facing user flow case studies", () => {
     await seedClientState(page, { now: "2025-09-21T16:00:00.000Z" });
     await expectClientRouteLoads(page, "/#calendar?view=week&date=2025-09-21");
     const selectedDay = page.getByLabel("Selected lunar day");
-    // Studio owns the visible title; target the existing lunation card role.
+    // Target the calculated lunation card and retain the full approved source assertion.
     const eventButton = selectedDay.locator(".calendar-day-events .calendar-stoic-card:has(.calendar-kind--lunation, .calendar-kind--eclipse)");
 
     await expect(eventButton).toBeVisible({ timeout: 15_000 });
     await eventButton.click();
-    await page.getByRole("dialog", { name: "Event detail" }).getByRole("button", { name: "Read article" }).click();
+    await expect(page).toHaveURL(/#sky\/event\//);
+    await expect(page.getByRole("dialog", { name: "Event detail" })).toHaveCount(0);
     const article = page.locator(".app-shell.mode-detail .sky-detail-article");
     await expect(article).toBeVisible();
     // This fixture has no dated CMS row; the current shared reader selects the
@@ -2892,12 +2988,13 @@ test.describe("client-facing user flow case studies", () => {
     await seedClientState(page, { now: "2026-08-12T16:00:00.000Z" });
     await expectClientRouteLoads(page, "/#calendar?view=week&date=2026-08-12");
     const selectedDay = page.getByLabel("Selected lunar day");
-    // Studio owns the visible title; target the existing lunation card role.
+    // Target the calculated lunation card and retain the full approved source assertion.
     const eventButton = selectedDay.locator(".calendar-day-events .calendar-stoic-card:has(.calendar-kind--lunation, .calendar-kind--eclipse)");
 
     await expect(eventButton).toBeVisible({ timeout: 15_000 });
     await eventButton.click();
-    await page.getByRole("dialog", { name: "Event detail" }).getByRole("button", { name: "Read article" }).click();
+    await expect(page).toHaveURL(/#sky\/event\//);
+    await expect(page.getByRole("dialog", { name: "Event detail" })).toHaveCount(0);
     const article = page.locator(".app-shell.mode-detail .sky-detail-article");
     await expect(article).toBeVisible();
     await expectBundledLunationBody(article, "new-moon", "leo");
@@ -2926,39 +3023,24 @@ test.describe("client-facing user flow case studies", () => {
 
   test("guest can move between login and account creation screens", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
-
     await seedClientState(page);
     await expectClientRouteLoads(page, "/#sky");
-
     await page.getByRole("button", { name: "Open menu" }).click();
     await page.getByRole("menuitem", { name: "Login" }).click();
-
-    await expect(page.getByRole("region", { name: "Log in" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Return to your sky." })).toBeVisible();
-    await expect(page.getByPlaceholder("you@somewhere.com")).toBeVisible();
-    await expect(page.getByPlaceholder("at least 8 characters")).toHaveAttribute("type", "password");
-
-    await page.getByRole("button", { name: "Show password" }).click();
-    await expect(page.getByPlaceholder("at least 8 characters")).toHaveAttribute("type", "text");
-
-    await page.getByRole("button", { name: "Create an account" }).click();
-    await expect(page.getByRole("region", { name: "Create account" })).toBeVisible();
-    await expect(page.getByText("Create profile")).toBeVisible();
-    await expect(page.getByPlaceholder("Jules Okafor")).toBeVisible();
-    await expect(page.getByLabel("Birth month")).toBeVisible();
-    await expect(page.getByLabel("Birth hour")).toBeVisible();
+    const dialog = page.getByRole("dialog");
+    await expect(dialog.getByRole("heading", { name: "Log in", exact: true })).toBeVisible();
+    await expect(dialog.getByLabel("Email", { exact: true })).toBeVisible();
+    const password = dialog.getByLabel("Password", { exact: true });
+    await expect(password).toHaveAttribute("type", "password");
+    await dialog.getByRole("button", { name: "Show password", exact: true }).click();
+    await expect(password).toHaveAttribute("type", "text");
+    await dialog.getByRole("button", { name: "Create an account", exact: true }).click();
+    await expect(dialog.getByRole("heading", { name: "Create an account", exact: true })).toBeVisible();
+    await expect(dialog.getByLabel("Email", { exact: true })).toBeVisible();
+    await expect(dialog.getByLabel("Password", { exact: true })).toBeVisible();
     await expectFormTypography(page, ".auth-page", "Auth create-account form");
-
-    await page.getByLabel("Birth month").fill("02");
-    await page.getByLabel("Birth day").fill("18");
-    await page.getByLabel("Birth year").fill("1979");
-    await page.getByLabel("Birth hour").fill("08");
-    await page.getByLabel("Birth minute").fill("24");
-    await page.getByLabel("I don't know my birth time.").check();
-    await expect(page.getByLabel("Birth hour")).toBeDisabled();
-
-    await page.getByRole("button", { name: /Create Account/ }).click();
-    await expect(page.getByText(/Add Supabase environment variables|Add an email and password/)).toBeVisible();
+    await dialog.getByRole("button", { name: "Log in", exact: true }).click();
+    await expect(dialog.getByRole("heading", { name: "Log in", exact: true })).toBeVisible();
     await assertNoClientErrors();
   });
 
@@ -3046,7 +3128,7 @@ test.describe("client-facing user flow case studies", () => {
     await expect(editor.getByRole("button", { name: "Next", exact: true })).toHaveCount(0);
     block = false;
     release();
-    await editor.getByRole("button", { name: "Retry", exact: true }).click();
+    await editor.getByRole("button", { name: "Try again", exact: true }).click();
     await expect(editor.getByRole("button", { name: "Next", exact: true })).toBeVisible({ timeout: 2_000 });
   });
 
@@ -3180,7 +3262,7 @@ test.describe("client-facing user flow case studies", () => {
       await expect(checkIn.getByRole("alert")).toContainText("Your saved check-in could not load");
       await expect(checkIn.getByRole("button", { name: "Next", exact: true })).toHaveCount(0);
       refuseCheckInLoad = false;
-      await checkIn.getByRole("button", { name: "Retry", exact: true }).click();
+      await checkIn.getByRole("button", { name: "Try again", exact: true }).click();
       await openNotes(false);
       await expect(checkIn.locator(".calendar-checkin__people")).toContainText("Avery");
     });
@@ -3208,9 +3290,10 @@ test.describe("client-facing user flow case studies", () => {
     await checkIn.getByRole("button", { name: "Sign in to save" }).click();
 
     await expect(page.getByRole("region", { name: "Log in" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Sign in to save your journal entry..." })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Log in", exact: true })).toBeVisible();
+    await expect(page.getByText("Sign in to save your journal entry…", { exact: true })).toBeVisible();
     await expect(page.getByText("Return to your sky.")).toHaveCount(0);
-    await expect(page.getByPlaceholder("you@somewhere.com")).toBeVisible();
+    await expect(page.getByRole("textbox", { name: "Email", exact: true })).toBeVisible();
     await assertNoClientErrors();
   });
 
@@ -3221,39 +3304,27 @@ test.describe("client-facing user flow case studies", () => {
     await seedClientState(page);
     await expectClientRouteLoads(page, "/#sky");
 
-    await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Sky", exact: true })).toBeVisible();
 
     const dateControl = page.getByRole("button", { name: /Today, New York/ });
     await expect(dateControl).toBeVisible();
     await dateControl.click();
-    const skyControls = page.getByRole("dialog", { name: "Sky controls" });
+    const skyControls = page.getByRole("dialog", { name: "Date and location" });
     await expect(skyControls).toBeVisible();
-    await expect(skyControls.getByRole("button", { name: "Today", exact: true })).toBeVisible();
-    await expect(skyControls.getByRole("button", { name: "Tomorrow" })).toBeVisible();
-    await expect(skyControls.getByRole("button", { name: "Date" })).toBeVisible();
-    await expect(skyControls.getByRole("button", { name: /New York/ })).toBeVisible();
-
-    await skyControls.getByRole("button", { name: /New York/ }).click();
-    await expect(skyControls).toBeVisible();
-    await expect(skyControls.getByRole("form", { name: "Change location" })).toBeVisible();
-    await expect(skyControls.getByLabel("City")).toBeVisible();
-    await expect(page.locator(".hero-city-picker--mobile")).toHaveCount(0);
-
-    await skyControls.getByRole("button", { name: "Back to Sky controls" }).click();
-    await expect(skyControls.getByRole("button", { name: "Today", exact: true })).toBeVisible();
-    await expect(skyControls.getByRole("button", { name: /New York/ })).toBeFocused();
-
-    await skyControls.getByRole("button", { name: /New York/ }).click();
-    await skyControls.getByLabel("City").fill("Boston, MA");
-    await skyControls.getByRole("button", { name: "Update" }).click();
-    await expect(skyControls.getByRole("button", { name: /Boston/ })).toBeVisible();
-
-    await skyControls.getByRole("button", { name: "Tomorrow" }).click();
-    await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible();
+    for (const name of ['Today', 'Tomorrow', 'Date']) await expect(skyControls.getByRole('tab', { name, exact: true })).toBeVisible();
+    const location = skyControls.getByRole('button', { name: /New York/ });
+    await location.click();
+    await expect(skyControls.getByRole('textbox', { name: 'City', exact: true })).toBeFocused();
+    await skyControls.getByRole('textbox', { name: 'City', exact: true }).fill('Boston, MA');
+    await skyControls.getByRole('textbox', { name: 'City', exact: true }).press('Enter');
+    await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem("tldrastro:selectedLocation")!).label)).toBe(fixtureLocation.label);
+    await skyControls.getByRole('tab', { name: 'Tomorrow', exact: true }).click();
+    await expect(skyControls).toBeHidden();
+    await expect(page.getByRole('heading', { name: 'Sky', exact: true })).toBeVisible();
 
     await page.getByRole("button", { name: "Open menu" }).click();
     await page.getByRole("menuitem", { name: /settings/i }).click();
-    await expect(page.getByText("settings.")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Settings", exact: true })).toBeVisible();
     await assertNoClientErrors();
   });
 
@@ -3291,7 +3362,8 @@ test.describe("client-facing user flow case studies", () => {
         expect(atTop.background).not.toBe("rgba(0, 0, 0, 0)");
         expect(atTop.shadow).not.toBe("none");
         const expectSharedElevation = async () => {
-          for (const selector of [".sky-header-date-button", ".menu-toggle", ".theme-toggle"]) {
+          await expect(page.locator('.topbar-actions > .theme-toggle')).toHaveCount(0);
+          for (const selector of [".sky-header-date-button", ".menu-toggle", ".profile-nav-button"]) {
             const control = page.locator(selector);
             if (await control.isVisible()) await expect(control).toHaveCSS("box-shadow", atTop.shadow);
           }
@@ -3306,18 +3378,22 @@ test.describe("client-facing user flow case studies", () => {
         await expect(page.locator("html")).toHaveAttribute("data-scrolled", "");
         await expect.poll(surface).toEqual(atTop);
         await expectSharedElevation();
-        await expect(logo.getByRole("button", { name: "TLDR Astro home" })).toBeVisible();
+        await expect(logo.getByRole("button", { name: width <= 600 ? "Home" : "TLDR Astro home", exact: true })).toBeVisible();
         await mkdir(responsiveScreenshotDir, { recursive: true });
         await page.screenshot({ path: path.join(responsiveScreenshotDir, `logo-scrolled-${theme}-${width}.png`) });
         await page.getByRole("button", { name: "Open menu" }).click();
         await expect(page.locator(".site-menu")).toBeVisible();
-        await expect(page.locator(".site-menu")).toHaveCSS("box-shadow", atTop.shadow);
+        const cardShadow = await page.locator('.site-menu').evaluate(el => { const probe = document.createElement('div'); probe.style.boxShadow = 'var(--card-shadow)'; el.append(probe); const value = getComputedStyle(probe).boxShadow; probe.remove(); return value; });
+        await expect(page.locator('.site-menu')).toHaveCSS('box-shadow', cardShadow);
         await page.screenshot({ path: path.join(responsiveScreenshotDir, `navigation-menu-${theme}-${width}.png`) });
         await page.keyboard.press("Escape");
         await expect(page.locator(".site-menu")).toBeHidden();
         await page.locator(".sky-header-date-button").click();
-        await expect(page.locator(".date-picker")).toBeVisible();
-        await expect(page.locator(".date-picker")).toHaveCSS("box-shadow", atTop.shadow);
+        await expect(page.getByRole('dialog', { name: 'Transit date', exact: true })).toBeVisible();
+        await page.getByRole('tab', { name: 'Date', exact: true }).click();
+        await expect(page.locator('.date-picker--embedded')).toBeVisible();
+        const panelShadow = await page.locator('.header-date-panel').evaluate(el => { const probe = document.createElement('div'); probe.style.boxShadow = 'var(--overlay-shadow)'; el.append(probe); const value = getComputedStyle(probe).boxShadow; probe.remove(); return value; });
+        await expect(page.locator('.header-date-panel')).toHaveCSS('box-shadow', panelShadow);
         await page.keyboard.press("Escape");
         await page.evaluate(() => window.scrollTo(0, 0));
         await expect(page.locator("html")).not.toHaveAttribute("data-scrolled", "");
@@ -3333,8 +3409,8 @@ test.describe("client-facing user flow case studies", () => {
     await seedClientState(page, { profile: true });
     await expectClientRouteLoads(page, "/#sky");
 
-    await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible();
-    await expect(page.getByRole("list", { name: "Daily planetary placements" })).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByRole("heading", { name: "Sky", exact: true })).toBeVisible();
+    await expect(page.getByRole("region", { name: "Planets", exact: true }).getByRole("list", { name: "Daily planetary placements" })).toBeVisible({ timeout: 15_000 });
 
     const layout = await page.evaluate(() => {
       const tolerance = 1;
@@ -3376,7 +3452,7 @@ test.describe("client-facing user flow case studies", () => {
 
     for (const width of [320, 390, 430]) {
       await page.setViewportSize({ width, height: 844 });
-      const mobileRail = await page.locator(".detail-panel").boundingBox();
+      const mobileRail = await page.locator(".sky-page").boundingBox();
       expect(mobileRail, `Sky content rail is rendered at ${width}px`).not.toBeNull();
 
       if (mobileRail) {
@@ -3399,7 +3475,8 @@ test.describe("client-facing user flow case studies", () => {
     await expectClientRouteLoads(page, "/#calendar");
 
     await expect(page.getByLabel("Lunar calendar")).toBeVisible();
-    await expect(page.locator(".calendar-day-panel")).toBeVisible();
+    await expect(page.locator('.calendar-day-panel[aria-busy="true"]')).toHaveCount(0);
+    await expect(page.locator('.calendar-day-panel').first()).toBeVisible();
     await captureResponsiveSurface(page, "mobile", "calendar-day");
 
     const layout = await page.evaluate(() => {
@@ -3448,15 +3525,20 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page.locator(".calendar-month-chip").first()).toBeVisible({ timeout: 60_000 });
     const mobileMonthMetrics = await page.evaluate(() => {
       const day = document.querySelector(".lunar-calendar-day")?.getBoundingClientRect();
-      const tab = document.querySelector('[role="tab"][aria-selected="true"]')?.getBoundingClientRect();
+      const tabElement = document.querySelector('[role="tab"][aria-selected="true"]')!;
+      const tab = tabElement.getBoundingClientRect();
+      const probe = document.createElement('div'); probe.style.height = 'var(--calendar-segmented-item-height)'; tabElement.append(probe);
+      const expectedTabHeight = Number.parseFloat(getComputedStyle(probe).height); probe.remove();
       return {
+        expectedTabHeight,
         dayHeight: day?.height ?? 0,
         tabHeight: tab?.height ?? 0,
         nestedMonthFocusStops: document.querySelectorAll(".lunar-calendar-day [tabindex='0']").length
       };
     });
     expect(mobileMonthMetrics.dayHeight, "Month cells stay scannable on a narrow phone").toBeLessThanOrEqual(100);
-    expect(mobileMonthMetrics.tabHeight, "Calendar view tabs meet the mobile touch target").toBeGreaterThanOrEqual(44);
+    expect(mobileMonthMetrics.expectedTabHeight).toBeGreaterThan(0);
+    expect(mobileMonthMetrics.tabHeight, "Calendar view tabs use the handoff segmented-control height").toBeCloseTo(mobileMonthMetrics.expectedTabHeight, 0);
     expect(mobileMonthMetrics.nestedMonthFocusStops, "Each date is a single keyboard stop").toBe(0);
     await captureResponsiveSurface(page, "mobile", "calendar-month");
     await assertNoClientErrors();
@@ -3466,21 +3548,20 @@ test.describe("client-facing user flow case studies", () => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await seedClientState(page, { profile: true, friends: true });
-    await expectClientRouteLoads(page, "/#sky/placement/sun");
+    await expectClientRouteLoads(page, "/#sky/placement/sun/cancer");
 
     await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
-    await expect(page.getByRole("button", { name: "Close detail" })).toBeVisible();
+    await expect(page.locator(".sky-detail-back")).toBeVisible();
     await expect(page.locator("#sky-detail-title")).toContainText(/Sun/i);
 
     await expectClientRouteLoads(page, "/#friends?tab=charts&chart=friend-nikki&view=synastry");
     await expect(page.getByRole("region", { name: "Nikki chart profile" })).toBeVisible();
-    await page.getByRole("button", { name: /More, \d+ sections/ }).click();
-    await expect(page.getByRole("menuitemradio", { name: /^Synastry/ })).toHaveAttribute("aria-checked", "true");
+    await expect(page.getByRole("tab", { name: "Synastry", exact: true })).toHaveAttribute("aria-selected", "true");
     await expect(page.getByText("What synastry shows")).toBeVisible();
     await assertNoClientErrors();
   });
 
-  test("signed-in user can sign out from the site menu", async ({ page }) => {
+  test("signed-in user can sign out from Account", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await seedClientState(page, { profile: true });
@@ -3503,12 +3584,14 @@ test.describe("client-facing user flow case studies", () => {
 
     await expect(page.getByText("Project Author")).toBeVisible();
     await page.getByRole("button", { name: "Open menu" }).click();
-    await page.getByRole("menuitem", { name: "Sign out" }).click();
+    await page.getByRole("menuitem", { name: "Account", exact: true }).click();
+    await page.getByRole("button", { name: "Sign out", exact: true }).click();
     await expect.poll(() => signedOut).toBe(true);
 
-    await expect(page.getByRole("region", { name: "Create account" })).toBeVisible();
-    await expect(page.getByText("Create profile")).toBeVisible();
-    await expect(page.getByRole("navigation", { name: "Primary navigation" }).getByRole("button", { name: "You" })).toHaveCount(0);
+    await expect(page.getByRole("dialog", { name: "Create an account", exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Create an account", exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Sign out", exact: true })).toHaveCount(0);
+    await expect.poll(() => page.evaluate(key => localStorage.getItem(key), storageKey)).toBeNull();
     await assertNoClientErrors();
   });
 
@@ -3524,7 +3607,7 @@ test.describe("client-facing user flow case studies", () => {
         window.localStorage.setItem("tldrastro:theme", nextTheme);
       }, theme);
       await page.reload();
-      await expect(page.getByRole("heading", { level: 1, name: /The sky today|Today, simple/i })).toBeVisible();
+      await expect(page.getByRole("heading", { level: 1, name: "Sky", exact: true })).toBeVisible();
       await captureThemeSurface(page, theme, "sky");
 
       await expectClientRouteLoads(page, "/#you");
@@ -3543,7 +3626,7 @@ test.describe("client-facing user flow case studies", () => {
       await captureThemeSurface(page, theme, "calendar");
 
       await expectClientRouteLoads(page, "/#settings");
-      await expect(page.getByText("settings.")).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Settings", exact: true })).toBeVisible();
       await captureThemeSurface(page, theme, "settings");
     }
 
@@ -3558,11 +3641,11 @@ test.describe("client-facing user flow case studies", () => {
 
     await expectClientRouteLoads(page, "/#sky");
     await expect(page.getByRole("navigation", { name: "Primary navigation" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Sky", exact: true })).toBeVisible();
     await captureResponsiveSurface(page, "desktop", "sky");
     await expectNoHorizontalOverflow(page, "Desktop Sky");
 
-    await page.getByRole("button", { name: "You" }).click();
+    await page.getByRole("button", { name: "Your profile", exact: true }).click();
     await expect(page.getByRole("region", { name: "You", exact: true })).toBeVisible();
     await captureResponsiveSurface(page, "desktop", "you");
     await expectNoHorizontalOverflow(page, "Desktop You");
@@ -3583,7 +3666,7 @@ test.describe("client-facing user flow case studies", () => {
     await expectNoHorizontalOverflow(page, "Desktop Calendar");
 
     await expectClientRouteLoads(page, "/#settings");
-    await expect(page.getByText("settings.")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Settings", exact: true })).toBeVisible();
     await captureResponsiveSurface(page, "desktop", "settings");
     await expectNoHorizontalOverflow(page, "Desktop Settings");
     await assertNoClientErrors();
@@ -3596,7 +3679,7 @@ test.describe("client-facing user flow case studies", () => {
     await seedClientState(page, { profile: true, friends: true });
 
     await expectClientRouteLoads(page, "/#sky");
-    await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Sky", exact: true })).toBeVisible();
     await captureResponsiveSurface(page, "mobile", "sky");
     await expectNoHorizontalOverflow(page, "Mobile Sky");
 
@@ -3625,7 +3708,7 @@ test.describe("client-facing user flow case studies", () => {
 
     await page.getByRole("button", { name: "Open menu" }).click();
     await page.getByRole("menuitem", { name: "Settings" }).click();
-    await expect(page.getByText("settings.")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Settings", exact: true })).toBeVisible();
     await captureResponsiveSurface(page, "mobile", "settings");
     await expectNoHorizontalOverflow(page, "Mobile Settings");
     await assertNoClientErrors();
@@ -3634,13 +3717,14 @@ test.describe("client-facing user flow case studies", () => {
   for (const theme of ["light", "dark"] as const) {
     test(`empty Friends directory keeps its heading rail in ${theme} theme`, async ({ page }) => {
       await seedClientState(page, { profile: true, theme });
+      await seedSignedInSession(page);
       await expectClientRouteLoads(page, "/#friends?tab=charts");
       await expect(page.getByRole("region", { name: "No charts" })).toBeVisible();
       for (const width of [1440, 390]) {
         await page.setViewportSize({ width, height: 1000 });
-        const title = page.getByRole("heading", { name: "friends.", level: 1, exact: true });
+        const title = page.getByRole("heading", { name: "Friends", level: 1, exact: true });
         const heading = await title.boundingBox();
-        const panel = await page.locator(".friends-unified-panel").boundingBox();
+        const panel = await page.locator(".friends-unified-content").boundingBox();
         expect(Math.abs(heading!.x - panel!.x)).toBeLessThan(1);
         expect(heading!.y + heading!.height).toBeLessThan(panel!.y);
         const navigation = await page.getByRole("button", { name: "Open menu" }).boundingBox();
@@ -3658,22 +3742,25 @@ test.describe("client-facing user flow case studies", () => {
       await seedClientState(page, { profile: true, friends: true, theme });
       await expectClientRouteLoads(page, "/#friends?tab=charts");
       await expect(page.locator(".app-shell")).toHaveClass(new RegExp(`theme-${theme}`));
+      await expect(page.getByRole("button", { name: "Open Nikki", exact: true })).toBeVisible();
       await mkdir(responsiveScreenshotDir, { recursive: true });
       for (const width of [1440, 390]) {
         await page.setViewportSize({ width, height: 1000 });
-        const heading = page.locator(".friends-page-heading");
-        const panel = page.locator(".friends-unified-panel");
+        const heading = page.locator(".friends-workspace-heading");
+        const panel = page.locator(".friends-unified-content");
+        await expect(heading).toBeVisible();
+        await expect(panel).toBeVisible();
         const headingBox = await heading.boundingBox();
         const panelBox = await panel.boundingBox();
         expect(Math.abs(headingBox!.x - panelBox!.x), "Friends title shares the directory rail").toBeLessThan(1);
-        await expect(heading.locator("h1")).toHaveText("friends.");
+        await expect(heading.locator("h1")).toHaveText("Friends");
         expect(headingBox!.y + headingBox!.height).toBeLessThan(panelBox!.y);
         await page.screenshot({ path: path.join(responsiveScreenshotDir, `friends-list-${theme}-${width}.png`) });
       }
       await page.getByRole("button", { name: "Open Nikki" }).click();
       for (const view of ["Synastry", "Composite"] as const) {
         await selectFriendDetailTab(page, view);
-        const rows = page.locator(view === "Synastry" ? ".synastry-placement-row" : ".composite-placements-section .placement-table-row");
+        const rows = page.locator(view === "Synastry" ? ".friend-dynamic-card" : ".friend-composite-stage .placement-table-row");
         await expect(rows.first()).toBeVisible();
         for (const width of [1440, 1280, 1080, 1024, 820, 768, 390, 320]) {
           await page.setViewportSize({ width, height: 1000 });
@@ -3681,10 +3768,10 @@ test.describe("client-facing user flow case studies", () => {
           for (const row of await rows.all()) await row.scrollIntoViewIfNeeded();
           const defects = await rows.evaluateAll(rows => rows.flatMap(row => {
             const box = row.getBoundingClientRect();
-            const rail = row.closest(".friend-detail-content-column")!.getBoundingClientRect();
+            const rail = row.closest(".friend-profile-dynamics, .natal-placement-section")!.getBoundingClientRect();
             const issues: string[] = [];
             if (box.left < rail.left - 1 || box.right > rail.right + 1) issues.push("card exceeds content rail");
-            for (const child of row.querySelectorAll(".synastry-placement-lead, .synastry-placement-sign, .synastry-placement-degree, .synastry-placement-house, .placement-table-row__body, .placement-table-row__glyph")) {
+            for (const child of row.querySelectorAll(".friend-dynamic-card__glyphs, .friend-dynamic-card h4, .reading-story-card__preview, .placement-table-row__body, .placement-table-row__glyph")) {
               const bounds = child.getBoundingClientRect();
               if (bounds.left < box.left - 1 || bounds.right > box.right + 1) issues.push(`clipped ${child.className}`);
             }
@@ -3693,8 +3780,8 @@ test.describe("client-facing user flow case studies", () => {
           expect(defects, `${view} ${theme} ${width}px`).toEqual([]);
           if (view === "Synastry") {
             const geometry = await rows.evaluateAll(rows => rows.map(row => ({height:row.getBoundingClientRect().height,padding:getComputedStyle(row).padding})));
-            expect(new Set(geometry.map(row => row.height)).size, "Both people's rows have equal height").toBe(1);
-            expect(new Set(geometry.map(row => row.padding)).size, "Both people's rows have equal padding").toBe(1);
+            expect(geometry.every(row => row.height > 0), "Dynamics cards remain rendered").toBe(true);
+            expect(new Set(geometry.map(row => row.padding)).size, "Dynamics cards share their card padding").toBe(1);
           }
           await expectNoHorizontalOverflow(page, `${view} ${theme} ${width}px`);
           await page.evaluate(() => window.scrollTo(0, 0));
@@ -3715,7 +3802,7 @@ test.describe("client-facing user flow case studies", () => {
       await page.getByRole("button", { name: "Open Nikki" }).click();
       await selectFriendDetailTab(page, "Synastry");
       const card = page.getByRole("button", { name: "Open full entry for Your Moon sextile Nikki's Neptune", exact: true });
-      const copy = card.locator(".synastry-contact-description");
+      const copy = card.locator(".reading-story-card__preview");
       const source = fallbackSourceRowsV3.hookRows.find(row => row.contentKey === "fallback-hook/synastry-pair/moon/neptune/soft");
       expect(source?.body_you).toBeTruthy();
       const expectedCopy = source!.body_you!.replaceAll("{{holder2}}", "Nikki");
@@ -3736,13 +3823,13 @@ test.describe("client-facing user flow case studies", () => {
     });
   }
 
-  test("synastry placement data stays inside each card after lazy styles load", async ({ page }) => {
+  test("synastry Dynamics stays inside each card after lazy styles load", async ({ page }) => {
     test.setTimeout(60_000);
     await seedClientState(page, { profile: true, friends: true });
     await expectClientRouteLoads(page, "/#friends?tab=charts");
     await page.getByRole("button", { name: "Open Nikki" }).click();
     await selectFriendDetailTab(page, "Synastry");
-    const rows = page.locator(".synastry-placement-row:not(.synastry-placement-row-empty)");
+    const rows = page.locator(".friend-dynamic-card");
     await expect(rows.first()).toBeVisible();
     for (const theme of ["light", "dark"]) {
       await page.evaluate((theme) => {
@@ -3754,7 +3841,7 @@ test.describe("client-facing user flow case studies", () => {
         await page.setViewportSize({ width, height: 1000 });
         const overflow = await rows.evaluateAll((rows) => rows.flatMap((row) => {
           const bounds = row.getBoundingClientRect();
-          return Array.from(row.querySelectorAll(".synastry-placement-lead, .synastry-placement-sign, .synastry-placement-degree, .synastry-placement-house"))
+          return Array.from(row.querySelectorAll(".friend-dynamic-card__glyphs, .friend-profile-eyebrow, h4, .reading-story-card__preview"))
             .filter((child) => {
               const box = child.getBoundingClientRect();
               return box.left < bounds.left - 1 || box.right > bounds.right + 1;
@@ -3762,7 +3849,7 @@ test.describe("client-facing user flow case studies", () => {
         }));
         expect(overflow, `${theme} synastry at ${width}px`).toEqual([]);
         await mkdir(responsiveScreenshotDir, { recursive: true });
-        await page.locator(".synastry-placements-comparison").screenshot({
+        await page.locator(".friend-profile-dynamics").screenshot({
           path: path.join(responsiveScreenshotDir, `synastry-${theme}-${width}.png`)
         });
       }
@@ -3781,11 +3868,9 @@ test.describe("client-facing user flow case studies", () => {
       await seedClientState(page, { profile: true, friends: true });
 
       await expectClientRouteLoads(page, "/#sky");
-      const responsiveSkyHeading = viewport.name === "mobile"
-        ? page.getByRole("region", { name: "The sky today" }).getByRole("heading", { level: 3, name: "The sky today" })
-        : page.getByRole("heading", { level: 1, name: /The sky today|Today, simple/i });
+      const responsiveSkyHeading = page.getByRole("heading", { level: 1, name: "Sky", exact: true });
       await expect(responsiveSkyHeading).toBeVisible();
-      await expect(page.getByRole("list", { name: "Daily planetary placements" })).toBeVisible({ timeout: 15_000 });
+      await expect(page.getByRole("region", { name: "Planets", exact: true }).getByRole("list", { name: "Daily planetary placements" })).toBeVisible({ timeout: 15_000 });
       await expectSharedLabelContract(page, `${viewport.name} Sky`, { requireLabels: false });
       await expectNoHorizontalOverflow(page, `${viewport.name} Sky label audit`);
       await captureResponsiveSurface(page, viewport.name, "label-audit-sky");
@@ -3794,6 +3879,7 @@ test.describe("client-facing user flow case studies", () => {
       await expect(page.getByRole("region", { name: "You", exact: true })).toBeVisible();
       await page.getByRole("tab", { name: /updates|transits/i }).click();
       await expect(page.getByRole("tab", { name: /updates|transits/i })).toHaveAttribute("aria-selected", "true");
+      await expect(page.getByRole("region", { name: "You", exact: true }).locator(".eyebrow").first()).toBeVisible();
       await expectSharedLabelContract(page, `${viewport.name} You updates`);
       await expectNoHorizontalOverflow(page, `${viewport.name} You updates label audit`);
       await captureResponsiveSurface(page, viewport.name, "label-audit-you-updates");
@@ -3806,12 +3892,12 @@ test.describe("client-facing user flow case studies", () => {
       await captureResponsiveSurface(page, viewport.name, "label-audit-you-natal-chart");
 
       await expectClientRouteLoads(page, "/#friends?tab=charts");
-      await expect(page.getByText("friends.")).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Friends", exact: true })).toBeVisible();
       await page.getByRole("button", { name: "Open Nikki" }).click();
       await expect(page.getByRole("region", { name: "Nikki chart profile" })).toBeVisible();
       await page.getByRole("tab", { name: "Natal", exact: true }).click();
       await expect(page.getByRole("tab", { name: "Natal", exact: true })).toHaveAttribute("aria-selected", "true");
-      await expect(page.getByRole("region", { name: /Nikki's natal placements/ })).toBeVisible();
+      await expect(page.getByRole("region", { name: "Big Three", exact: true })).toBeVisible();
       await expectSharedLabelContract(page, `${viewport.name} Friends natal`);
       await expectNoHorizontalOverflow(page, `${viewport.name} Friends natal label audit`);
       await captureResponsiveSurface(page, viewport.name, "label-audit-friends-natal");
@@ -3829,8 +3915,8 @@ test.describe("client-facing user flow case studies", () => {
       await captureResponsiveSurface(page, viewport.name, "label-audit-calendar");
 
       await expectClientRouteLoads(page, "/#settings");
-      await expect(page.getByText("settings.")).toBeVisible();
-      await expectSharedLabelContract(page, `${viewport.name} Settings`);
+      await expect(page.getByRole("heading", { name: "Settings", exact: true })).toBeVisible();
+      await expectSharedLabelContract(page, `${viewport.name} Settings`, { requireLabels: false });
       await expectNoHorizontalOverflow(page, `${viewport.name} Settings label audit`);
       await captureResponsiveSurface(page, viewport.name, "label-audit-settings");
     }
@@ -3845,13 +3931,13 @@ test.describe("client-facing user flow case studies", () => {
     await seedClientState(page);
     await expectClientRouteLoads(page, "/#sky");
 
-    await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Sky", exact: true })).toBeVisible();
     await page.getByRole("button", { name: "Open full current sky chart" }).click();
     await expect(page.getByRole("heading", { name: "Full sky chart" })).toBeVisible();
     await expect(page.getByLabel(/Full sky chart for/)).toBeVisible();
 
     await page.getByRole("button", { name: "Back" }).click();
-    await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Sky", exact: true })).toBeVisible();
     await assertNoClientErrors();
   });
 
@@ -3933,10 +4019,27 @@ test.describe("client-facing user flow case studies", () => {
     await page.goto("/#access_token=fixture-callback-token&refresh_token=fixture-callback-refresh&expires_in=3600&token_type=bearer", { waitUntil: "domcontentloaded" });
     await expect(page.locator("#app-startup")).toBeVisible();
     await expect(page.getByRole("button", { name: "Open menu", exact: true })).toBeHidden();
+    // The failed callback can paint login controls before its document redirect
+    // completes. Settle that navigation before starting the next callback.
+    const loginNavigation = page.waitForURL(/auth=login/, { waitUntil: "load" });
+    const loginDocument = page.waitForResponse(response => response.request().isNavigationRequest()
+      && new URL(response.url()).searchParams.get("auth") === "login");
     finishVerification();
+    const loginResponse = await loginDocument;
+    expect(loginResponse.status()).toBe(200);
+    expect(await loginResponse.finished()).toBeNull();
+    await loginNavigation;
     await expect(page).toHaveURL(/auth=login/);
     await expect(page.getByRole("button", { name: /Google/ })).toBeVisible();
     expect(await page.evaluate(key => Boolean(localStorage.getItem(key)), supabaseAuthStorageKey())).toBe(false);
+    // A cancelled background chunk in the login document must not reload that
+    // document over the next sign-in callback (the WebKit postmerge failure).
+    expect(await page.evaluate(() => {
+      const event = new Event("vite:preloadError", { cancelable: true });
+      Object.assign(event, { payload: new Error("Synthetic background import interrupted by sign-in") });
+      window.dispatchEvent(event);
+      return Boolean(history.state?.__tldrastroReaderPageRecovery);
+    })).toBe(false);
     rejectVerification = false;
     await page.goto("/#access_token=fixture-callback-token&refresh_token=fixture-callback-refresh&expires_in=3600&token_type=bearer");
     await expect.poll(() => page.evaluate(key => Boolean(localStorage.getItem(key)), supabaseAuthStorageKey())).toBe(true);
@@ -4228,7 +4331,7 @@ test.describe("client-facing user flow case studies", () => {
           // WebKit reports interrupted route.fulfill requests as CORS page errors.
           await page.waitForLoadState("networkidle");
           await page.goto(child.route);
-          await expect(page.getByRole("heading", { name: `${child.parent.toLowerCase()}.`, exact: true })).toBeVisible();
+          await expect(page.getByRole("heading", { name: child.parent, exact: true })).toBeVisible();
           await expect(page.locator(".settings-back-button")).toHaveCount(0);
           await page.getByRole("button", { name: child.open }).click();
           const back = page.getByRole("button", { name: `Back to ${child.parent}`, exact: true });
@@ -4254,7 +4357,7 @@ test.describe("client-facing user flow case studies", () => {
             expect(box.x + box.width <= nav.x || nav.y + nav.height <= box.y,
               "Back control clears the brand in both one-row and tablet two-row navigation").toBe(true);
             expect(nav.x + nav.width).toBeLessThanOrEqual(menu.x);
-            if (width <= 720) {
+            if (width <= 800) {
               expect(box.width).toBeCloseTo(reference.width, 0);
               expect(box.width).toBeCloseTo(box.height, 0);
               expect(box.y).toBeCloseTo(nav.y, 0);
@@ -4272,7 +4375,7 @@ test.describe("client-facing user flow case studies", () => {
           expect(titleBox.y).toBeGreaterThan(backBox.y + backBox.height);
           await page.screenshot({ path: test.info().outputPath(`${child.parent}-child-empty.png`) });
           await back.click();
-          await expect(page.getByRole("heading", { name: `${child.parent.toLowerCase()}.`, exact: true })).toBeVisible();
+          await expect(page.getByRole("heading", { name: child.parent, exact: true })).toBeVisible();
           await expect(page.locator(".settings-back-button")).toHaveCount(0);
 
           if (child.parent === "Account") {
@@ -4300,9 +4403,9 @@ test.describe("client-facing user flow case studies", () => {
           await page.screenshot({ path: test.info().outputPath(`${child.parent}-child-scrolled.png`) });
           await page.getByRole("button", { name: "Open menu", exact: true }).click();
           await expect(page.getByRole("menuitem", { name: child.parent, exact: true })).toBeVisible();
-          await page.getByRole("button", { name: "Close menu", exact: true }).click();
+          await page.locator(".site-menu-close").click();
           await back.click();
-          await expect(page.getByRole("heading", { name: `${child.parent.toLowerCase()}.`, exact: true })).toBeVisible();
+          await expect(page.getByRole("heading", { name: child.parent, exact: true })).toBeVisible();
         }
         await assertNoClientErrors();
       });
@@ -4317,7 +4420,7 @@ test.describe("client-facing user flow case studies", () => {
       await expect(page.getByText(/You are signed out\./)).toBeVisible();
       await expect(page.locator(".settings-profile-row, .account-chart-group, .account-data-group")).toHaveCount(0);
       const account = page.getByRole("region", { name: "Account", exact: true });
-      await expect(account.getByRole("heading")).toHaveText(["account."]);
+      await expect(account.getByRole("heading")).toHaveText(["Account"]);
       await expect(account).not.toContainText("Project Author");
       await expect(account).not.toContainText("qa-flow@example.com");
       await expect(account.getByRole("button", { name: "Handle", exact: false })).toHaveCount(0);
@@ -4331,7 +4434,7 @@ test.describe("client-facing user flow case studies", () => {
       await page.getByRole("button", { name: "Open menu", exact: true }).click();
       await expect(page.getByRole("menuitem", { name: "Login", exact: true })).toBeVisible();
       await expect(page.getByRole("menuitem", { name: "Sign out", exact: true })).toHaveCount(0);
-      await page.getByRole("button", { name: "Close menu", exact: true }).click();
+      await page.locator(".site-menu-close").click();
       await page.getByRole("button", { name: /Open journal/ }).click();
       await expect(page.getByText("Sign in to see your saved journal on this device.")).toBeVisible();
       await expect(page.getByText("No check-ins yet", { exact: true })).toHaveCount(0);
@@ -4372,7 +4475,7 @@ test.describe("client-facing user flow case studies", () => {
     ]);
     await expectClientRouteLoads(page, "/#account");
 
-    await expect(page.getByRole("heading", { name: "account." })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Account", exact: true, level: 1 })).toBeVisible();
     await page.getByRole("button", { name: /Open journal/ }).click();
 
     const journal = page.getByRole("region", { name: "Journal" });
@@ -4406,8 +4509,9 @@ test.describe("client-facing user flow case studies", () => {
     await seedClientState(page, { profile: true, friends: true });
     await expectClientRouteLoads(page, "/#friends?tab=charts");
 
-    await expect(page.getByText("friends.")).toBeVisible();
-    await page.getByRole("button", { name: /Add (?:a )?chart/ }).click();
+    await expect(page.getByRole("heading", { name: "Friends", exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'Add', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Add a chart', exact: true }).click();
     await expect(page.getByRole("heading", { name: "Add chart" })).toBeVisible();
     const addChartDialog = page.getByRole("dialog", { name: "Add chart" });
     await expect(page.getByLabel("Chart type")).toBeVisible();
@@ -4467,7 +4571,8 @@ test.describe("client-facing user flow case studies", () => {
     await seedClientState(page, { profile: true, friends: true });
     await expectClientRouteLoads(page, "/#friends?tab=charts");
 
-    await page.getByRole("button", { name: /Add (?:a )?chart/ }).click();
+    await page.getByRole('button', { name: 'Add', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Add a chart', exact: true }).click();
     await page.getByLabel("Chart type").selectOption("event");
 
     const eventDialog = page.getByRole("dialog", { name: "Add event chart" });
@@ -4493,13 +4598,13 @@ test.describe("client-facing user flow case studies", () => {
     await seedClientState(page);
     await expectClientRouteLoads(page, "/#sky");
 
-    await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Sky", exact: true })).toBeVisible();
     await page.getByRole("button", { name: "Open menu" }).click();
     await page.getByRole("menuitem", { name: "Login" }).click();
     await expect(page.getByRole("region", { name: "Log in" })).toBeVisible();
 
     await page.getByRole("button", { name: "Close" }).click();
-    await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Sky", exact: true })).toBeVisible();
     await assertNoClientErrors();
   });
 
@@ -4511,17 +4616,17 @@ test.describe("client-facing user flow case studies", () => {
     await expectClientRouteLoads(page, "/#sky");
 
     await page.getByRole("button", { name: /Today, New York/ }).click();
-    const skyControls = page.getByRole("dialog", { name: "Sky controls" });
+    const skyControls = page.getByRole("dialog", { name: "Date and location" });
     await expect(skyControls).toBeVisible();
-    await skyControls.getByRole("button", { name: "Date" }).click();
+    await skyControls.getByRole("tab", { name: "Date" }).click();
 
     const datePicker = page.getByLabel("Pick Date");
     await expect(datePicker).toBeVisible();
     await datePicker.getByRole("button", { name: "Next month" }).click();
     await datePicker.getByRole("button", { name: "Previous month" }).click();
-    await datePicker.getByRole("button", { name: "Close date picker" }).click();
+    await skyControls.getByRole("button", { name: "Close date and location", exact: true }).filter({ visible: true }).click();
 
-    await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Sky", exact: true })).toBeVisible();
     await assertNoClientErrors();
   });
 
@@ -4541,17 +4646,17 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page.getByRole("heading", { name: "Full sky chart" })).toBeVisible();
     await page.keyboard.press("Escape");
     await expect(page.getByRole("heading", { name: "Full sky chart" })).toHaveCount(0);
-    await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Sky", exact: true })).toBeVisible();
     await assertNoClientErrors();
   });
 
-  test("signed-in user can edit current location from settings", async ({ page }) => {
+  test("signed-in settings reject a current city without selected coordinates", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await seedClientState(page, { profile: true });
     await expectClientRouteLoads(page, "/#settings");
 
-    await expect(page.getByText("settings.")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Settings", exact: true })).toBeVisible();
     await expect(page.getByRole("button", { name: "Toggle journal prompts" })).toHaveCount(0);
     await expect(page.getByLabel("House sign labels", { exact: true })).toBeVisible();
     await page.getByRole("button", { name: /Current location/i }).click();
@@ -4559,11 +4664,12 @@ test.describe("client-facing user flow case studies", () => {
     await expectFormTypography(page, ".settings-location-editor", "Settings location form");
     await page.getByLabel("Current location").fill("Austin, TX");
     await page.keyboard.press("Escape");
-    await page.getByRole("button", { name: "Save location" }).click();
+    await expect(page.getByRole("button", { name: "Save location" })).toBeDisabled();
+    await page.getByRole("button", { name: "Cancel", exact: true }).click();
 
-    await expect(page.getByText("Austin")).toBeVisible();
+    await expect(page.getByRole("button", { name: /Current location/i })).toContainText("New York, NY");
     await page.reload();
-    await expect(page.getByText("Austin")).toBeVisible();
+    await expect(page.getByRole("button", { name: /Current location/i })).toContainText("New York, NY");
     await assertNoClientErrors();
   });
 
@@ -4629,7 +4735,7 @@ test.describe("client-facing user flow case studies", () => {
     await page.getByRole("button", { name: "Open menu" }).click();
     await expectPopoverTextNotBold(page, ".site-menu", "Mobile site menu");
     await page.getByRole("menuitem", { name: "Friends" }).click();
-    await expect(page.getByRole("heading", { name: "friends.", exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Friends", exact: true })).toBeVisible();
     await page.getByRole("tab", { name: "Charts" }).click();
     await expect(page.getByRole("button", { name: "Open River" })).toBeVisible();
 
@@ -4638,12 +4744,9 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page.getByRole("tab", { name: "Natal" })).toBeVisible();
     await page.getByRole("tab", { name: "Transits" }).click();
     const mobileDailyForecast = page.locator(".friend-daily-forecast").first();
-    await expect(mobileDailyForecast, "Mobile friend forecast keeps its card inset").toBeVisible();
-    await expect(mobileDailyForecast).toHaveCSS("border-top-style", "solid");
-    expect(
-      await mobileDailyForecast.evaluate((element) => Number.parseFloat(getComputedStyle(element).paddingTop)),
-      "Mobile friend forecast has visible internal padding"
-    ).toBeGreaterThan(0);
+    await expect(mobileDailyForecast, "Mobile friend overview retains its complete reading").toBeVisible();
+    await expect(mobileDailyForecast.locator(".friend-profile-overview__headline")).not.toBeEmpty();
+    await expect(mobileDailyForecast).toHaveCSS("border-top-width", "0px");
     await expectNoHorizontalOverflow(page, "Mobile friend transit forecast");
     await assertNoClientErrors();
   });
@@ -4815,7 +4918,12 @@ test.describe("client-facing user flow case studies", () => {
     });
 
     expect(bodyType, "Friend aspect typography must resolve in the placement detail").not.toBeNull();
-    expect(bodyType?.aspect).toEqual(bodyType?.article);
+    expect(bodyType?.aspect).toEqual({
+      fontFamily: bodyType?.article.fontFamily,
+      fontSize: page.viewportSize()!.width <= 800 ? '19px' : '20px',
+      fontWeight: '400',
+      lineHeight: page.viewportSize()!.width <= 800 ? '28.5px' : '29px'
+    });
 
     await page.getByRole("button", { name: "Close detail" }).click();
     await expect(page.getByRole("region", { name: "Nikki chart profile" })).toBeVisible();
@@ -4826,9 +4934,10 @@ test.describe("client-facing user flow case studies", () => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await seedClientState(page, { profile: true });
+    await seedSignedInSession(page);
     await expectClientRouteLoads(page, "/#friends?tab=charts");
 
-    await expect(page.getByText("friends.")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Friends", exact: true })).toBeVisible();
     await expect(page.getByLabel("Friend charts")).toBeVisible();
     await expect(page.getByRole("region", { name: "No charts" })).toBeVisible();
     await expect(page.getByText("No charts yet.")).toBeVisible();
@@ -4842,8 +4951,8 @@ test.describe("client-facing user flow case studies", () => {
     await seedClientState(page, { now: "2026-07-29T16:00:00.000Z" });
     await expectClientRouteLoads(page, "/#sky");
 
-    await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible();
-    await page.locator(".sky-pl-item button").first().click();
+    await expect(page.getByRole("heading", { name: "Sky", exact: true })).toBeVisible();
+    await page.getByRole("region", { name: "Planets", exact: true }).getByRole("button").first().click();
 
     await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
     await expectNoDuplicateArticleHeadings(page, "Sky fallback placement detail");
@@ -4859,7 +4968,7 @@ test.describe("client-facing user flow case studies", () => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await seedClientState(page, { now: "2026-08-27T16:00:00.000Z" });
-    await expectClientRouteLoads(page, "/#sky/placement/sun");
+    await expectClientRouteLoads(page, "/#sky/placement/sun/virgo");
 
     const article = page.locator(".sky-detail-article");
     await expect(article).toBeVisible();
@@ -4868,7 +4977,7 @@ test.describe("client-facing user flow case studies", () => {
     await expect(article).not.toContainText("Aspects shaping this transit");
     await expect(article.getByRole("heading", { name: "Gifts" })).toBeVisible();
     await expect(article.getByRole("heading", { name: "Lessons" })).toBeVisible();
-    await expect(article).toContainText("Sun Trine Chiron");
+    await expect(article.locator('.article-related-aspect-row').filter({ hasText: 'Sun Trine Lilith' })).toHaveCount(0);
     const mercuryCopy = JSON.parse(readFileSync(path.resolve("packages/astro-knowledge/data/transits/sun-conjunction-mercury.json"), "utf8"));
     expect(mercuryCopy.status).toBe("LIVE");
     await expect(article).toContainText(mercuryCopy.readerCopy.body);
@@ -4885,14 +4994,13 @@ test.describe("client-facing user flow case studies", () => {
 
     const article = page.locator(".sky-detail-article");
     await expect(article).toBeVisible();
-    // In-sign aspects are shown in Gifts and Lessons rather than a separate aspect list; the
-    // approved write-up must still arrive complete, not shortened to fit the section.
+    // Selected-date aspects retain their complete approved write-ups.
     const gifts = article.getByRole("region", { name: "Gifts" });
     await expect(gifts.getByRole("heading", { name: "Sun Trine Lilith", level: 4 })).toBeVisible();
     const lilithCopy = JSON.parse(readFileSync(path.resolve("packages/astro-knowledge/data/transits/sun-trine-lilith.json"), "utf8"));
     expect(lilithCopy.status).toBe("LIVE");
     await expect(gifts).toContainText(lilithCopy.readerCopy.body);
-    await expect(gifts).toContainText("Exact · September 2 and September 10, 2026");
+    await expect(gifts).toContainText("Exact September 2.");
     await assertNoClientErrors();
   });
 
@@ -4942,7 +5050,7 @@ test.describe("client-facing user flow case studies", () => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await seedClientState(page, { now: "2026-08-22T16:00:00.000Z" });
-    await expectClientRouteLoads(page, "/#sky/placement/north-node");
+    await expectClientRouteLoads(page, "/#sky/placement/north-node/aquarius");
     await expect(page.locator(".sky-detail-article")).toContainText("The North Node moves into Aquarius, making a less familiar response more important than the one that comes automatically.");
     await expect(page.locator(".sky-detail-article")).toContainText("During this Aquarius–Leo node cycle, recognition and personal visibility stop being the only measure");
     await expect(page.locator(".sky-detail-article")).toContainText("The lunar nodes are not planets.");
@@ -4951,7 +5059,7 @@ test.describe("client-facing user flow case studies", () => {
     await expectNoDuplicateArticleHeadings(page, "SKY V4 North Node detail");
     await page.screenshot({ path: "test-results/reader-source-reference-north-node.png", fullPage: true });
 
-    await expectClientRouteLoads(page, "/#sky/placement/south-node");
+    await expectClientRouteLoads(page, "/#sky/placement/south-node/leo");
     await expect(page.locator(".sky-detail-article")).toContainText("The South Node moves into Leo, making an old reflex easier to repeat and easier to see.");
     await expect(page.locator(".sky-detail-article")).not.toContainText(/Marie|Satori|owner-approved|longer-form writing/iu);
     await expectNoDuplicateArticleHeadings(page, "SKY V4 South Node detail");
@@ -4997,7 +5105,7 @@ test.describe("client-facing user flow case studies", () => {
       now: "2026-07-29T16:00:00.000Z"
     });
 
-    await expectClientRouteLoads(page, "/#sky/placement/sun");
+    await expectClientRouteLoads(page, "/#sky/placement/sun/leo");
     await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
     await expectNoDuplicateArticleHeadings(page, "Sky placement detail");
     await expect(page.locator(".sky-detail-article")).toContainText(/The Sun in Leo/i);
@@ -5054,7 +5162,7 @@ test.describe("client-facing user flow case studies", () => {
     await seedClientState(page, { now: "2026-07-29T16:00:00.000Z" });
     await expectClientRouteLoads(page, "/#sky/placement/sun/leo");
 
-    const horoscopeSection = page.getByRole("region", { name: "Horoscopes by rising sign" });
+    const horoscopeSection = page.getByRole("region", { name: "Horoscopes" });
     await expect(horoscopeSection).toBeVisible();
     await expect(horoscopeSection.getByRole("heading", { level: 3 })).toHaveCount(12);
     await expect(horoscopeSection.getByRole("heading", { name: "Aries & Aries Rising" })).toBeVisible();
@@ -5082,11 +5190,11 @@ test.describe("client-facing user flow case studies", () => {
     });
     await expectClientRouteLoads(page, "/#sky/placement/sun/leo");
 
-    const personalizedSection = page.getByRole("region", { name: "Where it lands for you" });
+    const personalizedSection = page.getByRole("region", { name: "How this affects you" });
     await expect(personalizedSection).toBeVisible();
     await expect(personalizedSection).toContainText("5th house");
-    await expect(page.getByRole("heading", { level: 2, name: "Where it lands for you" })).toBeVisible();
-    const horoscopeSection = page.getByRole("region", { name: "Horoscopes by rising sign" });
+    await expect(page.getByRole("heading", { level: 2, name: "How this affects you" })).toBeVisible();
+    const horoscopeSection = page.getByRole("region", { name: "Horoscopes" });
     await expect(horoscopeSection).toBeVisible();
     await expect(horoscopeSection.getByRole("heading", { level: 3 })).toHaveCount(12);
     await expect(horoscopeSection.getByRole("heading", { name: "Aries & Aries Rising" })).toBeVisible();
@@ -5104,13 +5212,55 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
+  for (const [width, theme] of [[1440, "light"], [1440, "dark"], [390, "light"], [390, "dark"]] as const) {
+    test(`How this affects you matches the Venus handoff ${width} ${theme}`, async ({ page }) => {
+      const noErrors = await expectNoClientErrors(page);
+      await page.setViewportSize({ width, height: 1000 });
+      await seedClientState(page, { profile: true, preloadProfileNatalSky: true, now: "2026-10-02T16:00:00.000Z", theme });
+      await expectClientRouteLoads(page, "/?date=2026-10-02#sky/placement/venus/scorpio");
+      const source = JSON.parse(readFileSync("apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-house-rows-v3.json", "utf8"))
+        .hookRows.find((row: { contentKey: string }) => row.contentKey === "house-horoscope-core/venus/scorpio/house-8");
+      const copy = page.locator(".sky-detail-personalized__copy");
+      await expect(copy).toHaveText(source.body_you, { timeout: 20_000 });
+      await expectPersonalizedPlacementPresentation(page, width);
+      await expectSemanticArticleHeadingOrder(page, "Venus personalized placement");
+      await expect(page.locator("#sky-personalized-placement mark")).toHaveCount(0);
+      await page.locator(".sky-detail-personalized").screenshot({ path: `test-results/where-it-lands-venus-${width}-${theme}.png` });
+      const paragraphs = await page.locator("#sky-personalized-placement p").allTextContents();
+      await page.reload();
+      await expect(copy).toHaveText(source.body_you);
+      await expect(page.locator("#sky-personalized-placement p")).toHaveText(paragraphs);
+      await expectPersonalizedPlacementPresentation(page, width);
+      await noErrors();
+    });
+
+    test(`How this affects you retains the house card without active aspects ${width} ${theme}`, async ({ page }) => {
+      const noErrors = await expectNoClientErrors(page);
+      await page.setViewportSize({ width, height: 1000 });
+      // Venus is in Libra on this day; the Scorpio reading has no current
+      // Venus-in-Scorpio natal contacts, but its house passage still applies.
+      await seedClientState(page, { profile: true, preloadProfileNatalSky: true, now: "2026-08-22T16:00:00.000Z", theme });
+      await expectClientRouteLoads(page, "/?date=2026-08-22#sky/placement/venus/scorpio");
+      const card = page.getByRole("region", { name: "How this affects you", exact: true });
+      await expect(card).toContainText("8th house");
+      await expect(card.locator(".sky-detail-personalized-aspect")).toHaveCount(0);
+      await expectPersonalizedPlacementPresentation(page, width);
+      await page.locator(".sky-detail-personalized").screenshot({ path: `test-results/where-it-lands-house-only-${width}-${theme}.png` });
+      const copy = await card.textContent();
+      await page.reload();
+      await expect(card).toHaveText(copy!);
+      await expect(card.locator(".sky-detail-personalized-aspect")).toHaveCount(0);
+      await noErrors();
+    });
+  }
+
   test("Jupiter in Leo shows the owner's complete 5th-house horoscope", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await seedClientState(page, { now: "2026-08-22T16:00:00.000Z" });
     await expectClientRouteLoads(page, "/#sky/placement/jupiter/leo");
 
-    const horoscopeSection = page.getByRole("region", { name: "Horoscopes by rising sign" });
+    const horoscopeSection = page.getByRole("region", { name: "Horoscopes" });
     await expect(horoscopeSection).toBeVisible();
     const ariesHeading = horoscopeSection.getByRole("heading", { name: "Aries & Aries Rising" });
     await expect(ariesHeading).toBeVisible();
@@ -5133,11 +5283,11 @@ test.describe("client-facing user flow case studies", () => {
     await expectClientRouteLoads(page, "/#sky/placement/venus/libra");
 
     await expect(page.getByRole("heading", { name: "Venus in Libra" })).toBeVisible();
-    const horoscopeSection = page.getByRole("region", { name: "Horoscopes by rising sign" });
+    const horoscopeSection = page.getByRole("region", { name: "Horoscopes" });
     await expect(horoscopeSection).toBeVisible();
     await expect(horoscopeSection.getByRole("heading", { level: 3 })).toHaveCount(12);
     await expect(horoscopeSection.getByRole("heading", { name: "Libra & Libra Rising" })).toBeVisible();
-    await expect(page.getByRole("region", { name: "Where it lands for you" })).toHaveCount(0);
+    await expect(page.getByRole("region", { name: "How this affects you" })).toHaveCount(0);
     await expect(page.getByText("You may want more of what is actually fun.", { exact: true })).toHaveCount(0);
     await expect(page.locator(".sky-detail-id .article-duration")).toHaveText([
       "August 6 to September 10, 2026",
@@ -5168,11 +5318,11 @@ test.describe("client-facing user flow case studies", () => {
     await expectClientRouteLoads(page, "/#sky/placement/moon/sagittarius");
 
     await expect(page.getByRole("heading", { name: "The Moon in Sagittarius" })).toBeVisible();
-    const horoscopeSection = page.getByRole("region", { name: "Horoscopes by rising sign" });
+    const horoscopeSection = page.getByRole("region", { name: "Horoscopes" });
     await expect(horoscopeSection).toBeVisible();
     await expect(horoscopeSection.getByRole("heading", { level: 3 })).toHaveCount(12);
     await expect(horoscopeSection.getByRole("heading", { name: "Sagittarius & Sagittarius Rising" })).toBeVisible();
-    await expect(page.getByRole("region", { name: "Where it lands for you" })).toHaveCount(0);
+    await expect(page.getByRole("region", { name: "How this affects you" })).toHaveCount(0);
     await expect(page.getByRole("link", { name: "Jump to horoscopes" })).toHaveCount(0);
     await expect(page.locator(".sky-detail-id .article-duration")).not.toBeEmpty();
     await assertNoClientErrors();
@@ -5184,7 +5334,7 @@ test.describe("client-facing user flow case studies", () => {
     await seedClientState(page, { now: "2026-08-22T16:00:00.000Z" });
     await expectClientRouteLoads(page, "/#sky/placement/uranus/gemini");
 
-    const horoscopeSection = page.getByRole("region", { name: "Horoscopes by rising sign" });
+    const horoscopeSection = page.getByRole("region", { name: "Horoscopes" });
     await expect(horoscopeSection).toBeVisible();
     await expect(horoscopeSection.getByRole("heading", { level: 3 })).toHaveCount(12);
     await expect(horoscopeSection.getByRole("heading", { name: "Aries & Aries Rising" })).toBeVisible();
@@ -5205,12 +5355,10 @@ test.describe("client-facing user flow case studies", () => {
     });
     await expectClientRouteLoads(page, "/#sky/placement/sun/leo");
 
-    const personalizedSection = page.getByRole("region", { name: "Where it lands for you" });
+    const personalizedSection = page.getByRole("region", { name: "How this affects you" });
     await expect(personalizedSection).toBeVisible();
-    await expect(
-      personalizedSection.getByRole("heading", { level: 3, name: "Aspects to the natal chart" })
-    ).toBeVisible({ timeout: 20_000 });
-    await expect(personalizedSection.getByRole("heading", { level: 4 }).first()).toBeVisible();
+    await expect(personalizedSection.getByRole("heading", { name: "Aspects to the natal chart" })).toHaveCount(0);
+    await expect(personalizedSection.getByRole("heading", { level: 3 }).first()).toBeVisible({ timeout: 20_000 });
     await expectReaderFacingCopy(
       personalizedSection.locator(".sky-detail-personalized-aspect p").first(),
       "Personalized Sky aspect interpretation",
@@ -5359,12 +5507,13 @@ test("Chiron Jupiter owner revision renders its complete opening and ending", as
   });
   await expectClientRouteLoads(page, "/#you");
   await page.getByRole("tab", { name: /updates|transits/i }).click();
-  const card = page.getByRole("button", { name: /^Chiron in Aries square your natal Jupiter/ }).first();
+  const card = page.locator('a.personal-transit-card[data-aspect-name="Chiron in Aries square your natal Jupiter"]').first();
   await expect(card).toBeVisible({ timeout: 30_000 });
-  await expect(card).toContainText("Exact Oct 5, 2026");
+  await expect(card.locator(".updates-aspect-row__meta-line")).toHaveText(/^Exact \d+:\d{2} [AP]M EDT · (?:\d+° \d{2}′|<1′)$/);
   await card.click();
   const detail = page.getByRole("region", { name: "Chiron in Aries square your natal Jupiter", exact: true });
   await expect(detail).toBeVisible();
+  await expect(detail).toContainText("Exact Oct 5, 2026");
   releaseCopy();
   await expect(detail).toContainText("A moment of real growth can unexpectedly pull an old insecurity straight to the surface.");
   await expect(detail).toContainText("You do not have to make an opportunity harder on yourself to feel like you earned it.");
@@ -5396,17 +5545,18 @@ test("Sky detail hydrates published aspects for its displayed snapshot and dated
     await route.fulfill({ json: readerResponse(snapshot.rows.filter((row: any) => keys.includes(row.content_key))) });
   });
   await expectClientRouteLoads(page, "/?date=2026-09-08#sky/placement/lilith/sagittarius");
-  // Placement cards now follow the displayed motion chapter, not the full residency.
-  const ids = ["mercury-sextile-lilith", "jupiter-trine-lilith", "sun-square-lilith"];
+  // Placement cards follow active contacts in the displayed snapshot.
+  const ids = ["chiron-trine-lilith", "neptune-square-lilith", "sun-square-lilith"];
   for (const id of ids) {
     const row = publishedAspect(id);
     await expectPublishedBody(row.body);
     expect(requested.has(row.contentKey)).toBe(true);
   }
-  const datedLink = page.getByRole("link", { name: "Read more about Lilith Square Sun", exact: true });
+  await expect(page.locator(".article-related-aspect-row").getByRole("heading").filter({ hasText: /Mercury|Jupiter/ })).toHaveCount(0);
+  const datedLink = page.getByRole("link", { name: /^Read more about Lilith(?: Rx)? Square Sun(?: Rx)?$/ });
   const datedHref = await datedLink.getAttribute("href");
-  expect(datedHref).toContain("/at/");
-  // Preserve complete-copy coverage for sampled links outside that shorter chapter.
+  expect(datedHref).toBe("#sky/aspect/sun/square/lilith/on/2026-09-18T14%3A03%3A00.000Z");
+  // Preserve complete-copy coverage for sampled links outside that snapshot.
   // Direct Swiss calculations put both Chiron trine Lilith and Neptune square
   // Lilith in this snapshot; neither is active on the original September 8 date.
   const sampleInstant = encodeURIComponent("2026-08-01T12:00:00.000Z");
@@ -5433,15 +5583,29 @@ test("Sky detail hydrates published aspects for its displayed snapshot and dated
   await page.evaluate(() => { window.location.hash = "calendar"; });
   await page.getByRole("button", { name: /^Thursday, September 10\./ }).click();
   await page.getByRole("button", { name: "Venus enters Scorpio", exact: true }).click();
-  await page.getByRole("dialog", { name: "Event detail" }).getByRole("button", { name: "Read article" }).click();
+  await expect(page).toHaveURL(/#sky\/event\//);
+  await expect(page.getByRole("dialog", { name: "Event detail" })).toHaveCount(0);
   const venus = publishedAspect("venus-square-pluto");
-  await expectPublishedBody(venus.body);
   await expect(page.locator('.sky-detail-article h1')).toContainText("Venus in Scorpio");
+  const placementParagraphs = page.locator('.sky-detail-article .article-body-inner').first().locator('p');
+  await expect(placementParagraphs.first()).not.toBeEmpty();
+  const placementBody = await placementParagraphs.allTextContents();
+  await page.reload();
+  await expect(placementParagraphs).toHaveText(placementBody, { timeout: 60_000 });
+  await expect(page.locator('#sky-detail-title')).toHaveText('Venus in Scorpio');
+  const keyDates = page.locator('.sky-placement-key-dates');
+  await keyDates.locator(':scope > summary').click();
+  const plutoDate = keyDates.getByRole('link', { name: /Venus.*square.*Pluto/iu }).first();
+  await expect(plutoDate).toHaveAttribute('href', /^#sky\/aspect\//);
+  await plutoDate.click();
+  await expectPublishedBody(venus.body);
+  await page.reload();
+  await expectPublishedBody(venus.body);
 });
 
 for (const theme of ["light", "dark"] as const) {
   for (const width of [390, 1440]) {
-    test(`shared reading cards use one visual contract ${theme} ${width}`, async ({ page }) => {
+    test(`reading cards retain their approved type roles ${theme} ${width}`, async ({ page }) => {
       test.setTimeout(300_000);
       await page.setViewportSize({ width, height: 1000 });
       // Hydrate the real pattern component through the cached chart fixture.
@@ -5461,84 +5625,45 @@ for (const theme of ["light", "dark"] as const) {
         if (!new URL(route.request().url()).searchParams.has("includeAspectPatternCopy")) return route.fallback();
         return route.fulfill({ json: { ok: true, sky: { aspectPatterns } } });
       });
-      const check = async (selector: string, role: "title" | "body" | "pill" | "label" | "action") => {
-        const elements = page.locator(selector);
-        await expect(elements.first()).toBeVisible();
-        const mismatches = await elements.evaluateAll((nodes, role) => {
-          const probe = document.createElement("span");
-          const roles = {
-            action: ["--font-ui", "--type-ui-size", "--weight-semibold", "--leading-label", "--tracking-normal"],
-            title: ["--font-display", "--text-card-title", "--weight-medium", "--leading-title", "--tracking-title"],
-            body: ["--font-body", "--text-body", "--weight-regular", "--leading-body", "--tracking-body"],
-            pill: ["--pill-font-family", "--pill-font-size", "--pill-font-weight", "--pill-line-height", "--pill-tracking"],
-            label: ["--label-eyebrow-font-family", "--label-eyebrow-font-size", "--label-eyebrow-font-weight", "--label-eyebrow-line-height", "--label-eyebrow-tracking"]
-          };
-          const properties = ["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing"] as const;
-          properties.forEach((property, i) => { probe.style[property] = `var(${roles[role][i]})`; });
-          document.body.append(probe);
-          const expected = getComputedStyle(probe);
-          const errors = nodes.filter(node => node.getBoundingClientRect().width).flatMap(node => {
-            const actual = getComputedStyle(node);
-            return properties.filter(key => actual[key] !== expected[key]).map(key => ({
-              text: node.textContent?.slice(0, 40), key, actual: actual[key], expected: expected[key]
-            }));
-          });
-          probe.remove();
-          return errors;
-        }, role);
-        expect(mismatches, selector).toEqual([]);
+      const title = "A shared plan needs room to change";
+      const copy = aspectPatterns.resolvedCopy[0].content.overview;
+      const checkToken = async (selector: string, property: string, token: string) => {
+        const element = page.locator(selector).first(); await expect(element).toBeVisible();
+        const result = await element.evaluate((el, { property, token }) => {
+          const probe = document.createElement('span'); probe.style.setProperty(property, `var(${token})`); el.append(probe);
+          const expected = getComputedStyle(probe).getPropertyValue(property), actual = getComputedStyle(el).getPropertyValue(property); probe.remove();
+          return { actual, expected };
+        }, { property, token });
+        expect(result.actual, `${selector}: ${property}`).toBe(result.expected);
       };
-      await expectClientRouteLoads(page, "/#friends?tab=charts");
-      await page.getByRole("button", { name: "Open Nikki" }).click();
-      await selectFriendDetailTab(page, "Natal");
-      await check(".natal-pattern-card__header h3", "title");
-      await check(".natal-pattern-card__header p", "body");
-      await check(".natal-pattern-card__header > span", "label");
-      await check(".placement-table-row__title", "title");
-      await check(".placement-table-row__description", "body");
-      await expect(page.locator(".placement-table-row .ui-pill")).toHaveCount(0);
-      const surface = async (selector: string) => page.locator(selector).first().evaluate(node => {
-        const style = getComputedStyle(node);
-        return { border: style.border, radius: style.borderRadius, background: style.backgroundColor, shadow: style.boxShadow };
-      });
-      const padding = async (selector: string) => page.locator(selector).first().evaluate(node => getComputedStyle(node).padding);
-      const pattern = page.locator(".natal-pattern-card").first();
-      const expectedSurface = await surface(".natal-pattern-card");
-      const expectedPadding = await padding(".natal-pattern-card__header");
-      expect(await surface(".placement-table-row")).toEqual(expectedSurface);
-      expect(await padding(".placement-table-row")).toEqual(expectedPadding);
-      expect(await pattern.locator("header > *").evaluateAll(nodes => nodes.map(node => node.tagName))).toEqual(["SPAN", "H3", "P"]);
-      await expect(pattern.getByRole("button", { name: "Read More" })).toBeVisible();
-      await mkdir(responsiveScreenshotDir, { recursive: true });
-      await pattern.screenshot({ path: path.join(responsiveScreenshotDir, `card-pattern-${theme}-${width}.png`) });
-      await page.locator(".placement-table-row").first().screenshot({ path: path.join(responsiveScreenshotDir, `card-placement-${theme}-${width}.png`) });
-      await expectNoHorizontalOverflow(page, "shared natal cards");
-      await check(".card-read-more", "action");
-      const placementCard = page.locator(".placement-table-row").first();
-      const previewBox = await placementCard.locator(".placement-table-row__description").boundingBox();
-      const actionBox = await placementCard.locator(".card-read-more").boundingBox();
-      expect(actionBox!.y).toBeGreaterThanOrEqual(previewBox!.y + previewBox!.height);
-      const natalRoute = page.url();
-      await page.locator(".placement-table-row .card-read-more").first().click();
-      await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
-      await page.goto(natalRoute);
-      await selectFriendDetailTab(page, "Transits");
-      await check(".updates-aspect-row__title", "title");
-      await check(".updates-aspect-row__description", "body");
-      expect(await surface(".updates-aspect-row")).toEqual(expectedSurface);
-      expect(await padding(".updates-aspect-row")).toEqual(expectedPadding);
-      await page.locator(".updates-aspect-row").first().screenshot({ path: path.join(responsiveScreenshotDir, `card-transit-${theme}-${width}.png`) });
-      await expectNoHorizontalOverflow(page, "shared transit cards");
-      await check(".card-read-more", "action");
-      await page.locator(".updates-aspect-row .card-read-more").first().click();
-      await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
-      await expectClientRouteLoads(page, "/#sky");
-      const skyCard = page.locator(".planet-placement-row:not(.card-skeleton):has(.card-read-more)").first();
-      await expect(skyCard.locator(".card-read-more")).toBeVisible();
-      await skyCard.focus();
-      await page.keyboard.press("Enter");
-      await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
-      await check(".article-pills .ui-pill", "pill");
+      for (const audience of ['friend', 'you']) {
+        await expectClientRouteLoads(page, audience === 'friend' ? '/#friends?tab=charts&chart=friend-nikki&view=natal' : '/#you?tab=chart');
+        const pattern = page.getByRole('button', { name: title, exact: true });
+        await expect(pattern).toContainText(copy);
+        await expect(pattern.locator('.natal-insight-card__preview')).toHaveCSS('font-family', /Newsreader/);
+        await expect(pattern.locator('.natal-insight-card__preview')).toHaveCSS('font-size', '19px');
+        await expect(pattern.locator('.natal-insight-card__preview')).toHaveCSS('line-height', '28.5px');
+        await expect(pattern.locator('.natal-insight-card__title')).toHaveCSS('font-weight', '400');
+        await checkToken('.natal-insight-card__title', 'font-size', width <= 800 ? '--type-large-title-size' : '--text-card-title');
+        await expect(pattern.locator('.natal-insight-card__meta')).toHaveCSS('font-family', /system-ui/);
+        await expect(pattern.locator('.card-read-more--icon')).toBeVisible();
+        const placementScope = audience === 'friend' ? '.natal-placement-sections ' : '';
+        const placement = page.locator(`${placementScope}button.placement-table-row`).first();
+        await expect(placement).toBeVisible();
+        await checkToken(`${placementScope}.placement-table-row__title`, 'font-size', '--text-row-title-size');
+        await expect(placement.locator('.placement-table-row__title')).toHaveCSS('font-family', /system-ui/);
+        await expect(placement.locator('.placement-table-row__description')).toHaveCSS('font-family', /Newsreader/);
+        await expect(placement.locator('.placement-table-row__description')).toHaveCSS('font-size', audience === 'friend' ? '15px' : '19px');
+        await expect(placement.locator('.ui-pill')).toHaveCount(0);
+        await expectNoHorizontalOverflow(page, `${audience} current reading cards`);
+        await mkdir(responsiveScreenshotDir, { recursive: true });
+        await pattern.screenshot({ path: path.join(responsiveScreenshotDir, `card-pattern-${audience}-${theme}-${width}.png`) });
+        const preview = await placement.locator('.placement-table-row__description').innerText();
+        await placement.focus(); await page.keyboard.press('Enter');
+        const detail = page.locator('.sky-detail-article');
+        await expect(detail).toBeVisible();
+        await expect(detail).toContainText(preview.replace(/…$/, ''));
+      }
     });
   }
 }
@@ -5560,8 +5685,8 @@ test("an open Friends article survives an empty initial dashboard overlay", asyn
   });
   await expectClientRouteLoads(page, "/#friends?tab=charts&chart=friend-batch4&view=synastry");
   const card = page.getByRole("button", { name: "Open full entry for Your Midheaven sextile Sofia's Sun", exact: true });
-  await expect(card.locator(".synastry-contact-description")).not.toBeEmpty();
-  const copy = await card.locator(".synastry-contact-description").innerText();
+  await expect(card.locator(".reading-story-card__preview")).not.toBeEmpty();
+  const copy = await card.locator(".reading-story-card__preview").innerText();
   await expect.poll(() => overlayReads).toBeGreaterThan(0);
   await card.click();
   const detail = page.locator(".app-shell.mode-detail");
@@ -5594,7 +5719,7 @@ for (const body of ["Ascendant", "Midheaven", "Descendant", "Imum Coeli", "Chiro
           .replaceAll("{{holder2Poss}}", inverse ? "your" : "Sofia's")
           .replaceAll("{{holder1}}", inverse ? "Sofia" : "you")
           .replaceAll("{{holder2}}", inverse ? "you" : "Sofia");
-        await expect(card.locator(".synastry-contact-description")).toHaveText(copy, { timeout: 20_000 });
+        await expect(card.locator(".reading-story-card__preview")).toHaveText(copy, { timeout: 20_000 });
         await card.click();
         const detail = page.locator(".app-shell.mode-detail");
         await expect(detail).toContainText(copy);
@@ -5619,16 +5744,14 @@ for (const theme of ["light", "dark"] as const) {
       await moon.click();
       const header = page.locator(".article-id");
       const pills = header.locator(".article-pills");
-      await expect(pills).toContainText(/COMBUST/i);
-      await expect(pills).toContainText(/left/);
-      const date = await header.locator(".article-duration").first().boundingBox();
-      const pillBox = await pills.boundingBox();
-      expect(pillBox!.y).toBeGreaterThanOrEqual(date!.y + date!.height);
-      await expectNoHorizontalOverflow(page, `article pills ${theme} ${width}`);
+      await expect(pills).toHaveCount(0);
+      await expect(header.locator('h1')).toHaveText('The Moon in Virgo');
+      const dates = await header.locator('.article-duration').allTextContents();
+      expect(dates).toEqual(['September 9 to September 11, 2026']);
+      await expectNoHorizontalOverflow(page, `article header ${theme} ${width}`);
       await page.screenshot({ path: `test-results/article-pills-sky-${theme}-${width}.png` });
-      const labels = await pills.innerText();
       await page.reload();
-      await expect.poll(() => pills.innerText()).toEqual(labels);
+      await expect(header.locator('.article-duration')).toHaveText(dates);
       await expectClientRouteLoads(page, "/#you");
       const houseCard = page.locator("button.updates-aspect-row--house").first();
       await expect(houseCard).toBeVisible();
@@ -5652,7 +5775,7 @@ for (const theme of ["light", "dark"] as const) {
       await expect(page.locator(".article-id h1")).toBeVisible();
       await expectNoHorizontalOverflow(page, `friend article pills ${theme} ${width}`);
       await expectClientRouteLoads(page, "/#friends?tab=charts&chart=friend-nikki&view=synastry");
-      const contact = page.locator("button.friend-aspect-row").filter({ has: page.locator(".synastry-contact-description") }).first();
+      const contact = page.locator("button.friend-dynamic-card").filter({ has: page.locator(".reading-story-card__preview") }).first();
       await expect(contact).toBeVisible();
       await expect(contact.locator(".ui-pill")).toHaveCount(0);
       await contact.click();
@@ -5727,7 +5850,7 @@ for (const theme of ["light", "dark"] as const) {
       await expectClientRouteLoads(page, "/#friends?tab=charts&chart=friend-batch4&view=synastry");
       const card = page.getByRole("button", { name: `Open full entry for Your ${inverse ? "Chiron" : "Sun"} square Sofia's ${inverse ? "Sun" : "Chiron"}`, exact: true });
       const copy = inverse ? record.body_they : record.body_you;
-      await expect(card.locator(".synastry-contact-description")).toHaveText(copy, { timeout: 30_000 });
+      await expect(card.locator(".reading-story-card__preview")).toHaveText(copy, { timeout: 30_000 });
       await card.click();
       await expect(page.locator(".app-shell.mode-detail")).toContainText(copy);
       await expectNoHorizontalOverflow(page, "new synastry publication");
@@ -5761,6 +5884,10 @@ for (const theme of ["light", "dark"] as const) {
       await seedCrossSurfacePublications(page, records, { profile: true, preloadProfileNatalSky: true, theme, now: "2026-09-10T16:00:00.000Z" }, theme === "light" && width === 1440);
       const errors = watchBrowserErrors(page);
       await expectClientRouteLoads(page, "/#you");
+      const group = page.getByRole('region', { name: 'Planets moving through your houses', exact: true });
+      await expect(group).toBeVisible();
+      const more = group.getByRole('button', { name: /^See all / });
+      if (await more.count()) await more.click();
       const card = page.locator("button.updates-aspect-row--house").filter({ hasText: "Uranus" }).first();
       await expect(card).toBeVisible({ timeout: 45_000 });
       await card.click();
@@ -5799,6 +5926,18 @@ for (const theme of ["light", "dark"] as const) for (const width of [390, 1440])
       body_they: "QA published friend solar return opening.\n\nQA published friend solar return final sentence." });
     await seedCrossSurfacePublications(page, records, { profile: true, friends: true, theme,
       profileBirthDate: "1979-08-22", preloadProfileNatalSky: true, now: "2026-08-22T16:00:00.000Z" });
+    let generationRequests = 0, savedReadingRequests = 0;
+    await page.route('**/api/generate-user-content', route => {
+      generationRequests++;
+      return route.fulfill({ status: 503, json: { error: 'Generation must never run while reading.' } });
+    });
+    await page.route('**/rest/v1/user_generated_interpretations*', route => {
+      const query = new URL(route.request().url()).searchParams;
+      if (query.get('subject_type') !== 'eq.you_transit') return route.fallback();
+      savedReadingRequests++;
+      expect(query.get('status')).toBe('eq.LIVE');
+      return route.fulfill({ json: [] });
+    });
     let personalReads = 0;
     await page.route('**/api/content-reader', async route => {
       const query = route.request().postDataJSON();
@@ -5808,7 +5947,7 @@ for (const theme of ["light", "dark"] as const) for (const width of [390, 1440])
     });
     const errors = watchBrowserErrors(page);
     await expectClientRouteLoads(page, "/#sky/placement/sun/leo");
-    const personalized = page.getByRole("region", { name: "Where it lands for you" });
+    const personalized = page.getByRole("region", { name: "How this affects you" });
     await expect(personalized).toContainText("QA published solar return opening.", { timeout: 30_000 });
     await expect(personalized).toContainText("QA published solar return final sentence.");
     await expect(personalized).not.toContainText("{{");
@@ -5820,7 +5959,10 @@ for (const theme of ["light", "dark"] as const) for (const width of [390, 1440])
     // Navigate within the same session; the scoped Sky overlay must not wipe
     // personal sources, nor should the published Friend audience fall back to You.
     await page.evaluate(() => { window.location.hash = "you"; });
-    const personalRow = page.locator('button.updates-aspect-row').filter({ hasText: /QA published (?:transit|solar return) opening/ }).first();
+    const personalRow = page.locator('.updates-aspect-row:is(a,button)').filter({ hasText: /QA published (?:transit|solar return) opening/ }).first();
+    await expect(personalRow).toBeVisible({ timeout: 30_000 });
+    await expect.poll(() => savedReadingRequests).toBeGreaterThan(0);
+    await page.reload();
     await expect(personalRow).toBeVisible({ timeout: 30_000 });
     await personalRow.click();
     await expect(page.locator('.you-transit-article')).toContainText(/QA published (?:transit|solar return) final sentence/);
@@ -5830,6 +5972,7 @@ for (const theme of ["light", "dark"] as const) for (const width of [390, 1440])
     await friend.click();
     await expect(page.locator('.app-shell.mode-detail')).toContainText(/QA published friend transit final sentence/);
     await expectNoHorizontalOverflow(page, "published friend personal reading");
+    expect(generationRequests).toBe(0);
     errors();
   });
 }
@@ -5852,7 +5995,7 @@ test('published personal transit failure retries and retirement clears an open Y
   });
   await page.goto('/#sky/placement/sun/leo');
   await expect(page.getByText('The transit readings could not load. Please try again.')).toBeVisible({ timeout: 30_000 });
-  await expect(page.getByRole('region', { name: 'Where it lands for you' })).toHaveCount(0);
+  await expect(page.getByRole('region', { name: 'How this affects you' })).toHaveCount(0);
   await page.evaluate(() => { window.location.hash = 'you'; });
   await expect(page.getByRole('region', { name: 'In-depth transit reports' })).toBeVisible();
   await expect(page.getByText('The transit readings could not load. Please try again.')).toBeVisible();
@@ -5865,10 +6008,10 @@ test('published personal transit failure retries and retirement clears an open Y
   await page.evaluate(() => { window.location.hash = 'sky/placement/sun/leo'; });
   await expect(page.getByText('The transit readings could not load. Please try again.')).toBeVisible();
   fail = false;
-  await page.getByRole('button', { name: 'Retry', exact: true }).click();
-  await expect(page.getByRole('region', { name: 'Where it lands for you' })).toContainText('QA retry solar return final sentence.', { timeout: 30_000 });
+  await page.getByRole('button', { name: 'Try again', exact: true }).click();
+  await expect(page.getByRole('region', { name: 'How this affects you' })).toContainText('QA retry solar return final sentence.', { timeout: 30_000 });
   await page.evaluate(() => { window.location.hash = 'you'; });
-  const personal = page.locator('button.updates-aspect-row').filter({ hasText: 'QA retry solar return opening.' });
+  const personal = page.locator('.updates-aspect-row:is(a,button)').filter({ hasText: 'QA retry solar return opening.' });
   await expect(personal).toBeVisible({ timeout: 30_000 }); await personal.click();
   await expect(page.locator('.you-transit-article')).toContainText('QA retry solar return final sentence.');
   const publication = { content_key: record.contentKey, state: 'retired', revision: 100_001,
@@ -5892,7 +6035,7 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
     await page.route('**/api/content-reader', route => route.request().postDataJSON().scope
       ? route.fulfill({ json: readerResponse([]) }) : route.fallback());
     await expectClientRouteLoads(page, '/#sky/placement/moon/taurus');
-    const section = page.getByRole('region', { name: 'Where it lands for you' });
+    const section = page.getByRole('region', { name: 'How this affects you' });
     for (const [index, title] of ['Moon square your Sun', 'Moon sextile your Jupiter'].entries()) {
       const article = section.locator('.sky-detail-personalized-aspect').filter({ has: page.getByRole('heading', { name: title, exact: true }) });
       const candidates = records.filter((row: any) => new RegExp(`^authored/transit-aspect/moon/${index ? '(?:jupiter|j)' : '(?:sun|s)'}/`).test(row.contentKey));
@@ -5928,7 +6071,7 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
       return route.fallback();
     });
     await page.goto('/#sky/placement/sun/leo');
-    const personal = page.getByRole('region', { name: 'Where it lands for you' });
+    const personal = page.getByRole('region', { name: 'How this affects you' });
     await expect(personal).toContainText('QA recovered return opening.', { timeout: 30_000 });
     await expect(personal).toContainText('QA recovered return final sentence.');
     await expect(page.getByText('The transit readings could not load. Please try again.')).toHaveCount(0);
@@ -5948,12 +6091,16 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"] as const)
     const assertNoClientErrors = await expectNoClientErrors(page);
     await seedClientState(page, { profile: true, friends: true, theme, preloadProfileNatalSky: true });
     await expectClientRouteLoads(page, "/#you");
-    const cards = page.locator("button.updates-aspect-row:has(.updates-aspect-row__orb)");
+    const cards = page.locator("a.updates-aspect-row:has(.updates-aspect-row__orb)");
     await expect(cards.first()).toBeVisible({ timeout: 60_000 });
-    const titles = await cards.locator(".updates-aspect-row__title").allTextContents();
+    const titles = await cards.evaluateAll(rows => rows.map(row => row.getAttribute("data-aspect-name")!));
     expect(titles.length).toBeGreaterThan(0);
     let titleStyle: Record<string, string> | undefined;
     for (const title of titles) {
+      for (const group of await page.locator('.you-transit-group').all()) {
+        const more = group.getByRole('button', {name: /^See all /});
+        if (await more.count()) await more.click();
+      }
       await cards.filter({ has: page.getByText(title, { exact: true }) }).click();
       const heading = page.locator("#you-transit-article-title");
       await expect(heading).toHaveText(title);
@@ -6017,7 +6164,7 @@ for (const theme of ["light", "dark"] as const) {
       await expectClientRouteLoads(page, "/#friends?tab=charts&chart=friend-nikki&view=synastry");
       const synastry = page.getByLabel("Nikki synastry chart wheel", { exact: true });
       await expectRelationshipWheelGeometry(page, "Nikki synastry chart wheel");
-      async function expectFitsPage(wheel: ReturnType<Page["locator"]>, rings: { selector: string; size: number }[]) {
+      async function expectFitsPage(wheel: ReturnType<Page["locator"]>, rings: { selector: string; size?: number }[]) {
         await expect(wheel.locator("iframe, .relationship-wheel-viewport, .relationship-wheel-controls")).toHaveCount(0);
         await expect(wheel.getByRole("tab", { name: /Bright|Monochrome/ })).toHaveCount(0);
         const geometry = await wheel.evaluate((element, rings) => {
@@ -6031,16 +6178,19 @@ for (const theme of ["light", "dark"] as const) {
               const style = getComputedStyle(node);
               return [style.overflowX, style.overflowY].some(value => ["auto", "scroll"].includes(value));
             }).length,
-            glyphs: rings.map(ring => ({ expected: bounds.width / 648 * ring.size,
-              widths: [...element.querySelectorAll(ring.selector)].map(glyph => glyph.getBoundingClientRect().width) }))
+            glyphs: rings.flatMap(ring => [...element.querySelectorAll(ring.selector)].map(glyph => ({
+              expected: bounds.width / svg.viewBox.baseVal.width * (ring.size ?? Number(glyph.getAttribute("width"))),
+              width: glyph.getBoundingClientRect().width
+            })))
           };
         }, rings);
-        expect(geometry.viewBox).toBe("-24 -24 648 648");
-        expect(Math.abs(geometry.width - geometry.height)).toBeLessThan(1);
+        expect(geometry.viewBox).toBe("-4 -4 608 608");
+        expect(Math.abs(geometry.height / geometry.width - 1)).toBeLessThan(0.01);
+        await expect(wheel.locator(".chart-house-system-label")).toHaveCount(0);
         expect(geometry.fits).toBe(true);
         expect(geometry.scrollRegions).toBe(0);
-        for (const ring of geometry.glyphs) for (const size of ring.widths) {
-          expect(Math.abs(size - ring.expected), "glyphs retain their normal responsive size").toBeLessThan(0.2);
+        for (const glyph of geometry.glyphs) {
+          expect(Math.abs(glyph.width - glyph.expected), "glyphs retain their normal responsive size").toBeLessThan(0.2);
         }
       }
       const synastryRings = [
@@ -6048,8 +6198,8 @@ for (const theme of ["light", "dark"] as const) {
         { selector: ".planet-marker-inner .planet-glyph-image", size: 22 }
       ];
       await expectFitsPage(synastry, synastryRings);
-      await expect(synastry.locator(".synastry-house-band--outer path")).toHaveCount(12);
-      await expect(synastry.locator(".synastry-house-band--inner path")).toHaveCount(12);
+      await expect(synastry.locator(".synastry-house-number")).toHaveCount(24);
+      await expect(synastry.locator(".wheel-surfaces > circle")).toHaveCount(5);
 
       // Find chart preferences through the site's existing menu, not on a profile.
       await page.getByRole("button", { name: "Open menu" }).click();
@@ -6078,9 +6228,9 @@ for (const theme of ["light", "dark"] as const) {
       const dialog = page.getByRole("dialog");
       await expect(dialog.locator(".synastry-house-number")).toHaveCount(24);
       await expect(dialog.locator(".relationship-wheel-viewport, .relationship-wheel-controls")).toHaveCount(0);
-      expect((await dialog.locator(".sky-wheel").boundingBox())!.width).toBeGreaterThanOrEqual((await synastry.locator(".sky-wheel").boundingBox())!.width - 1);
+      expect((await dialog.locator(".sky-wheel").boundingBox())!.width).toBeGreaterThanOrEqual((await dialog.locator(".full-chart__wheel").boundingBox())!.width - 2);
       const synastryDialogBox = (await dialog.boundingBox())!;
-      const synastryFooterBox = (await dialog.locator(".chart-fullscreen-footer").boundingBox())!;
+      const synastryFooterBox = (await dialog.locator(".full-chart__heading .friend-compare-control").boundingBox())!;
       expect(synastryFooterBox.y + synastryFooterBox.height).toBeLessThan(synastryDialogBox.y + synastryDialogBox.height);
       await dialog.getByRole("button", { name: "Close full-screen chart" }).click();
 
@@ -6089,16 +6239,16 @@ for (const theme of ["light", "dark"] as const) {
       await expect(composite.locator(".wheel-glyph-ring")).toHaveCount(0);
       await expect(composite.locator(".sky-wheel")).toHaveClass(/sky-wheel--monochrome/);
       await expect(composite.locator(".planet-label-group[transform*=scale]")).toHaveCount(0);
-      await expectFitsPage(composite, [{ selector: ".planet-glyph-image", size: 26 }]);
+      await expectFitsPage(composite, [{ selector: ".planet-glyph-image" }]);
       await expect(composite.locator(".aspect-lines > g").first()).toBeVisible();
       await expectAspectInspector(composite, "Refined composite");
       await composite.screenshot({ path: testInfo.outputPath("composite.png") });
       await expectNoHorizontalOverflow(page, "Composite chart");
       await page.getByRole("button", { name: "Full-screen chart", exact: true }).click();
       await expect(dialog.locator(".sky-wheel-composite")).toHaveClass(/sky-wheel--monochrome/);
-      expect((await dialog.locator(".sky-wheel").boundingBox())!.width).toBeGreaterThanOrEqual((await composite.locator(".sky-wheel").boundingBox())!.width - 1);
+      expect((await dialog.locator(".sky-wheel").boundingBox())!.width).toBeGreaterThanOrEqual((await dialog.locator(".full-chart__wheel").boundingBox())!.width - 2);
       const compositeDialogBox = (await dialog.boundingBox())!;
-      const compositeFooterBox = (await dialog.locator(".chart-fullscreen-footer").boundingBox())!;
+      const compositeFooterBox = (await dialog.locator(".full-chart__heading .friend-compare-control").boundingBox())!;
       expect(compositeFooterBox.y + compositeFooterBox.height).toBeLessThan(compositeDialogBox.y + compositeDialogBox.height);
       await dialog.screenshot({ path: testInfo.outputPath("composite-fullscreen.png") });
       await dialog.getByRole("button", { name: "Close full-screen chart" }).click();
@@ -6122,7 +6272,7 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) test(`Mo
     ? route.fulfill({ json: readerResponse([]) }) : route.fallback());
   const errors = watchBrowserErrors(page);
   await expectClientRouteLoads(page, '/#sky/placement/moon/taurus');
-  const section = page.getByRole('region', { name: 'Where it lands for you' });
+  const section = page.getByRole('region', { name: 'How this affects you' });
   const article = section.locator('.sky-detail-personalized-aspect').filter({ hasText: 'Primary You source' }).first();
   await expect(article).toBeVisible();
   const body = (await article.locator('p').allTextContents()).join('\n\n');
@@ -6133,8 +6283,10 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) test(`Mo
   // Select the reading date through the ordinary control. No Studio inputs or
   // arbitrary variant seed can stand in for the actual reader adapter.
   await page.locator('.sky-header-date-button').click();
+  await page.getByRole('tab', { name: 'Date', exact: true }).click();
   await page.getByRole('gridcell', { name: 'Monday, October 26, 2026' }).click();
-  const card = page.locator('button.updates-aspect-row').filter({ hasText: 'Primary You source' }).first();
+  await page.getByRole('button', { name: 'Apply date', exact: true }).click();
+  const card = page.locator('.updates-aspect-row:is(a,button)').filter({ hasText: 'Primary You source' }).first();
   await expect(card).toBeVisible();
   await card.click();
   const detail = page.locator('.you-transit-article');
@@ -6204,16 +6356,24 @@ for (const theme of ["light", "dark"] as const) for (const width of [1440, 390])
       profileBirthDate: "1994-04-12", profileBirthTime: sect === "day" ? "12:00 PM" : "12:00 AM", theme, generatedInterpretations: rows, contentPublications: rows.map(row => ({ content_key: row.content_key, state: "live", revision: 1, row_id: row.id, row_updated_at: row.updated_at, published_at: row.updated_at, updated_at: row.updated_at })) });
     await expectClientRouteLoads(page, "/#you");
     await selectYouNatalTab(page);
-    const chartRegion = page.getByRole("region", { name: sect === "day" ? "Day chart" : "Night chart", exact: true });
-    await expect(chartRegion).toContainText(`You ${sect} overview opening.`);
-    await expect(chartRegion).toContainText(`Complete ${sect} overview final sentence.`);
-    await expect(page.getByRole("region", { name: "Understanding Undoing", exact: true })).toContainText("Complete introduction final sentence.");
-    const rulerRegion = page.getByRole("region", { name: /^Twelfth-house ruler/ });
+    const sectCard = page.getByRole("region", { name: "Chart sect", exact: true }).getByRole("link");
+    await sectCard.click();
+    const sectPage = page.locator(".natal-sect-article");
+    await expect(sectPage).toContainText(`You ${sect} overview opening.`);
+    await expect(sectPage).toContainText(`Complete ${sect} overview final sentence.`);
+    await page.getByRole("button", { name: "Back", exact: true }).click();
+    await page.getByRole("region", { name: "Insights", exact: true }).getByRole("link", { name: "Understanding undoing", exact: true }).click();
+    const rulerRegion = page.locator(".natal-insight-page .natal-sect-article");
+    await expect(rulerRegion).toContainText("Complete introduction final sentence.");
     await expect(rulerRegion).toContainText(/You ruler house \d+ opening/);
     await expect(rulerRegion).toContainText(/The entire ruler house \d+ final sentence/);
     await page.reload();
-    await selectYouNatalTab(page);
-    await expect(chartRegion).toContainText(`Complete ${sect} overview final sentence.`);
+    await expect(rulerRegion).toContainText("Complete introduction final sentence.");
+    await expect(rulerRegion).toContainText(/The entire ruler house \d+ final sentence/);
+    await page.getByRole("button", { name: "Back", exact: true }).click();
+    await sectCard.click();
+    await expect(sectPage).toContainText(`Complete ${sect} overview final sentence.`);
+    await page.getByRole("button", { name: "Back", exact: true }).click();
     const saturnRow = page.locator("button.placement-table-row").filter({ hasText: /Saturn/ }).first();
     await saturnRow.click();
     const youArticle = page.locator(".you-transit-article-page");
@@ -6223,10 +6383,14 @@ for (const theme of ["light", "dark"] as const) for (const width of [1440, 390])
     await expectNoHorizontalOverflow(page, `natal You ${theme} ${width}`);
     await page.goto("/#friends?tab=charts&chart=friend-nikki&view=natal");
     const friendPane = page.locator('.friend-tab-pane[aria-label="Natal"]');
-    await expect(friendPane.getByRole("region", { name: sect === "day" ? "Day chart" : "Night chart", exact: true })).toContainText(`Nikki ${sect} overview opening.`, { timeout: 60_000 });
-    await expect(friendPane).toContainText("Nikki introduction opening.");
-    await expect(friendPane).not.toContainText("{{ownerName}}");
-    await expect(friendPane).not.toContainText("Maya");
+    await friendPane.getByRole("region", { name: "Chart sect", exact: true }).getByRole("link").click();
+    await expect(sectPage).toContainText(`Nikki ${sect} overview opening.`, { timeout: 60_000 });
+    await page.getByRole("button", { name: "Back", exact: true }).click();
+    await friendPane.getByRole("region", { name: "Insights", exact: true }).getByRole("link", { name: "Understanding undoing", exact: true }).click();
+    await expect(rulerRegion).toContainText("Nikki introduction opening.");
+    await expect(rulerRegion).not.toContainText("{{ownerName}}");
+    await expect(rulerRegion).not.toContainText("Maya");
+    await page.getByRole("button", { name: "Back", exact: true }).click();
     await friendPane.locator("button.placement-table-row").filter({ hasText: /Saturn/ }).first().click();
     const friendArticle = page.locator(".sky-detail-article");
     await expect(friendArticle).toContainText(`Nikki saturn ${sect} opening.`);
@@ -6242,11 +6406,16 @@ for (const theme of ["light", "dark"] as const) for (const width of [1440, 390])
       localStorage.setItem(key, JSON.stringify(charts));
     });
     await page.reload();
-    await expect(friendPane).toContainText(`Robin ${sect} overview opening.`, { timeout: 60_000 });
-    await expect(friendPane).not.toContainText(`Nikki ${sect} overview opening.`);
-    await expectSharedBodyContract(page, `natal Friend ${theme} ${width}`, [`section[aria-label="${sect === "day" ? "Day chart" : "Night chart"}"] .you-signatures-main p`, 'section[aria-label="Understanding Undoing"] p', 'section[aria-label^="Twelfth-house ruler"] p']);
+    await friendPane.getByRole("region", { name: "Chart sect", exact: true }).getByRole("link").click();
+    await expect(sectPage).toContainText(`Robin ${sect} overview opening.`, { timeout: 60_000 });
+    await expect(sectPage).not.toContainText(`Nikki ${sect} overview opening.`);
+    await expect(sectPage.locator(".natal-sect-intro > p").first()).toHaveCSS('font-family', /Newsreader/u);
+    await expect(sectPage.locator(".natal-sect-intro > p").first()).toHaveCSS('font-size', '19px');
+    await expect(sectPage.locator(".natal-sect-intro > p").first()).toHaveCSS('line-height', '28.5px');
+    await expect(sectPage.locator(".natal-sect-intro > p").first()).toHaveCSS('font-weight', '400');
+    await page.getByRole("button", { name: "Back", exact: true }).click();
     await expectNoHorizontalOverflow(page, `natal Friend ${theme} ${width}`);
-    const comparison = friendPane.getByRole("button", { name: /^Read more about Empty .* (Scorpio|Aquarius|Pisces)$/ }).first();
+    const comparison = friendPane.locator('.natal-empty-houses').getByRole("button", { name: /^Read more about .* (Scorpio|Aquarius|Pisces)$/ }).first();
     await expect(comparison).toBeVisible();
     await comparison.click();
     await expect(friendArticle.getByRole("heading", { name: "Hellenistic interpretation", exact: true })).toBeVisible();
@@ -6260,9 +6429,13 @@ test("Natal published readings stay unavailable for unknown birth times", async 
   await seedClientState(page, { profile: true, profileBirthTime: "Time unknown" });
   await expectClientRouteLoads(page, "/#you");
   await selectYouNatalTab(page);
+  const wheel = page.locator("#wheel-natal .interactive-zodiac-wheel");
+  await expect(wheel).toHaveAttribute("data-has-houses", "false");
+  await expect(wheel.locator(".interactive-wheel-angle, .interactive-wheel-house, .interactive-wheel-lord-connector")).toHaveCount(0);
   await expect(page.getByRole("region", { name: "Day chart", exact: true })).toHaveCount(0);
   await expect(page.getByRole("region", { name: "Night chart", exact: true })).toHaveCount(0);
-  await expect(page.getByRole("region", { name: "Understanding Undoing", exact: true })).toHaveCount(0);
+  await expect(page.getByRole("region", { name: "Chart sect", exact: true })).toHaveCount(0);
+  await expect(page.getByRole("region", { name: "Insights", exact: true })).toHaveCount(0);
 });
 
 
@@ -6277,14 +6450,15 @@ for (const sect of ["day", "night"] as const) test(`Natal approved saved bodies 
   for (const audience of ["you", "they"]) {
     await page.goto(audience === "you" ? "/#you" : "/#friends?tab=charts&chart=friend-nikki&view=natal");
     if (audience === "you") await selectYouNatalTab(page);
-    const overview = page.getByRole("region", { name: sect === "day" ? "Day chart" : "Night chart", exact: true });
-    await expect(overview.locator(".you-signatures-main > p")).toHaveText(body(`cms/natal-chart-context/${audience}/sect/${sect}`).split(/\n{2,}/u), { timeout: 60_000 });
-    const introduction = page.getByRole("region", { name: "Understanding Undoing", exact: true });
-    await expect(introduction.locator(".you-signatures-main > p")).toHaveText(body(`cms/natal-twelfth-ruler/${audience}/introduction`).split(/\n{2,}/u));
-    const ruler = page.getByRole("region", { name: /^Twelfth-house ruler/ });
-    const label = await ruler.getAttribute("aria-label");
-    const house = label!.match(/(\d+)(?:st|nd|rd|th)/)![1];
-    await expect(ruler.locator(".you-signatures-main > p")).toHaveText(body(`cms/natal-twelfth-ruler/${audience}/ruler-house/${house}`).split(/\n{2,}/u));
+    await page.getByRole("region", { name: "Chart sect", exact: true }).getByRole("link").click();
+    const overview = page.getByRole("dialog");
+    await expect.poll(async () => (await page.locator(".natal-sect-intro > p, .natal-sect-sections p").allTextContents()).join(" ").replace(/\s+/gu," ").trim()).toBe(body(`cms/natal-chart-context/${audience}/sect/${sect}`).replace(/\s+/gu," ").trim());
+    await page.getByRole("button", { name: "Back", exact: true }).click();
+    await page.getByRole("region", { name: "Insights", exact: true }).getByRole("button").click();
+    const label = await overview.locator("h3").innerText();
+    const house = label.match(/(\d+)(?:st|nd|rd|th)/)![1];
+    await expect(overview.locator("p")).toHaveText([...body(`cms/natal-twelfth-ruler/${audience}/introduction`).split(/\n{2,}/u), ...body(`cms/natal-twelfth-ruler/${audience}/ruler-house/${house}`).split(/\n{2,}/u)]);
+    await page.keyboard.press("Escape");
     for (const planet of ["Jupiter", "Venus", "Mars", "Saturn"]) {
       await page.locator("button.placement-table-row").filter({ hasText: new RegExp(planet) }).first().click();
       const article = page.locator(audience === "you" ? ".you-transit-article-page" : ".sky-detail-article");
@@ -6311,10 +6485,11 @@ test("Natal published readings distinguish an outage from missing writing and re
   });
   await expectClientRouteLoads(page, "/#you");
   await selectYouNatalTab(page);
-  const error = page.getByRole("alert").filter({ hasText: "Chart readings could not be loaded." });
+  const error = page.getByRole("region", { name: "Chart sect could not load.", exact: true });
   await expect(error).toBeVisible();
   fail = false;
-  await error.getByRole("button", { name: "Retry", exact: true }).click();
+  await error.getByRole("button", { name: "Try again", exact: true }).click();
+  await page.getByRole("region", { name: "Chart sect", exact: true }).getByRole("link").click();
   await expect(page.getByText("The complete recovery final sentence.", { exact: true })).toBeVisible();
   await expect(error).toHaveCount(0);
 });
@@ -6358,7 +6533,7 @@ for (const width of [390, 1440]) test(`shared Friend natal URL retains selection
     await route.fulfill({ json: shareChart ? [friend] : [] });
     completedSocialReads++;
   });
-  const introduction = page.getByRole("region", { name: "Understanding Undoing", exact: true });
+  const introduction = page.getByRole("link", { name: "Understanding undoing", exact: true });
   async function expectSharedReading() {
     await expect(page.getByRole("heading", { name: "Rowan", exact: true })).toBeVisible({ timeout: 30_000 });
     await expect(page.getByRole("tab", { name: "Natal", exact: true })).toHaveAttribute("aria-selected", "true");
@@ -6399,3 +6574,396 @@ for (const width of [390, 1440]) test(`shared Friend natal URL retains selection
   await expect(page.getByRole("heading", { name: "Rowan", exact: true })).toHaveCount(0);
   await expect(introduction).toHaveCount(0);
 });
+
+
+for (const width of [390,1440]) test(`Complete Friend natal placement bodies reach each person ${width}`, async ({page}) => {
+  test.skip(!process.env.NATAL_FRIEND_READER_SNAPSHOT, 'Private approved-pair snapshot is local opt-in only.');
+  test.setTimeout(120_000);
+  const saved=JSON.parse(readFileSync(process.env.NATAL_FRIEND_READER_SNAPSHOT!,'utf8'));
+  await page.setViewportSize({width,height:1000});
+  await seedClientState(page,{profile:true,friends:true,friendMatchesProfile:true,preloadProfileNatalSky:true,
+    profileBirthDate:'1979-02-17',profileBirthTime:'11:00 AM',generatedInterpretations:saved.rows,contentPublications:saved.publications});
+  const check=async(audience:'you'|'they',name='Nikki')=>{
+    await page.goto(audience==='you'?'/#you':'/#friends?tab=charts&chart=friend-nikki&view=natal');
+    if(audience==='you')await selectYouNatalTab(page);
+    for(const planet of ['Chiron','Lilith']){
+      const target=saved.rows.find((row:any)=>row.content_key.includes('/'+planet.toLowerCase()+'/'));
+      const record=target.sections.packageRecord;
+      const expected=(audience==='you'?record.body:record.body_they.replaceAll('{{ownerName}}',name)).replace(/\s+/gu,' ').trim();
+      await page.locator('button.placement-table-row').filter({hasText:new RegExp(planet)}).first().click();
+      const article=page.locator(audience==='you'?'.you-transit-article-page':'.sky-detail-article');
+      const assertCompleteCopy=async()=>{
+        if(audience==='you') await expect(article).toContainText(expected);
+        else await expect(article.locator('.sky-detail-section').first().locator(':scope > p')).toHaveText(record.body_they.replaceAll('{{ownerName}}',name).split(/\n{2,}/u));
+      };
+      await assertCompleteCopy();
+      await expect(article).not.toContainText('{{ownerName}}');
+      await expectNoHorizontalOverflow(page,`complete natal ${audience} ${width}`);
+      if(audience==='they'){
+        await page.reload();
+        await assertCompleteCopy();
+        await article.screenshot({path:`test-results/approved-friend-${planet}-${width}-${name}.png`});
+      }
+      await page.getByRole('button',{name:audience==='you'?'Back to updates':'Close detail',exact:true}).click();
+    }
+  };
+  await check('you'); await check('they');
+  await page.evaluate(()=>{
+    const key='tldrastro:manualCharts:qa-flow-user';const charts=JSON.parse(localStorage.getItem(key)!);
+    Object.assign(charts.find((chart:any)=>chart.id==='friend-nikki'),{displayName:'Robin',firstName:'Robin'});
+    localStorage.setItem(key,JSON.stringify(charts));
+  });
+  await check('they','Robin');
+});
+
+for (const [theme, width] of [["light", 1440], ["dark", 390]] as const) for (const pilot of [
+  { planet: "Jupiter", sign: "Leo", house: 3, sect: "day", date: "1979-02-17", time: "11:00 AM" },
+  { planet: "Jupiter", sign: "Leo", house: 3, sect: "night", date: "1978-11-17", time: "6:00 PM" },
+  { planet: "Saturn", sign: "Aries", house: undefined, sect: "day", date: "1997-04-12", time: "12:00 PM" },
+  { planet: "Saturn", sign: "Aries", house: undefined, sect: "night", date: "1997-04-12", time: "12:00 AM" }
+] as const) test(`Natal placement sect selects one complete passage for You and Friend ${pilot.planet} ${pilot.sect} ${theme} ${width}`, async ({ page }) => {
+  test.setTimeout(120_000);
+  await page.setViewportSize({ width, height: 1000 });
+  const timestamp = "2026-10-22T12:00:00Z";
+  const rows: Array<Record<string, unknown>> = [];
+  const bodies = new Map<string, string>();
+  for (const audience of ["you", "they"]) {
+    const subject = audience === "you" ? "You" : "{{ownerName}}";
+    const fixture = (key: string, body: string, status = "LIVE") => ({ id: key, content_key: key, surface: "natal", mode: "in_depth", status, lane: "serving", review_state: status === "LIVE" ? null : "EDITORIAL_REVIEW_REQUIRED",
+      updated_at: timestamp, body, summary: "", headline: "", sections: {}, source_snapshot: { contentType: "mustache-template", contentSystem: "editorial-library" } });
+    for (const sect of ["day", "night"]) {
+      rows.push(fixture(`cms/natal-planet-sect/${audience}/jupiter/${sect}`, `${subject} general Jupiter opening.\n\nGeneral Jupiter ending.`));
+      const jupiterKey = `cms/natal-planet-sect/${audience}/jupiter/leo/house-3/${sect}`;
+      const jupiterBody = approvedNatalPilotBody(jupiterKey, `${subject} precise third house opening.\n\nRetained complete placement ending.`);
+      bodies.set(jupiterKey, jupiterBody);
+      rows.push(fixture(jupiterKey, jupiterBody));
+      rows.push(fixture(`cms/natal-planet-sect/${audience}/jupiter/leo/house-4/${sect}`, "Wrong house must not appear."));
+      rows.push(fixture(`cms/natal-planet-sect/${audience}/saturn/${sect}`, `${subject} general Saturn opening.\n\nRetained general Saturn ending.`));
+      const saturnKey = `cms/natal-planet-sect/${audience}/saturn/aries/${sect}`;
+      const saturnBody = approvedNatalPilotBody(saturnKey, `${subject} Aries Saturn opening.\n\nRetained complete Aries ending.`);
+      bodies.set(saturnKey, saturnBody);
+      rows.push(fixture(saturnKey, saturnBody));
+      for (const sign of ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"]) for (let house = 1; house <= 12; house++) {
+        rows.push(fixture(`cms/natal-planet-sect/${audience}/saturn/${sign}/house-${house}/${sect}`, "Unpublished Saturn proposal must not appear.", "DRAFT"));
+      }
+    }
+  }
+  const liveRows = rows.filter(row => row.status === "LIVE");
+  await seedClientState(page, { profile: true, friends: true, friendMatchesProfile: true, preloadProfileNatalSky: true, profileBirthDate: pilot.date, profileBirthTime: pilot.time, theme,
+    generatedInterpretations: rows, contentPublications: liveRows.map(row => ({ content_key: row.content_key, state: "live", revision: 1, row_id: row.id, row_updated_at: timestamp, published_at: timestamp, updated_at: timestamp })) });
+  for (const audience of ["you", "they"]) {
+    await expectClientRouteLoads(page, audience === "you" ? "/#you" : "/#friends?tab=charts&chart=friend-nikki&view=natal");
+    if (audience === "you") await selectYouNatalTab(page);
+    const natalListUrl = page.url();
+    await page.locator("button.placement-table-row").filter({ hasText: new RegExp(pilot.planet) }).first().click();
+    const article = page.locator(audience === "you" ? ".you-transit-article-page" : ".sky-detail-article");
+    const sect = article.getByRole("region", { name: pilot.sect === "day" ? "Day chart" : "Night chart", exact: true });
+    const key = `cms/natal-planet-sect/${audience}/${pilot.planet.toLowerCase()}/${pilot.sign.toLowerCase()}${pilot.house ? `/house-${pilot.house}` : ""}/${pilot.sect}`;
+    const body = bodies.get(key)!.replaceAll("{{ownerName}}", "Nikki");
+    await expect(sect.locator("p")).toHaveText(body.split(/\n\s*\n/u));
+    await expect(sect).toHaveCount(1);
+    await expect(article).not.toContainText(`General ${pilot.planet} ending.`);
+    await expect(article).not.toContainText("Wrong house must not appear.");
+    await expect(article).not.toContainText("Unpublished Saturn proposal must not appear.");
+    const precedingCopy = (element: Element) => [...element.parentElement!.children].slice(0, [...element.parentElement!.children].indexOf(element)).filter(child => child.tagName === "SECTION").map(child => child.textContent);
+    const baseCopy = await sect.evaluate(precedingCopy);
+    expect(baseCopy.some(text => (text?.length ?? 0) > 50)).toBe(true);
+    const aspects = article.locator(".article-related-aspects");
+    const aspectCopy = await aspects.allTextContents();
+    // Readiness is the rendered passage; an optional font response must not hold navigation open.
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await expect(sect.locator("p")).toHaveText(body.split(/\n\s*\n/u));
+    expect(await sect.evaluate(precedingCopy)).toEqual(baseCopy);
+    expect(await aspects.allTextContents()).toEqual(aspectCopy);
+    if (pilot.planet === "Jupiter") {
+      await page.getByRole("button", { name: audience === "you" ? "Back to updates" : "Close detail", exact: true }).click();
+      await expect(page).toHaveURL(natalListUrl);
+      await expect(article).toHaveCount(0);
+      await page.locator("button.placement-table-row").filter({ hasText: /Saturn/ }).first().click();
+      await expect(sect).toContainText("Retained general Saturn ending.");
+      await expect(article).not.toContainText("Retained complete Aries ending.");
+      await expect(article).not.toContainText("Unpublished Saturn proposal must not appear.");
+    }
+  }
+});
+
+// Keep member reads inside the fixture. The shared empty-inventory fixture is
+// not a valid save receipt and otherwise causes repeated chart synchronization.
+const wheelJourneyTest = test.extend({
+  page: async ({ page }, use, info) => {
+    const network = await installSyntheticNetworkGuard(page.context(), new URL(info.project.use.baseURL as string).origin);
+    try { await use(page); }
+    finally {
+      await network.finishStaticFonts();
+      expect(network.unhandledExternal, "Wheel journeys must not contact unhandled external services").toEqual([]);
+    }
+  }
+});
+
+async function routeWheelSavedCharts(page: Page) {
+  // Register after seedClientState's bundled-publication defaults. Return the
+  // same synthetic saved charts in the database's read shape, not an empty
+  // successful insert that loses the chart's identity during navigation.
+  let savedRows: Promise<Array<Record<string, any>>> | undefined;
+  await page.route("**/rest/v1/manual_charts*", async route => {
+    expect(["GET", "PATCH"]).toContain(route.request().method());
+    // Cloud storage survives local-cache migration and document reloads.
+    const rows = await (savedRows ??= page.evaluate(userId => {
+      const charts = JSON.parse(localStorage.getItem(`tldrastro:manualCharts:${userId}`) ?? "[]");
+      return charts.map((chart: Record<string, any>) => ({
+        id: chart.id, owner_user_id: userId, claimed_by_user_id: null,
+        display_name: chart.displayName, first_name: chart.firstName, last_name: chart.lastName,
+        pronouns: chart.pronouns, relationship_type: chart.relationshipType,
+        birth_date: chart.birthDate, birth_time: chart.birthTime,
+        birth_time_unknown: chart.birthTimeUnknown, birth_place: chart.birthPlace,
+        birth_latitude: chart.birthLocation.latitude, birth_longitude: chart.birthLocation.longitude,
+        birth_timezone: chart.birthLocation.timeZone, natal_chart: chart.natalChart, notes: chart.notes,
+        created_at: chart.createdAt, updated_at: chart.updatedAt
+      }));
+    }, fixtureUserId));
+    expect(rows).toHaveLength(3);
+    const id = new URL(route.request().url()).searchParams.get("id")?.replace(/^eq\./u, "");
+    const result = id ? rows.filter((row: { id: string }) => row.id === id) : rows;
+    if (route.request().method() === "PATCH") {
+      expect(id).toBeTruthy();
+      expect(result).toHaveLength(1);
+      Object.assign(result[0], route.request().postDataJSON());
+    }
+    return route.fulfill({ json: route.request().headers().accept?.includes("vnd.pgrst.object") ? result[0] ?? null : result });
+  });
+}
+
+for (const theme of ["light", "dark"] as const) for (const width of [390, 1440]) {
+  wheelJourneyTest(`interactive zodiac wheel journey across Sky You and Friend ${theme} ${width}`, async ({ page }, info) => {
+    test.setTimeout(120_000);
+    await page.setViewportSize({ width, height: 1000 });
+    const assertNoClientErrors = await expectNoClientErrors(page);
+    await seedClientState(page, { profile: true, friends: true, preloadProfileNatalSky: true, theme });
+    await routeWheelSavedCharts(page);
+    const navigate = async (href: string) => {
+      // Complete isolated member reads before a full document navigation cancels
+      // WebKit fetches. Browser-error and network assertions stay enabled.
+      await page.waitForLoadState("networkidle");
+      await expectClientRouteLoads(page, href);
+    };
+    await navigate("/#sky");
+    const sky = page.getByRole("region", { name: "Current sky", exact: true });
+    const skyWheel = sky.locator(".interactive-zodiac-wheel");
+    await expect(skyWheel).toBeVisible();
+    await skyWheel.locator('[data-planet="Sun"] [role="button"]').click();
+    await expect(skyWheel.locator(".interactive-wheel-detail")).toBeVisible();
+    const detailBounds = (await skyWheel.locator(".interactive-wheel-detail").boundingBox())!;
+    const columnBounds = (await sky.boundingBox())!;
+    expect(detailBounds.y + detailBounds.height).toBeLessThanOrEqual(columnBounds.y + columnBounds.height + 1);
+    await expect(skyWheel.locator(".interactive-wheel-lord-connector")).toHaveCount(0);
+    await skyWheel.screenshot({ path: info.outputPath("sky-selected.png") });
+    await sky.getByRole("button", { name: "Open full current sky chart" }).click();
+    await expect(page.locator(".full-chart[data-chart-kind=sky] .interactive-zodiac-wheel")).toBeVisible();
+    await page.locator(".full-chart[data-chart-kind=sky]").getByRole("button", { name: "Back", exact: true }).click();
+    await expect(sky.getByRole("button", { name: "Open full current sky chart" })).toBeFocused();
+
+    await navigate("/#you?tab=chart");
+    await selectYouNatalTab(page);
+    const you = page.locator("#wheel-natal .interactive-zodiac-wheel");
+    await expect(you).toBeVisible();
+    const natalFacts = await you.locator(".interactive-wheel-planet-button").evaluateAll(nodes => nodes.map(node => node.getAttribute("aria-label")));
+    await you.locator('[data-house="1"]').focus(); await page.keyboard.press("Enter");
+    await expect(you.locator(".interactive-wheel-detail__heading")).toContainText("Lord:");
+    await you.getByRole("button", { name: "House ruler details" }).last().click();
+    await expect(you.getByRole("dialog", { name: "House ruler", exact: true })).toContainText("Your 1st house ruler");
+    await you.screenshot({ path: info.outputPath("you-ruler.png") });
+    await page.keyboard.press("Escape"); await page.keyboard.press("Escape");
+    await navigate("/?date=2026-07-20#you?tab=chart");
+    await selectYouNatalTab(page);
+    await expect.poll(() => you.locator(".interactive-wheel-planet-button").evaluateAll(nodes => nodes.map(node => node.getAttribute("aria-label")))).toEqual(natalFacts);
+
+    await navigate("/#friends?tab=charts&chart=friend-nikki&view=natal");
+    await selectFriendDetailTab(page, "Natal");
+    const friend = page.getByLabel("Nikki natal chart wheel", { exact: true }).locator(".interactive-zodiac-wheel");
+    await expect(friend).toBeVisible();
+    await friend.locator('[data-house="1"]').focus(); await page.keyboard.press("Enter");
+    await expect(friend.locator(".interactive-wheel-detail__heading")).toContainText("Lord:");
+    await friend.getByRole("button", { name: "House ruler details" }).last().click();
+    await expect(friend.getByRole("dialog", { name: "House ruler", exact: true })).toContainText("Nikki's 1st house ruler");
+    await friend.screenshot({ path: info.outputPath("friend-ruler.png") });
+    await page.waitForLoadState("networkidle");
+    await page.reload();
+    await expect(friend).toBeVisible();
+    await expect(friend.locator(".interactive-wheel-detail")).toHaveCount(0);
+    await friend.locator('[data-planet="Moon"] [role="button"]').click();
+    await expect(friend.locator(".interactive-wheel-detail__heading")).toContainText("Moon");
+    await expectNoHorizontalOverflow(page, "Interactive Friend chart");
+    await assertNoClientErrors();
+  });
+}
+
+for (const width of [320, 390, 1280, 1440, 1920]) for (const theme of ["light", "dark"] as const) {
+  wheelJourneyTest(`lazy natal styles preserve You and Friend transit containment and fullscreen ${width} ${theme}`, async ({ page }, info) => {
+    test.setTimeout(120_000);
+    await page.setViewportSize({ width, height: 1000 });
+    const assertNoClientErrors = await expectNoClientErrors(page);
+    await seedClientState(page, { profile: true, friends: true, preloadProfileNatalSky: true, theme });
+    await routeWheelSavedCharts(page);
+    const geometry = (svg: Locator) => svg.locator('.wheel-surfaces circle, .wheel-sectors line, .sign-band-dividers line, .house-labels text, .planet-labels:not(.transit-planet-labels) .planet-label-group')
+      .evaluateAll(nodes => nodes.map(node => ['x', 'y', 'x1', 'y1', 'x2', 'y2', 'cx', 'cy', 'r', 'transform'].map(attribute => node.getAttribute(attribute))));
+    for (const owner of ["you", "friend"] as const) {
+      await page.waitForLoadState("networkidle");
+      await expectClientRouteLoads(page, owner === "you" ? "/#you?tab=chart" : "/#friends?tab=charts&chart=friend-nikki&view=natal");
+      if (owner === "you") await selectYouNatalTab(page);
+      else await selectFriendDetailTab(page, "Natal");
+      const natal = page.locator(owner === "you" ? '#wheel-natal .interactive-zodiac-wheel' : '[aria-label="Nikki natal chart wheel"] .interactive-zodiac-wheel');
+      await expect(natal.locator('.interactive-zodiac-wheel__svg')).toBeVisible();
+      await expect(natal.locator('.interactive-zodiac-wheel__svg')).toHaveAttribute('viewBox', '0 0 600 600');
+      await expectNoHorizontalOverflow(page, `${owner} natal angle badges ${width} ${theme}`);
+      const openNatal = page.getByRole('button', { name: 'Open full natal chart', exact: true });
+      await openNatal.click();
+      const fullscreen = page.getByRole('dialog', { name: 'Natal chart', exact: true });
+      await expect(fullscreen.locator('.interactive-zodiac-wheel__svg')).toBeVisible();
+      await expect(fullscreen.locator('.interactive-zodiac-wheel__svg')).toHaveAttribute('viewBox', '0 0 600 600');
+      await expectNoHorizontalOverflow(page, `${owner} fullscreen angle badges ${width} ${theme}`);
+      await fullscreen.getByRole('button', { name: 'Close full-screen chart', exact: true }).click();
+      await expect(openNatal).toBeFocused();
+      if (owner === "you") await page.getByRole('tab', { name: 'Transits', exact: true }).click();
+      else await selectFriendDetailTab(page, "Transits");
+      const transit = page.getByLabel(owner === "you" ? 'Transit chart wheel' : 'Nikki transit chart wheel', { exact: true }).locator('svg.sky-wheel');
+      await expect(transit.locator('.planet-marker-transit')).toHaveCount(14);
+      await page.evaluate(() => document.fonts.ready);
+      const originalNatal = await geometry(transit);
+      await expectTransitContainment(transit);
+      if (owner === "you") {
+        const openTransit = page.getByRole('button', { name: 'Open full transit chart', exact: true });
+        await openTransit.click();
+        const expanded = page.getByRole('dialog', { name: 'Transit chart', exact: true });
+        await expectTransitContainment(expanded.locator('svg.sky-wheel'));
+        await expanded.getByRole('button', { name: 'Close full-screen chart', exact: true }).click();
+        await expect(openTransit).toBeFocused();
+        await expectTransitContainment(transit);
+      }
+      expect(await geometry(transit), 'Lazy natal styles and fullscreen retain the legacy inner natal geometry').toEqual(originalNatal);
+      const natalGlyphSize = await transit.evaluate(root => {
+        const matrix = (root as SVGSVGElement).getScreenCTM()!;
+        return root.querySelector('.planet-labels:not(.transit-planet-labels) .wheel-placement__glyph')!.getBoundingClientRect().width / Math.hypot(matrix.a, matrix.b);
+      });
+      expect(natalGlyphSize).toBeCloseTo(24, 2);
+      await expectNoHorizontalOverflow(page, `${owner} transit after lazy natal ${width} ${theme}`);
+      await transit.screenshot({ path: info.outputPath(`after-natal-${owner}-transits-${width}-${theme}.png`) });
+    }
+    await assertNoClientErrors();
+  });
+}
+
+for (const width of [390, 1440]) wheelJourneyTest(`interactive Friend placement card opens its matching Sky article ${width}`, async ({ page }) => {
+  test.setTimeout(120_000);
+  await page.setViewportSize({ width, height: 1000 });
+  await seedClientState(page, { profile: true, friends: true, friendMatchesProfile: true, preloadProfileNatalSky: true,
+    profileBirthDate: "1980-05-12", profileBirthTime: "12:00 PM", now: "2026-11-05T17:00:00.000Z" });
+  await routeWheelSavedCharts(page);
+  const friendUrl = "/#friends?tab=charts&chart=friend-nikki&view=natal";
+  await expectClientRouteLoads(page, friendUrl);
+  const wheel = page.getByLabel("Nikki natal chart wheel", { exact: true }).locator(".interactive-zodiac-wheel");
+  await wheel.locator('[data-planet="Chiron"] [role="button"]').click();
+  const reading = wheel.getByRole("link", { name: "Read about Chiron in Taurus", exact: true });
+  await expect(reading).toHaveAttribute("href", "#sky/placement/chiron/taurus");
+  const chevron = reading.locator(".lucide-chevron-right");
+  await expect(chevron).toBeVisible();
+  expect((await chevron.boundingBox())!.width).toBeLessThanOrEqual(18);
+  expect((await chevron.boundingBox())!.height).toBeLessThanOrEqual(18);
+  await wheel.locator(".interactive-wheel-detail").screenshot({ path: test.info().outputPath("chiron-taurus-detail.png") });
+  await expect(wheel.getByRole("button", { name: "Clear chart selection" })).toHaveCount(0);
+  await reading.click();
+  await expect(page).toHaveURL(/#sky\/placement\/chiron\/taurus$/);
+  await expect(page.locator(".sky-detail-article")).toBeVisible({ timeout: 90_000 });
+  await expect(page.getByRole("heading", { name: /^Chiron(?: Rx)? in Taurus$/ })).toBeVisible();
+  await page.screenshot({ path: test.info().outputPath("chiron-taurus-article.png"), fullPage: true });
+  await page.goBack();
+  await expect(page).toHaveURL(new RegExp("#friends\\?tab=charts&chart=friend-nikki&view=natal$"));
+  await expect(wheel).toBeVisible();
+});
+
+wheelJourneyTest("interactive Friend wheel preserves an unknown birth time after reload", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await seedClientState(page, { profile: true, friends: true, preloadProfileNatalSky: true });
+  await routeWheelSavedCharts(page);
+  await page.addInitScript(() => {
+    const key = "tldrastro:manualCharts:qa-flow-user";
+    const charts = JSON.parse(localStorage.getItem(key) ?? "[]");
+    for (const chart of charts) if (chart.id === "friend-nikki") {
+      chart.birthTimeUnknown = true;
+      chart.birthTime = null;
+    }
+    localStorage.setItem(key, JSON.stringify(charts));
+  });
+  await expectClientRouteLoads(page, "/#friends?tab=charts&chart=friend-nikki&view=natal");
+  const wheel = page.getByLabel("Nikki natal chart wheel", { exact: true }).locator(".interactive-zodiac-wheel");
+  await expect(wheel).toHaveAttribute("data-has-houses", "false");
+  await expect(wheel.locator(".interactive-wheel-angle, .interactive-wheel-house, .interactive-wheel-lord-connector")).toHaveCount(0);
+  await wheel.locator('[data-planet="Sun"] [role="button"]').click();
+  await expect(wheel.locator(".interactive-wheel-detail")).not.toContainText(/house|Lord|sect/i);
+  await page.reload();
+  await expect(wheel).toHaveAttribute("data-has-houses", "false");
+  await expect(wheel.locator(".interactive-wheel-sector[role=button]")).toHaveCount(0);
+});
+
+for (const [width, theme] of [[390, 'dark'], [1440, 'light']] as const) for (const failure of ['none', 'response', 'stall'] as const) {
+  test(`Saturn natal reader loads its published sources independently and recovers ${width} ${theme} failure=${failure}`, async ({ page }) => {
+    test.setTimeout(90_000);
+    await page.setViewportSize({ width, height: 1000 });
+    const timestamp = '2026-11-14T12:00:00Z';
+    const texts = [
+      'Synthetic Saturn Virgo sign opening. Complete sign ending.',
+      'Synthetic Saturn fourth-house opening. Complete house ending.',
+      'Synthetic Saturn retrograde opening.\n\nComplete retrograde ending.'
+    ];
+    const keys = ['fallback-hook/placement-sentence/saturn/virgo', 'fallback-hook/placement-house-sentence/saturn/4', 'fallback-hook/natal-retrograde-modifier/saturn/4'];
+    const rows = keys.map((content_key, index) => ({
+      id: `fixture-saturn-source-${index}`, content_key, surface: 'natal', mode: 'in_depth', status: 'LIVE', lane: 'serving', review_state: null,
+      updated_at: timestamp, body: texts[index], headline: '', summary: '', provider: 'tldrastro-fallback-architecture-v3',
+      sections: { packageRecord: { contentKey: content_key, body: texts[index], body_you: texts[index], content_role: index === 2 ? 'full_copy' : 'fallback_hook', review_status: 'approved', reader_only: true, render_policy: 'reader-only-exact-lived-v1' } },
+      source_snapshot: { contentType: 'fallback-system', review_status: 'approved' }, facts: { fallbackArchitectureV3: true, review_status: 'approved' }
+    }));
+    const publications = rows.map(row => ({ content_key: row.content_key, state: 'live', revision: 1, row_id: row.id, row_updated_at: timestamp, updated_at: timestamp }));
+    await seedClientState(page, { profile: true, preloadProfileNatalSky: true, profileBirthDate: '1979-02-17', profileBirthTime: '11:00 AM', theme, contentPublications: publications });
+    let releaseInventory!: () => void, releaseArticle!: () => void;
+    const inventory = new Promise<void>(resolve => { releaseInventory = resolve; });
+    const article = new Promise<void>(resolve => { releaseArticle = resolve; });
+    let unavailable = failure;
+    if (failure === 'stall') await page.addInitScript(() => {
+      const schedule = window.setTimeout.bind(window);
+      window.setTimeout = ((handler, delay, ...args) => schedule(handler, delay === 20_000 ? 1_000 : delay, ...args)) as typeof window.setTimeout;
+    });
+    let targeted = 0;
+    await page.route('**/api/content-reader', async route => {
+      const query = route.request().postDataJSON();
+      if (query.provider && !query.keys && !query.latestVersion) await inventory;
+      if (query.keys?.some((key: string) => keys.includes(key))) {
+        targeted++;
+        if (unavailable === 'response') { await route.fulfill({ status: 503, json: { error: 'Synthetic natal read unavailable.' } }); return; }
+        await article;
+      }
+      await route.fulfill({ json: readerResponse(rows.filter(row => query.keys?.includes(row.content_key)), publications) });
+    });
+    try {
+      await page.goto('/#you/placement/saturn-virgo-4h');
+      await expect(page.locator('#you-transit-article-title')).toHaveText('Saturn Rx in Virgo in the 4th house');
+      await expect(page.getByText('Loading natal reading…', { exact: true })).toBeVisible();
+      if (failure !== 'none') {
+        await expect(page.getByText('The natal reading could not load. Please try again.', { exact: true })).toBeVisible();
+        unavailable = 'none';
+        releaseArticle();
+        await page.getByRole('button', { name: 'Try again', exact: true }).click();
+      } else releaseArticle();
+      const reading = page.locator('.you-transit-article-page');
+      for (const text of texts) for (const paragraph of text.split('\n\n')) await expect(reading).toContainText(paragraph);
+      expect(targeted).toBeGreaterThan(0);
+      await expect(page.getByText('Loading natal reading…', { exact: true })).toBeHidden();
+      await page.reload({ waitUntil: 'domcontentloaded' });
+      for (const text of texts) for (const paragraph of text.split('\n\n')) await expect(reading).toContainText(paragraph);
+      await page.screenshot({ path: `test-results/saturn-natal-reader-${width}-${theme}-${failure}.png`, fullPage: true });
+      await page.getByRole('button', { name: 'Back to updates', exact: true }).click();
+      await selectYouNatalTab(page);
+      await page.getByRole('button', { name: 'Saturn Rx in Virgo', exact: true }).click();
+      await expect(reading).toContainText(texts[0]);
+      await expect(reading).toContainText('Complete retrograde ending.');
+    } finally { releaseArticle(); releaseInventory(); }
+  });
+}

@@ -5,6 +5,14 @@ import type { TemplateVariableReference } from "./templateVariableReference";
 // can fill it. Variables omitted here are calculated by the app and do not have
 // an editable content row.
 const resolverSourceFamilies: Record<string, string[]> = {
+  aTopic: ["fallback-vocab/planet-topic/"],
+  houseATopic: ["fallback-vocab/house-topic/"],
+  houseJurisdiction: ["fallback-vocab/house-jurisdiction/"],
+  jurisdiction: ["fallback-vocab/house-jurisdiction/"],
+  rulerHouseJurisdiction: ["fallback-vocab/house-jurisdiction/"],
+  signTrap: ["fallback-hook/sky-sign-trap/"],
+  pairEffect: ["fallback-hook/transit-effect-soft/", "fallback-hook/transit-effect-hard/", "fallback-vocab/planet-topic/", "fallback-vocab/house-topic/"],
+  pairEffectCap: ["fallback-hook/transit-effect-soft/", "fallback-hook/transit-effect-hard/", "fallback-vocab/planet-topic/", "fallback-vocab/house-topic/"],
   zodiacSeason: ["fallback-hook/zodiac-season/"],
   zodiacSeasonPolarAxis: ["fallback-hook/zodiac-season-polar-axis/"],
   planetVerb: ["fallback-vocab/planet-verb/"],
@@ -20,6 +28,10 @@ const resolverSourceFamilies: Record<string, string[]> = {
   angleIntro: ["fallback-hook/angle-intro/"],
   nodeJourney: ["fallback-hook/node-journey/"],
   planetFunction: ["fallback-vocab/planet-function/"],
+  planetTopic: ["fallback-vocab/planet-topic/"],
+  planetCore: ["fallback-vocab/planet-core/"],
+  planetProductive: ["fallback-vocab/planet-productive/"],
+  signStyle: ["fallback-vocab/sign-style/"],
   houseTopic: ["fallback-vocab/house-topic/"],
   transitTopic: ["fallback-vocab/planet-topic/"],
   natalCore: ["fallback-hook/natal-core/", "fallback-vocab/planet-core/"],

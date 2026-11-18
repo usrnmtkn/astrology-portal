@@ -21,10 +21,23 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     outputs:
-      reader: ${{ steps.scope.outputs.reader }}
-      studio: ${{ steps.scope.outputs.studio }}
-      friends: ${{ steps.scope.outputs.friends }}
-      sky: ${{ steps.scope.outputs.sky }}
+      test_plan: ${{ steps.scope.outputs.test_plan }}
+      friends_loading_performance: ${{ steps.scope.outputs.friends_loading_performance }}
+      visual_smoke: ${{ steps.scope.outputs.visual_smoke }}
+      client_facing_flows: ${{ steps.scope.outputs.client_facing_flows }}
+      studio_admin_flows: ${{ steps.scope.outputs.studio_admin_flows }}
+      lunation_source_wiring: ${{ steps.scope.outputs.lunation_source_wiring }}
+      connection_transit_sources: ${{ steps.scope.outputs.connection_transit_sources }}
+      sky_placement_studio: ${{ steps.scope.outputs.sky_placement_studio }}
+      sky_placement_reader: ${{ steps.scope.outputs.sky_placement_reader }}
+      sky_summary: ${{ steps.scope.outputs.sky_summary }}
+      studio_preview_suites: ${{ steps.scope.outputs.studio_preview_suites }}
+      horoscope_reader: ${{ steps.scope.outputs.horoscope_reader }}
+      reader_surface_suites: ${{ steps.scope.outputs.reader_surface_suites }}
+      reader_overlays: ${{ steps.scope.outputs.reader_overlays }}
+      key_dates_disclosures: ${{ steps.scope.outputs.key_dates_disclosures }}
+      design_handoff: ${{ steps.scope.outputs.design_handoff }}
+      mobile_parity: ${{ steps.scope.outputs.mobile_parity }}
     steps:
       - uses: actions/checkout@v6
         with:
@@ -34,8 +47,9 @@ jobs:
           node-version: 22
       - name: Validate workflow YAML and conditions
         run: ruby scripts/test-ci-workflow-syntax.rb
-      - name: Verify shared-dependency scope regressions
-        run: node scripts/test-ci-visual-scope.mjs
+      - run: npm ci
+      - name: Verify affected selection and browser coverage
+        run: node scripts/test-ci-affected-tests.mjs && node scripts/test-browser-suite-coverage.mjs
       - id: scope
         name: Determine affected browser surfaces
         env:
@@ -43,27 +57,38 @@ jobs:
           PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
           PUSH_BASE_SHA: ${{ github.event.before }}
           HEAD_SHA: ${{ github.sha }}
-        run: node scripts/ci-visual-scope.mjs
+        run: node scripts/ci-affected-tests.mjs
 
   friends-loading-performance:
     needs: scope
-    if: needs.scope.outputs.friends == 'true'
+    if: needs.scope.outputs.friends_loading_performance == 'true'
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.61.0-noble@sha256:57b65fdc9ceabe0ef613124c7bbe2babcf9362c4d85e382fe3b03604e84b428a
+      volumes:
+        - /usr/share/fonts:/usr/share/fonts/runner:ro
+    defaults:
+      run:
+        shell: bash
     timeout-minutes: 10
     env:
+      CI_AFFECTED_TEST_PLAN: ${{ needs.scope.outputs.test_plan }}
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
       VITE_SUPABASE_URL: https://visual-smoke.supabase.test
       VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
     steps:
       - uses: actions/checkout@v6
+      - name: Verify exact container checkout
+        run: bash scripts/ci-prepare-playwright-workspace.sh
       - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
       - run: npm ci
       - run: npm run build:knowledge
-      - run: bash scripts/ci-install-playwright.sh
+      - run: node scripts/ci-validate-playwright-image.mjs
       - name: Run Friends loading performance matrix on a fresh runner
-        run: npm run qa:friends-loading-matrix
+        run: npm run test:natal-calculation-scope && node scripts/run-affected-playwright.mjs -c playwright.friends-performance.config.ts --trace off
       - name: Upload Friends performance artifacts
         if: always()
         uses: actions/upload-artifact@v6
@@ -74,15 +99,26 @@ jobs:
 
   visual-smoke:
     needs: scope
-    if: needs.scope.outputs.reader == 'true'
+    if: needs.scope.outputs.visual_smoke == 'true'
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.61.0-noble@sha256:57b65fdc9ceabe0ef613124c7bbe2babcf9362c4d85e382fe3b03604e84b428a
+      volumes:
+        - /usr/share/fonts:/usr/share/fonts/runner:ro
+    defaults:
+      run:
+        shell: bash
     timeout-minutes: 45
     env:
+      CI_AFFECTED_TEST_PLAN: ${{ needs.scope.outputs.test_plan }}
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
       VITE_SUPABASE_URL: https://visual-smoke.supabase.test
       VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
+      - name: Verify exact container checkout
+        run: bash scripts/ci-prepare-playwright-workspace.sh
       - name: Fetch current main for complete reader comparison
         run: git fetch --no-tags --depth=1 origin main:refs/remotes/origin/main
       - name: Set up Node
@@ -104,8 +140,15 @@ jobs:
         run: npm run build:knowledge && node scripts/test-content-live-status-node-runtime.mjs
       - name: Verify publication lifecycle and offline retirement
         run: npm run test:content-publications
-      - name: Install Playwright Chromium
-        run: bash scripts/ci-install-playwright.sh
+      - name: Validate pinned Playwright browsers and dependencies
+        run: node scripts/ci-validate-playwright-image.mjs
+      - name: Verify shared current location and saved-city recovery
+        env:
+          VITE_MAPBOX_ACCESS_TOKEN: pk.location-fixture
+          VITE_TLDRASTRO_API_URL: https://location-api.invalid
+        run: |
+          npm run test:location-consistency
+          node scripts/run-affected-playwright.mjs -c playwright.config.ts tests/visual/location-consistency.spec.ts tests/visual/observer-date-label.spec.ts tests/visual/date-picker-confirmation.spec.ts --workers=1
       - name: Enforce fresh browser release path
         run: npm run test:playwright-release-path
       - name: Build app
@@ -133,7 +176,7 @@ jobs:
       - name: Run loading recovery, visual regression and smoke screens
         # One fresh build/preview for the same complete selection also preserves
         # loading traces that a second Playwright invocation used to clear.
-        run: npx playwright test -c playwright.config.ts --workers=1 tests/visual/app-loading-feedback.spec.ts tests/visual/startup-animation.spec.ts tests/visual/startup-animation-preview.spec.ts tests/visual/visual-regression-baseline.spec.ts tests/visual/visual-smoke.spec.ts tests/visual/loading-illustration.spec.ts tests/visual/lazy-reveal.spec.ts
+        run: node scripts/run-affected-playwright.mjs -c playwright.config.ts --workers=1 tests/visual/app-loading-feedback.spec.ts tests/visual/startup-animation.spec.ts tests/visual/startup-animation-preview.spec.ts tests/visual/visual-regression-baseline.spec.ts tests/visual/visual-smoke.spec.ts tests/visual/loading-illustration.spec.ts tests/visual/lazy-reveal.spec.ts
       - name: Upload visual smoke artifacts
         if: always()
         uses: actions/upload-artifact@v6
@@ -146,27 +189,38 @@ jobs:
 
   client-facing-flows:
     needs: scope
-    if: needs.scope.outputs.reader == 'true'
+    if: needs.scope.outputs.client_facing_flows == 'true'
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.61.0-noble@sha256:57b65fdc9ceabe0ef613124c7bbe2babcf9362c4d85e382fe3b03604e84b428a
+      volumes:
+        - /usr/share/fonts:/usr/share/fonts/runner:ro
+    defaults:
+      run:
+        shell: bash
     timeout-minutes: 25
     strategy:
       fail-fast: false
       matrix:
         shard: [1, 2, 3, 4]
     env:
+      CI_AFFECTED_TEST_PLAN: ${{ needs.scope.outputs.test_plan }}
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
       VITE_SUPABASE_URL: https://visual-smoke.supabase.test
       VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
     steps:
       - uses: actions/checkout@v6
+      - name: Verify exact container checkout
+        run: bash scripts/ci-prepare-playwright-workspace.sh
       - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
       - run: npm ci
       - run: npm run build:knowledge
-      - run: bash scripts/ci-install-playwright.sh
+      - run: node scripts/ci-validate-playwright-image.mjs
       - name: Run client-facing user flows
-        run: npx playwright test -c playwright.reader-release.config.ts --fully-parallel --workers=1 --shard=${{ matrix.shard }}/4 tests/visual/client-facing-user-flows.spec.ts tests/visual/report-library-ui.spec.ts
+        run: node scripts/run-affected-playwright.mjs -c playwright.reader-release.config.ts --fully-parallel --workers=1 --shard=${{ matrix.shard }}/4 tests/visual/client-facing-user-flows.spec.ts tests/visual/report-library-ui.spec.ts
       - name: Upload client-facing flow artifacts
         if: always()
         uses: actions/upload-artifact@v6
@@ -177,27 +231,38 @@ jobs:
 
   studio-admin-flows:
     needs: scope
-    if: needs.scope.outputs.studio == 'true'
+    if: needs.scope.outputs.studio_admin_flows == 'true'
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.61.0-noble@sha256:57b65fdc9ceabe0ef613124c7bbe2babcf9362c4d85e382fe3b03604e84b428a
+      volumes:
+        - /usr/share/fonts:/usr/share/fonts/runner:ro
+    defaults:
+      run:
+        shell: bash
     timeout-minutes: 25
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4]
+        shard: [1, 2, 3, 4, 5, 6]
     env:
+      CI_AFFECTED_TEST_PLAN: ${{ needs.scope.outputs.test_plan }}
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
       VITE_SUPABASE_URL: https://visual-smoke.supabase.test
       VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
     steps:
       - uses: actions/checkout@v6
+      - name: Verify exact container checkout
+        run: bash scripts/ci-prepare-playwright-workspace.sh
       - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
       - run: npm ci
       - run: npm run build:knowledge
-      - run: bash scripts/ci-install-playwright.sh
+      - run: node scripts/ci-validate-playwright-image.mjs
       - name: Run Content Studio admin user flows
-        run: npx playwright test -c playwright.config.ts --fully-parallel --workers=1 --shard=${{ matrix.shard }}/4 tests/visual/content-dashboard-admin-user-flows.spec.ts tests/visual/calendar-review-queue-api.spec.ts tests/visual/studio-publication-recovery.spec.ts tests/visual/review-queue-workflow.spec.ts tests/visual/calendar-aspect-create.spec.ts tests/visual/compatibility-aspect-create.spec.ts tests/visual/calendar-aspect-retrograde.spec.ts tests/visual/calendar-planetary-studio.spec.ts tests/visual/studio-section-visibility.spec.ts tests/visual/content-publication-offline.spec.ts tests/visual/content-studio-reader-destinations.spec.ts tests/visual/content-studio-needs-attention.spec.ts tests/visual/studio-dedicated-editor-routing.spec.ts tests/visual/studio-inventory-loading.spec.ts tests/visual/studio-formatting-publication.spec.ts tests/visual/astro-101-reader-recovery.spec.ts tests/visual/calendar-subscriptions.spec.ts tests/visual/studio-csv.spec.ts tests/visual/studio-article-memory.spec.ts tests/visual/studio-owner-publishing.spec.ts tests/visual/personal-transit-copy-versions.spec.ts
+        run: node scripts/balanced-browser-tests.mjs --config playwright.studio-admin-flows.config.ts ${{ matrix.shard }}/6
       - name: Upload Content Studio flow artifacts
         if: always()
         uses: actions/upload-artifact@v6
@@ -206,22 +271,72 @@ jobs:
           path: test-results/
           if-no-files-found: ignore
 
-  connection-transit-sources:
+  lunation-source-wiring:
     needs: scope
-    if: needs.scope.outputs.reader == 'true'
+    if: needs.scope.outputs.lunation_source_wiring == 'true'
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.61.0-noble@sha256:57b65fdc9ceabe0ef613124c7bbe2babcf9362c4d85e382fe3b03604e84b428a
+      volumes:
+        - /usr/share/fonts:/usr/share/fonts/runner:ro
+    defaults:
+      run:
+        shell: bash
     timeout-minutes: 20
+    env:
+      CI_AFFECTED_TEST_PLAN: ${{ needs.scope.outputs.test_plan }}
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      VITE_SUPABASE_URL: https://visual-smoke.supabase.test
+      VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
     steps:
       - uses: actions/checkout@v6
+      - name: Verify exact container checkout
+        run: bash scripts/ci-prepare-playwright-workspace.sh
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build:knowledge
+      - run: node scripts/ci-validate-playwright-image.mjs
+      - name: Verify complete RATM sources and owner publication to readers
+        run: node scripts/run-affected-playwright.mjs -c playwright.lunation-horoscopes.config.ts
+      - name: Upload lunar source wiring artifacts
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: lunation-source-wiring-results
+          path: test-results/
+          if-no-files-found: ignore
+
+  connection-transit-sources:
+    needs: scope
+    if: needs.scope.outputs.connection_transit_sources == 'true'
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.61.0-noble@sha256:57b65fdc9ceabe0ef613124c7bbe2babcf9362c4d85e382fe3b03604e84b428a
+      volumes:
+        - /usr/share/fonts:/usr/share/fonts/runner:ro
+    defaults:
+      run:
+        shell: bash
+    timeout-minutes: 20
+    env:
+      CI_AFFECTED_TEST_PLAN: ${{ needs.scope.outputs.test_plan }}
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+    steps:
+      - uses: actions/checkout@v6
+      - name: Verify exact container checkout
+        run: bash scripts/ci-prepare-playwright-workspace.sh
       - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
       - run: npm ci
       - run: npm run build -w @tldr/astro-knowledge
-      - run: bash scripts/ci-install-playwright.sh
+      - run: node scripts/ci-validate-playwright-image.mjs
       - name: Verify independent connection sources and Studio draft editing
-        run: npx playwright test -c playwright.connection-transit.config.ts
+        run: node scripts/run-affected-playwright.mjs -c playwright.connection-transit.config.ts
       - name: Upload connection transit artifacts
         if: always()
         uses: actions/upload-artifact@v6
@@ -232,16 +347,27 @@ jobs:
 
   sky-placement-studio:
     needs: scope
-    if: needs.scope.outputs.sky == 'true'
+    if: needs.scope.outputs.sky_placement_studio == 'true'
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.61.0-noble@sha256:57b65fdc9ceabe0ef613124c7bbe2babcf9362c4d85e382fe3b03604e84b428a
+      volumes:
+        - /usr/share/fonts:/usr/share/fonts/runner:ro
+    defaults:
+      run:
+        shell: bash
     # Fresh browser builds and Sky checks run serially; preserve the recovery
     # suite job allowance without changing any individual test timeout.
     timeout-minutes: 40
     env:
+      CI_AFFECTED_TEST_PLAN: ${{ needs.scope.outputs.test_plan }}
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
       VITE_SUPABASE_URL: https://visual-smoke.supabase.test
       VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
     steps:
       - uses: actions/checkout@v6
+      - name: Verify exact container checkout
+        run: bash scripts/ci-prepare-playwright-workspace.sh
       - uses: actions/setup-node@v6
         with:
           node-version: 22
@@ -251,13 +377,18 @@ jobs:
         # The required Content Studio API workflow runs the full unfiltered
         # contract on this exact head. Keep the Sky-specific checks here.
         run: npm run build:knowledge && npm run test:sky-evergreen-sections
-      - run: bash scripts/ci-install-playwright.sh
+      - run: node scripts/ci-validate-playwright-image.mjs
       - name: Verify placement composition editing
         run: |
-          npx playwright test -c playwright.studio-secondary.config.ts
-          npx playwright test -c playwright.sky-composition.config.ts
+          node scripts/run-affected-playwright.mjs -c playwright.studio-secondary.config.ts
+          node scripts/run-affected-playwright.mjs -c playwright.sky-composition.config.ts
       - name: Verify Studio crash recovery through the production web entry
-        run: STUDIO_PRODUCTION_ENTRY=1 npx playwright test -c playwright.studio-recovery.config.ts
+        run: STUDIO_PRODUCTION_ENTRY=1 node scripts/run-affected-playwright.mjs -c playwright.studio-recovery.config.ts
+      - name: Verify deployment-pinned assets and unsaved Studio editing
+        run: |
+          node scripts/test-deployment-assets.mjs
+          node scripts/run-affected-playwright.mjs -c playwright.studio-deployment.config.ts
+          STUDIO_PRODUCTION_ENTRY=1 node scripts/run-affected-playwright.mjs -c playwright.studio-deployment.config.ts
       - name: Upload Sky placement artifacts
         if: always()
         uses: actions/upload-artifact@v6
@@ -268,27 +399,41 @@ jobs:
 
   sky-placement-reader:
     needs: scope
-    if: needs.scope.outputs.sky == 'true'
+    if: needs.scope.outputs.sky_placement_reader == 'true'
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.61.0-noble@sha256:57b65fdc9ceabe0ef613124c7bbe2babcf9362c4d85e382fe3b03604e84b428a
+      volumes:
+        - /usr/share/fonts:/usr/share/fonts/runner:ro
+    defaults:
+      run:
+        shell: bash
     timeout-minutes: 40
     strategy:
       fail-fast: false
       matrix:
         shard: [1, 2]
     env:
+      CI_AFFECTED_TEST_PLAN: ${{ needs.scope.outputs.test_plan }}
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
       VITE_SUPABASE_URL: https://visual-smoke.supabase.test
       VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
     steps:
       - uses: actions/checkout@v6
+      - name: Verify exact container checkout
+        run: bash scripts/ci-prepare-playwright-workspace.sh
       - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
       - run: npm ci
       - run: npm run build:knowledge
-      - run: bash scripts/ci-install-playwright.sh
+      - run: node scripts/ci-validate-playwright-image.mjs
       - name: Verify exact placement scan parity and calculation reuse
         run: node --import tsx scripts/test-sky-placement-scan-reuse.mts
+      - name: Verify current visit and full residency labels
+        if: matrix.shard == 1
+        run: npm run test:sky-placement-range-labels
       - name: Verify Calendar Moon ingress facts and complete reader copy
         if: matrix.shard == 1
         run: node scripts/test-calendar-moon-ingress-reader.mjs && node --import tsx scripts/test-calendar-surface-events.mjs && node --import tsx scripts/test-calendar-api-timezone-anchor.mjs
@@ -304,56 +449,81 @@ jobs:
 
   sky-summary:
     needs: scope
-    if: needs.scope.outputs.sky == 'true'
+    if: needs.scope.outputs.sky_summary == 'true'
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.61.0-noble@sha256:57b65fdc9ceabe0ef613124c7bbe2babcf9362c4d85e382fe3b03604e84b428a
+      volumes:
+        - /usr/share/fonts:/usr/share/fonts/runner:ro
+    defaults:
+      run:
+        shell: bash
     timeout-minutes: 25
     strategy:
       fail-fast: false
       matrix:
-        phase: [reader, studio, recovery]
+        phase: [reader, reader-summary, studio, forecast, editor, recovery]
     env:
+      CI_AFFECTED_TEST_PLAN: ${{ needs.scope.outputs.test_plan }}
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
       VITE_SUPABASE_URL: https://visual-smoke.supabase.test
       VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
     steps:
       - uses: actions/checkout@v6
+      - name: Verify exact container checkout
+        run: bash scripts/ci-prepare-playwright-workspace.sh
       - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: bash scripts/ci-install-playwright.sh
+      - run: node scripts/ci-validate-playwright-image.mjs
       - run: npm run build:knowledge
       - name: Verify daily Sky summary composition
-        if: matrix.phase == 'reader'
+        if: matrix.phase == 'reader-summary'
         run: npm run test:sky-daily-summary && node scripts/test-sky-placement-aspect-matrix.mjs && node --import tsx scripts/test-calendar-template-preview.mts
-      - name: Verify daily Sky summary reader
+      - name: Verify Sky reader loading and recovery
         if: matrix.phase == 'reader'
-        run: npx playwright test -c playwright.config.ts --workers=1 tests/visual/sky-early-loading.spec.ts tests/visual/sky-direct-preparation-navigation.spec.ts tests/visual/sky-compiled-guest-readiness.spec.ts tests/visual/sky-source-recovery.spec.ts tests/visual/sky-loading-layout.spec.ts tests/visual/sky-summary-cold-hydration.spec.ts tests/visual/sky-daily-summary.spec.ts tests/visual/sky-live-clock.spec.ts tests/visual/sky-summary-paragraphs.spec.ts tests/visual/sky-placement-aspects.spec.ts tests/visual/sky-refresh-performance.spec.ts tests/visual/sky-summary-supplied-copy.spec.ts tests/visual/sun-season-variants.spec.ts tests/visual/calendar-summary-studio.spec.ts
+        env:
+          VITE_MAPBOX_ACCESS_TOKEN: pk.location-fixture
+        run: |
+          node --import tsx scripts/test-qa-runtime-guards.mts
+          node scripts/run-affected-playwright.mjs -c playwright.config.ts --workers=1 --output=test-results/sky-summary/reader tests/visual/sky-early-loading.spec.ts tests/visual/sky-direct-preparation-navigation.spec.ts tests/visual/sky-compiled-guest-readiness.spec.ts tests/visual/sky-source-recovery.spec.ts tests/visual/sky-loading-layout.spec.ts tests/visual/sky-summary-cold-hydration.spec.ts tests/visual/sky-live-clock.spec.ts tests/visual/sky-placement-aspects.spec.ts tests/visual/sky-placement-selected-aspects.spec.ts tests/visual/sky-refresh-performance.spec.ts
+      - name: Verify daily Sky summary reader
+        if: matrix.phase == 'reader-summary'
+        run: node scripts/run-affected-playwright.mjs -c playwright.config.ts --workers=1 --output=test-results/sky-summary/summary tests/visual/sky-daily-summary.spec.ts tests/visual/sky-summary-paragraphs.spec.ts tests/visual/sky-summary-supplied-copy.spec.ts tests/visual/sun-season-variants.spec.ts tests/visual/calendar-summary-studio.spec.ts
       - name: Verify public Sky does not wait for the login SDK
         if: matrix.phase == 'reader'
         env:
           TLDR_NATIVE_PUBLIC_READER: "1"
           VITE_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_visual_fixture"
-        run: npx playwright test -c playwright.config.ts --project=chromium-desktop --workers=1 tests/visual/sky-anonymous-startup.spec.ts
+        run: node scripts/run-affected-playwright.mjs -c playwright.config.ts --project=chromium-desktop --workers=1 --output=test-results/sky-summary/native tests/visual/sky-anonymous-startup.spec.ts
       - name: Verify daily Sky summary Studio
         if: matrix.phase == 'studio'
-        run: |
-          npx playwright test -c playwright.sky-studio.config.ts
-          npx playwright test -c playwright.sky-forecast.config.ts tests/visual/calendar-template-preview.spec.ts tests/visual/calendar-season-transitions.spec.ts tests/visual/sky-forecast-studio.spec.ts
-          npx playwright test -c playwright.config.ts --workers=1 tests/visual/calendar-passage-editor.spec.ts tests/visual/retrograde-history.spec.ts tests/visual/article-library.spec.ts tests/visual/season-article.spec.ts tests/visual/app-cold-formatting.spec.ts
+        run: node scripts/run-affected-playwright.mjs -c playwright.sky-studio.config.ts --output=test-results/sky-summary/studio
+      - name: Verify Calendar forecast Studio
+        if: matrix.phase == 'forecast'
+        run: node scripts/run-affected-playwright.mjs -c playwright.sky-forecast.config.ts --output=test-results/sky-summary/forecast tests/visual/calendar-template-preview.spec.ts tests/visual/calendar-season-transitions.spec.ts tests/visual/sky-forecast-studio.spec.ts
+      - name: Verify Sky article and passage editors
+        if: matrix.phase == 'editor'
+        run: node scripts/run-affected-playwright.mjs -c playwright.config.ts --workers=1 --output=test-results/sky-summary/editor tests/visual/calendar-passage-editor.spec.ts tests/visual/retrograde-history.spec.ts tests/visual/article-library.spec.ts tests/visual/season-article.spec.ts tests/visual/app-cold-formatting.spec.ts
       - name: Enforce Content Studio bundle size and deferred editor boundaries
         if: matrix.phase == 'studio'
-        run: node scripts/check-admin-bundle-budgets.mjs
+        run: |
+          if [[ ! -f apps/admin/dist/.vite/manifest.json ]]; then
+            npm run build:admin
+          fi
+          node scripts/check-admin-bundle-budgets.mjs
       - name: Verify owner sign-in return and storage-timeout recovery
         if: matrix.phase == 'recovery'
-        run: npx playwright test -c playwright.studio-auth.config.ts
+        run: node scripts/run-affected-playwright.mjs -c playwright.studio-auth.config.ts --output=test-results/sky-summary/auth
       - name: Verify Friends recovery, transit visibility, and Calendar dates
         if: matrix.phase == 'recovery'
         run: |
           node --experimental-strip-types scripts/test-sky-aspect-date-range.mjs
           node scripts/test-you-transit-live-content-wiring.mjs
           node --import tsx scripts/test-transit-article-description.mts
-          npx playwright test -c playwright.reader-recovery.config.ts
+          node scripts/run-affected-playwright.mjs -c playwright.reader-recovery.config.ts --output=test-results/sky-summary/recovery
       - name: Upload Sky summary artifacts
         if: always()
         uses: actions/upload-artifact@v6
@@ -366,40 +536,65 @@ jobs:
   # serve the admin preview; the web-entry suite serves the same Studio through the web bundle.
   studio-preview-suites:
     needs: scope
-    if: needs.scope.outputs.studio == 'true'
+    if: needs.scope.outputs.studio_preview_suites == 'true'
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.61.0-noble@sha256:57b65fdc9ceabe0ef613124c7bbe2babcf9362c4d85e382fe3b03604e84b428a
+      volumes:
+        - /usr/share/fonts:/usr/share/fonts/runner:ro
+    defaults:
+      run:
+        shell: bash
     timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
-        suite: [studio-style, studio-web-entry, studio-variables, sky-article, horoscope-writing, lunation-studio, studio-ui, sky-reader-preview]
+        suite: [studio-style, studio-web-entry, studio-variables, sky-article, sky-cms, horoscope-writing, lunation-studio, sky-reader-preview]
+        include:
+          - suite: studio-ui
+            shard: 1
+          - suite: studio-ui
+            shard: 2
     env:
+      CI_AFFECTED_TEST_PLAN: ${{ needs.scope.outputs.test_plan }}
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
       VITE_SUPABASE_URL: https://visual-smoke.supabase.test
       VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
     steps:
       - uses: actions/checkout@v6
+      - name: Verify exact container checkout
+        run: bash scripts/ci-prepare-playwright-workspace.sh
       - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
       - run: npm ci
       - run: npm run build:knowledge
-      - run: bash scripts/ci-install-playwright.sh
+      - run: node scripts/ci-validate-playwright-image.mjs
       - name: Run the ${{ matrix.suite }} suite
+        if: matrix.suite != 'studio-ui'
         env:
-          STUDIO_PRODUCTION_ENTRY: ${{ (matrix.suite == 'horoscope-writing' || matrix.suite == 'studio-ui') && '1' || '0' }}
-        run: npx playwright test -c playwright.${{ matrix.suite }}.config.ts
+          STUDIO_PRODUCTION_ENTRY: ${{ matrix.suite == 'horoscope-writing' && '1' || '0' }}
+        run: node scripts/run-affected-playwright.mjs -c playwright.${{ matrix.suite }}.config.ts
+      - name: Run the Studio UI shard with complete test files
+        if: matrix.suite == 'studio-ui'
+        env:
+          STUDIO_PRODUCTION_ENTRY: '1'
+        run: node scripts/balanced-browser-tests.mjs --config playwright.studio-ui.config.ts ${{ matrix.shard }}/2
       - name: Verify standalone Studio notification containment
         if: matrix.suite == 'studio-style'
-        run: npx playwright test -c playwright.tooltip-toast-studio.config.ts --workers=1
+        run: node scripts/run-affected-playwright.mjs -c playwright.tooltip-toast-studio.config.ts --workers=1
       - name: Verify standalone Studio table containment
         if: matrix.suite == 'studio-style'
-        run: npx playwright test -c playwright.chart-table-studio.config.ts --workers=1
+        run: node scripts/run-affected-playwright.mjs -c playwright.chart-table-studio.config.ts --workers=1
+      - name: Verify explicit Moon recovery through the actual reader
+        if: matrix.suite == 'lunation-studio'
+        run: node scripts/run-affected-playwright.mjs -c playwright.config.ts tests/visual/moon-reusable-recovery.spec.ts tests/visual/dated-lunation-recovery.spec.ts --workers=1 --timeout=120000
       - name: Upload ${{ matrix.suite }} artifacts
         if: always()
         uses: actions/upload-artifact@v6
         with:
-          name: studio-preview-suite-results-${{ matrix.suite }}
+          name: studio-preview-suite-results-${{ matrix.suite }}${{ matrix.shard && format('-{0}', matrix.shard) || '' }}
           path: test-results/
           if-no-files-found: ignore
 
@@ -407,25 +602,36 @@ jobs:
   # Shard by test while retaining one worker and every per-action deadline.
   horoscope-reader:
     needs: scope
-    if: needs.scope.outputs.studio == 'true'
+    if: needs.scope.outputs.horoscope_reader == 'true'
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.61.0-noble@sha256:57b65fdc9ceabe0ef613124c7bbe2babcf9362c4d85e382fe3b03604e84b428a
+      volumes:
+        - /usr/share/fonts:/usr/share/fonts/runner:ro
+    defaults:
+      run:
+        shell: bash
     timeout-minutes: 25
     strategy:
       fail-fast: false
       matrix:
         shard: [1, 2, 3]
     env:
+      CI_AFFECTED_TEST_PLAN: ${{ needs.scope.outputs.test_plan }}
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
       VITE_SUPABASE_URL: https://visual-smoke.supabase.test
       VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
     steps:
       - uses: actions/checkout@v6
+      - name: Verify exact container checkout
+        run: bash scripts/ci-prepare-playwright-workspace.sh
       - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
       - run: npm ci
       - run: npm run build:knowledge
-      - run: bash scripts/ci-install-playwright.sh
+      - run: node scripts/ci-validate-playwright-image.mjs
       - name: Run Horoscope editor and reader journeys
         run: node scripts/balanced-browser-tests.mjs --config playwright.horoscope-reader.config.ts ${{ matrix.shard }}/3
       - name: Upload Horoscope artifacts
@@ -439,18 +645,29 @@ jobs:
   # Calendar, learning, date consistency, and ephemeris parity screens had no workflow either.
   reader-surface-suites:
     needs: scope
-    if: needs.scope.outputs.reader == 'true'
+    if: needs.scope.outputs.reader_surface_suites == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    container:
+      image: mcr.microsoft.com/playwright:v1.61.0-noble@sha256:57b65fdc9ceabe0ef613124c7bbe2babcf9362c4d85e382fe3b03604e84b428a
+      volumes:
+        - /usr/share/fonts:/usr/share/fonts/runner:ro
+    defaults:
+      run:
+        shell: bash
+    timeout-minutes: 40
     strategy:
       fail-fast: false
       matrix:
         shard: [1, 2, 3]
     env:
+      CI_AFFECTED_TEST_PLAN: ${{ needs.scope.outputs.test_plan }}
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
       VITE_SUPABASE_URL: https://visual-smoke.supabase.test
       VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
     steps:
       - uses: actions/checkout@v6
+      - name: Verify exact container checkout
+        run: bash scripts/ci-prepare-playwright-workspace.sh
       - uses: actions/setup-node@v6
         with:
           node-version: 22
@@ -460,15 +677,9 @@ jobs:
       - name: Verify personal daily peak calculations
         if: matrix.shard == 1
         run: npm run test:transit-pass-engine
-      - run: bash scripts/ci-install-playwright.sh
+      - run: node scripts/ci-validate-playwright-image.mjs
       - name: Run Calendar, learning, and date consistency screens
         run: node scripts/balanced-browser-tests.mjs --config playwright.reader-surfaces.config.ts ${{ matrix.shard }}/3
-      - name: Verify modals, menus, and populated city dropdowns
-        env:
-          VITE_MAPBOX_ACCESS_TOKEN: viewport-synthetic-token
-        run: >-
-          npx playwright test -c playwright.config.ts --workers=1
-          --shard=${{ matrix.shard }}/3 tests/visual/overlay-viewport.spec.ts
       - name: Upload reader surface artifacts
         if: always()
         uses: actions/upload-artifact@v6
@@ -477,8 +688,191 @@ jobs:
           path: test-results/
           if-no-files-found: ignore
 
+  # Overlay coverage runs in parallel so the reader shards retain their full job budget.
+  reader-overlays:
+    needs: scope
+    if: needs.scope.outputs.reader_overlays == 'true'
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.61.0-noble@sha256:57b65fdc9ceabe0ef613124c7bbe2babcf9362c4d85e382fe3b03604e84b428a
+      volumes:
+        - /usr/share/fonts:/usr/share/fonts/runner:ro
+    defaults:
+      run:
+        shell: bash
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
+    env:
+      CI_AFFECTED_TEST_PLAN: ${{ needs.scope.outputs.test_plan }}
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      VITE_SUPABASE_URL: https://visual-smoke.supabase.test
+      VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
+    steps:
+      - uses: actions/checkout@v6
+      - name: Verify exact container checkout
+        run: bash scripts/ci-prepare-playwright-workspace.sh
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build:knowledge
+      - run: node scripts/ci-validate-playwright-image.mjs
+      - name: Verify modals, menus, and populated city dropdowns
+        env:
+          VITE_MAPBOX_ACCESS_TOKEN: viewport-synthetic-token
+        run: >-
+          node scripts/run-affected-playwright.mjs -c playwright.config.ts --workers=1
+          --shard=${{ matrix.shard }}/3 tests/visual/overlay-viewport.spec.ts
+      - name: Upload overlay artifacts
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: reader-overlay-results-${{ matrix.shard }}
+          path: test-results/
+          if-no-files-found: ignore
+
+  key-dates-disclosures:
+    needs: scope
+    if: needs.scope.outputs.key_dates_disclosures == 'true'
+    runs-on: ubuntu-24.04
+    container:
+      image: mcr.microsoft.com/playwright:v1.61.0-noble@sha256:57b65fdc9ceabe0ef613124c7bbe2babcf9362c4d85e382fe3b03604e84b428a
+      volumes:
+        - /usr/share/fonts:/usr/share/fonts/runner:ro
+    defaults:
+      run:
+        shell: bash
+    timeout-minutes: 15
+    env:
+      CI_AFFECTED_TEST_PLAN: ${{ needs.scope.outputs.test_plan }}
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      VITE_SUPABASE_URL: https://visual-smoke.supabase.test
+      VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
+      PLAYWRIGHT_ISOLATED_SYNTHETIC: '1'
+    steps:
+      - uses: actions/checkout@v6
+      - name: Verify exact container checkout
+        run: bash scripts/ci-prepare-playwright-workspace.sh
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build:knowledge
+      - run: node scripts/ci-validate-playwright-image.mjs
+      - name: Verify shared and consumer Key dates journeys
+        run: >-
+          node scripts/run-affected-playwright.mjs -c playwright.config.ts --workers=1 --retries=0
+          tests/visual/shared-key-dates-panel.spec.ts
+          tests/visual/generic-sky-key-dates.spec.ts
+          tests/visual/friends-key-dates.spec.ts
+      - name: Upload Key dates artifacts
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: key-dates-disclosure-results
+          path: test-results/
+          if-no-files-found: ignore
+
+  design-handoff:
+    needs: scope
+    if: needs.scope.outputs.design_handoff == 'true'
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.61.0-noble@sha256:57b65fdc9ceabe0ef613124c7bbe2babcf9362c4d85e382fe3b03604e84b428a
+      volumes:
+        - /usr/share/fonts:/usr/share/fonts/runner:ro
+    defaults:
+      run:
+        shell: bash
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4, 5, 6]
+    env:
+      CI_AFFECTED_TEST_PLAN: ${{ needs.scope.outputs.test_plan }}
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      VITE_SUPABASE_URL: https://visual-smoke.supabase.test
+      VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
+      VITE_MAPBOX_ACCESS_TOKEN: viewport-synthetic-token
+    steps:
+      - uses: actions/checkout@v6
+      - name: Verify exact container checkout
+        run: bash scripts/ci-prepare-playwright-workspace.sh
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build:knowledge
+      - run: node scripts/ci-validate-playwright-image.mjs
+      - name: Verify all updated reader designs
+        run: node scripts/run-affected-playwright.mjs -c playwright.design-handoff.config.ts --fully-parallel --workers=1 --shard=${{ matrix.shard }}/6
+      - name: Upload handoff screenshots and traces
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: design-handoff-results-${{ matrix.shard }}
+          path: test-results/
+          if-no-files-found: ignore
+
+  mobile-parity:
+    needs: scope
+    if: needs.scope.outputs.mobile_parity == 'true'
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.61.0-noble@sha256:57b65fdc9ceabe0ef613124c7bbe2babcf9362c4d85e382fe3b03604e84b428a
+      volumes:
+        - /usr/share/fonts:/usr/share/fonts/runner:ro
+    defaults:
+      run:
+        shell: bash
+    timeout-minutes: 30
+    env:
+      CI_AFFECTED_TEST_PLAN: ${{ needs.scope.outputs.test_plan }}
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      VITE_SUPABASE_URL: https://visual-smoke.supabase.test
+      VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
+    steps:
+      - uses: actions/checkout@v6
+      - name: Verify exact container checkout
+        run: bash scripts/ci-prepare-playwright-workspace.sh
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build:knowledge
+      - run: node scripts/ci-validate-playwright-image.mjs
+      - name: Verify reader navigation cancellation and transient recovery
+        timeout-minutes: 3
+        run: node --import tsx scripts/test-reader-navigation-browser.mts
+      - name: Verify calculated placement countdown boundaries
+        run: node --import tsx scripts/test-placement-card-countdowns.mts
+      - name: Verify forecast return and house selection boundaries
+        run: |
+          npm run test:friends-routing
+          node --import tsx scripts/test-friend-transits-brief.mts
+          node --import tsx scripts/test-friend-transits-brief-render.mjs
+      - name: Verify mobile dialogs, glyphs, signs and placement countdowns
+        run: >-
+          node scripts/run-affected-playwright.mjs -c playwright.mobile-parity.config.ts
+          --grep 'Mobile parity:|Planetary and Sky cards share remaining countdowns|Day sheet social transit returns|House transit profiles|published Lilith refresh during the first press preserves activation'
+      - name: Upload mobile parity screenshots and traces
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: mobile-parity-results
+          path: test-results/
+          if-no-files-found: ignore
+
   browser-release-gate:
-    needs: [scope, friends-loading-performance, visual-smoke, client-facing-flows, studio-admin-flows, connection-transit-sources, sky-placement-studio, sky-placement-reader, sky-summary, studio-preview-suites, horoscope-reader, reader-surface-suites]
+    needs: [scope, friends-loading-performance, visual-smoke, client-facing-flows, studio-admin-flows, lunation-source-wiring, connection-transit-sources, sky-placement-studio, sky-placement-reader, sky-summary, studio-preview-suites, horoscope-reader, reader-surface-suites, reader-overlays, key-dates-disclosures, design-handoff, mobile-parity]
     # Still inspect failed dependencies, but let a superseded workflow cancel.
     # An always() gate can remain queued and block the next revision's run.
     if: ${{ !cancelled() }}
@@ -493,6 +887,7 @@ jobs:
       - name: Require every applicable browser job to pass
         env:
           BROWSER_JOB_RESULTS: ${{ toJSON(needs) }}
+          CI_AFFECTED_TEST_PLAN: ${{ needs.scope.outputs.test_plan }}
         run: node scripts/check-browser-release-gate.mjs
 
 env:

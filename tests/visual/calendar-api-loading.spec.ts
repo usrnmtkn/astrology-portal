@@ -34,7 +34,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
     try {
       await page.goto('/?date=2026-10-02#calendar?view=day&date=2026-10-02', { waitUntil: 'domcontentloaded' });
       await expect.poll(() => held).toBe(true);
-      const loader = page.getByRole('status', { name: 'Loading calendar…', exact: true });
+      const loader = page.locator('.app-loading[aria-label="Loading calendar…"]');
       await expect(loader).toBeVisible();
       expect(await loader.evaluate(el => getComputedStyle(el).display)).toBe('grid');
       // Calendar cards depend on the held stylesheet and must not paint unstyled.

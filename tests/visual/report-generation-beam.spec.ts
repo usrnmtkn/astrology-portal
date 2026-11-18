@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { selectMenuTheme } from "../helpers/menu-theme";
 
 for (const theme of ["light", "dark"] as const) {
   for (const width of [390, 1440]) {
@@ -25,6 +26,7 @@ for (const theme of ["light", "dark"] as const) {
           : []
       }));
       await page.goto("/reports/");
+      await expect(page.locator(".report-topbar .theme-toggle")).toHaveCount(0);
       const card = page.locator('.report-library-row[data-report-status="generating"]');
       const beam = card.locator("[data-beam]");
       await expect(beam).toBeVisible();
@@ -48,9 +50,9 @@ for (const theme of ["light", "dark"] as const) {
       if (width === 1440) {
         const effectStyles = card.locator(".report-generation-beam > style");
         const originalStyles = await effectStyles.textContent();
-        await page.getByRole("button", { name: `Switch to ${theme === "light" ? "dark" : "light"} mode` }).click();
+        await selectMenuTheme(page, theme === "light" ? "dark" : "light");
         await expect.poll(() => effectStyles.textContent()).not.toBe(originalStyles);
-        await page.getByRole("button", { name: `Switch to ${theme} mode` }).click();
+        await selectMenuTheme(page, theme);
         await expect.poll(() => effectStyles.textContent()).toBe(originalStyles);
       }
       await expect.poll(() => beam.evaluate(el => getComputedStyle(el).getPropertyValue(`--beam-opacity-${el.getAttribute("data-beam")}`))).toBe("1");

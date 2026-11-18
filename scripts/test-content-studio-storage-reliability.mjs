@@ -37,8 +37,10 @@ assert.equal(empty.statusCode, 200);
 assert.deepEqual(empty.payload.rows, [], 'A genuinely empty inventory remains a valid response');
 
 // Opening a document needs one indexed lookup, independent of listing metadata.
+// Keep this storage-parity fixture outside the installed package catalog;
+// source inheritance is covered by the inventory source-integrity contract.
 let detailReads = 0;
-const saved = { id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', content_key: 'fallback-hook/sky-placement-hook/moon/cancer', body: 'Synthetic opening.\n\nSynthetic ending.', updated_at: '2026-10-03T12:00:00Z', sections: { packageRecord: { body_you: 'Complete synthetic saved document.' } } };
+const saved = { id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', content_key: 'cms/synthetic/storage-reliability', body: 'Synthetic opening.\n\nSynthetic ending.', updated_at: '2026-10-03T12:00:00Z', sections: { packageRecord: { body_you: 'Complete synthetic saved document.' } } };
 globalThis.fetch = async input => {
   detailReads++;
   const query = new URL(String(input)).searchParams;
@@ -61,7 +63,9 @@ const horoscope = {...saved, content_key:'horoscope/weekly/fixture', mode:'artic
   source_snapshot:{history:'Complete synthetic evidence. '.repeat(700_000)}, studio_facts:null};
 globalThis.fetch = async input => {
   const query = new URL(String(input)).searchParams;
-  assert.equal(query.get('mode'),'eq.article');
+  assert.equal(query.get('mode'),null);
+  assert.equal(query.get('or'),'(mode.eq.article,and(mode.eq.studio-draft,event_type.eq.horoscope-edition-revision))','Horoscope storage reads include only editions and their private revisions');
+  assert.equal(query.get('and'),query.has('id')?null:'(or(event_type.neq.horoscope-edition-revision,event_type.is.null,status.neq.ARCHIVED))','Completed revisions do not obscure editions, but exact-ID recovery remains available');
   const columns=query.get('select');
   return Response.json([columns==='*'?horoscope:Object.fromEntries(columns.split(',').map(key=>[key,horoscope[key]]))]);
 };

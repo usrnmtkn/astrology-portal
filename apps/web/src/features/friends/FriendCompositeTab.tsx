@@ -1,13 +1,12 @@
 import { FormattedProse } from "../../components/FormattedProse";
-import { CardReadMore } from "../../components/CardReadMore";
 import type { RelationshipCompareResponse } from "../../services/tldrastroApi";
 import type { AspectGiftLessonLabel } from "../../services/aspectGiftLesson";
-import type { SocialPlacementRow } from "../../components/charts/PlacementRows";
-import { AspectGlyphs } from "../../components/charts/PlacementRows";
-import { wholeDegreeOrb } from "../sky/skyHelpers";
-import { AspectGiftLessonGroup } from "../../components/charts/AspectGiftLessonGroup";
+import { PlacementTableRow, placementTitleFromParts, socialPlacementDegree, type SocialPlacementRow } from "../../components/charts/PlacementRows";
+import { NatalPlacementSections } from "../../components/NatalPlacementSections";
+import { emptyNatalHouseNumbers, natalHouseCardRuler } from "../../services/natalHouseCards";
+import type { SkySnapshot } from "../../types";
+import { zodiacSigns } from "../../services/chartMath";
 import { zodiacAssetHref } from "../../components/charts/chartAssets";
-import { FriendPlacementTable } from "./FriendPlacementTables";
 import { RelationshipApiSummary, type RelationshipCompareStatus } from "./RelationshipApiSummary";
 
 export type FriendCompositeAspectGroup = {
@@ -22,100 +21,44 @@ export type FriendCompositeAspectGroup = {
   }>;
 };
 
-export function FriendCompositeTab({
-  aspectGroups,
-  compositeAvailable,
-  placementRows,
-  onPlacementClick,
-  onAspectClick,
-  relationshipCompare,
-  relationshipCompareStatus
-}: {
+export function FriendCompositeTab({ aspectGroups, compositeAvailable, compositeSky, housesReliable = compositeSky?.birthTimeKnown === true, placementRows, onPlacementClick, onAspectClick, relationshipCompare, relationshipCompareStatus }: {
   aspectGroups: FriendCompositeAspectGroup[];
   compositeAvailable: boolean;
+  compositeSky?: SkySnapshot | null;
+  housesReliable?: boolean;
   placementRows: SocialPlacementRow[];
   onPlacementClick?: (row: SocialPlacementRow) => void;
   onAspectClick?: (aspect: FriendCompositeAspectGroup["aspects"][number]) => void;
   relationshipCompare: RelationshipCompareResponse | null;
   relationshipCompareStatus: RelationshipCompareStatus;
 }) {
-  return (
-    <div className="friend-tab-pane friend-compat-stage" aria-label="Composite">
-      <div className="friend-profile-copy-column">
+  const aspects = aspectGroups.flatMap(group => group.aspects).sort((a, b) => a.orb - b.orb);
+  const strongest = aspects.find(aspect => aspect.summary);
+  const emptyHouses = compositeSky && housesReliable ? emptyNatalHouseNumbers(compositeSky.positions) : [];
+  return <div className="friend-tab-pane friend-compat-stage friend-composite-stage" aria-label="Composite">
+    <div className="friend-profile-copy-column">
+      <div className="friend-profile-intro">
         <article className="relationship-explainer-card relationship-explainer-card--composite" aria-label="What a composite chart is">
-          <span className="relationship-explainer-card__glyph" aria-hidden="true">
-            <img src={zodiacAssetHref("tool-composite.svg") ?? ""} alt="" />
-          </span>
-          <span className="relationship-explainer-card__copy">
-            <span className="relationship-explainer-card__kicker">What a composite chart is</span>
-            <p>
-              A composite chart is the relationship&apos;s own chart, built from the midpoints between two people&apos;s planets. It&apos;s read like a natal chart, but the placements describe the relationship instead of either person.
-            </p>
-          </span>
+          <span className="relationship-explainer-card__glyph" aria-hidden="true"><img src={zodiacAssetHref("tool-composite.svg") ?? ""} alt="" /></span>
+          <span className="relationship-explainer-card__copy"><span className="relationship-explainer-card__kicker">What a composite chart is</span><p>A composite chart is the relationship&apos;s own chart, built from the midpoints between two people&apos;s planets. It&apos;s read like a natal chart, but the placements describe the relationship instead of either person.</p></span>
         </article>
-        <RelationshipApiSummary
-          mode="composite"
-          response={relationshipCompare}
-          status={relationshipCompareStatus}
-        />
-        {compositeAvailable && (
-          <section className="composite-placements-section">
-            <span className="eyebrow section-label friend-section-label">Composite placements</span>
-            <FriendPlacementTable
-              title="Composite placements"
-              rows={placementRows}
-              compact
-              generatedContext="composite"
-              showTitle={false}
-              onPlacementClick={onPlacementClick}
-            />
-          </section>
-        )}
-        {compositeAvailable ? (
-          aspectGroups.length > 0 ? (
-            aspectGroups.map((group) => (
-              <AspectGiftLessonGroup
-                ariaLabel={`Composite aspect ${group.label}`}
-                key={group.key}
-                label={group.label}
-                listAriaLabel={`Composite ${group.label.toLowerCase()}`}
-                listClassName="friend-aspect-list"
-              >
-                {group.aspects.map((aspect) => (
-                  <button type="button" className="aspect-row aspect-row-button friend-aspect-row is-revealing" key={`${aspect.from}-${aspect.type}-${aspect.to}`}
-                    disabled={!aspect.summary || !onAspectClick}
-                    aria-label={`Open full entry for ${aspect.from} ${aspect.type} ${aspect.to}`}
-                    onClick={() => onAspectClick?.(aspect)}
-                  >
-                    <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
-                    <span className="aspect-row-copy">
-                      <h3>{aspect.from} {aspect.type} {aspect.to}</h3>
-                      {aspect.summary ? aspect.summary.split(/\n{2,}/).map((paragraph, index) => <FormattedProse key={index} text={paragraph} />) : null}
-                      {aspect.summary && onAspectClick ? <CardReadMore /> : null}
-                    </span>
-                    <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
-                      <span className="aspect-row-dot" aria-hidden="true" />
-                      <span>{wholeDegreeOrb(aspect.orb)}</span>
-                    </span>
-                  </button>
-                ))}
-              </AspectGiftLessonGroup>
-            ))
-          ) : (
-            <article className="friends-logic-card">
-              <span>Composite aspects</span>
-              <h3>No tight major aspects found.</h3>
-              <p>The composite chart is ready, but no single aspect is leading the relationship pattern.</p>
-            </article>
-          )
-        ) : (
-          <article className="friends-logic-card">
-            <span>Composite</span>
-            <h3>Composite chart needs both birth charts.</h3>
-            <p>Add complete birth data for both people to generate the composite chart view.</p>
-          </article>
-        )}
+        {relationshipCompare || relationshipCompareStatus === "loading" ? <RelationshipApiSummary mode="composite" response={relationshipCompare} status={relationshipCompareStatus} /> : strongest ? <section className="friend-profile-contact" aria-label="Composite pattern">
+          <span className="friend-profile-eyebrow">Composite pattern</span>
+          <h2 className="friend-profile-contact__title"><button className="friend-profile-pattern-open" type="button" aria-label={`Open full entry for ${strongest.from} ${strongest.type} ${strongest.to}`} onClick={() => onAspectClick?.(strongest)} disabled={!onAspectClick}>{strongest.from} {strongest.type} {strongest.to}</button></h2>
+          <FormattedProse text={strongest.summary} />
+          <div className="friend-profile-pattern-chips">{aspects.filter(aspect => aspect !== strongest && aspect.summary).slice(0, 4).map(aspect => <button type="button" key={`${aspect.from}-${aspect.type}-${aspect.to}`} onClick={() => onAspectClick?.(aspect)} disabled={!onAspectClick}>{aspect.from} {aspect.type} {aspect.to}</button>)}</div>
+        </section> : null}
       </div>
+      {compositeAvailable ? <NatalPlacementSections planetTitle="Composite planets" supplementalAngleDescriptions={false} includeLuminaries snapshot={compositeSky && housesReliable ? {...compositeSky, birthTimeKnown: true} : undefined}
+        items={placementRows.map(row => ({ id: row.id, pointName: row.label, node: <PlacementTableRow textGlyphs
+          asButton={Boolean(onPlacementClick) && row.detailAvailable !== false} degree={socialPlacementDegree(row.degree)} description={row.description ?? ""}
+          glyph={row.glyph} house={row.house} onClick={onPlacementClick && row.detailAvailable !== false ? () => onPlacementClick(row) : undefined} pointName={row.label} readMoreAppearance="icon"
+          retrograde={row.retrograde} sign={row.sign} title={placementTitleFromParts(row.label, row.sign, row.retrograde)} variant="composite" /> }))}
+        emptyHouses={emptyHouses.map(house => {
+          const sign = zodiacSigns[(zodiacSigns.indexOf(compositeSky!.ascendant) + house - 1) % 12];
+          const ruler = natalHouseCardRuler(compositeSky, house);
+          return <PlacementTableRow textGlyphs key={house} glyph={String(house)} glyphBadgePointName={ruler?.name} metadata={ruler?.metadata} title={`${house}${house === 1 ? "st" : house === 2 ? "nd" : house === 3 ? "rd" : "th"} House in ${sign}`} variant="composite" />;
+        })} /> : <article className="friends-logic-card"><h2>Composite chart needs both birth charts.</h2><p>Add complete birth data for both people to generate the composite chart view.</p></article>}
     </div>
-  );
+  </div>;
 }

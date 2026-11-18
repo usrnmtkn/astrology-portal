@@ -1,8 +1,14 @@
+import {openEditorMoreActions} from '../helpers/studio-editor-actions';
+import { routeStudioInventoryApi } from "../helpers/studio-inventory-route";
+import { installSyntheticNetworkGuard } from "../helpers/synthetic-network-guard";
+import { approvedNatalPilotBody } from "../helpers/natal-approved-pilot.mts";
 import { natalEditorialDraftForKey, natalEditorialIdentity, natalSectPlanets, type NatalEditorialSelection } from "../../apps/admin/src/natalEditorialLibrary";
 import { moonRoutingPreviewApi } from '../helpers/moon-routing-preview-api';
 import { moonRoutingRows } from '../helpers/moon-routing-fixtures';
 import { studioApiStore } from "../helpers/studio-api-store";
 import { workspaceFixtureRows, workspaceVisitFacts } from "../helpers/sky-placement-workspace-fixtures";
+import { holdSkySourcesUntilTemplatePointer } from '../helpers/sky-source-pointer-race';
+import { openSkyPlacementChooser, openSkyPlacementReaderSources } from '../helpers/sky-placement-workspace-navigation';
 import { readerResponse } from '../helpers/reader-response';
 import { canonicalPublicationLedger, publicationLedgerTag } from '../../apps/web/src/services/publicationLedgerTransport';
 import { emptyHousePreviewApi } from "../helpers/empty-house-preview-api";
@@ -130,6 +136,7 @@ const adminPages = [
   { nav: "Astro 101", title: "Astro 101", breadcrumb: "Admin / Write / Astro 101", hash: "astro-101" },
   { nav: "Compatibility", title: "Compatibility", breadcrumb: "Admin / Write / Compatibility", hash: "compatibility" },
   { nav: "Composite Review", title: "Composite Review", breadcrumb: "Admin / Write / Composite review", hash: "composite-review" },
+  { nav: "Tooltips", title: "Zodiac Wheel tooltips", breadcrumb: "Admin / Zodiac Wheel / Tooltips", hash: "wheel-tooltips" },
   { nav: "Composition", title: "Composition Map", breadcrumb: "Admin / Composition / Map", hash: "composition-map" },
   { nav: "Aspect Patterns", title: "Aspect Patterns", breadcrumb: "Admin / Language System / Aspect Patterns", hash: "content/aspect-patterns" }
 ];
@@ -555,16 +562,27 @@ async function seedAdminApi(
     generatedContentWriteReturnsEmpty?: boolean;
     loseFirstPublicationResponse?: boolean;
     useGeneratedContentHandler?: boolean;
+    warmPublicationFixture?: boolean;
     onGeneratedContentRead?: (url: URL) => void;
     reviewRows?: Record<string, unknown>[];
     compositionCatalog?: Array<{ content_key: string; headline: string | null; role: string }>;
   } = {}
 ) {
   const apiGeneratedContentRows = structuredClone(options.generatedRows ?? generatedContentRows) as Record<string, unknown>[];
+  const publicationStore = options.warmPublicationFixture ? await studioApiStore(apiGeneratedContentRows) : null;
+  if (publicationStore) {
+    try { await publicationStore.call({ method: "prepare-publication" }); }
+    catch (error) { publicationStore.close(); throw error; }
+    page.once("close", () => publicationStore.close());
+  }
   const publications = new Map<string, Record<string, unknown>>();
   const publicationResults = new Map<string, any>();
   let losePublicationResponse = options.loseFirstPublicationResponse ?? false;
   await page.route("**/rest/v1/content_publications*", (route) => route.fulfill({ json: [...publications.values()] }));
+  await page.route("**/api/content-publications*", async route => {
+    const ledger = canonicalPublicationLedger([...publications.values()]);
+    await route.fulfill({ headers: { etag: await publicationLedgerTag(ledger) }, json: { schema: 'tldr-publications/v1', publications: ledger } });
+  });
   let generatedContentFailuresRemaining = options.generatedContentFailuresBeforeSuccess ?? 0;
   await page.route("https://tldrastro-api-27165565299.us-central1.run.app/**", async (route) => {
     await route.fulfill({
@@ -902,8 +920,9 @@ async function seedAdminApi(
         if (["approve-package-revision", "publish-owner-content", "save-and-publish-owner-content"].includes(String(payload.ownerAction)) || options.useGeneratedContentHandler) {
           // Use the real handler and transactional SQL for the response/receipt;
           // a fabricated LIVE row cannot prove successful publication.
-          const store = await studioApiStore(apiGeneratedContentRows);
+          const store = publicationStore ?? await studioApiStore(apiGeneratedContentRows);
           try {
+            if (publicationStore) await store.call({ method: "prepare-publication", body: apiGeneratedContentRows });
             const result = await store.call({ method, body: payload });
             for (const saved of await store.call({ method: "rows" })) {
               const index = apiGeneratedContentRows.findIndex(row => row.id === saved.id);
@@ -920,7 +939,7 @@ async function seedAdminApi(
               }
             }
             await route.fulfill({ status: result.status, json: result.payload });
-          } finally { store.close(); }
+          } finally { if (!publicationStore) store.close(); }
           return;
         }
         const packageReviewStatus = typeof payload.reviewStatus === "string" ? payload.reviewStatus : null;
@@ -1052,6 +1071,10 @@ async function seedAdminApi(
     window.localStorage.setItem("tldrastro:contentAdminSecret", initialSecret);
     window.localStorage.setItem("tldrastro:slotDictionaryInfoDismissed", "true");
   }, { initialSecret: options.initialSecret ?? "qa-secret" });
+  return { readPublished: (keys: string[]) => {
+    if (!publicationStore) throw new Error("Reader proof requires a persistent publication fixture.");
+    return publicationStore.call({ method: "POST", url: "/api/content-reader", body: { keys } });
+  } };
 }
 
 async function expectNoBrowserErrors(page: Page) {
@@ -1439,7 +1462,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expectAdminHeader(page, "Review Queue", "Admin / Publish / Review queue");
     await expect(page.getByRole("button", { name: "Studio Home" })).toHaveCount(0);
     const navigationGroups = page.getByRole("navigation", { name: "Content operations" }).locator(".admin-nav-section > .admin-eyebrow, details.admin-nav-advanced > summary");
-    await expect(navigationGroups).toHaveText(["Publish", "Write", "Compose", "Operations"]);
+    await expect(navigationGroups).toHaveText(["Publish", "Write", "Zodiac Wheel", "Compose", "Operations"]);
     const advanced = page.locator("details.admin-nav-advanced");
     // Operations stays expanded at desktop widths so Users / Reports / Connection are one click away.
     await expect(advanced).toHaveAttribute("open", "");
@@ -1507,12 +1530,14 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.getByRole("tab", { name: "Write-ups", exact: true }).click();
     await detail.getByRole("button", { name: "Edit passage", exact: true }).click();
     await expect(editor.getByLabel("Full lunar passage")).toHaveValue(record.body + "\nQA revision.");
+    await openEditorMoreActions(editor);
     await editor.getByRole("button", { name: "Archive source" }).click();
     await expect.poll(() => writes.length).toBe(2);
     await editor.getByRole("button", { name: "Close", exact: true }).click();
     await page.getByLabel("Publication", { exact: true }).selectOption("archived");
     await expect(browse.getByRole("button", { name: /^Moon in Cancer/ })).toBeVisible();
     await detail.getByRole("button", { name: "Edit passage", exact: true }).click();
+    await openEditorMoreActions(editor);
     await editor.getByRole("button", { name: "Restore as draft" }).click();
     await expect.poll(() => writes.length).toBe(3);
     await editor.getByRole("button", { name: "Close", exact: true }).click();
@@ -1664,7 +1689,7 @@ test.describe("content dashboard admin user flow case studies", () => {
 
   for (const theme of ["light", "dark"]) {
     for (const width of [1440, 390]) {
-      test(`Calendar Aspects signed titles and optional advanced filters ${theme} ${width}`, async ({ page }) => {
+      test(`Calendar Aspects signed titles and stacked optional filters ${theme} ${width}`, async ({ page }) => {
         const assertNoBrowserErrors = await expectNoBrowserErrors(page);
         await page.setViewportSize({ width, height: 900 });
         await page.addInitScript(theme => localStorage.setItem("tldrastro:studio-theme", theme), theme);
@@ -1690,7 +1715,7 @@ test.describe("content dashboard admin user flow case studies", () => {
         const row = (index: number) => rows.filter({ hasText: keys[index] }).filter({ has: page.getByText(keys[index], { exact: true }) });
         await expect(rows).toHaveCount(5);
         await expectAdminHeader(page, "Calendar Aspect Cards", "Admin / Write / Calendar aspects");
-        await expect(filters.getByLabel("Calendar aspect first sign")).toBeHidden();
+        await expect(filters.getByLabel("Calendar aspect first sign")).toBeVisible();
         const headingStyle = (element: Element) => {
           const style = getComputedStyle(element);
           return Object.fromEntries(["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing", "marginTop", "marginBottom", "textTransform", "textAlign"].map(key => [key, style[key as keyof CSSStyleDeclaration]]));
@@ -1721,7 +1746,6 @@ test.describe("content dashboard admin user flow case studies", () => {
           }
           await editor.getByRole("button", { name: "Close", exact: true }).click();
         }
-        await filters.getByText("Advanced signs", { exact: true }).click();
         const firstSign = filters.getByLabel("Calendar aspect first sign", { exact: true });
         const secondSign = filters.getByLabel("Calendar aspect second sign", { exact: true });
         const first = filters.getByLabel("Calendar aspect planet or point", { exact: true });
@@ -1754,7 +1778,6 @@ test.describe("content dashboard admin user flow case studies", () => {
         await expect(first).toHaveValue("");
         await expect(aspect).toHaveValue("");
         await expect(second).toHaveValue("");
-        await filters.getByText("Advanced signs", { exact: true }).click();
         await expect(firstSign).toHaveValue("");
         await expect(secondSign).toHaveValue("");
         await secondSign.selectOption("aquarius");
@@ -1763,8 +1786,35 @@ test.describe("content dashboard admin user flow case studies", () => {
         await firstSign.selectOption("aries");
         await second.selectOption("moon");
         await expect(rows).toHaveCount(3); // Reversed planet/sign pairs work.
-        await expect(filters.getByRole("group", { name: "Calendar aspect filters", exact: true }).locator("label > span:first-child")).toHaveText(["Planet or point", "Aspect", "Other planet or point"]);
-        await expect(filters.getByRole("group", { name: "Calendar aspect sign filters", exact: true }).locator("label > span:first-child")).toHaveText(["Neptune in sign", "Moon in sign"]);
+        const search = filters.getByRole("searchbox", { name: "Find an aspect", exact: true });
+        const controls = [first, firstSign, aspect, second, secondSign, search];
+        await first.focus();
+        for (const control of controls.slice(1)) {
+          await page.keyboard.press("Tab");
+          await expect(control).toBeFocused();
+        }
+        const boxes = await Promise.all(controls.map(control => control.boundingBox()));
+        const [firstBox, firstSignBox, aspectBox, secondBox, secondSignBox, searchBox] = boxes.map(box => box!);
+        expect(firstBox.y).toBe(firstSignBox.y);
+        expect(secondBox.y).toBe(secondSignBox.y);
+        expect(firstSignBox.x).toBeGreaterThan(firstBox.x);
+        expect(secondSignBox.x).toBeGreaterThan(secondBox.x);
+        expect(aspectBox.y).toBeGreaterThan(firstBox.y + firstBox.height);
+        expect(secondBox.y).toBeGreaterThan(aspectBox.y + aspectBox.height);
+        expect(searchBox.y).toBeGreaterThan(secondBox.y + secondBox.height);
+        const placementBox = (await filters.getByRole("group", { name: "First planet and sign", exact: true }).boundingBox())!;
+        expect(Math.abs(aspectBox.width - placementBox.width)).toBeLessThanOrEqual(1);
+        const searchRowBox = (await filters.locator(".admin-browse-search").boundingBox())!;
+        expect(Math.abs(aspectBox.width - searchRowBox.width)).toBeLessThanOrEqual(1);
+        await search.fill("unmatched aspect");
+        await expect(rows).toHaveCount(0);
+        await filters.getByRole("button", { name: "Clear filters", exact: true }).click();
+        await expect(rows).toHaveCount(5);
+        for (const control of controls) await expect(control).toHaveValue("");
+        expect(await filters.getByRole("combobox").evaluateAll(selects => selects.map(select => (select as HTMLSelectElement).selectedOptions[0].text))).toEqual([
+          "Any planet or point", "in any sign", "Any aspect", "Any other planet or point", "in any sign"
+        ]);
+        await expect(filters.getByText("Advanced signs", { exact: true })).toHaveCount(0);
         await expectNoHorizontalOverflow(page, "Calendar Aspect filters");
         await page.evaluate(() => window.scrollTo(0, 0));
         await page.screenshot({ path: path.join(adminScreenshotDir, `calendar-signed-filters-${theme}-${width}.png`), fullPage: true });
@@ -1989,7 +2039,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await sourceFinder.getByText("Sentence structure (advanced)", { exact: true }).click();
     await sourceFinder.getByRole("button", { name: "Preview template" }).first().click();
     await expect(page.getByRole("complementary", { name: "Template variable reference" })).toBeVisible();
-    const templatePreview = page.getByRole("region", { name: "Example reader write-up" });
+    const templatePreview = page.getByRole("complementary", { name: "Template variable reference" }).getByRole("region", { name: "Example reader write-up" });
     await expect(templatePreview).toBeVisible();
     await expect(templatePreview.locator(".variable-fact")).toContainText(["Sun", "Cancer"]);
     const stylePhrase = templatePreview.getByRole("button", { name: /protectively.*Open the saved source for Sign Adverb/u });
@@ -2284,7 +2334,7 @@ test.describe("content dashboard admin user flow case studies", () => {
       });
       await expectAdminRouteLoads(page, `/admin/content#${createCase.hash}`);
       await openCreateMenu(page);
-      const createAction = page.getByRole("menuitem", { name: createCase.action });
+      const createAction = page.getByRole("menuitem", { name: createCase.action === "Create article" ? /New article/u : createCase.action });
       await expect(createAction).toBeVisible();
       await createAction.click({ force: true });
       const editor = page.locator(".admin-editor-panel");
@@ -2345,7 +2395,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     const contentSystemPanel = editor.locator("section[aria-label='Article content system']");
     await expect(async () => {
       if (!await editor.isVisible()) {
-        await savedRow.getByRole("button", { name: "Edit", exact: true }).click();
+        await savedRow.getByRole("button", { name: "Edit source", exact: true }).click();
       }
       await expect(page.locator(".admin-editor-backdrop")).toBeVisible();
       await expect(editor.getByRole("heading", { name: "Edit Sun in Cancer" })).toBeVisible();
@@ -2489,7 +2539,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.getByLabel("Search content").fill("sky.placement.chiron.taurus");
     const savedRow = page.locator(".admin-content-row", { hasText: "sky.placement.chiron.taurus" });
     await expect(savedRow).toHaveCount(1);
-    await savedRow.getByRole("button", { name: "Edit", exact: true }).click();
+    await savedRow.getByRole("button", { name: "Edit source", exact: true }).click();
 
     const editor = page.locator(".admin-editor-panel");
     await expect(editor).toBeVisible();
@@ -2568,19 +2618,24 @@ test.describe("content dashboard admin user flow case studies", () => {
     const row = page.locator(".admin-content-row", { hasText: contentKey });
     await row.getByRole("button", { name: "Edit", exact: true }).click();
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
+    await openEditorMoreActions(editor);
     await editor.getByRole("button", { name: "Retire everywhere", exact: true }).click();
+    await openEditorMoreActions(editor);
     await expect(editor.getByRole("button", { name: "Publish again", exact: true })).toBeEnabled();
     await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Inactive");
     const stored = await page.evaluate(() => JSON.parse(localStorage.getItem("tldrastro:content-publications:v1") ?? "[]"));
     expect(stored.find((record: any) => record.content_key === contentKey).state).toBe("retired");
     await page.reload();
     await row.getByRole("button", { name: "Edit", exact: true }).click();
+    await openEditorMoreActions(editor);
     await expect(editor.getByRole("button", { name: "Publish again", exact: true })).toBeEnabled();
     await page.setViewportSize({ width: 390, height: 844 });
     await expectNoHorizontalOverflow(page, "Retirement mobile editor");
     await mkdir(adminScreenshotDir, { recursive: true });
     await page.screenshot({ path: path.join(adminScreenshotDir, "retire-everywhere-mobile.png") });
+    await openEditorMoreActions(editor);
     await editor.getByRole("button", { name: "Publish again", exact: true }).click();
+    await openEditorMoreActions(editor);
     await expect(editor.getByRole("button", { name: "Retire everywhere", exact: true })).toBeEnabled();
     await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Live");
     await assertNoBrowserErrors();
@@ -2650,7 +2705,16 @@ test.describe("content dashboard admin user flow case studies", () => {
       await expect(editor.getByLabel("Full lunar passage", { exact: true })).toHaveValue(body);
     }
     expect(writes.filter((write) => !write.payload.ownerAction)).toHaveLength(2);
+    const publicationResponse = page.waitForResponse(response =>
+      new URL(response.url()).pathname === "/api/admin/generated-content"
+      && response.request().method() === "PATCH"
+      && response.request().postDataJSON()?.ownerAction === "approve-package-revision"
+    );
     await editor.getByRole("button", { name: "Save & publish", exact: true }).click();
+    const published = await publicationResponse;
+    expect(published.status()).toBe(200);
+    expect(await published.finished()).toBeNull();
+    expect((await published.json()).publicationReceipt).toBeTruthy();
     await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Live");
     await editor.getByRole("button", { name: "Close", exact: true }).click();
     await row.getByRole("button", { name: "Edit", exact: true }).click();
@@ -3705,6 +3769,16 @@ test.describe("content dashboard admin user flow case studies", () => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     const compatibilityReads: URL[] = [];
     let compatibilityWrite: { method: string; payload: Record<string, unknown> } | null = null;
+    async function saveCreatedCompatibility(contentKey: string, button: Locator) {
+      const [response] = await Promise.all([
+        page.waitForResponse(response => new URL(response.url()).pathname === '/api/admin/generated-content'
+          && response.request().method() === 'POST' && response.request().postDataJSON()?.contentKey === contentKey),
+        button.click()
+      ]);
+      expect(response.status()).toBe(200);
+      expect(await response.finished()).toBeNull();
+      expect(await response.json()).toMatchObject({ ok: true, rows: [{ content_key: contentKey }] });
+    }
     const directionalCompatibilityRow = {
       ...generatedContentRows.find((row) => row.id === "qa-compatibility-content-row")!,
       id: "qa-directional-compatibility-content-row",
@@ -3825,7 +3899,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(compatibilityEditor.getByLabel("Content key")).toHaveValue("authored/compat-pair/mars/pisces/aquarius");
     await compatibilityEditor.getByLabel("Compatibility write-up").fill("Mars between Pisces and Aquarius needs room for both instinct and perspective.");
     await expect(newCardSave).toBeEnabled();
-    await newCardSave.click();
+    await saveCreatedCompatibility('authored/compat-pair/mars/pisces/aquarius', newCardSave);
     expect(compatibilityWrite?.method).toBe("POST");
     expect(compatibilityWrite?.payload).toMatchObject({
       contentKey: "authored/compat-pair/mars/pisces/aquarius",
@@ -3855,7 +3929,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(compatibilityEditor.getByRole("region", { name: "Content role" })).toHaveCount(0);
     await compatibilityEditor.getByLabel("Phrase title").fill("Repair timing phrase");
     await compatibilityEditor.getByLabel("Reusable phrase").fill("Name the timing mismatch before assigning blame.");
-    await compatibilityEditor.getByRole("button", { name: "Save", exact: true }).click();
+    await saveCreatedCompatibility('vocab/relationship/repair-timing-phrase', compatibilityEditor.getByRole("button", { name: "Save", exact: true }));
     expect(compatibilityWrite?.payload).toMatchObject({
       contentKey: "vocab/relationship/repair-timing-phrase",
       lane: "reference",
@@ -4548,6 +4622,110 @@ test.describe("content dashboard admin user flow case studies", () => {
     await assertNoBrowserErrors();
   });
 
+  for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
+    test(`natal aspect surfaces remain editable ${width} ${theme}`, async ({ page }) => {
+      test.setTimeout(90_000);
+      await page.setViewportSize({width,height:1000});
+      await page.addInitScript(theme => localStorage.setItem('tldrastro:studio-theme', theme), theme);
+      const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+      const key='fallback-hook/natal-aspect-lived/lilith/opposition/mercury';
+      const you='QA complete original You opening.\n\nQA complete original You ending.';
+      const friend='{{Name}} keeps the complete Friend opening.\n\nThey keep the complete Friend ending.';
+      const hint='QA original astrology hint.';
+      const sources=JSON.parse(readFileSync('apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json','utf8'));
+      const templates=JSON.parse(readFileSync('apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json','utf8'));
+      const dependencyKeys=['fallback-hook/aspect-pair/lilith/mercury/hard','fallback-template/natal.aspect','fallback-hook/aspect-type/opposition',
+        'fallback-vocab/aspect-adj/opposition','fallback-vocab/aspect-motion/opposition','fallback-vocab/planet-core/lilith','fallback-vocab/planet-core/mercury'];
+      const packageRow=(record:Record<string,any>, index:number)=>({ ...generatedContentRows[0],id:`qa-natal-fields-${index}`,content_key:record.contentKey,
+        surface:'sky',mode:'feed',status:'DRAFT',lane:'reference',review_state:'fallback-system-reference',provider:'tldrastro-fallback-architecture-v3',
+        headline:record.contentKey,body:record.body??record.body_you??'',summary:'',block_type:record.content_role==='template'?'template':record.content_role==='vocabulary'?'vocabulary':'fallback_hook',
+        facts:{fallbackArchitectureV3:true,content_role:record.content_role,review_status:record.review_status??'approved_reuse'},
+        source_snapshot:{sourcePackage:'tldrastro-fallback-architecture-v3',contentType:'fallback-system',content_role:record.content_role,review_status:record.review_status??'approved_reuse'},
+        sections:{packageRecord:{...record,review_status:record.review_status??'approved_reuse'}} });
+      const exact=packageRow({contentKey:key,content_role:'fallback_hook',grammar_frame:'complete_sentence',reader_only:true,
+        render_policy:'reader-only-exact-lived-v1',review_status:'approved',body:you,astroHint:hint},0);
+      const nativeRows=['conjunction','sextile','square','trine','opposition','quincunx'].map((aspect,index)=>({
+        ...generatedContentRows[0],id:`qa-native-sun-moon-${index}`,content_key:`natal.aspect.sun.${aspect}.moon`,surface:'you',mode:'feed',status:'DRAFT',
+        lane:'reference',review_state:'needs-review',event_type:'natal-aspect',block_type:'natal_aspect',provider:'authored-natal-aspect-copy',
+        headline:`Sun ${aspect} Moon`,body:`QA native ${aspect} complete opening. QA native complete ending.`,summary:'',facts:{},sections:{},
+        source_snapshot:{contentType:'authored-natal-aspect',canonicalKey:`natal.aspect.sun.${aspect}.moon`}
+      }));
+      const dependencies=dependencyKeys.map((key,index)=>packageRow([...sources.hookRows,...sources.vocabularyRows,...templates.templates].find(row=>row.contentKey===key),index+1));
+      await seedAdminApi(page,{generatedRows:[exact,...dependencies,...nativeRows],useGeneratedContentHandler:true});
+      await expectAdminRouteLoads(page,'/admin/content#exact-content?category=Natal+Aspects&first=mercury&aspect=opposition&second=lilith');
+      await expect(page.locator('[data-studio-theme]').first()).toHaveAttribute('data-studio-theme',theme);
+      const matches=page.getByRole('region',{name:'Matching natal aspect passages'});
+      const shared=page.getByRole('region',{name:'Shared natal aspect fallback sources'});
+      await expect(matches).toContainText('Friend: empty');
+      await expect(shared.locator('article')).toHaveCount(7);
+      for (const key of dependencyKeys) await expect(shared).toContainText(key);
+      const fonts=await matches.locator('h4').evaluate(element=>{const s=getComputedStyle(element);return [s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing]});
+      expect(await shared.locator('h4').first().evaluate(element=>{const s=getComputedStyle(element);return [s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing]})).toEqual(fonts);
+      await expectNoHorizontalOverflow(page,'natal aspect sources');
+      await matches.getByRole('button',{name:'Edit source',exact:true}).click();
+      let editor=page.getByRole('dialog',{name:'Generated content editor'});
+      await expect(editor.locator('.admin-aspect-context-pill')).toHaveText('Natal aspect · birth chart');
+      await expect(editor.getByLabel('Reader phrase · You',{exact:true})).toHaveValue(you);
+      await expect(editor.getByLabel('Reader phrase · They',{exact:true})).toHaveValue('');
+      await expect(editor.getByLabel('Astrology hint',{exact:true})).toHaveValue(hint);
+      const editedYou='QA edited You opening.\n\nQA edited You ending.';
+      await editor.getByLabel('Reader phrase · You',{exact:true}).fill(editedYou);
+      await editor.getByLabel('Reader phrase · They',{exact:true}).fill(friend);
+      await editor.getByLabel('Astrology hint',{exact:true}).fill('QA edited astrology hint.');
+      const savedResponse=page.waitForResponse(response=>new URL(response.url()).pathname==='/api/admin/generated-content' && ['PATCH','POST'].includes(response.request().method()));
+      await editor.getByRole('button',{name:'Save draft',exact:true}).click();
+      expect((await savedResponse).status()).toBe(200);
+      await closeGeneratedEditor(page);
+      await page.reload();
+      await matches.getByRole('button',{name:'Edit source',exact:true}).click();
+      editor=page.getByRole('dialog',{name:'Generated content editor'});
+      await expect(editor.getByLabel('Reader phrase · You',{exact:true})).toHaveValue(editedYou);
+      await expect(editor.getByLabel('Reader phrase · They',{exact:true})).toHaveValue(friend);
+      await expect(editor.getByLabel('Astrology hint',{exact:true})).toHaveValue('QA edited astrology hint.');
+      await expectNoHorizontalOverflow(page,'natal aspect editor');
+      await editor.getByLabel('Astrology hint',{exact:true}).evaluate(element => element.scrollIntoView({block:'center'}));
+      await editor.screenshot({path:`test-results/natal-aspect-editor-${width}-${theme}.png`});
+      await closeGeneratedEditor(page);
+      await shared.locator('article').filter({hasText:'fallback-template/natal.aspect'}).getByRole('button',{name:'Edit source',exact:true}).click();
+      editor=page.getByRole('dialog',{name:'Generated content editor'});
+      await expect(editor.getByLabel('You view copy',{exact:true})).toHaveValue(templates.templates.find(row=>row.contentKey==='fallback-template/natal.aspect').body_you);
+      await expect(editor.getByLabel('Friend view copy',{exact:true})).toHaveValue(templates.templates.find(row=>row.contentKey==='fallback-template/natal.aspect').body_they);
+      const sharedYou=templates.templates.find(row=>row.contentKey==='fallback-template/natal.aspect').body_you+'\n\nQA shared template ending.';
+      await editor.getByLabel('You view copy',{exact:true}).fill(sharedYou);
+      const sharedSave=page.waitForResponse(response=>new URL(response.url()).pathname==='/api/admin/generated-content' && response.request().method()==='PATCH');
+      await editor.getByRole('button',{name:'Save draft',exact:true}).click();
+      expect((await sharedSave).status()).toBe(200);
+      await closeGeneratedEditor(page);
+      await page.reload();
+      await shared.locator('article').filter({hasText:'fallback-template/natal.aspect'}).getByRole('button',{name:'Edit source',exact:true}).click();
+      editor=page.getByRole('dialog',{name:'Generated content editor'});
+      await expect(editor.getByLabel('You view copy',{exact:true})).toHaveValue(sharedYou);
+      await expect(editor.getByLabel('Friend view copy',{exact:true})).toHaveValue(templates.templates.find(row=>row.contentKey==='fallback-template/natal.aspect').body_they);
+      await closeGeneratedEditor(page);
+      await page.getByLabel('Natal aspect planet or point',{exact:true}).selectOption('sun');
+      await page.getByLabel('Other natal aspect planet or point',{exact:true}).selectOption('moon');
+      await expect(matches).toContainText('natal.aspect.sun.opposition.moon');
+      await matches.getByRole('button',{name:'Edit source',exact:true}).click();
+      editor=page.getByRole('dialog',{name:'Generated content editor'});
+      await expect(editor.getByLabel('You write-up',{exact:true})).toHaveValue(nativeRows[4].body);
+      await expect(editor.getByLabel('Astrology hint',{exact:true})).toHaveValue('');
+      await closeGeneratedEditor(page);
+      for (const aspect of ['conjunction','sextile','square','trine','opposition','quincunx']) {
+        await page.getByLabel('Natal aspect type',{exact:true}).selectOption(aspect);
+        await expect(matches).toContainText(`natal.aspect.sun.${aspect}.moon`);
+      }
+      await page.getByLabel('Natal aspect type',{exact:true}).selectOption('opposition');
+      await matches.getByRole('button',{name:'Write Friend passage',exact:true}).click();
+      editor=page.getByRole('dialog',{name:'Generated content editor'});
+      await expect(editor.getByLabel('Reader phrase · You',{exact:true})).toHaveValue('');
+      await editor.getByLabel('Reader phrase · They',{exact:true}).fill(friend);
+      await expect(editor.getByRole('button',{name:'Save draft',exact:true})).toBeEnabled();
+      await editor.getByRole('button',{name:'Save draft',exact:true}).click();
+      await expect(page.getByRole('status').filter({hasText:/saved/i})).toBeVisible();
+      await assertNoBrowserErrors();
+    });
+  }
+
   test("new natal aspect They copy shows the exact name variable above the field", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     const exactAspectSeed = (contentKey: string, headline: string) => ({
@@ -4910,7 +5088,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(editor.getByRole("region", { name: "Rendered fallback preview" })).toContainText("Jupiter enters Leo");
     await expect(editor.getByLabel("Fallback field Opening paragraphs")).toHaveValue("Jupiter enters Leo on {{entryDate}}.");
     const calculatedFacts = editor.getByRole("region", { name: "Calculated facts" });
-    await expect(calculatedFacts).toContainText("These tokens are the only variables");
+    await expect(calculatedFacts).toContainText("Insert calculated values into your writing.");
     await expect(calculatedFacts).toContainText("{{exitDate}}");
     await expect(editor.getByLabel("Calculated fact target field")).toHaveValue("fact_line");
     await expect(editor.getByText("Package renderer")).toHaveCount(0);
@@ -5041,7 +5219,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.getByLabel("Search content").fill("sky.placement.base.jupiter.leo");
     const candidate = page.locator(".admin-content-row", { hasText: "sky.placement.base.jupiter.leo" });
     await expect(candidate).toHaveCount(1);
-    await candidate.getByRole("button", { name: "Edit", exact: true }).click();
+    await candidate.getByRole("button", { name: "Continue draft", exact: true }).click();
 
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
     const readerStatus = editor.getByRole("region", { name: "Reader source status" });
@@ -5133,7 +5311,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await assertNoBrowserErrors();
   });
 
-  for (const [width, theme] of [[1440, "light"], [390, "dark"]] as const) for (const scenario of ["publish", "partial refusal", "lost receipt", "stale passage"] as const) test(`Daily At-a-Glance pairs headline and passage with calculated Moon context: ${scenario} ${width} ${theme}`, async ({ page }) => {
+  for (const [width, theme] of [[1440, "light"], [390, "dark"]] as const) for (const scenario of ["publish", "partial refusal", "lost receipt", "stale passage", "cancel navigation", "saving navigation"] as const) test(`Daily At-a-Glance pairs headline and passage with calculated Moon context: ${scenario} ${width} ${theme}`, async ({ page }) => {
     test.setTimeout(90_000);
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     await page.setViewportSize({ width, height: 1000 });
@@ -5211,19 +5389,37 @@ test.describe("content dashboard admin user flow case studies", () => {
     });
 
     const api = await studioApiStore(generatedRows);
+    const originalStoredRows = await api.call({ method: "rows" });
+    const assertPrivateRevisions = async () => {
+      const sources = await api.call({ method: "rows" });
+      const published = sources.filter((row: any) => row.status === "LIVE");
+      expect(published).toEqual(originalStoredRows);
+      const drafts = sources.filter((row: any) => row.status === "DRAFT");
+      expect(drafts).toHaveLength(2);
+      for (const source of originalStoredRows) {
+        const revision = drafts.find((row: any) => row.content_key === source.content_key);
+        expect(revision?.source_snapshot).toMatchObject({ targetRowId: source.id, targetRowUpdatedAt: source.updated_at });
+      }
+    };
+    let passageRevisionId: string | undefined;
     let interrupt = scenario !== "publish";
+    let releaseSave: (() => void) | undefined;
+    const heldSave = scenario === "saving navigation" ? new Promise<void>(resolve => { releaseSave = resolve; }) : null;
     await page.route("**/api/admin/generated-content**", async route => {
       if (new URL(route.request().url()).pathname !== "/api/admin/generated-content") return route.fallback();
       const method = route.request().method();
       const body = method === "GET" ? undefined : route.request().postDataJSON();
       if (body) writes.push({ method, payload: body });
-      if (interrupt && scenario === "partial refusal" && body?.id === "qa-daily-passage" && body?.ownerAction === "approve-package-revision") {
+      if (heldSave && body?.id === "qa-daily-headline") await heldSave;
+      if (interrupt && scenario === "partial refusal" && passageRevisionId && body?.id === passageRevisionId && body?.ownerAction === "approve-package-revision") {
         interrupt = false;
         await route.fulfill({ status: 409, json: { ok: false, error: "Synthetic passage publication refused; retained writing must be retryable." } });
         return;
       }
       const url = new URL(route.request().url());
       const result = await api.call({ method, body, url: url.pathname + url.search });
+      const saved = result.payload?.rows?.[0];
+      if (method === "PATCH" && saved?.status === "DRAFT" && saved.source_snapshot?.targetRowId === "qa-daily-passage") passageRevisionId = saved.id;
       if (interrupt && scenario === "lost receipt" && body?.ownerAction === "approve-package-revision" && result.status === 200) {
         interrupt = false;
         await route.fulfill({ json: { ok: true, rows: [] } });
@@ -5232,7 +5428,12 @@ test.describe("content dashboard admin user flow case studies", () => {
       await route.fulfill({ status: result.status, json: result.payload });
     });
     try {
-    await expectAdminRouteLoads(page, "/admin/content#fallback-hooks?section=daily&q=daily");
+    if (scenario === "cancel navigation") {
+      await expectAdminRouteLoads(page, "/admin/content#surface-map");
+      await page.evaluate(() => { window.location.hash = "#fallback-hooks?section=daily&q=daily"; });
+    } else {
+      await expectAdminRouteLoads(page, "/admin/content#fallback-hooks?section=daily&q=daily");
+    }
     const studio = page.getByRole("region", { name: "Daily At-a-Glance editor" });
     await expect(studio.getByRole("heading", { name: "Edit the complete write-up" })).toBeVisible();
     await expect(studio).toContainText("1 matched write-ups");
@@ -5283,6 +5484,86 @@ test.describe("content dashboard admin user flow case studies", () => {
     const publish = editor.getByRole("button", { name: "Save & publish", exact: true });
     await expect(publish).toBeVisible();
     await expectNoHorizontalOverflow(page, `Daily paired editor ${width} ${theme}`);
+    const expectCompleteWriting = async () => {
+      await expect(editor.getByLabel("Headline · You")).toHaveValue(youHeadline);
+      await expect(editor.getByLabel("Passage · You")).toHaveValue(youPassageText);
+      await expect(editor.getByLabel("Headline · Friend")).toHaveValue(friendHeadline);
+      await expect(editor.getByLabel("Passage · Friend")).toHaveValue(friendPassage);
+    };
+    const cancelReload = async () => {
+      const originalDocument = await page.evaluateHandle(() => document);
+      try {
+        expect(await originalDocument.evaluate(value => value instanceof Document)).toBe(true);
+        const dismissed = page.waitForEvent("dialog", { timeout: 5_000 }).then(async dialog => {
+          expect(dialog.type()).toBe("beforeunload");
+          await dialog.dismiss();
+        });
+        // Settle both the real reload dispatch and dismissal before checking retained edits.
+        await Promise.all([dismissed, page.evaluate(() => window.location.reload())]);
+        expect(await originalDocument.evaluate(value => value === document)).toBe(true);
+        await expectCompleteWriting();
+      } finally { await originalDocument.dispose(); }
+    };
+    if (scenario === "cancel navigation") {
+      await cancelReload();
+      const acceptedUrl = page.url();
+      let confirmations = 0;
+      const cancel = async (dialog: import("@playwright/test").Dialog) => {
+        expect(dialog.type()).toBe("confirm");
+        confirmations += 1;
+        await dialog.dismiss();
+      };
+      page.on("dialog", cancel);
+      await editor.getByRole("button", { name: "Close", exact: true }).click();
+      await expectCompleteWriting();
+      await page.evaluate(() => window.history.back());
+      await expect.poll(() => confirmations).toBe(2);
+      await expect(page).toHaveURL(acceptedUrl);
+      await expectCompleteWriting();
+      await page.evaluate(() => { window.location.hash = "#surface-map"; });
+      await expect.poll(() => confirmations).toBe(3);
+      await expect(page).toHaveURL(acceptedUrl);
+      await expectCompleteWriting();
+      page.off("dialog", cancel);
+      expect(writes).toHaveLength(0);
+      expect(await api.call({ method: "rows" })).toEqual(originalStoredRows);
+      page.once("dialog", dialog => dialog.accept());
+      await page.evaluate(() => { window.location.hash = "#surface-map"; });
+      await expect(editor).toHaveCount(0);
+      await expect(page).toHaveURL(/#surface-map$/u);
+      await page.evaluate(() => { window.location.hash = "#fallback-hooks?section=daily&q=daily"; });
+      await expect(studio).toBeVisible();
+      await expect(editor).toHaveCount(0);
+      expect(writes).toHaveLength(0);
+      await assertNoBrowserErrors();
+      return;
+    }
+    if (scenario === "saving navigation") {
+      await editor.getByRole("button", { name: "Save draft", exact: true }).click();
+      await expect.poll(() => writes.length).toBe(1);
+      await expect(editor.getByLabel("Passage · You")).toBeDisabled();
+      const acceptedUrl = page.url();
+      await page.evaluate(() => { window.location.hash = "#surface-map"; });
+      await expect(page).toHaveURL(acceptedUrl);
+      await expect(page.getByText("Finish the current editor operation before leaving this section.", { exact: true })).toBeVisible();
+      await expectCompleteWriting();
+      await cancelReload();
+      expect(writes).toHaveLength(1);
+      releaseSave!();
+      await expect.poll(() => writes.length).toBe(2);
+      await expect(editor).toContainText("No unsaved changes");
+      await expectCompleteWriting();
+      await assertPrivateRevisions();
+      await page.evaluate(() => { window.location.hash = "#surface-map"; });
+      await expect(editor).toHaveCount(0);
+      await page.evaluate(() => { window.location.hash = "#fallback-hooks?section=daily&q=daily"; });
+      await expect(studio).toBeVisible();
+      await expect(editor).toHaveCount(0);
+      await studio.getByRole("button", { name: "Edit this headline and passage" }).click();
+      await expectCompleteWriting();
+      await assertNoBrowserErrors();
+      return;
+    }
     if (scenario === "stale passage") {
       const newer = await api.call({ method: "PATCH", body: { id: "qa-daily-passage", expectedUpdatedAt: now, summary: "A concurrent owner correction must survive." } });
       expect(newer.status).toBe(200);
@@ -5299,7 +5580,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await editor.getByRole("button", { name: "Save draft", exact: true }).click();
     await expect.poll(() => writes.length).toBe(2);
     await expect(editor).toContainText("No unsaved changes");
-    expect((await api.call({ method: "rows" })).every((row: any) => row.status === "DRAFT")).toBe(true);
+    await assertPrivateRevisions();
     await publish.click();
     if (scenario === "partial refusal") {
       await expect(editor.getByRole("alert")).toContainText("Headline published. Passage:");
@@ -5328,7 +5609,187 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(editor.getByLabel("Headline · Friend")).toHaveValue(friendHeadline);
     await expect(editor.getByLabel("Passage · Friend")).toHaveValue(friendPassage);
     await assertNoBrowserErrors();
-    } finally { api.close(); }
+    } finally {
+      releaseSave?.();
+      try { if (heldSave) await page.waitForLoadState("networkidle", { timeout: 5_000 }); }
+      finally { api.close(); }
+    }
+  });
+
+  for (const [width, theme] of [[1440, "light"], [390, "dark"]] as const) for (const scenario of ["leave while loading", "newer pair wins"] as const) test(`Daily At-a-Glance source opening ignores stale reads: ${scenario} ${width} ${theme}`, async ({ page, context, baseURL }, info) => {
+    test.setTimeout(60_000);
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    const network = await installSyntheticNetworkGuard(context, new URL(baseURL!).origin, { deployedFixture: { supabaseOrigin: "https://visual-smoke.supabase.test" } });
+    await page.setViewportSize({ width, height: 1000 });
+    await page.addInitScript(value => localStorage.setItem("tldrastro:studio-theme", value), theme);
+    const dailyRow = (id: string, contentKey: string, bodyYou: string, bodyThey: string) => ({
+      id,
+      content_key: contentKey,
+      surface: "you",
+      mode: "feed",
+      status: "DRAFT",
+      event_type: "fallback-hook",
+      target_date: null,
+      headline: contentKey,
+      summary: "Owner-approved Daily At-a-Glance fixture.",
+      body: bodyYou,
+      sections: {
+        packageRecord: {
+          content_role: "fallback_hook",
+          contentKey,
+          review_status: "approved",
+          body_you: bodyYou,
+          body_they: bodyThey
+        }
+      },
+      block_type: "fallback_hook",
+      lane: "reference",
+      review_state: null,
+      facts: { fallbackArchitectureV3: true, review_status: "approved" },
+      knowledge_ids: [],
+      source_snapshot: { sourcePackage: "tldrastro-fallback-architecture-v3", review_status: "approved" },
+      reviewer_notes: null,
+      prompt_version: "qa-daily-glance",
+      provider: "fallback-architecture-v3",
+      model: null,
+      reviewed_at: now,
+      published_at: null,
+      updated_at: now,
+      created_at: now
+    });
+    const rows = [
+      dailyRow("31000000-0000-4000-8000-000000000001", "fallback-hook/daily-headline/soft/mars", "Synthetic first headline.", "Synthetic first Friend headline."),
+      dailyRow("31000000-0000-4000-8000-000000000002", "fallback-hook/daily-body/soft/mars", "Synthetic first passage. Final sentence.", "Synthetic first Friend passage. Final sentence."),
+      dailyRow("31000000-0000-4000-8000-000000000003", "fallback-hook/daily-headline/house/7", "Synthetic second headline.", "Synthetic second Friend headline."),
+      dailyRow("31000000-0000-4000-8000-000000000004", "fallback-hook/daily-body/house/7", "Synthetic second passage. Final sentence.", "Synthetic second Friend passage. Final sentence.")
+    ];
+    await seedAdminApi(page, { generatedRows: rows });
+    const api = await studioApiStore(rows, { publicationDb: true });
+    const original = await api.call({ method: "rows" });
+    let release!: () => void, heldReads = 0;
+    const held = new Promise<void>(resolve => { release = resolve; });
+    let releasePrefetch!: () => void;
+    const heldPrefetch = new Promise<void>(resolve => { releasePrefetch = resolve; });
+    const prefetchKeys = rows.map(row => row.content_key).sort();
+    const firstIds = new Set(rows.slice(0, 2).map(row => row.id));
+    const writes: string[] = [];
+    await routeStudioInventoryApi(page, { actualDocumentRoute: true, call: async message => {
+      const url = new URL(message.url ?? "/api/admin/generated-content", "https://synthetic.test");
+      const keys = url.searchParams.getAll("contentKeys").sort();
+      if (message.method === "GET" && url.pathname === "/api/admin/generated-content-inventory"
+        && !url.searchParams.has("id") && keys.length === prefetchKeys.length
+        && keys.every((key, index) => key === prefetchKeys[index])) await heldPrefetch;
+      const hold = message.method === "GET" && firstIds.has(url.searchParams.get("id") ?? "") && heldReads < 2;
+      if (hold) { heldReads++; await held; }
+      if (["POST", "PATCH", "DELETE"].includes(message.method) && url.pathname === "/api/admin/generated-content") writes.push(message.method);
+      return api.call(message);
+    }, answer: async (route, url) => {
+      if (!["/api/admin/content-live-status", "/api/content-publications"].includes(url.pathname)) return false;
+      const result = await api.call({ method: route.request().method(), url: url.pathname + url.search, body: route.request().method() === "GET" ? undefined : route.request().postDataJSON() });
+      await route.fulfill({ status: result.status, headers: result.headers, json: result.payload }); return true;
+    } });
+    await page.route("https://visual-smoke.supabase.test/rest/v1/content_publications*", async route => {
+      const url = new URL(route.request().url()), result = await api.call({ method: "publication-page", url: url.pathname + url.search });
+      await route.fulfill({ status: result.status, json: result.payload });
+    });
+    const completedReads: Array<{ id: string; contentKey: string; status: number; finished: boolean; exactBody: boolean }> = [];
+    const completedPrefetch: typeof completedReads = [];
+    async function confirmCompletedRead(request: import("@playwright/test").Request, expectedRows: typeof rows) {
+      const [response, finished] = await Promise.all([
+        page.waitForResponse(response => response.request() === request),
+        page.waitForEvent("requestfinished", finished => finished === request)
+      ]);
+      expect(finished).toBe(request);
+      expect(response.status()).toBe(200);
+      expect(await response.finished()).toBeNull();
+      expect(request.failure()).toBeNull();
+      const payload = await response.json();
+      expect(payload.ok).toBe(true);
+      expect(payload.rows).toHaveLength(expectedRows.length);
+      return expectedRows.map(expected => {
+        const document = payload.rows.find((row: { id: string }) => row.id === expected.id);
+        expect(document).toBeDefined();
+        expect(document.content_key).toBe(expected.content_key);
+        expect(document.body).toBe(expected.body);
+        expect(document.sections.packageRecord.body_you).toBe(expected.sections.packageRecord.body_you);
+        expect(document.sections.packageRecord.body_they).toBe(expected.sections.packageRecord.body_they);
+        return { id: document.id as string, contentKey: document.content_key as string, status: response.status(), finished: true, exactBody: true };
+      });
+    }
+    try {
+      const pendingPrefetch = page.waitForRequest(request => {
+        const url = new URL(request.url()), keys = url.searchParams.getAll("contentKeys").sort();
+        return request.method() === "GET" && url.origin === new URL(baseURL!).origin
+          && url.pathname === "/api/admin/generated-content-inventory" && !url.searchParams.has("id")
+          && keys.length === prefetchKeys.length && keys.every((key, index) => key === prefetchKeys[index]);
+      });
+      await expectAdminRouteLoads(page, "/admin/content#fallback-hooks?section=daily");
+      const prefetchRequest = await pendingPrefetch;
+      const studio = page.getByRole("region", { name: "Daily At-a-Glance editor" });
+      await expect(studio).toContainText("2 matched write-ups");
+      const first = studio.locator(".admin-daily-glance-pair-list article").filter({ hasText: "Moon Soft Contact natal Mars" });
+      const second = studio.locator(".admin-daily-glance-pair-list article").filter({ hasText: "7th House fallback" });
+      const pendingRequests = rows.slice(0, 2).map(row => page.waitForRequest(request => {
+        const url = new URL(request.url());
+        return request.method() === "GET" && url.origin === new URL(baseURL!).origin
+          && url.pathname === "/api/admin/generated-content-inventory"
+          && url.searchParams.getAll("id").length === 1 && url.searchParams.get("id") === row.id;
+      }));
+      await first.getByRole("button", { name: "Edit write-up", exact: true }).click();
+      await expect.poll(() => heldReads).toBe(2);
+      const requests = await Promise.all(pendingRequests);
+      const prefetchCompletion = confirmCompletedRead(prefetchRequest, rows);
+      releasePrefetch();
+      completedPrefetch.push(...await prefetchCompletion);
+      expect(completedPrefetch).toHaveLength(rows.length);
+      async function releaseAndConfirmReads() {
+        const completed = requests.map((request, index) => confirmCompletedRead(request, [rows[index]]));
+        release();
+        completedReads.push(...(await Promise.all(completed)).flat());
+        expect(completedReads).toHaveLength(2);
+        expect(completedReads.map(read => read.id).sort()).toEqual(rows.slice(0, 2).map(row => row.id).sort());
+      }
+      const editor = page.getByRole("dialog", { name: "Daily At-a-Glance paired editor" });
+      if (scenario === "leave while loading") {
+        await page.evaluate(() => { window.location.hash = "#surface-map"; });
+        await expect(page).toHaveURL(/#surface-map$/u);
+        await releaseAndConfirmReads();
+        await page.waitForLoadState("networkidle");
+        await expect(editor, "A completed old read must not reopen an editor after navigation").toHaveCount(0);
+        await page.evaluate(() => { window.location.hash = "#exact-content"; });
+        await expect(page.getByRole("button", { name: "Refresh rows", exact: true }), "Leaving a source load must release the shared loading state").toBeEnabled();
+        await page.evaluate(() => { window.location.hash = "#fallback-hooks?section=daily"; });
+        await expect(studio).toBeVisible();
+        await first.getByRole("button", { name: "Edit write-up", exact: true }).click();
+        await expect(editor.getByLabel("Headline · You")).toHaveValue(rows[0].body);
+        await expect(editor.getByLabel("Passage · You")).toHaveValue(rows[1].body);
+      } else {
+        await second.getByRole("button", { name: "Edit write-up", exact: true }).click();
+        await expect(editor.getByLabel("Headline · You")).toHaveValue(rows[2].body);
+        const writing = {
+          "Headline · You": "Synthetic newer selected headline.",
+          "Passage · You": "Synthetic newer selected passage.\n\nRetain its complete final sentence.",
+          "Headline · Friend": "Synthetic newer selected Friend headline.",
+          "Passage · Friend": "Synthetic newer selected Friend passage.\n\nRetain its complete Friend final sentence."
+        };
+        for (const [label, value] of Object.entries(writing)) await editor.getByLabel(label).fill(value);
+        await releaseAndConfirmReads();
+        await page.waitForLoadState("networkidle");
+        for (const [label, value] of Object.entries(writing)) await expect(editor.getByLabel(label), "An older read must retain the newer selection and every local field").toHaveValue(value);
+      }
+      expect(writes).toEqual([]); expect(await api.call({ method: "rows" })).toEqual(original);
+      await assertNoBrowserErrors();
+    } finally {
+      release(); releasePrefetch();
+      try { await page.waitForLoadState("networkidle", { timeout: 5_000 }); await network.finishStaticFonts(); }
+      finally {
+        await page.close(); api.close();
+        await info.attach("completed-prefetch-ledger", { contentType: "application/json", body: JSON.stringify(completedPrefetch) });
+        await info.attach("completed-held-read-ledger", { contentType: "application/json", body: JSON.stringify(completedReads) });
+        await info.attach("strict-network-ledger", { contentType: "application/json", body: JSON.stringify({ unhandledExternal: network.unhandledExternal }) });
+        expect(network.unhandledExternal).toEqual([]);
+      }
+    }
   });
 
   test("composition map opens canonical templates and saved hook sources for editing", async ({ page }) => {
@@ -5397,7 +5858,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(sentenceContext).toContainText("Closing card · Passage");
     await expect(sentenceContext).toContainText("Leo and Aquarius can return to this:");
     await expect(sentenceContext.locator("mark")).toHaveText("The connection works best when both people say what they need directly.");
-    await expect(sentenceContext).toContainText("The highlighted words are the source you are editing.");
+    await expect(sentenceContext).toContainText("Highlighted text is the source being edited.");
     await editor.getByLabel("Reader copy").fill("Both people do better when they say what they need directly.");
     await expect(sentenceContext.locator("mark")).toHaveText("Both people do better when they say what they need directly.");
     page.once("dialog", async (dialog) => {
@@ -6137,7 +6598,8 @@ test.describe("content dashboard admin user flow case studies", () => {
     await variableDetails.getByRole("region", { name: "Saved source copy" }).getByRole("button", { name: "{{planetTitle}}" }).click();
     variableDetails = variableGuide.getByRole("region", { name: "Planet title variable details" });
     await expect(variableDetails).toContainText("Calculated by app");
-    await expect(variableDetails).toContainText("No saved passage to review");
+    await expect(variableDetails).toContainText("Example value");
+    await expect(variableDetails).not.toContainText("No saved passage to review");
     await variableDetails.getByRole("button", { name: "All variables" }).click();
 
     await variableGuide.locator("summary[aria-label='Template syntax help']").click();
@@ -6373,7 +6835,16 @@ test.describe("content dashboard admin user flow case studies", () => {
     await action.getByRole("button", { name: "Save draft", exact: true }).click();
     await expect.poll(() => writes.length).toBe(2);
     expect((writes[1].payload.sections as { packageDraft: { body: string } }).packageDraft.body).toBe("second test revision");
+    const publicationResponse = page.waitForResponse(response =>
+      new URL(response.url()).pathname === "/api/admin/generated-content"
+      && response.request().method() === "PATCH"
+      && response.request().postDataJSON()?.ownerAction === "approve-package-revision"
+    );
     await action.getByRole("button", { name: "Save & publish", exact: true }).click();
+    const published = await publicationResponse;
+    expect(published.status()).toBe(200);
+    expect(await published.finished()).toBeNull();
+    expect((await published.json()).publicationReceipt).toBeTruthy();
     await expect(action).toContainText("Published. The reader preview will refresh.");
     await field.fill("third test revision");
     await action.getByRole("button", { name: "Save draft", exact: true }).click();
@@ -6483,7 +6954,7 @@ test.describe("content dashboard admin user flow case studies", () => {
       await route.fulfill({ json: { ok: true, rows: [saved] } });
     });
     await expectAdminRouteLoads(page, "/admin/content#exact-content");
-    await page.locator(".admin-content-row").getByRole("button", { name: "Edit", exact: true }).click();
+    await page.locator(".admin-content-row").getByRole("button", { name: /^(?:Open article|Edit published article)$/u, exact: true }).click();
     const editor = page.locator(".admin-editor-panel");
     await editor.getByLabel("Dated article variable target").selectOption("tldr");
     const summary = editor.getByLabel("Sky article TL;DR", { exact: true });
@@ -6509,7 +6980,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
     await seedAdminApi(page, { generatedRows: [generatedContentRows[0]], onGeneratedContentWrite: (write) => writes.push(write) });
     await expectAdminRouteLoads(page, "/admin/content#exact-content");
-    await page.locator(".admin-content-row").getByRole("button", { name: "Edit", exact: true }).click();
+    await page.locator(".admin-content-row").getByRole("button", { name: "Edit source", exact: true }).click();
     const editor = page.locator(".admin-editor-panel");
     const summary = editor.getByLabel("TL;DR / summary", { exact: true });
     expect(await page.evaluate(() => window.dispatchEvent(new Event("beforeunload", { cancelable: true })))).toBe(true);
@@ -6526,9 +6997,13 @@ test.describe("content dashboard admin user flow case studies", () => {
       await expect(summary).toHaveValue(copy);
       expect(await page.evaluate(() => window.dispatchEvent(new Event("beforeunload", { cancelable: true })))).toBe(true);
     }
+    await openEditorMoreActions(editor);
     await editor.getByRole("button", { name: "Archive source", exact: true }).click();
+    await openEditorMoreActions(editor);
     await expect(editor.getByRole("button", { name: "Restore as draft", exact: true })).toBeVisible();
+    await openEditorMoreActions(editor);
     await editor.getByRole("button", { name: "Restore as draft", exact: true }).click();
+    await openEditorMoreActions(editor);
     await expect(editor.getByRole("button", { name: "Archive source", exact: true })).toBeVisible();
     await summary.fill("QA final copy after restore.");
     await editor.getByRole("button", { name: "Save", exact: true }).click();
@@ -6538,7 +7013,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await editor.getByRole("button", { name: "Close", exact: true }).click();
     await expect(editor).toHaveCount(0);
     expect(await page.evaluate(() => window.dispatchEvent(new Event("beforeunload", { cancelable: true })))).toBe(true);
-    await page.locator(".admin-content-row").getByRole("button", { name: "Edit", exact: true }).click();
+    await page.locator(".admin-content-row").getByRole("button", { name: "Continue draft", exact: true }).click();
     await expect(summary).toHaveValue("QA final copy after restore.");
     expect(discarded).toBe(false);
     expect(writes.map((write) => write.payload.status)).toEqual(["LIVE", "LIVE", "ARCHIVED", "DRAFT", "DRAFT"]);
@@ -6647,7 +7122,9 @@ test("Chiron transit recovers stale save versions and keeps conflicting edits vi
     facts: { fallbackArchitectureV3: true }, source_snapshot: { sourcePackage: "tldrastro-fallback-architecture-v3" },
     sections: { packageRecord: original, body_you: original.body_you, body_they: original.body_they } };
   const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
-  await seedAdminApi(page, { generatedRows: [row], onGeneratedContentWrite: write => writes.push(write) });
+  // Bootstrap the isolated PostgreSQL fixture before timing UI saves. Reuse it
+  // for the two real publication transactions without relaxing the 5s assertion.
+  await seedAdminApi(page, { generatedRows: [row], warmPublicationFixture: true, onGeneratedContentWrite: write => writes.push(write) });
   await expectAdminRouteLoads(page, "/admin/content#exact-content");
   await page.locator(".admin-content-row").getByRole("button", { name: "Edit", exact: true }).click();
   const editor = page.getByRole("dialog", { name: "Generated content editor" });
@@ -6774,7 +7251,9 @@ test("Natal Empty Houses opens exact sources and supports repeated edits and ret
     await expect(editor.getByRole("button",{name:/^Save(?: draft)?$/})).toBeDisabled();
   }
   expect(writes).toHaveLength(2);
+  await openEditorMoreActions(editor);
   await editor.getByRole("button",{name:"Retire everywhere",exact:true}).click();
+  await openEditorMoreActions(editor);
   await expect(editor.getByRole("button",{name:"Publish again",exact:true})).toBeVisible();
   await editor.getByRole("button",{name:"Close",exact:true}).click();
   await page.reload();
@@ -6791,6 +7270,7 @@ test("Sky placement filters select exact planet sign and motion independently of
   await expectAdminRouteLoads(page,"/admin/content#sky-writeups");
   await page.getByLabel("Sky placement planet or point").selectOption("sun");
   await page.getByLabel("Sky placement zodiac sign").selectOption("virgo");
+  await openSkyPlacementChooser(page);
   await page.getByLabel("Sky write-up motion").selectOption("direct");
   await expect(page.locator(".admin-content-row")).toHaveCount(1);
   await expect(page.locator(".admin-content-row .admin-content-row-title")).toHaveText("Sun in Virgo · Direct");
@@ -7069,9 +7549,16 @@ for (const theme of ['light', 'dark']) for (const width of [1440, 390]) {
     await detail.locator('summary').click();
     await expect(detail).toContainText(notes);
     await expect(editor.locator('.admin-copy-field-body')).toHaveValue(body);
-    await expect(editor.getByLabel('aries rising horoscope',{exact:true})).toHaveValue(passages[0].body);
-    await expect(editor.getByLabel('pisces rising horoscope',{exact:true})).toHaveValue(passages[11].body);
-    await expect(editor.getByLabel(/rising horoscope$/)).toHaveCount(12);
+    await editor.getByRole('button',{name:'Edit article horoscopes',exact:true}).click();
+    const horoscopePanel=page.getByRole('dialog',{name:'Article horoscopes',exact:true});
+    const rising=horoscopePanel.getByLabel('Article horoscope rising sign',{exact:true});
+    await expect(rising.locator('option')).toHaveCount(12);
+    for(const passage of passages){
+      await rising.selectOption(passage.risingSign);
+      await expect(horoscopePanel.getByLabel(`${passage.risingSign} rising horoscope`,{exact:true})).toHaveValue(passage.body);
+    }
+    await rising.selectOption('aries');
+    await expect(horoscopePanel.getByLabel(/rising horoscope$/)).toHaveCount(1);
     const headings=await editor.locator('h2,h3').allTextContents();
     expect(headings.indexOf('Sun Enters Aries')>=0 || headings.some(h=>h.includes('Edit Sun Enters Aries'))).toBeTruthy();
     const styles=await editor.evaluate(root=>{
@@ -7081,8 +7568,12 @@ for (const theme of ['light', 'dark']) for (const width of [1440, 390]) {
     expect(styles.horoscope).toEqual(styles.body);
     const revised='Revised complete opening.\n\nRevised complete ending.';
     await editor.getByLabel('aries rising horoscope',{exact:true}).fill('');
+    await rising.selectOption('pisces');
     await expect(editor.getByLabel('pisces rising horoscope',{exact:true})).toHaveValue(passages[11].body);
+    await rising.selectOption('aries');
+    await expect(editor.getByLabel('aries rising horoscope',{exact:true})).toHaveValue('');
     await editor.getByLabel('aries rising horoscope',{exact:true}).fill(revised);
+    await horoscopePanel.getByRole('button',{name:'Done',exact:true}).click();
     await editor.getByRole('button',{name:'Save template',exact:true}).click();
     await expect.poll(()=>writes.length).toBe(1);
     expect(writes[0].payload.body).toBe(body);
@@ -7092,6 +7583,7 @@ for (const theme of ['light', 'dark']) for (const width of [1440, 390]) {
     expect(savedSections.articleHoroscopes.passages.slice(1)).toEqual(passages.slice(1));
     await editor.getByRole('button',{name:'Close',exact:true}).click();
     await page.getByRole('row').filter({hasText:row.content_key}).getByRole('button',{name:'Edit',exact:true}).click();
+    await editor.getByRole('button',{name:'Edit article horoscopes',exact:true}).click();
     await expect(editor.getByLabel('aries rising horoscope',{exact:true})).toHaveValue(revised);
     await expect(editor.locator('.admin-copy-field-body')).toHaveValue(body);
     await editor.getByLabel('aries rising horoscope',{exact:true}).scrollIntoViewIfNeeded();
@@ -7111,6 +7603,7 @@ for (const contentKey of ['sky/article-template/nodes','sky/article-template/ura
     await expectAdminRouteLoads(page,'/admin/content#review-queue?view=all');
     await page.getByRole('row').filter({hasText:contentKey}).getByRole('button',{name:'Edit',exact:true}).click();
     const editor=page.getByRole('dialog',{name:'Generated content editor'});
+    await editor.getByRole('button',{name:'Edit article horoscopes',exact:true}).click();
     await expect(editor.getByLabel('Horoscope introduction',{exact:true})).toHaveValue(row.sections.articleHoroscopes.introduction);
     await editor.getByLabel('Horoscope introduction',{exact:true}).fill('');
     await editor.getByLabel('Horoscope introduction',{exact:true}).fill(row.sections.articleHoroscopes.introduction);
@@ -7206,6 +7699,7 @@ test('Aspect Patterns authenticates reads and previews and preserves newer draft
     expect(saves).toBe(3);
     expect(row!.source_snapshot.record.content.overview).toBe('QA newer draft from another editor.');
     await expect(overview).toHaveValue('QA stale browser edit.');
+    page.once('dialog', dialog => dialog.accept());
     await page.getByRole('button', { name: 'Refresh', exact: true }).click();
     await expect(overview).toHaveValue('QA newer draft from another editor.');
     omitPatternReceipt = true;
@@ -7272,7 +7766,7 @@ for (const theme of ["dark", "light"] as const) {
       await page.getByLabel("Search content", { exact: true }).fill("sky.placement.sun.cancer");
       const row = page.locator(".admin-content-row", { hasText: "sky.placement.sun.cancer" });
       await expect(row).toHaveCount(1);
-      await row.getByRole("button", { name: "Edit", exact: true }).click();
+      await row.getByRole("button", { name: "Edit source", exact: true }).click();
       const editor = page.locator(".admin-editor-panel");
       await expect(editor.getByRole("heading", { name: "Edit Sun in Cancer" })).toBeVisible();
       await expect(page.getByRole('button', {name:'Close editor',exact:true})).toHaveCSS('border-radius', '0px');
@@ -7641,7 +8135,7 @@ for (const theme of ['dark', 'light'] as const) {
       }
       await expectAdminRouteLoads(page, '/admin/content#exact-content');
       await page.getByLabel('Search content', { exact: true }).fill('sky.placement.sun.cancer');
-      await page.locator('.admin-content-row', { hasText: 'sky.placement.sun.cancer' }).getByRole('button', { name: 'Edit', exact: true }).click();
+      await page.locator('.admin-content-row', { hasText: 'sky.placement.sun.cancer' }).getByRole('button', { name: 'Edit source', exact: true }).click();
       await expect(page.locator('.admin-editor-panel')).toBeVisible();
       await expectStudioTypography(page, 'content editor');
       await expect(page.locator('.admin-editor-toolbar h2')).toHaveCSS('font-size','22px');
@@ -7816,13 +8310,13 @@ for (const theme of ['dark', 'light'] as const) {
       await expect(page.locator('.admin-editor-panel')).toHaveCount(0);
       if (width === 390) {
         const detailsBox = await row.locator('..').locator('.admin-content-expanded-body').boundingBox();
-        const editBox = await row.getByRole('button', {name:'Edit', exact:true}).boundingBox();
+        const editBox = await row.getByRole('button', {name:'Edit source', exact:true}).boundingBox();
         expect(detailsBox!.y).toBeGreaterThanOrEqual(editBox!.y + editBox!.height);
       }
       await row.locator('..').screenshot({path:`outputs/studio-style/native-row-${theme}-${width}.png`});
       await page.keyboard.press('Space');
       await expect(summary).toHaveAttribute('aria-expanded', 'false');
-      await row.getByRole('button', {name:'Edit', exact:true}).click();
+      await row.getByRole('button', {name:'Edit source', exact:true}).click();
       const editor = page.locator('.admin-editor-panel');
       const related = editor.locator('.admin-sky-related-editor');
       const aspectSummary = related.locator('.admin-sky-related-group > summary').first();
@@ -7904,7 +8398,7 @@ for (const theme of ['dark', 'light'] as const) for (const width of [1440, 900, 
       expect(brokenCells).toBe(0);
       await expect(toggle).toHaveCSS('font-weight','400');
       await expect(row.locator('.admin-content-row-title')).toHaveCSS('font-weight','400');
-      await expect(row.getByRole('button', {name:'Edit',exact:true})).toHaveCSS('font-weight','400');
+      await expect(row.getByRole('button', {name:route === 'exact-content' ? 'Edit source' : 'Edit',exact:true})).toHaveCSS('font-weight','400');
       await expectStudioTypography(page, `Expanded ${route}`);
       await table.screenshot({path:`outputs/studio-style/row-rhythm-${route}-${theme}-${width}.png`});
       await toggle.click();
@@ -7951,6 +8445,32 @@ for (const theme of ['light', 'dark'] as const) for (const width of [1440, 900, 
         expect(failures, `${route} cell overflow`).toEqual([]);
         await expect(table.locator('tbody td').first()).toHaveCSS('border-bottom-width','0px');
         if(width===390) await expect(table).toHaveCSS('display','block');
+      }
+      if (route === 'report-fulfillment') {
+        for (const name of ['Set cap', 'Preview and edit']) {
+          const lines = await page.getByRole('button', {name, exact:true}).evaluate(button => {
+            const range = document.createRange();
+            range.selectNodeContents(button);
+            return new Set([...range.getClientRects()].map(rect => Math.round(rect.top))).size;
+          });
+          expect(lines, `${name} remains readable without letter-by-letter wrapping`).toBeLessThanOrEqual(2);
+        }
+        const readableBudget = await page.getByLabel('Lifetime token cap for layout-report').evaluate(input => {
+          const field = input as HTMLInputElement;
+          const style = getComputedStyle(field);
+          const context = document.createElement('canvas').getContext('2d')!;
+          context.font = style.font;
+          return field.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight) >= context.measureText(field.value).width;
+        });
+        expect(readableBudget, 'The complete token cap fits in its input').toBe(true);
+        const preview = page.getByRole('button', {name:'Preview and edit', exact:true});
+        await preview.scrollIntoViewIfNeeded();
+        const visibleAction = await preview.evaluate(button => {
+          const rect = button.getBoundingClientRect();
+          return rect.left >= 0 && rect.right <= innerWidth;
+        });
+        expect(visibleAction, 'Report actions remain reachable within the page').toBe(true);
+        await tables.first().locator('..').screenshot({path:`outputs/studio-style/shared-report-actions-${theme}-${width}.png`});
       }
       await expectStudioTypography(page,route);
       expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
@@ -8294,11 +8814,13 @@ for (const theme of ['dark','light']) for (const width of [1440,390]) {
       const footer=editor.locator('.admin-editor-savebar');
       await expect(footer).toHaveCSS('display','grid');
       const save=(await footer.getByRole('button',{name:'Save',exact:true}).boundingBox())!;
-      const retire=(await footer.getByRole('button',{name:'Retire everywhere',exact:true}).boundingBox())!;
-      expect(Math.abs(save.width-retire.width)).toBeLessThan(1);
-      expect(Math.abs(save.y-retire.y)).toBeLessThan(1);
+      const more = footer.getByText('More actions', { exact: true });
+      await expect(more).toBeVisible();
+      await expect(footer.getByRole('button',{name:'Retire everywhere',exact:true})).toBeHidden();
       const publish=(await footer.getByRole('button',{name:'Publish to app',exact:true}).boundingBox())!;
-      expect(publish.width).toBeGreaterThan(save.width*2);
+      expect(publish.width).toBeGreaterThanOrEqual(save.width);
+      await openEditorMoreActions(editor);
+      await expect(footer.getByRole('button',{name:'Retire everywhere',exact:true})).toBeVisible();
     }
     await editor.screenshot({path:`outputs/studio-style/fallback-editor-cards-${theme}-${width}.png`});
     const body=editor.locator('.admin-copy-field-body');
@@ -8316,14 +8838,14 @@ for (const theme of ['dark','light']) for (const width of [1440,390]) {
     await expectNoHorizontalOverflow(page,'Fallback library cards');
     await noErrors();
   });
-  test(`Studio container insets ${theme} ${width}`, async ({page,context}) => {
+  test(`Studio container insets ${theme} ${width}`, async ({page,context,browserName}) => {
     await seedAdminApi(page);
     await page.setViewportSize({width,height:1000});
     await page.addInitScript(value=>localStorage.setItem('tldrastro:studio-theme',value),theme);
     const noErrors=await expectNoBrowserErrors(page);
     await expectAdminRouteLoads(page,'/admin/content#exact-content');
     await page.getByLabel('Search content',{exact:true}).fill('sky.placement.sun.cancer');
-    await page.locator('.admin-content-row').getByRole('button',{name:'Edit',exact:true}).click();
+    await page.locator('.admin-content-row').getByRole('button',{name:'Edit source',exact:true}).click();
     const editor=page.getByRole('dialog',{name:'Generated content editor'});
     await editor.locator('.admin-editor-details > summary').click();
     const diagnostic=editor.locator('.admin-fallback-diagnostic-grid');
@@ -8364,7 +8886,7 @@ for (const theme of ['dark','light']) for (const width of [1440,390]) {
     expect(Math.abs(fieldBox.x-(await body.boundingBox())!.x)).toBeLessThan(2);
     expect(Math.abs((await button.boundingBox())!.x-fieldBox.x)).toBeLessThan(2);
     expect((await button.boundingBox())!.height).toBeGreaterThanOrEqual(40);
-    await context.grantPermissions(['clipboard-read','clipboard-write']);
+    await context.grantPermissions(browserName === 'webkit' ? ['clipboard-read'] : ['clipboard-read','clipboard-write']);
     await button.click();
     expect(await page.evaluate(()=>navigator.clipboard.readText())).toBe('sky.placement.sun.cancer');
     await key.screenshot({path:`outputs/studio-style/token-content-key-${theme}-${width}.png`});
@@ -8424,7 +8946,7 @@ for (const theme of ['dark', 'light'] as const) for (const width of [1440, 390])
 
     await expectAdminRouteLoads(page, '/admin/content#exact-content');
     await page.getByLabel('Search content', { exact: true }).fill('sky.placement.sun.cancer');
-    await page.locator('.admin-content-row').getByRole('button', { name: 'Edit', exact: true }).click();
+    await page.locator('.admin-content-row').getByRole('button', { name: 'Edit source', exact: true }).click();
     const editor = page.getByRole('dialog', { name: 'Generated content editor' });
     const related = editor.locator('.admin-sky-related-editor');
     await related.locator('.admin-sky-related-group > summary').nth(1).click();
@@ -8747,6 +9269,7 @@ for (const theme of ['light', 'dark']) for (const width of [1440, 390]) {
     const tabs = page.getByRole('tablist', { name: 'Sky Write-ups workspaces' });
     await expectConnectedTabSurfaces();
     const daily = tabs.getByRole('tab', { name: 'Daily Sky Summary' });
+    const dignity = tabs.getByRole('tab', { name: 'Detriment and fall', exact: true });
     const catalog = tabs.getByRole('tab', { name: 'Placements & lunations' });
     await expect(daily).toHaveAttribute('aria-selected', 'true');
     await expect(daily).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
@@ -8765,8 +9288,13 @@ for (const theme of ['light', 'dark']) for (const width of [1440, 390]) {
     if (width > 720) expect(Math.max(...bounds.map(rect => rect.width)) - Math.min(...bounds.map(rect => rect.width))).toBeLessThan(1);
     await daily.focus();
     await daily.press('ArrowRight');
-    await expect(catalog).toBeFocused();
+    await expect(dignity).toBeFocused();
     await expect(daily).toHaveAttribute('aria-selected', 'true');
+    await dignity.press('Enter');
+    await expect(dignity).toHaveAttribute('aria-selected', 'true');
+    await expect(page.getByRole('tabpanel', { name: 'Detriment and fall', exact: true })).toBeVisible();
+    await dignity.press('ArrowRight');
+    await expect(catalog).toBeFocused();
     await catalog.press('Enter');
     await expect(catalog).toHaveAttribute('aria-selected', 'true');
     const panel = page.getByRole('tabpanel', { name: 'Placements & lunations', exact: true });
@@ -8947,6 +9475,7 @@ for (const theme of ['light','dark']) for (const width of [1440,390]) {
       await page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
       // Any loading line is chrome on the canvas while it waits, so the audit runs after the
       // workspace has finished. Listing only some waits reported the natal aspect finder's.
+      await expect(page.locator(".admin-loaded-workspace .app-loading:visible")).toHaveCount(0);
       await expect(page.locator('.admin-loaded-workspace')).not.toContainText(/Loading\b/iu);
       await page.locator('.admin-main details').evaluateAll(items => items.forEach(item => { (item as HTMLDetailsElement).open = true; }));
       for (const toggle of await page.locator('.admin-filter-disclosure-toggle[aria-expanded="false"],.admin-browse-filter-toggle[aria-expanded="false"]').all()) {
@@ -9167,10 +9696,13 @@ for (const [width, theme] of [[1440, "light"], [390, "dark"]] as const) {
     await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Sky Write-ups", exact: true }).click();
     const library = page.getByRole("complementary", { name: "Sky write-up rows" });
     for (const planet of planets) await expect(library.locator(".admin-content-row").filter({ hasText: `fallback-hook/planet-lived/${planet}` })).toHaveCount(1);
+    await openSkyPlacementChooser(page);
     await page.getByLabel("Sky placement planet or point").selectOption("saturn");
     await page.getByLabel("Sky placement zodiac sign").selectOption("aries");
     await page.getByText("Content library sources", { exact: true }).click();
     for (const motion of ["direct", "retrograde"]) {
+      await openSkyPlacementChooser(page);
+      await expect(page.getByLabel("Sky write-up motion")).toBeVisible();
       await page.getByLabel("Sky write-up motion").selectOption(motion);
       await expect(library.locator(".admin-content-row")).toHaveCount(1);
       await expect(library).toContainText("Saturn · Planet lived");
@@ -9189,6 +9721,8 @@ for (const [width, theme] of [[1440, "light"], [390, "dark"]] as const) {
     await expect(editor.locator(".admin-editor-save-state")).toContainText(/Draft saved|All changes saved/);
     await editor.getByRole("button", { name: "Close", exact: true }).click();
     await page.reload();
+    await openSkyPlacementChooser(page);
+    await expect(page.getByLabel("Search Sky write-ups")).toBeVisible();
     await page.getByLabel("Search Sky write-ups").fill("fallback-hook/planet-lived/saturn");
     await page.getByText("Content library sources", { exact: true }).click();
     await open();
@@ -9343,7 +9877,7 @@ for (const [theme, width] of [["light", 390], ["dark", 390], ["light", 1440], ["
   const writes: Record<string, unknown>[] = [];
   const approved = natalEditorialFixtures.map(row => ({ ...row, status: "REVIEWED", review_state: null,
     source_snapshot: { ...row.source_snapshot, review_status: "approved", ownerApproved: true } }));
-  await seedAdminApi(page, { generatedRows: approved, useGeneratedContentHandler: true,
+  const fixture = await seedAdminApi(page, { generatedRows: approved, useGeneratedContentHandler: true, warmPublicationFixture: true,
     onGeneratedContentWrite: write => { writes.push(write.payload); } });
   await page.setViewportSize({ width, height: 1000 });
   await page.addInitScript(value => localStorage.setItem("tldrastro:studio-theme", value), theme);
@@ -9364,12 +9898,24 @@ for (const [theme, width] of [["light", 390], ["dark", 390], ["light", 1440], ["
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
     await expect(editor.getByLabel("Full passage / body", { exact: true })).toHaveValue(saved.body);
     const completed = page.waitForResponse(response => new URL(response.url()).pathname === "/api/admin/generated-content"
-      && response.request().method() === "PATCH" && response.request().postDataJSON()?.status === "LIVE");
+      && response.request().method() === "PATCH" && response.request().postDataJSON()?.id === saved.id
+      && response.request().postDataJSON()?.ownerAction === "publish-owner-content");
     await editor.getByRole("button", { name: "Save & publish", exact: true }).click();
     const response = await completed;
     expect(response.status()).toBe(200);
+    const submitted = response.request().postDataJSON();
+    expect(submitted).toMatchObject({ id: saved.id, ownerAction: "publish-owner-content" });
+    expect(Date.parse(submitted.expectedUpdatedAt)).toBe(Date.parse(String(saved.updated_at)));
     const published = (await response.json()).rows[0];
-    expect(published.status).toBe("LIVE");
+    expect(published).toMatchObject({ id: saved.id, content_key: identity.contentKey, status: "LIVE", lane: "serving", review_state: null });
+    expect(published.updated_at).not.toBe(saved.updated_at);
+    await expect(editor.getByText("The reviewed revision is published.", { exact: true })).toBeVisible();
+    await expect(editor.getByRole("alert")).toHaveCount(0);
+    const reader = await fixture.readPublished([identity.contentKey]);
+    expect(reader.status).toBe(200);
+    expect(reader.payload.rows).toHaveLength(1);
+    expect(reader.payload.rows[0]).toMatchObject({ id: published.id, content_key: identity.contentKey, body: saved.body });
+    expect(Date.parse(reader.payload.rows[0].updated_at)).toBe(Date.parse(published.updated_at));
     expect(published.body).toBe(saved.body);
     expect(published.facts).toEqual(saved.facts);
     expect(published.source_snapshot.contentSystem).toBe("editorial-library");
@@ -9382,7 +9928,7 @@ for (const [theme, width] of [["light", 390], ["dark", 390], ["light", 1440], ["
     await closeGeneratedEditor(page);
   }
   expect(writes).toHaveLength(2);
-  expect(writes.every(write => write.status === "LIVE")).toBe(true);
+  expect(writes.every(write => write.ownerAction === "publish-owner-content")).toBe(true);
   await expectNoHorizontalOverflow(page, `Natal publication ${theme} ${width}`);
 });
 
@@ -9458,12 +10004,75 @@ test("Natal editorial library owner draft preview", async ({ page }) => {
 });
 
 for (const theme of ['light', 'dark'] as const) for (const width of [1440, 390]) {
-  test(`Sky planet and sign workspace preserves separate writing ${theme} ${width}`, async ({ page }) => {
+  test(`Moon visit Write article keeps the full visit and saved writing ${theme} ${width}`, async ({ page }) => {
+    test.setTimeout(90_000);
+    const facts = workspaceVisitFacts('moon', 'gemini', '2026-10-27', '2026-10-29');
+    const initial = await workspaceFixtureRows();
+    const shared = { ...initial[1], id: 'synthetic-moon-default', content_key: 'sky-placement/article/moon/gemini',
+      sections: { packageRecord: { ...initial[1].sections.packageRecord, contentKey: 'sky-placement/article/moon/gemini' } } };
+    const writes: Array<{ method: string; payload: Record<string, any> }> = [];
+    let providerRequests = 0;
+    await seedAdminApi(page, { generatedRows: [shared], useGeneratedContentHandler: true, onGeneratedContentWrite: write => writes.push(write) });
+    await page.route('**/api/admin/sky-article-facts?**', route => {
+      const url = new URL(route.request().url());
+      expect(url.searchParams.get('planet')).toBe('moon'); expect(url.searchParams.get('date')).toBe('2026-10-28');
+      return route.fulfill({ json: { ok: true, facts } });
+    });
+    await page.route('**/api/admin/sky-article-template-slots', async route => { providerRequests++; await route.abort(); });
+    await page.setViewportSize({ width, height: 1000 });
+    await page.addInitScript(value => localStorage.setItem('tldrastro:studio-theme', value), theme);
+    const noErrors = await expectNoBrowserErrors(page);
+    await expectAdminRouteLoads(page, '/admin/content#sky-writeups?planet=moon&sign=gemini');
+    const workspace = page.getByRole('region', { name: 'Moon in Gemini workspace', exact: true });
+    await workspace.getByRole('button', { name: 'New article', exact: true }).click();
+    await workspace.getByLabel('Visit reference date', { exact: true }).fill('2026-10-28');
+    await expect(workspace.getByLabel('Visit reference date', { exact: true })).toHaveValue('2026-10-28');
+    await workspace.getByRole('button', { name: 'Write article', exact: true }).click();
+    expect(providerRequests).toBe(0); expect(writes).toHaveLength(0);
+    const editor = workspace.getByRole('region', { name: 'Article for this visit', exact: true });
+    const writing = editor.getByRole('textbox', { name: 'Visit article body', exact: true });
+    await expect(editor).toBeFocused();
+    await editor.getByRole('textbox', { name: 'Visit article title', exact: true }).fill('Synthetic Moon in Gemini visit');
+    await editor.getByRole('textbox', { name: 'Visit article summary', exact: true }).fill('Synthetic Moon summary.');
+    await writing.fill('Synthetic complete Moon opening.\n\nSynthetic complete Moon ending.');
+    page.once('dialog', dialog => dialog.dismiss());
+    await editor.getByRole('button', { name: 'Back to articles', exact: true }).click();
+    await expect(writing).toHaveValue('Synthetic complete Moon opening.\n\nSynthetic complete Moon ending.');
+    expect(providerRequests).toBe(0);
+    await editor.getByRole('button', { name: 'Save draft', exact: true }).click();
+    await expect(workspace.getByText('Draft saved. Nothing was published.', { exact: true })).toBeVisible();
+    expect(writes).toHaveLength(1);
+    const saved = writes[0].payload.rows[0];
+    expect(saved.contentKey).toBe('sky-article/moon/gemini/2026/2026-10-27'); expect(saved.status).toBe('DRAFT');
+    expect(saved.sections.skyArticleEdition.transitStartInstant).toBe(facts.transitStartInstant);
+    expect(saved.sections.skyArticleEdition.transitEndInstant).toBe(facts.transitEndInstant);
+    expect(saved.sourceSnapshot.ownerApproval).toBeUndefined();
+    await page.reload();
+    await workspace.getByRole('button', { name: 'Edit', exact: true }).click();
+    await expect(writing).toHaveValue(saved.body);
+    await editor.getByRole('button', { name: 'Back to articles', exact: true }).click();
+    await workspace.getByRole('button', { name: 'New article', exact: true }).click();
+    await workspace.getByLabel('Visit reference date', { exact: true }).fill('2026-10-28');
+    await workspace.getByRole('button', { name: 'Generate draft', exact: true }).click();
+    await expect(writing).toHaveValue(saved.body);
+    await expect(workspace).toContainText('Its wording has been preserved. No generation was started.');
+    expect(providerRequests).toBe(0); expect(writes).toHaveLength(1);
+    await expectNoHorizontalOverflow(page, 'Moon visit article actions');
+    await page.screenshot({ path: `test-results/moon-visit-Write-article-${width}-${theme}.png`, fullPage: true });
+    await noErrors();
+  });
+}
+
+for (const theme of ['light', 'dark'] as const) for (const width of [1440, 390]) {
+  test(`Sky planet and sign workspace preserves separate writing ${theme} ${width}`, async ({ page }, testInfo) => {
+
     test.setTimeout(90_000);
     const initial = await workspaceFixtureRows();
     const writes: Array<{ method: string; payload: Record<string, any> }> = [];
     const generated: string[] = [];
     await seedAdminApi(page, { generatedRows: initial, useGeneratedContentHandler: true, onGeneratedContentWrite: write => { writes.push(write); } });
+    const pointerRace = await holdSkySourcesUntilTemplatePointer(page);
+    await page.route('**/rest/v1/rpc/content_runtime_revision', route => route.fulfill({ json: now }));
     await page.route('**/api/admin/sky-article-template-slots**', async route => { generated.push(route.request().url()); await route.abort(); });
     await page.route('**/api/admin/sky-article-facts?**', route => {
       const url = new URL(route.request().url());
@@ -9475,18 +10084,18 @@ for (const theme of ['light', 'dark'] as const) for (const width of [1440, 390])
     await expectAdminRouteLoads(page, '/admin/content#sky-writeups?planet=sun&sign=scorpio');
     const workspace = page.getByRole('region', { name: 'Sun in Scorpio workspace', exact: true });
     const tabs = workspace.getByRole('tablist', { name: 'Planet and sign writing' });
-    await expect(tabs.getByRole('tab')).toHaveText(['This visit', 'Default reading', 'Writing setup']);
-    await expect(workspace.getByRole('button', { name: 'Open saved draft', exact: true })).toBeVisible();
+    await expect(tabs.getByRole('tab')).toHaveText(['Articles', 'Evergreen reading', 'Templates & sources']);
+    await expect(workspace.getByRole('button', { name: 'Edit', exact: true })).toBeVisible();
     expect(writes).toHaveLength(0);
-    await workspace.getByRole('button', { name: 'Open saved draft', exact: true }).click();
+    await workspace.getByText('Reader preview & source details', { exact: true }).press('Enter');
+    await workspace.getByRole('button', { name: 'Edit', exact: true }).click();
     const body = workspace.getByRole('textbox', { name: 'Visit article body', exact: true });
     await expect(body).toHaveValue(initial[0].body!);
     await expect(workspace.getByRole('textbox', { name: 'Visit article title', exact: true })).toHaveValue('Synthetic Scorpio 2026 draft');
-    await expect(workspace.getByRole('region', { name: 'Article for this visit', exact: true }).locator('p').first()).toContainText('2026-11-22');
+    await expect(workspace.getByRole('region', { name: 'Article for this visit', exact: true }).getByRole('complementary', { name: 'Article settings' })).toContainText('2026-11-22');
     await expect(workspace.getByRole('button', { name: 'Save draft', exact: true })).toBeDisabled();
     await expectNoHorizontalOverflow(page, 'Planet and sign dated editor');
-    const headings = await page.getByRole('main').getByRole('heading').evaluateAll(nodes => nodes.map(node => ({ level: Number(node.tagName.slice(1)), text: node.textContent?.trim() })));
-    expect(headings.slice(0, 4)).toEqual([{ level: 1, text: 'Sky Write-ups' }, { level: 2, text: 'Sky writing workspaces' }, { level: 3, text: 'Reader sources' }, { level: 3, text: 'Saved visits' }]);
+    await expect.poll(() => page.getByRole('main').getByRole('heading').evaluateAll(nodes => nodes.slice(0, 5).map(node => ({ level: Number(node.tagName.slice(1)), text: node.textContent?.trim() })))).toEqual([{ level: 1, text: 'Sky Write-ups' }, { level: 2, text: 'Sky writing workspaces' }, { level: 3, text: 'Aspects during this period' }, { level: 3, text: 'Article settings' }, { level: 3, text: 'Reader sources' }]);
     await expect(workspace.getByRole('region', { name: 'Currently live', exact: true })).toHaveCount(0);
     const typography = await workspace.getByRole('heading', { name: 'Reader sources' }).evaluate(node => {
       const style = getComputedStyle(node); const shell = getComputedStyle(node.closest('.admin-dashboard')!);
@@ -9496,14 +10105,14 @@ for (const theme of ['light', 'dark'] as const) for (const width of [1440, 390])
     expect(typography.size).toBe(typography.expectedSize);
     expect(typography.weight).toBe('600'); expect(typography.margin).toBe('0px');
     expect(typography.casing).toBe('none'); expect(typography.alignment).toBe('start');
-    const paragraph = workspace.getByText('Write for one calculated visit.', { exact: false });
+    const paragraph = workspace.getByRole('complementary', { name: 'Article settings' }).locator('dd').first();
     await expect(paragraph).toHaveCSS('font-size', '16px'); await expect(paragraph).toHaveCSS('line-height', '24px');
     await mkdir('test-results/sky-placement-workspace', { recursive: true });
     await workspace.getByRole('heading', { name: 'Reader sources', exact: true }).evaluate(node => node.scrollIntoView({ block: 'center' }));
     await page.screenshot({ path: `test-results/sky-placement-workspace/visit-${theme}-${width}.png` });
 
-    await tabs.getByRole('tab', { name: 'Default reading', exact: true }).click();
-    await expect(workspace.getByText('This reusable reading supplies content', { exact: false })).toBeVisible();
+    await tabs.getByRole('tab', { name: 'Evergreen reading', exact: true }).press('Enter');
+    await expect(tabs.getByRole('tab', { name: 'Evergreen reading', exact: true })).toHaveAttribute('aria-selected', 'true');
     await expect(workspace.getByText('Synthetic year-neutral default remains intact.', { exact: true })).toBeVisible();
     const establishedHeadingTypography = await workspace.getByRole('heading', { name: 'Sun in Scorpio', exact: true }).evaluate(node => {
       const style = getComputedStyle(node); const shell = getComputedStyle(node.closest('.admin-dashboard')!);
@@ -9511,33 +10120,43 @@ for (const theme of ['light', 'dark'] as const) for (const width of [1440, 390])
         family: style.fontFamily, leading: style.lineHeight, tracking: style.letterSpacing, margin: style.margin, casing: style.textTransform, alignment: style.textAlign };
     });
     expect(typography).toEqual(establishedHeadingTypography);
-    await expectNoHorizontalOverflow(page, 'Default reading');
+    await expectNoHorizontalOverflow(page, 'Evergreen reading');
     await page.screenshot({ path: `test-results/sky-placement-workspace/default-${theme}-${width}.png` });
-    await tabs.getByRole('tab', { name: 'Writing setup', exact: true }).click();
-    await workspace.getByRole('button', { name: 'Edit reusable template', exact: true }).click();
+    await tabs.getByRole('tab', { name: 'Templates & sources', exact: true }).press('Enter');
+    await expect(tabs.getByRole('tab', { name: 'Templates & sources', exact: true })).toHaveAttribute('aria-selected', 'true');
+    await pointerRace.ready();
+    await pointerRace.activate(Boolean(testInfo.project.use.hasTouch));
+    await pointerRace.verify();
     const editor = page.getByRole('dialog', { name: 'Generated content editor' });
+    await expect(editor).toBeVisible({ timeout: routeReadyTimeoutMs });
     await expect(editor.getByRole('textbox', { name: 'Article body', exact: true })).toHaveValue(initial[2].body!);
     expect(writes).toHaveLength(0);
     await editor.getByRole('button', { name: 'Close', exact: true }).click();
     await expect(editor).toHaveCount(0);
-    await tabs.getByRole('tab', { name: 'This visit', exact: true }).click();
+    await expect(workspace.getByRole('region', { name: 'Sky placement reader sources' })).not.toHaveAttribute('style', /height:/u);
+    await pointerRace.verifyCleanup();
+    await tabs.getByRole('tab', { name: 'Articles', exact: true }).press('Enter');
+    await expect(tabs.getByRole('tab', { name: 'Articles', exact: true })).toHaveAttribute('aria-selected', 'true');
     await expect(body).toHaveValue(initial[0].body!);
     await workspace.getByRole('textbox', { name: 'Visit article title', exact: true }).fill('Synthetic Scorpio edited draft');
     page.once('dialog', dialog => dialog.dismiss());
+    await page.getByText('Sun in Scorpio · Change placement', { exact: true }).press('Enter');
     await page.getByRole('combobox', { name: 'Sky placement planet or point', exact: true }).selectOption('venus');
     await expect(page.getByRole('combobox', { name: 'Sky placement planet or point', exact: true })).toHaveValue('sun');
     await workspace.getByRole('button', { name: 'Save draft', exact: true }).click();
     await expect(workspace.getByText('Draft saved. Nothing was published.', { exact: true })).toBeVisible();
     expect(writes).toHaveLength(1); expect(writes[0].payload.ownerAction).toBe('save-sky-article-edition-revision');
     await page.reload();
-    await workspace.getByRole('button', { name: 'Open saved draft', exact: true }).click();
+    await workspace.getByRole('button', { name: 'Edit', exact: true }).click();
     await expect(workspace.getByRole('textbox', { name: 'Visit article title', exact: true })).toHaveValue('Synthetic Scorpio edited draft');
     await expect(body).toHaveValue(initial[0].body!);
 
+    if (!await page.getByRole('combobox', { name: 'Sky placement planet or point', exact: true }).isVisible()) await page.getByText('Sun in Scorpio · Change placement', { exact: true }).press('Enter');
     await page.getByRole('combobox', { name: 'Sky placement planet or point', exact: true }).selectOption('venus');
     const venus = page.getByRole('region', { name: 'Venus in Scorpio workspace', exact: true });
-    await expect(venus.getByText('No dated article is saved for this placement.', { exact: false })).toBeVisible();
-    await venus.getByRole('button', { name: 'Load calculated dates', exact: true }).click();
+    await expect(venus.getByText('No articles yet.', { exact: false })).toBeVisible();
+    await venus.getByRole('button', { name: 'New article', exact: true }).click();
+    await venus.getByRole('button', { name: 'Write article', exact: true }).click();
     await venus.getByRole('textbox', { name: 'Visit article title', exact: true }).fill('Synthetic Venus visit');
     await venus.getByRole('textbox', { name: 'Visit article summary', exact: true }).fill('Synthetic Venus summary.');
     await venus.getByRole('textbox', { name: 'Visit article body', exact: true }).fill('Synthetic Venus opening.\n\nSynthetic Venus ending.');
@@ -9548,7 +10167,7 @@ for (const theme of ['light', 'dark'] as const) for (const width of [1440, 390])
     expect(writes[1].payload.rows[0].status).toBe('DRAFT');
     expect(generated).toHaveLength(0);
     await page.reload();
-    await venus.getByRole('button', { name: 'Open saved draft', exact: true }).click();
+    await venus.getByRole('button', { name: 'Edit', exact: true }).click();
     await expect(venus.getByRole('textbox', { name: 'Visit article title', exact: true })).toHaveValue('Synthetic Venus visit');
     await expect(venus.getByRole('textbox', { name: 'Visit article body', exact: true })).toHaveValue(/Synthetic Venus ending\.$/);
     await noErrors();
@@ -9570,7 +10189,7 @@ test('Sky planet and sign workspace distinguishes failed reads and keeps text af
   await expect(workspace.getByText('No dated article is saved', { exact: false })).toHaveCount(0);
   failInventory = false;
   await workspace.getByRole('button', { name: 'Reload saved writing', exact: true }).click();
-  await workspace.getByRole('button', { name: 'Open saved draft', exact: true }).click();
+  await workspace.getByRole('button', { name: 'Edit', exact: true }).click();
   await workspace.getByRole('textbox', { name: 'Visit article title', exact: true }).fill('Synthetic unsaved title remains');
   await page.route('**/api/admin/generated-content', route => route.request().method() === 'PATCH'
     ? route.fulfill({ status: 409, json: { ok: false, error: 'Synthetic stale saved version.' } }) : route.fallback());
@@ -9607,17 +10226,18 @@ test('Sky planet and sign workspace covers every selector and preserves publishe
   } }));
   await page.clock.setFixedTime(new Date('2026-10-30T12:00:00Z'));
   await expectAdminRouteLoads(page, '/admin/content#sky-writeups?planet=sun&sign=scorpio');
-  const current = page.getByRole('region', { name: 'Sky placement reader sources', exact: true });
+  const current = await openSkyPlacementReaderSources(page);
   await expect(current.getByLabel('Sky reader date')).toHaveValue('2026-10-30');
   await expect(current.getByLabel('Active dated article')).toContainText('Synthetic Scorpio 2026 draft');
   await current.getByRole('button', { name: 'Preview reader', exact: true }).click();
   const reader = current.frameLocator('iframe');
-  await expect(reader.locator('.sky-detail-body')).toContainText('Synthetic approved opening kept exactly.');
-  await expect(reader.locator('.sky-detail-body')).toContainText('Synthetic final sentence kept exactly.');
+  await expect(reader.locator('.sky-detail-body').first()).toContainText('Synthetic approved opening kept exactly.');
+  await expect(reader.locator('.sky-detail-body').first()).toContainText('Synthetic final sentence kept exactly.');
   await current.getByRole('button', { name: 'Edit active article', exact: true }).click();
   const editor = page.getByRole('dialog');
   await expect(editor.getByRole('textbox', { name: 'Sky article general copy', exact: true })).toHaveValue(live.body!);
   await editor.getByRole('button', { name: 'Done', exact: true }).click();
+  await openSkyPlacementChooser(page);
   const planets = page.getByRole('combobox', { name: 'Sky placement planet or point', exact: true });
   const signs = page.getByRole('combobox', { name: 'Sky placement zodiac sign', exact: true });
   const bodies = await planets.locator('option').evaluateAll(nodes => nodes.map(node => (node as HTMLOptionElement).value).filter(value => value !== 'all'));
@@ -9626,12 +10246,18 @@ test('Sky planet and sign workspace covers every selector and preserves publishe
   for (const body of bodies) {
     await planets.selectOption(body);
     await expect(page.getByRole('tablist', { name: 'Planet and sign writing', exact: true })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Load calculated dates', exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'New article', exact: true }).click();
+    await expect(page.getByRole('button', { name: 'Write article', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Generate draft', exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'Back to articles', exact: true }).click();
   }
   for (const sign of zodiac) {
     await signs.selectOption(sign);
     await expect(page.getByRole('tablist', { name: 'Planet and sign writing', exact: true })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Load calculated dates', exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'New article', exact: true }).click();
+    await expect(page.getByRole('button', { name: 'Write article', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Generate draft', exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'Back to articles', exact: true }).click();
   }
   expect(writes).toHaveLength(0);
 });
@@ -9645,10 +10271,207 @@ test('Sky planet and sign workspace shows the evergreen default when the complet
   const writes: unknown[] = [];
   await seedAdminApi(page, { generatedRows: rows, onGeneratedContentWrite: write => { writes.push(write); } });
   await expectAdminRouteLoads(page, '/admin/content#sky-writeups?planet=sun&sign=scorpio');
-  await page.getByRole('tab', { name: 'Default reading', exact: true }).click();
+  await page.getByRole('tab', { name: 'Evergreen reading', exact: true }).click();
   const reading = page.getByRole('region', { name: 'Default placement reading', exact: true });
   await expect(reading.getByText('Synthetic evergreen opening remains available.', { exact: true })).toBeVisible();
   await expect(reading.getByText('Synthetic evergreen ending.', { exact: true })).toBeVisible();
   await expect(reading.getByRole('combobox', { name: 'Placement writing path' })).toHaveCount(0);
   expect(writes).toHaveLength(0);
+});
+
+
+test.describe("Report correction pending responses",()=>{
+const initial='The initial complete report opening.\n\nThe initial report ending remains complete.';
+const submitted='The submitted complete report opening.\n\nThe submitted report ending remains complete.';
+const newer='The newer complete report opening.\n\nThe newer report ending remains complete.';
+
+async function fixture(page:any,phase:'save'|'publish'|'dirty',holdAt:'action'|'dashboard'|'inspection'='action'){
+  let staged:any=phase==='save'?null:{headline:'Synthetic report section',summary:'A complete summary.',timing:'A date-neutral passage.',body:submitted,sections:[{heading:'Synthetic section heading',body:'Complete synthetic section body.'}]};
+  let published=initial,held=false,changed=false,release!:()=>void;
+  const gate=new Promise<void>(resolve=>{release=resolve});
+  const hold=async(at:typeof holdAt)=>{if(phase!=='dirty'&&changed&&!held&&at===holdAt){held=true;await gate;}};
+  const reportId='qa-report-ack',unitId='qa-report-ack-unit';
+  const metrics={orders:1,entitlementStatuses:{active:1},fulfillmentStatuses:{live:1},jobStates:{complete:1},exceptionDepth:0,auditDepth:0,averageDeliveryMinutes:0,averageJudgeScore:1,averageAcceptedTokenCount:0,averageTotalTokenCount:0,averageEstimatedSpendUsd:0,validatorPassRate:1,judgePassRate:1,attemptDistribution:{'1':1},judgeScoreDistribution:{'1':1}};
+  const reportRow={id:reportId,entitlement_id:'qa-entitlement-ack',entitlement_source:'comp',report_domain:'general',report_horizon:'12_months',fulfillment_status:'live',token_count:0,token_count_total:0,token_budget_lifetime:0,token_spend_usd_estimate:0,attempt_counts:{},validator_results:[],failure_history:[]};
+  await page.addInitScript(()=>localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture'));
+  await routeStudioInventoryApi(page,{call:async request=>request.method==='rows'?[]:{status:200,payload:{ok:true,rows:[]}},answer:async(route,url)=>{
+    if(url.pathname!=='/api/admin/report-fulfillment')return false;
+    if(route.request().method()==='POST'){
+      const payload=route.request().postDataJSON();
+      expect(['save_report_unit_draft','publish_report_unit_correction']).toContain(payload.action);
+      if(payload.action==='save_report_unit_draft')staged=payload;
+      else{published=staged.body;staged=null;}
+      changed=true;await hold('action');
+      await route.fulfill({json:{ok:true}});return true;
+    }
+    if(url.searchParams.has('reportId')){
+      await hold('inspection');
+      await route.fulfill({json:{report:reportRow,units:[{id:unitId,updated_at:'2026-10-15T12:00:00.123456Z',content_key:`report:${reportId}:overview`,headline:'Synthetic report section',timing:'A date-neutral passage.',summary:'A complete summary.',body:published,sections:[{heading:'Synthetic section heading',body:'Complete synthetic section body.'}],source_snapshot:staged?{adminCorrectionDraft:staged}:{}}]}});return true;
+    }
+    await hold('dashboard');
+    await route.fulfill({json:{billingMode:'free_test',metrics,reports:[reportRow],audits:[],users:[],callEstimates:{}}});return true;
+  }});
+  await page.goto('/admin/content#report-fulfillment');
+  await page.getByRole('button',{name:'Preview and edit',exact:true}).click();
+  const editor=page.getByRole('region',{name:'Report reader-copy editor'});
+  await expect(editor).toBeVisible();
+  return{editor,input:editor.getByRole('textbox',{name:'Body',exact:true}),held:()=>held,release:()=>release(),published:()=>published,staged:()=>staged};
+}
+
+for(const phase of ['save','publish'] as const)for(const holdAt of ['action','dashboard','inspection'] as const)test(`report ${phase} keeps copy locked through ${holdAt}`,async({page},testInfo)=>{
+  await page.setViewportSize({width:phase==='save'?390:1440,height:1000});
+  const f=await fixture(page,phase,holdAt);
+  try{
+    if(phase==='save')await f.input.fill(submitted);
+    const action=phase==='save'?'save_report_unit_draft':'publish_report_unit_correction';
+    const response=page.waitForResponse(response=>response.request().method()==='POST'&&response.request().postDataJSON()?.action===action);
+    await f.editor.getByRole('button',{name:phase==='save'?'Save correction draft':'Publish correction',exact:true}).click();
+    await expect.poll(f.held).toBe(true);
+    const editable=await f.input.isEditable();expect(editable).toBe(false);
+    for(const input of await f.editor.getByRole('textbox').all())await expect(input).toBeDisabled();
+    await expect(f.editor.getByRole('combobox',{name:'Report section',exact:true})).toBeDisabled();
+    await expect(f.editor.getByRole('button',{name:'Close preview',exact:true})).toBeDisabled();
+    f.release();const completed=await response;expect(completed.status()).toBe(200);expect(await completed.finished()).toBeNull();
+    const publish=f.editor.getByRole('button',{name:'Publish correction',exact:true});
+    if(phase==='save')await expect(publish).toBeVisible();else await expect(publish).toHaveCount(0);
+    await expect(f.editor.getByRole('button',{name:'Save correction draft',exact:true})).toBeEnabled();
+    const displayed=await f.input.inputValue();
+    await testInfo.attach('report-ack-proof',{body:JSON.stringify({phase,inputEditableWhilePending:editable,newerRetained:editable?displayed===newer:null,publishedMatchesSubmitted:phase==='publish'?f.published()===submitted:null,stagedMatchesSubmitted:phase==='save'?f.staged()?.body===submitted:null}),contentType:'application/json'});
+    expect(f.published()).toBe(phase==='save'?initial:submitted);
+    await expect(f.input).toHaveValue(editable?newer:submitted);
+  }finally{f.release();}
+});
+
+test('report correction cannot publish stale staged text while the editor has newer unsaved text',async({page})=>{
+  const f=await fixture(page,'dirty');
+  await f.input.fill(newer);
+  await expect(f.editor.getByRole('button',{name:'Publish correction',exact:true})).toBeDisabled();
+  expect(f.published()).toBe(initial);
+  await expect(f.input).toHaveValue(newer);
+  const saved=page.waitForResponse(response=>response.request().method()==='POST'&&response.request().postDataJSON()?.action==='save_report_unit_draft');
+  await f.editor.getByRole('button',{name:'Save correction draft',exact:true}).click();
+  const savedResponse=await saved;expect(savedResponse.status()).toBe(200);expect(await savedResponse.finished()).toBeNull();
+  await expect(f.editor.getByRole('button',{name:'Publish correction',exact:true})).toBeEnabled();
+  expect(f.published()).toBe(initial);expect(f.staged().body).toBe(newer);
+  const published=page.waitForResponse(response=>response.request().method()==='POST'&&response.request().postDataJSON()?.action==='publish_report_unit_correction');
+  await f.editor.getByRole('button',{name:'Publish correction',exact:true}).click();
+  const publishedResponse=await published;expect(publishedResponse.status()).toBe(200);expect(await publishedResponse.finished()).toBeNull();
+  await expect(f.editor.getByRole('button',{name:'Publish correction',exact:true})).toHaveCount(0);
+  expect(f.published()).toBe(newer);
+  await page.reload();
+  await page.getByRole('button',{name:'Preview and edit',exact:true}).click();
+  await expect(f.input).toHaveValue(newer);
+});
+
+});
+
+for (const [theme, width] of [["light", 390], ["dark", 390], ["light", 1440], ["dark", 1440]] as const) for (const sect of ["day", "night"] as const) for (const planet of ["jupiter", "saturn"] as const) test(`Natal placement sect drafts compare and reopen independently ${planet} ${sect} ${theme} ${width}`, async ({ page }) => {
+  test.setTimeout(120_000);
+  const sign = planet === "jupiter" ? "leo" : "aries";
+  const house = planet === "jupiter" ? "3" : "";
+  const suffix = `${sign}${house ? `/house-${house}` : ""}/${sect}`;
+  const writes: Record<string, unknown>[] = [];
+  const fixtures = (["you", "they"] as const).map(audience => {
+    const draft = natalEditorialDraftForKey(`cms/natal-planet-sect/${audience}/${planet}/${sect}`)!;
+    return { id: `general-sect-${audience}`, content_key: draft.contentKey, surface: "natal", mode: "in_depth", status: "LIVE", lane: "serving", review_state: null,
+      body: `${audience === "you" ? "You" : "{{ownerName}}"} general sect opening.\n\nGeneral sect final sentence.`, summary: "", headline: draft.headline, sections: {}, facts: draft.facts,
+      source_snapshot: { ...draft.sourceSnapshot, review_status: "approved", ownerApproved: true }, updated_at: now, created_at: now };
+  });
+  const originals = structuredClone(fixtures);
+  await seedAdminApi(page, { generatedRows: fixtures, useGeneratedContentHandler: true, onGeneratedContentWrite: write => { writes.push(write.payload); } });
+  let failComparison = false;
+  await page.route("**/api/content-reader", route => failComparison ? route.fulfill({ status: 503, json: { error: "Isolated outage" } }) : route.fulfill({ json: readerResponse(originals) }));
+  const previewInputs: Record<string, unknown>[] = [];
+  await page.route("**/api/admin/natal-placement-preview", route => {
+    const input = route.request().postDataJSON();
+    previewInputs.push(input);
+    const name = input.audience === "you" ? "You" : input.ownerName;
+    return route.fulfill({ json: { rendered: { body: `${name} existing sign opening.\n\nComplete house ${input.house} ending.`, parts: [], headline: "Jupiter in Leo" } } });
+  });
+  await page.setViewportSize({ width, height: 1000 });
+  await page.addInitScript(value => localStorage.setItem("tldrastro:studio-theme", value), theme);
+  await expectAdminRouteLoads(page, `/admin/content#exact-content?category=Natal+Chart&natalView=day-night&natalPassage=${planet}&natalSect=${sect}&natalSign=${sign}${house ? `&natalHouse=${house}` : ""}`);
+  const workspace = page.getByRole("region", { name: "Day and night charts", exact: true });
+  const headingStyles = (element: Element) => { const style = getComputedStyle(element); return [style.fontFamily, style.fontSize, style.fontWeight, style.lineHeight, style.letterSpacing, style.marginTop, style.marginBottom]; };
+  const cardStyle = await workspace.getByRole("heading", { level: 4 }).first().evaluate(headingStyles);
+  await expect(workspace.getByLabel("Natal sect passage scope")).toHaveValue("placement");
+  for (const audience of ["you", "they"] as const) {
+    await workspace.getByLabel("Natal reading audience", { exact: true }).selectOption(audience);
+    if (audience === "they") await workspace.getByLabel("Friend’s name in preview").fill("Robin");
+    const key = `cms/natal-planet-sect/${audience}/${planet}/${suffix}`;
+    await expect(workspace.locator("code")).toHaveText(key);
+    await expect(workspace).toContainText("No passage has been saved for this selection.");
+    await workspace.getByRole("button", { name: "Create passage draft", exact: true }).click();
+    const editor = page.getByRole("dialog", { name: "Generated content editor" });
+    await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue(key);
+    const body = approvedNatalPilotBody(key, `${audience === "you" ? "You" : "{{ownerName}}"} placement draft opening.\n\nComplete placement draft final sentence.`);
+    await fillAdminEditorField(editor, "Full passage / body", body);
+    await editor.getByRole("button", { name: "Save draft", exact: true }).click();
+    await expect.poll(() => writes.length).toBe(audience === "you" ? 1 : 2);
+    await closeGeneratedEditor(page);
+    await page.reload();
+    await expect(workspace.getByLabel("Natal reading audience", { exact: true })).toHaveValue(audience);
+    await expect(workspace.getByLabel("Natal sect placement sign")).toHaveValue(sign);
+    await expect(workspace.getByLabel("Natal sect placement house")).toHaveValue(house);
+    const rendered = body.replaceAll("{{ownerName}}", audience === "you" ? "You" : "Maya");
+    for (const paragraph of rendered.split(/\n\s*\n/u)) await expect(workspace).toContainText(paragraph);
+    if (audience === "they") await workspace.getByLabel("Friend’s name in preview").fill("Robin");
+    await workspace.getByRole("button", { name: "Compare complete reading", exact: true }).click();
+    const comparison = workspace.getByLabel("Natal sect reading comparison", { exact: true });
+    await expect(comparison.getByRole("article", { name: "Existing placement reading", exact: true })).toContainText(`${audience === "you" ? "You" : "Robin"} existing sign opening.`);
+    await expect(comparison.getByRole("article", { name: "Published general sect passage", exact: true })).toContainText("General sect final sentence.");
+    await expect(comparison.getByRole("article", { name: "Proposed placement sect passage", exact: true }).locator("p")).toHaveText(body.replaceAll("{{ownerName}}", "Robin").split(/\n\s*\n/u));
+    for (const heading of await comparison.getByRole("heading", { level: 4 }).all()) expect(await heading.evaluate(headingStyles)).toEqual(cardStyle);
+    await expect(comparison.locator("h4")).toHaveText(["Existing placement reading", "Published general sect passage", "Proposed placement sect passage"]);
+    await workspace.getByRole("button", { name: "Edit saved passage", exact: true }).click();
+    await expect(editor.getByLabel("Full passage / body", { exact: true })).toHaveValue(body);
+    await closeGeneratedEditor(page);
+    await workspace.getByLabel("Natal sect placement house").selectOption("4");
+    await expect(workspace).toContainText("No passage has been saved for this selection.");
+    await expect(comparison).not.toContainText("Complete placement draft final sentence.");
+    await expect(comparison).toContainText("Complete house 4 ending.");
+    await workspace.getByLabel("Natal sect placement house").selectOption(house);
+    if (audience === "you") await workspace.getByRole("button", { name: "Hide reading comparison", exact: true }).click();
+  }
+  failComparison = true;
+  await workspace.getByLabel("Friend’s name in preview").fill("Avery");
+  await expect(workspace.getByRole("alert")).toContainText("The published sect passage could not be loaded.");
+  await expect(workspace.getByLabel("Natal sect reading comparison")).not.toContainText("Robin existing sign opening.");
+  failComparison = false;
+  await workspace.getByRole("button", { name: "Retry comparison", exact: true }).click();
+  await expect(workspace.getByLabel("Natal sect reading comparison")).toContainText("Avery existing sign opening.");
+  if (planet === "jupiter" && sect === "day" && theme === "light" && width === 390) {
+    await page.evaluate(() => {
+      const schedule=window.setTimeout.bind(window);
+      window.setTimeout=((handler,timeout,...args)=>schedule(handler,timeout===45_000?1_000:timeout,...args)) as typeof window.setTimeout;
+      const fetchRequest=window.fetch.bind(window);
+      window.fetch=(input,options)=>{
+        const url=new URL(typeof input==='string'?input:input instanceof URL?input.href:input.url,location.href);
+        if (url.pathname===(window as any).__stalledComparisonPath) return new Promise<Response>((_resolve,reject)=>{
+          const abort=()=>reject(new DOMException('Synthetic stalled comparison was interrupted.','AbortError'));
+          if(options?.signal?.aborted)abort();else options?.signal?.addEventListener('abort',abort,{once:true});
+        });
+        return fetchRequest(input,options);
+      };
+    });
+    for (const [index,path] of ['/api/admin/natal-placement-preview','/api/content-reader'].entries()) {
+      await page.evaluate(path=>{(window as any).__stalledComparisonPath=path;},path);
+      await workspace.getByLabel("Friend’s name in preview").fill(`Retry${index}`);
+      const comparison=workspace.getByLabel("Natal sect reading comparison",{exact:true});
+      await expect(comparison.getByRole('alert')).toContainText('Loading content timed out. Try again; no changes were submitted.',{timeout:5_000});
+      await page.evaluate(()=>{(window as any).__stalledComparisonPath='';});
+      await comparison.getByRole('button',{name:'Retry comparison',exact:true}).click();
+      await expect(comparison.getByRole('article',{name:'Existing placement reading',exact:true}).locator('p')).toHaveText([`Retry${index} existing sign opening.`,`Complete house ${house} ending.`]);
+      await expect(comparison.getByRole('article',{name:'Published general sect passage',exact:true})).toContainText('General sect final sentence.');
+    }
+  }
+  expect(writes.every(write => write.status === "DRAFT" && String(write.contentKey ?? "").endsWith(`/${suffix}`))).toBe(true);
+  expect(previewInputs.every(input => input.motion === "direct" && [house, "4"].includes(String(input.house)))).toBe(true);
+  if (!house) {
+    expect(new URL(page.url()).hash).not.toContain("natalHouse=");
+    await expect(workspace).toContainText("all houses");
+    await expect(workspace.getByLabel("Natal sect placement house")).toHaveValue("");
+  }
+  await expectNoHorizontalOverflow(page, `Natal sect comparison ${theme} ${width}`);
+  await page.screenshot({ path: `test-results/natal-sect-comparison-${planet}-${sect}-${theme}-${width}.png`, fullPage: true });
 });

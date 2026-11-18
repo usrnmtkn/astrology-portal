@@ -1,4 +1,3 @@
-import { assertCleanReaderCopy } from "../../apps/web/src/content/editorialCopyBoundary.mjs";
 import type { IncomingMessage } from "node:http";
 import { STUDIO_VARIABLE_PREFIX, STUDIO_VARIABLE_SCHEMA, validateStudioVariable, studioRecordVariableNames, resolveStudioVariableRecord } from "../../apps/web/src/content/studioCustomVariables.mjs";
 import reservedNames from "../_generated/studio-variable-names.json" with { type: "json" };
@@ -54,7 +53,7 @@ export async function handleStudioVariables(req: IncomingMessage, storage: Stora
     return { ok: true, deletedId: saved.id };
   }
   let definition;
-  try { definition = validateStudioVariable(body.variable, reservedNames); for (const value of [definition.value, ...definition.overrides.map(item => item.value)]) assertCleanReaderCopy({ body: value }); }
+  try { definition = validateStudioVariable(body.variable, reservedNames); }
   catch (error) { throw new StudioVariableError(error instanceof Error ? error.message : "Invalid variable."); }
   if (existing.some(item => item.id !== saved?.id && item.name.toLowerCase() === definition.name.toLowerCase())) throw new StudioVariableError(`{{${definition.name}}} already exists. Choose a different token name.`, 409);
   const row = {

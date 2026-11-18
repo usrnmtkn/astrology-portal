@@ -2,11 +2,12 @@ import { isInitialSkyReaderHash } from "../apps/web/src/services/initialSkyRoute
 import {buildSync} from 'esbuild';
 import {fileURLToPath} from 'node:url';
 import {gzipSync} from 'node:zlib';
+import {deploymentAssetUrl} from './deployment-assets-plugin.mjs';
 
 /** Discover App before the entry waits for React. Direct articles also preload
  * placement rows; the list starts those large downloads after App mounts so
  * its selected publication reads can begin sooner. */
-export function skyEntryPreloadPlugin() {
+export function skyEntryPreloadPlugin(env = process.env) {
   const primer=buildSync({entryPoints:[fileURLToPath(new URL('../apps/web/src/initialSkyRequestPrimer.ts',import.meta.url))],
     bundle:true,write:false,format:'iife',platform:'browser',minify:true,target:'es2022',metafile:true});
   if(gzipSync(primer.outputFiles[0].contents).length>4_000
@@ -38,12 +39,12 @@ export function skyEntryPreloadPlugin() {
         // Their existing shared promises let the mounted reader join the same
         // calculation and complete publication-ledger reads.
         visit(bootstrap.fileName);
-        const bootstrapFiles = [...files];
+        const bootstrapFiles = [...files].map(file => deploymentAssetUrl(file, env));
         if ([...files].some(file => Object.keys(bundle[file].modules ?? {}).some(id => /\/(?:main\.tsx|react(?:-dom)?\/)/u.test(id)))) {
           throw new Error("Sky data entry must start independently of the component entry.");
         }
         visit(app.fileName);
-        const appFiles = [...files];
+        const appFiles = [...files].map(file => deploymentAssetUrl(file, env));
         const readerStyles = Object.values(bundle).find(asset => asset.type === "asset"
           && /^assets\/styles-[^/]+\.css$/u.test(asset.fileName));
         if (!readerStyles) throw new Error("Sky preload could not locate the reader stylesheet.");
@@ -52,9 +53,9 @@ export function skyEntryPreloadPlugin() {
         if (!placements) throw new Error("Sky preload could not locate the built placement rows.");
         visit(placements.fileName);
         return [{ tag: "script", injectTo: "head-prepend", children:
-          `(()=>{if(location.pathname!=="/"||!(${isInitialSkyReaderHash.toString()})(location.hash))return;const boot=${JSON.stringify(bootstrapFiles)};const files=!location.hash||/^#\\/?sky\\/?$/.test(location.hash)?${JSON.stringify(appFiles)}:${JSON.stringify([...files])};const preload=(items,priority)=>{for(const file of items){const href="/"+file;if([...document.querySelectorAll('link[rel="modulepreload"]')].some(link=>link.getAttribute("href")===href))continue;const link=document.createElement("link");link.rel="modulepreload";link.crossOrigin="";link.fetchPriority=priority;link.href=href;document.head.appendChild(link);}};preload(boot,"high");window.addEventListener("tldr:sky-bootstrap-started",()=>{const style=document.createElement("link");style.rel="preload";style.as="style";style.crossOrigin="";style.fetchPriority="high";style.href="/${readerStyles.fileName}";document.head.appendChild(style);preload(files,"low");},{once:true});})();`
+          `(()=>{if(location.pathname!=="/"||!(${isInitialSkyReaderHash.toString()})(location.hash))return;const boot=${JSON.stringify(bootstrapFiles)};const files=!location.hash||/^#\\/?sky\\/?$/.test(location.hash)?${JSON.stringify(appFiles)}:${JSON.stringify([...files].map(file => deploymentAssetUrl(file, env)))};const preload=(items,priority)=>{for(const file of items){const href="/"+file;if([...document.querySelectorAll('link[rel="modulepreload"]')].some(link=>link.getAttribute("href")===href))continue;const link=document.createElement("link");link.rel="modulepreload";link.crossOrigin="";link.fetchPriority=priority;link.href=href;document.head.appendChild(link);}};preload(boot,"high");window.addEventListener("tldr:sky-bootstrap-started",()=>{const style=document.createElement("link");style.rel="preload";style.as="style";style.crossOrigin="";style.fetchPriority="high";style.href="/${deploymentAssetUrl(readerStyles.fileName, env)}";document.head.appendChild(style);preload(files,"low");},{once:true});})();`
         }, {tag:"script",injectTo:"head-prepend",children:primer.outputFiles[0].text}, { tag: "script", injectTo: "head-prepend", children:
-          `if(location.pathname==="/"&&(${isInitialSkyReaderHash.toString()})(location.hash)&&!new URL(location.href).searchParams.has("code"))void import("/${bootstrap.fileName}").catch(()=>{});`
+          `if(location.pathname==="/"&&(${isInitialSkyReaderHash.toString()})(location.hash)&&!new URL(location.href).searchParams.has("code"))void import("/${deploymentAssetUrl(bootstrap.fileName, env)}").catch(()=>{});`
         }];
       }
     }

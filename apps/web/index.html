@@ -12,7 +12,12 @@
   </head>
   <body>
     <div id="root">
-      <main id="app-startup" class="app-loading app-loading--centered app-startup" role="status" aria-live="polite" aria-busy="true">
+      <main id="app-startup" data-loader="orbit" class="app-loading app-loading--centered app-startup" role="status" aria-live="polite" aria-busy="true">
+        <svg class="startup-orbit" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <circle class="startup-orbit__track" cx="24" cy="24" r="16" />
+          <path d="M24 8a16 16 0 0 1 16 16" />
+          <circle class="startup-orbit__dot" cx="40" cy="24" r="3" />
+        </svg>
         <span class="startup-artwork" aria-hidden="true">
           <!-- app-startup-poster -->
           <span class="startup-artwork__animation"></span>

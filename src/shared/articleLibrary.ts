@@ -6,6 +6,16 @@ export function standaloneArticleKind(key: string): "article" | "guide" | null {
   if (/^article\/guide\/[^/]+$/u.test(key)) return "guide";
   return null;
 }
+/** Revision eligibility is separate from library placement and release scheduling. */
+export function articleRevisionTarget(row: { content_key: string; mode?: string | null; surface?: string | null; event_type?: string | null; lane?: string | null; review_state?: string | null; provider?:string|null; source_snapshot?:Record<string,unknown>|null; facts?:Record<string,unknown>|null }) {
+  return Boolean(standaloneArticleKind(row.content_key) && row.mode === "article")
+    || row.content_key.startsWith('cms/lunation-article/') && row.event_type==='lunation-article'
+      && row.mode==='article' && row.surface==='sky' && row.lane==='serving' && !row.review_state
+      && row.provider!=='tldrastro-fallback-architecture-v3' && row.source_snapshot?.sourcePackage!=='tldrastro-fallback-architecture-v3'
+      && (row.facts?.fallbackArchitectureV3==null || row.facts?.fallbackArchitectureV3===false)
+    || row.content_key.startsWith("education/astro-101/") && row.surface === "education"
+      && ["article", "all"].includes(row.mode ?? "");
+}
 export function articleLibraryKind(row: { content_key: string; event_type?: string | null }): ArticleLibraryKind | null {
   return standaloneArticleKind(row.content_key)
     ?? (row.event_type === "sky-article-edition" || /^(?:sky\/article-template\/|sky-article-template\/|sky-article\/)/u.test(row.content_key) ? "sky" : null);
@@ -17,4 +27,34 @@ export function articleKeyFromHash(hash: string) {
   const value = hash.replace(/^#\/?/u, "");
   if (!value.startsWith("articles/")) return null;
   try { return decodeURIComponent(value.slice("articles/".length)); } catch { return null; }
+}
+
+type PublicationRow = { content_key: string; sections?: unknown; published_at?: string | null; target_date?: string | null; updated_at?: string | null };
+export function validArticleTimeZone(value: unknown): value is string {
+  if (typeof value !== "string" || value.length > 100) return false;
+  try { new Intl.DateTimeFormat("en", { timeZone: value }); return true; } catch { return false; }
+}
+export function articlePublicationTimeZone(row: PublicationRow) {
+  const zone = (row.sections as { articlePublication?: { timeZone?: unknown } } | null)?.articlePublication?.timeZone;
+  return validArticleTimeZone(zone) ? zone : undefined;
+}
+export function validArticlePublishAt(value: unknown): value is string {
+  // Invalid dates serialize to null; the exact comparison rejects normalized dates.
+  return typeof value === "string" && value.length === 24 && new Date(value).toJSON() === value;
+}
+export function articlePublishAt(row: PublicationRow): string | null {
+  if (!standaloneArticleKind(row.content_key)) return null;
+  const value = (row.sections as { articlePublication?: { publishAt?: unknown } } | null)?.articlePublication?.publishAt;
+  return validArticlePublishAt(value) ? value : null;
+}
+export function articlePublicationIsDue(row: PublicationRow, now = Date.now()) {
+  if (!standaloneArticleKind(row.content_key)) return true;
+  const publication = (row.sections as { articlePublication?: { publishAt?: unknown } } | null)?.articlePublication;
+  return publication == null || validArticlePublishAt(publication.publishAt) && Date.parse(publication.publishAt) <= now;
+}
+export function articlePublicationDate(row: PublicationRow) {
+  return articlePublishAt(row) ?? (standaloneArticleKind(row.content_key) ? row.published_at : null) ?? null;
+}
+export function articleSortDate(row: PublicationRow) {
+  return Date.parse(articlePublicationDate(row) ?? row.target_date ?? row.updated_at ?? "") || 0;
 }

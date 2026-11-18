@@ -92,7 +92,7 @@ for (const cachedProfile of [false, true]) {
     if (cachedProfile) expect(await page.evaluate(() => JSON.parse(localStorage.getItem("tldrastro:userProfile")!).id)).toBe("studio-qa-owner");
     await page.getByLabel("Email", { exact: true }).fill("owner@example.test");
     await page.getByLabel("Password", { exact: true }).fill("fixture-password");
-    await page.getByRole("button", { name: "Log in →", exact: true }).click();
+    await page.getByRole("button", { name: "Log in", exact: true }).click();
     await expect(page).toHaveURL(`http://127.0.0.1:4296${destination}`);
     await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Connected");
   });

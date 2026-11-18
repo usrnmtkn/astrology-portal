@@ -129,7 +129,16 @@ function matchesFilter(params, name, value) {
   throw new Error(`Unhandled test filter ${name}=${filter}`);
 }
 
-const atomicPublication = publicationRpcFixture(() => [row, ...compatibilitySupportRows], saved => { const target=saved.find(item=>item.id===row.id); if(target) row={...row,...target}; });
+const packageRevisions = new Map();
+let packageRevisionSequence = 0;
+const fixtureRows = () => [row, ...[...packageRevisions.values()].filter(revision =>
+  revision.source_snapshot.targetRowId === row.id && revision.content_key === row.content_key)];
+const atomicPublication = publicationRpcFixture(() => [...fixtureRows(), ...compatibilitySupportRows], saved => {
+  for (const item of saved) {
+    if (item.id === row.id) row = { ...row, ...item };
+    else if (packageRevisions.has(item.id)) packageRevisions.set(item.id, item);
+  }
+});
 globalThis.fetch = async (input, init = {}) => {
   const operation = await atomicPublication(input, init); if (operation) return operation;
   const reader = await readerRouteResponse(input, init); if (reader) return reader;
@@ -138,16 +147,18 @@ globalThis.fetch = async (input, init = {}) => {
   requests.push({ method, url: url.toString() });
 
   assert.equal(url.origin, "https://content-studio-api-test.invalid");
-  if (url.pathname === "/rest/v1/content_publications") return Response.json(fixturePublications([row, ...compatibilitySupportRows]));
+  if (url.pathname === "/rest/v1/content_publications") return Response.json(fixturePublications([...fixtureRows(), ...compatibilitySupportRows]));
   assert.equal(url.pathname, "/rest/v1/generated_interpretations");
 
   if (method === "PATCH") {
-    assert.equal(url.searchParams.get("id"), `eq.${row.id}`);
-    if (!matchesFilter(url.searchParams, "updated_at", row.updated_at)) return Response.json([]);
+    const target = fixtureRows().find(candidate => url.searchParams.get("id") === `eq.${candidate.id}`);
+    if (!target || !matchesFilter(url.searchParams, "updated_at", target.updated_at)) return Response.json([]);
     const patch = JSON.parse(String(init.body));
     assert.notEqual(patch.mode, "card", "The production mode constraint rejects the Studio card alias.");
-    row = { ...row, ...patch };
-    return Response.json([row]);
+    const saved = { ...target, ...patch };
+    if (target.id === row.id) row = saved;
+    else packageRevisions.set(target.id, saved);
+    return Response.json([saved]);
   }
 
   if (method === "DELETE") {
@@ -160,30 +171,26 @@ globalThis.fetch = async (input, init = {}) => {
   if (method === "POST") {
     const created = JSON.parse(String(init.body));
     assert.notEqual(created.mode, "card", "The production mode constraint rejects the Studio card alias.");
-    row = {
-      id: "content-studio-created-row",
+    const privateRevision = created.event_type === "studio-package-source-draft";
+    const saved = {
+      id: privateRevision ? `qa-package-revision-${++packageRevisionSequence}` : "content-studio-created-row",
       target_date: null,
       updated_at: "2026-09-01T04:00:00.000Z",
       created_at: "2026-09-01T04:00:00.000Z",
       ...created
     };
-    return Response.json([row]);
+    if (privateRevision) packageRevisions.set(saved.id, saved);
+    else row = saved;
+    return Response.json([saved]);
   }
 
   if (method === "GET") {
     if (url.searchParams.has("or") && !url.searchParams.has("lane")) {
       return Response.json(compatibilitySupportRows);
     }
-    const matches = [
-      matchesFilter(url.searchParams, "id", row.id),
-      matchesFilter(url.searchParams, "content_key", row.content_key),
-      matchesFilter(url.searchParams, "status", row.status),
-      matchesFilter(url.searchParams, "lane", row.lane),
-      matchesFilter(url.searchParams, "mode", row.mode),
-      matchesFilter(url.searchParams, "target_date", row.target_date),
-      matchesFilter(url.searchParams, "review_state", row.review_state)
-    ].every(Boolean);
-    return Response.json(matches ? [row] : []);
+    const fields = ["id", "content_key", "status", "lane", "mode", "target_date", "review_state"];
+    return Response.json(fixtureRows().filter(candidate =>
+      fields.every(field => matchesFilter(url.searchParams, field, candidate[field]))));
   }
 
   throw new Error(`Unexpected Supabase test request: ${method} ${url}`);
@@ -225,6 +232,12 @@ async function invokeApi(method, url, body, secret) {
   const { completed, res } = responseResult();
   await generatedContentHandler(apiRequest(method, url, body, secret), res);
   return completed;
+}
+
+function approveSavedPackage(revision) {
+  return invokeApi("PATCH", "/api/admin/generated-content", {
+    id: revision.id, expectedUpdatedAt: revision.updated_at, ownerAction: "approve-package-revision"
+  });
 }
 
 const unauthorized = await invokeApi(
@@ -529,7 +542,14 @@ for (let attempt = 0; attempt < 2; attempt++) {
   facts: row.facts, sourceSnapshot: row.source_snapshot, reviewStatus: "needs_review"
  });
  assert.equal(savedChiron.status, 200, JSON.stringify(savedChiron.payload));
- const publishedChiron = await invokeApi("PATCH", "/api/admin/generated-content", { id: row.id, ownerAction: "approve-package-revision" });
+ const revision = savedChiron.payload.rows[0];
+ if (attempt === 1) {
+   assert.notEqual(revision.id, row.id);
+   assert.equal(revision.source_snapshot.targetRowUpdatedAt, row.updated_at);
+   assert.equal(row.status, "LIVE");
+   assert.equal(row.sections.packageRecord.body_you, chironOriginal.body_you);
+ }
+ const publishedChiron = await approveSavedPackage(revision);
  assert.equal(publishedChiron.status, 200, JSON.stringify(publishedChiron.payload));
  assert.equal(row.sections.packageRecord.body_you, nextYou);
  assert.equal(row.sections.packageRecord.body_they, chironCopy.body_they);
@@ -583,9 +603,7 @@ const savedNamedBond = await invokeApi('PATCH', '/api/admin/generated-content', 
 assert.equal(savedNamedBond.status, 200, JSON.stringify(savedNamedBond.payload));
 assert.equal(savedNamedBond.payload.rows[0].sections.packageDraft.body_you, bondNamed.body_you);
 assert.equal(savedNamedBond.payload.rows[0].sections.packageDraft.body_they, bondNamed.body_they);
-const publishedNamedBond = await invokeApi('PATCH', '/api/admin/generated-content', {
-  id: row.id, expectedUpdatedAt: row.updated_at, ownerAction: 'approve-package-revision'
-});
+const publishedNamedBond = await approveSavedPackage(savedNamedBond.payload.rows[0]);
 assert.equal(publishedNamedBond.status, 200, JSON.stringify(publishedNamedBond.payload));
 assert.equal(publishedNamedBond.payload.rows[0].status, 'LIVE');
 assert.equal(publishedNamedBond.payload.rows[0].sections.packageRecord.body_you, bondNamed.body_you);
@@ -727,10 +745,7 @@ const savedPlaceholderTransitFriendRevision = await invokeApi("PATCH", "/api/adm
 assert.equal(savedPlaceholderTransitFriendRevision.status, 200, "A blank transit body_they baseline must accept body_you transit placeholders plus {{Name}}.");
 assert.equal(savedPlaceholderTransitFriendRevision.payload.rows[0].sections.packageDraft.body_they, placeholderFriendBody);
 
-const publishedPlaceholderTransitFriendRevision = await invokeApi("PATCH", "/api/admin/generated-content", {
-  id: row.id,
-  ownerAction: "approve-package-revision"
-});
+const publishedPlaceholderTransitFriendRevision = await approveSavedPackage(savedPlaceholderTransitFriendRevision.payload.rows[0]);
 assert.equal(publishedPlaceholderTransitFriendRevision.status, 200);
 assert.equal(publishedPlaceholderTransitFriendRevision.payload.rows[0].sections.packageRecord.body_they, placeholderFriendBody);
 assert.equal(publishedPlaceholderTransitFriendRevision.payload.rows[0].sections.body_they, placeholderFriendBody);
@@ -800,15 +815,12 @@ const savedPackageRevision = await invokeApi("PATCH", "/api/admin/generated-cont
 assert.equal(savedPackageRevision.status, 200);
 assert.equal(savedPackageRevision.payload.rows[0].status, "DRAFT", "Saving revised package copy must hold it for explicit approval.");
 assert.equal(savedPackageRevision.payload.rows[0].lane, "reference");
-assert.equal(savedPackageRevision.payload.rows[0].review_state, "needs-review");
+assert.equal(savedPackageRevision.payload.rows[0].review_state, "owner-review-required");
 assert.equal(savedPackageRevision.payload.rows[0].facts.review_status, "needs_review");
 assert.equal(savedPackageRevision.payload.rows[0].sections.packageRecord.body_you, installedPackageRecord.body_you, "A normal Save must not silently replace the installed reader copy.");
 assert.equal(savedPackageRevision.payload.rows[0].sections.packageDraft.body_you, proposedPackageRecord.body_you);
 
-const publishedPackageRevision = await invokeApi("PATCH", "/api/admin/generated-content", {
-  id: row.id,
-  ownerAction: "approve-package-revision"
-});
+const publishedPackageRevision = await approveSavedPackage(savedPackageRevision.payload.rows[0]);
 assert.equal(publishedPackageRevision.status, 200);
 assert.equal(publishedPackageRevision.payload.rows[0].status, "LIVE", "Approve & publish revision must make the saved package revision reader-eligible.");
 assert.equal(publishedPackageRevision.payload.rows[0].lane, "serving");
@@ -852,11 +864,8 @@ const savedSourceMaterial = await invokeApi("PATCH", "/api/admin/generated-conte
 assert.equal(savedSourceMaterial.status, 200);
 assert.equal(savedSourceMaterial.payload.rows[0].status, "DRAFT", "Approved source material must remain outside the reader-serving lane.");
 assert.equal(savedSourceMaterial.payload.rows[0].lane, "reference");
-assert.equal(savedSourceMaterial.payload.rows[0].review_state, "needs-review");
-const rejectedSourceMaterialPublish = await invokeApi("PATCH", "/api/admin/generated-content", {
-  id: row.id,
-  ownerAction: "approve-package-revision"
-});
+assert.equal(savedSourceMaterial.payload.rows[0].review_state, "owner-review-required");
+const rejectedSourceMaterialPublish = await approveSavedPackage(savedSourceMaterial.payload.rows[0]);
 assert.equal(rejectedSourceMaterialPublish.status, 400, "Source ingredients must reject exact-copy publishing actions.");
 
 assert.ok(
@@ -901,10 +910,8 @@ for (const revision of [1, 2]) {
   });
   assert.equal(saved.status, 200);
   assert.equal(row.body, previousBody, "Saving a draft preserves the approved passage.");
-  assert.equal(row.sections.packageDraft.Body, body);
-  const published = await invokeApi("PATCH", "/api/admin/generated-content", {
-    id: row.id, expectedUpdatedAt: row.updated_at, ownerAction: "approve-package-revision"
-  });
+  assert.equal(saved.payload.rows[0].sections.packageDraft.Body, body);
+  const published = await approveSavedPackage(saved.payload.rows[0]);
   assert.equal(published.status, 200, JSON.stringify(published.payload));
   assert.equal(row.status, "LIVE");
   assert.equal(row.summary, summary, "Sign Off must publish the capitalized Summary field.");
@@ -1006,10 +1013,8 @@ for (const revision of [1, 2]) {
   });
   assert.equal(saved.status, 200);
   assert.equal(row.body, original);
-  assert.equal(row.sections.packageDraft.body, body);
-  const published = await invokeApi("PATCH", "/api/admin/generated-content", {
-    id: row.id, expectedUpdatedAt: row.updated_at, ownerAction: "approve-package-revision"
-  });
+  assert.equal(saved.payload.rows[0].sections.packageDraft.body, body);
+  const published = await approveSavedPackage(saved.payload.rows[0]);
   assert.equal(published.status, 200, JSON.stringify(published.payload));
   assert.equal(row.content_key, moonRecord.contentKey);
   assert.equal(row.body, body);
@@ -1030,6 +1035,7 @@ console.log(JSON.stringify({
 }, null, 2));
 
 // Repeat save, publish, edit, and save again with the real editor wire shape.
+packageRevisions.clear();
 row = { ...packageRegressionBaseline, updated_at: row.updated_at,
   sections: { packageRecord: { ...packageRegressionBaseline.sections.packageRecord, headline: "Original title", summary: "Original purpose", editorial_notes: "Original notes" } } };
 for (const [field, value] of [["body_you", "First revised copy."], ["summary", "Updated purpose"], ["headline", "Updated title"], ["editorial_notes", "Updated editor notes"], ["body_you", "Second revised copy."]]) {
@@ -1040,9 +1046,7 @@ for (const [field, value] of [["body_you", "First revised copy."], ["summary", "
   });
   assert.equal(result.status, 200, `The editor must be able to save ${field}: ${JSON.stringify(result.payload)}`);
   assert.equal(result.payload.rows[0].sections.packageDraft[field], value);
-  const published = await invokeApi("PATCH", "/api/admin/generated-content", {
-    id: row.id, expectedUpdatedAt: row.updated_at, ownerAction: "approve-package-revision"
-  });
+  const published = await approveSavedPackage(result.payload.rows[0]);
   assert.equal(published.status, 200, JSON.stringify(published.payload));
   assert.equal(published.payload.rows[0].sections.packageRecord[field], value);
 }

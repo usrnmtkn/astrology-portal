@@ -1,3 +1,7 @@
+import { natalRetrogradeModifierKey } from '../../web/src/content/natalRetrogradeModifier.js';
+import { natalPlacementSourceKeys as natalPlacementResolverDependencyKeys, natalPlacementAngles, natalPlacementSigns } from '../../web/src/content/natalPlacementSourceKeys.js';
+export { natalPlacementResolverDependencyKeys, natalPlacementAngles, natalPlacementSigns };
+
 export const natalPlacementPlanets = [
   "sun",
   "moon",
@@ -19,7 +23,7 @@ export const natalPlacementPlanets = [
   "imum-coeli"
 ] as const;
 
-export const natalPlacementAngles = ["ascendant", "descendant", "midheaven", "imum-coeli"] as const;
+
 
 const natalPlacementPointLabels = {
   ascendant: "ASC",
@@ -39,20 +43,7 @@ const natalPlacementPointAliases: Array<{ pattern: RegExp; point: typeof natalPl
   { pattern: /\bic\b/, point: "imum-coeli" }
 ];
 
-export const natalPlacementSigns = [
-  "aries",
-  "taurus",
-  "gemini",
-  "cancer",
-  "leo",
-  "virgo",
-  "libra",
-  "scorpio",
-  "sagittarius",
-  "capricorn",
-  "aquarius",
-  "pisces"
-] as const;
+
 
 export const natalPlacementHouses = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"] as const;
 export const natalPlacementMotions = ["direct", "retrograde"] as const;
@@ -88,21 +79,6 @@ export type NatalPlacementSourceGroup = {
   sources: NatalPlacementSource[];
 };
 
-const oppositeSign: Record<NatalPlacementSign, NatalPlacementSign> = {
-  aries: "libra",
-  taurus: "scorpio",
-  gemini: "sagittarius",
-  cancer: "capricorn",
-  leo: "aquarius",
-  virgo: "pisces",
-  libra: "aries",
-  scorpio: "taurus",
-  sagittarius: "gemini",
-  capricorn: "cancer",
-  aquarius: "leo",
-  pisces: "virgo"
-};
-
 function titleCase(value: string) {
   return value
     .split("-")
@@ -117,12 +93,16 @@ export function ordinalHouse(house: NatalPlacementHouse) {
   return `${house}th`;
 }
 
-export function natalPlacementLabel(planet: NatalPlacementPlanet, sign: NatalPlacementSign, house: NatalPlacementHouse) {
-  return `${natalPlacementPointLabel(planet)} in ${titleCase(sign)} in the ${ordinalHouse(house)} house`;
+export function natalPlacementLabel(planet: NatalPlacementPlanet, sign: NatalPlacementSign, house: NatalPlacementHouse, motion: NatalPlacementMotion = "direct") {
+  return `${natalPlacementPointLabel(planet)}${motion === "retrograde" ? " retrograde" : ""} in ${titleCase(sign)} in the ${ordinalHouse(house)} house`;
 }
 
 export function natalPlacementSignLabel(planet: NatalPlacementPlanet, sign: NatalPlacementSign) {
   return `${natalPlacementPointLabel(planet)} in ${titleCase(sign)}`;
+}
+
+export function natalPlacementHouseLabel(planet: NatalPlacementPlanet, house: NatalPlacementHouse, motion: NatalPlacementMotion = "direct") {
+  return `${natalPlacementPointLabel(planet)}${motion === "retrograde" ? " retrograde" : ""} in the ${ordinalHouse(house)} house`;
 }
 
 export function natalPlacementExactKey(
@@ -135,84 +115,15 @@ export function natalPlacementExactKey(
   return motion === "retrograde" ? `${directKey}/retrograde` : directKey;
 }
 
-/**
- * Every Content Studio row the production natal resolver can consult for the
- * selected placement. This is intentionally broader than the visible authoring
- * cards: production can resolve through exact lived rows, composed templates,
- * or generic floors, and any LIVE serving override for one of those keys must
- * be present in the Studio preview too.
- *
- * Keep this list synchronized with renderNatalPlacement / renderNatalAngle in renderFallback.*.
- */
-export function natalPlacementResolverDependencyKeys(
-  planet: NatalPlacementPlanet,
-  sign: NatalPlacementSign,
-  house?: NatalPlacementHouse | "",
-  motion: NatalPlacementMotion = "direct"
-) {
-  if (isNatalPlacementAngle(planet)) {
-    return [
-      `fallback-hook/angle-intro/${planet}`,
-      `fallback-hook/angle-sign/${planet}/${sign}`,
-      "fallback-template/natal.angle-in-sign"
-    ];
-  }
-
-  const keys = new Set<string>([
-    `fallback-hook/natal-you-placement-sign-final/${planet}/${sign}`,
-    `fallback-hook/placement-sign-lived/${planet}/${sign}`,
-    `fallback-hook/sign-lived/${sign}`,
-    `fallback-hook/natal/planet-intro/${planet}`,
-    `fallback-hook/planet-best/${planet}`,
-    `fallback-hook/placement-sentence/${planet}/${sign}`,
-    `fallback-vocab/planet-topic/${planet}`,
-    `fallback-vocab/planet-excess/${planet}`,
-    `fallback-vocab/planet-productive/${planet}`,
-    `fallback-vocab/planet-core/${planet}`,
-    `fallback-vocab/sign-style/${sign}`,
-    `fallback-vocab/sign-need/${sign}`,
-    `fallback-vocab/planet-verb/${planet}`,
-    `fallback-vocab/sign-adverb/${sign}`,
-    `fallback-template/natal.planet-in-sign/${planet}`,
-    planet === "north-node" || planet === "south-node"
-      ? "fallback-template/natal.node-in-sign"
-      : "fallback-template/natal.planet-in-sign"
-  ]);
-
-  for (let index = 0; index < 8; index += 1) {
-    keys.add(`fallback-vocab/placement-gerund/${planet}/${sign}/${index}`);
-  }
-
-  if (planet === "north-node" || planet === "south-node") {
-    keys.add(`fallback-hook/node-journey/${planet}`);
-    keys.add(`fallback-vocab/node-direction/${oppositeSign[sign]}`);
-  }
-
-  if (motion === "retrograde") {
-    keys.add("fallback-template/natal.modifier.retrograde");
-  }
-
-  if (house) {
-    keys.add(natalPlacementExactKey(planet, sign, house, motion));
-    keys.add(`fallback-hook/natal-you-placement-house-final/${planet}/${house}`);
-    keys.add(`fallback-hook/placement-house-lived/${planet}/${house}`);
-    keys.add(`fallback-hook/house-lived/${house}`);
-    keys.add(`fallback-hook/house-meaning/${house}`);
-    keys.add(`fallback-hook/placement-house-sentence/${planet}/${house}`);
-    keys.add("fallback-template/natal.house-context");
-  }
-
-  return [...keys];
-}
-
 export function natalPlacementSourceGroups(
   planet: NatalPlacementPlanet,
-  sign: NatalPlacementSign,
+  sign: NatalPlacementSign | "",
   house?: NatalPlacementHouse | "",
   motion: NatalPlacementMotion = "direct"
 ): NatalPlacementSourceGroup[] {
   const planetLabel = natalPlacementPointLabel(planet);
   const signLabel = titleCase(sign);
+  if (!sign && (!house || isNatalPlacementAngle(planet))) return [];
   if (isNatalPlacementAngle(planet)) {
     return [
       {
@@ -227,7 +138,7 @@ export function natalPlacementSourceGroups(
       {
         key: "structure",
         label: "Sentence structure (advanced)",
-        description: "Preview the assembled reader copy before editing its structure. Colored sections link to the exact facts, phrases, and hooks used for this placement.",
+        description: "Preview the assembled copy; colored sections open its source writing.",
         sources: [
           { key: "fallback-template/natal.angle-in-sign", label: "Natal angle template", scope: "Controls the sentence order for every natal angle-in-sign write-up." }
         ]
@@ -237,9 +148,9 @@ export function natalPlacementSourceGroups(
   const signGroup: NatalPlacementSourceGroup = {
     key: "sign",
     label: `${planetLabel} in ${signLabel}`,
-    description: "Edit the complete sign passage or the shared variables below. A published complete passage takes priority over the shared sign assembly.",
+    description: "Edit the complete sign passage or its shared sources.",
     sources: [
-      { key: `fallback-hook/natal-you-placement-sign-final/${planet}/${sign}`, label: `Complete ${planetLabel} in ${signLabel} passage`, scope: `When published, this complete You-view passage replaces the shared sign assembly across every house.` },
+      { key: `fallback-hook/natal-you-placement-sign-final/${planet}/${sign}`, label: `Complete ${planetLabel} in ${signLabel} passage`, scope: `Replaces the You sign paragraph across every house.` },
       { key: `fallback-hook/natal/planet-intro/${planet}`, label: `${planetLabel} introduction`, scope: `Used by every natal ${planetLabel} placement.` },
       { key: `fallback-vocab/planet-verb/${planet}`, label: `${planetLabel} action phrase`, scope: `Used by every natal ${planetLabel} sign placement.` },
       { key: `fallback-vocab/sign-adverb/${sign}`, label: `${signLabel} style phrase`, scope: `Used by every natal placement in ${signLabel}.` },
@@ -257,50 +168,52 @@ export function natalPlacementSourceGroups(
   const structureGroup = (includeHouse: boolean): NatalPlacementSourceGroup => ({
     key: "structure",
     label: "Sentence structure (advanced)",
-    description: "Preview the assembled reader copy before editing its structure. Colored sections link to the exact facts, phrases, and hooks used for this placement.",
+    description: "Preview the assembled copy; colored sections open its source writing.",
     sources: [
-      signStructure,
+      ...(sign ? [signStructure] : []),
       ...(includeHouse ? [{ key: "fallback-template/natal.house-context", label: "Natal house template", scope: "Controls the sentence order for all natal placement house paragraphs." }] : [])
     ]
   });
 
-  const motionGroup: NatalPlacementSourceGroup | null = motion === "retrograde" ? {
+  const retrogradeKey = motion === "retrograde" ? natalRetrogradeModifierKey(planet, house) : null;
+  const motionGroup: NatalPlacementSourceGroup | null = motion === "retrograde" && !natalPlacementMotionIsFixed(planet) ? {
     key: "motion",
-    label: `${planetLabel} retrograde fallback`,
-    description: "This shared modifier is used only when the birth-chart calculation says the placement is retrograde and no approved retrograde-specific full write-up exists. Motion is a calculated fact, not an editorial setting.",
-    sources: [{
-      key: "fallback-template/natal.modifier.retrograde",
-      label: "Natal retrograde modifier",
-      scope: "Fallback wording appended to composed retrograde natal placements. An exact retrograde full-copy override is served verbatim and must include its own retrograde treatment."
-    }]
+    label: `${planetLabel} retrograde${house ? ` in the ${ordinalHouse(house)} house` : ""}`,
+    description: house
+      ? "Retrograde is a calculated fact; edit this planet and house."
+      : "Choose a house to edit its You and Friend retrograde additions.",
+    sources: retrogradeKey && house ? [{
+      key: retrogradeKey,
+      label: `${planetLabel} retrograde in the ${ordinalHouse(house)} house modifier`,
+      scope: `Used across every zodiac sign, after the sign and house paragraphs.`
+    }] : []
   } : null;
 
   if (!house) return [signGroup, ...(motionGroup ? [motionGroup] : []), structureGroup(false)];
 
   const houseLabel = ordinalHouse(house);
-  const exactKey = natalPlacementExactKey(planet, sign, house, motion);
+  const exactKey = sign ? natalPlacementExactKey(planet, sign, house, motion) : "";
   const motionLabel = motion === "retrograde" ? "retrograde " : "";
   return [
-    {
+    ...(sign ? [{
       key: "exact",
-      label: `${planetLabel} in ${signLabel} in the ${houseLabel} house`,
-      description: `Optional ${motionLabel}exact override. Direct and retrograde full write-ups are stored separately so changing motion cannot reuse the other motion's copy. If no approved ${motionLabel}full write-up exists, the app assembles the reader preview from the atomic sources shown here.`,
+      label: natalPlacementLabel(planet, sign, house, motion),
+      description: `Optional exact override. Direct/retrograde stored separately; replaces all assembled sections.`,
       sources: [
         {
           key: exactKey,
           label: `Complete ${motionLabel}${planetLabel} in ${signLabel} in the ${houseLabel} house write-up`,
-          scope: `Optional full-copy override used only for ${motionLabel}${planetLabel} in ${signLabel} in the ${houseLabel} house.`
+          scope: `Only for this planet, sign, house and motion.`
         }
       ]
-    },
-    signGroup,
+    } as NatalPlacementSourceGroup, signGroup] : []),
     ...(motionGroup ? [motionGroup] : []),
     {
       key: "house",
       label: `${planetLabel} in the ${houseLabel} house`,
       description: "These rows build the second paragraph about how this placement works in the selected house.",
       sources: [
-        { key: `fallback-hook/natal-you-placement-house-final/${planet}/${house}`, label: `Complete ${planetLabel} in the ${houseLabel} house passage`, scope: `When published, this You-view passage takes priority over the shared house assembly across every zodiac sign.` },
+        { key: `fallback-hook/natal-you-placement-house-final/${planet}/${house}`, label: `Complete ${planetLabel} in the ${houseLabel} house passage`, scope: `Replaces the You house paragraph across every sign.` },
         { key: `fallback-hook/house-meaning/${house}`, label: `${houseLabel} house meaning`, scope: `Used by every natal placement in the ${houseLabel} house.` },
         { key: `fallback-hook/placement-house-sentence/${planet}/${house}`, label: `${planetLabel} in the ${houseLabel} house passage`, scope: `Used for ${planetLabel} in the ${houseLabel} house, across every zodiac sign.` }
       ]

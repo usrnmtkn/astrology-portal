@@ -1,4 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
+import { ReportStateCard } from "./ReportStateCard";
+import { ReaderUnavailable } from "../ReaderUnavailable";
+import { PageLoadState } from "../PageLoading";
 import {
   generatedReportVanityPath,
   loadGeneratedReportById,
@@ -13,28 +16,35 @@ import { documentFromDelivery, ReportDeliveryView } from "./ReportDeliveryView";
 import { GeneratedReportArticle, GeneratedReportDeliveryView } from "./ReportLibraryView";
 
 function DeliveryState({ message }: { message: string }) {
-  return <main className="report-delivery-state" role="status"><p>{message}</p></main>;
+  const loading = message === "Loading report…" || message === "Opening report…";
+  return <ReportStateCard title={loading ? "Preparing your report" : message} loading={loading} action={loading ? undefined : {label:"Back to Reports",href:"/reports/"}}/>;
 }
 
 export function LegacyGeneratedReportRedirect({ reportId }: { reportId: string }) {
   const [failed, setFailed] = useState(false);
+  const [missing, setMissing] = useState(false);
+  const [pending, setPending] = useState(true);
+  const [attempt, setAttempt] = useState(0);
+  const [failure, setFailure] = useState<unknown>();
 
   useEffect(() => {
     let cancelled = false;
+    setPending(true);
     void loadGeneratedReportById(reportId).then((report) => {
       if (cancelled) return;
       if (!report) {
-        setFailed(true);
+        setMissing(true); setPending(false);
         return;
       }
       window.location.replace(generatedReportVanityPath(report));
-    }).catch(() => {
-      if (!cancelled) setFailed(true);
+    }).catch(error => {
+      if (!cancelled) { setFailure(error); setFailed(true); setPending(false); }
     });
     return () => { cancelled = true; };
-  }, [reportId]);
+  }, [reportId, attempt]);
 
-  return <DeliveryState message={failed ? "This report is unavailable." : "Opening report…"} />;
+  if (missing) return <ReaderUnavailable kind="report"/>;
+  return <PageLoadState scope="page" what="This report" cause={failure} failed={failed} pending={pending} onRetry={() => setAttempt(value => value + 1)}><DeliveryState message="Opening report…"/></PageLoadState>;
 }
 
 function SharedReportView({ payload }: { payload: SharedReportPayload }) {
@@ -48,17 +58,20 @@ export function ReportVanityDeliveryView({ slug }: { slug: string }) {
   const shareKey = useMemo(() => reportShareKeyFromHash(window.location.hash), []);
   const [item, setItem] = useState<ReportLibraryItem | null>(null);
   const [shared, setShared] = useState<SharedReportPayload | null>(null);
-  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+  const [status, setStatus] = useState<"loading" | "ready" | "error" | "missing">("loading");
+  const [attempt, setAttempt] = useState(0);
+  const [failure, setFailure] = useState<unknown>();
 
   useEffect(() => {
     let cancelled = false;
+    setStatus("loading");
     if (shareKey) {
       void loadSharedReport(shareKey).then((payload) => {
         if (cancelled) return;
         setShared(payload);
         setStatus("ready");
-      }).catch(() => {
-        if (!cancelled) setStatus("error");
+      }).catch(error => {
+        if (!cancelled) { setFailure(error); setStatus("error"); }
       });
       return () => { cancelled = true; };
     }
@@ -71,36 +84,38 @@ export function ReportVanityDeliveryView({ slug }: { slug: string }) {
       try {
         const resolved = await resolveReportLibraryItemByVanitySlug(slug);
         if (cancelled) return;
-        if (!resolved) { setStatus("error"); return; }
+        if (!resolved) { setStatus("missing"); return; }
         hasLoaded = true;
         setItem(resolved);
         setStatus("ready");
         if (resolved.status === "ready") {
           await markReportSeen(resolved).catch(() => undefined);
         } else if (resolved.status === "generating") {
-          timer = setTimeout(refresh, 3_000);
+          timer = setTimeout(refresh, 10_000);
         }
-      } catch {
+      } catch (error) {
         if (!cancelled) {
+          setFailure(error);
           if (!hasLoaded) setStatus("error");
-          timer = setTimeout(refresh, 3_000);
+          timer = setTimeout(refresh, 10_000);
         }
       }
     }
     void refresh();
     return () => { cancelled = true; clearTimeout(timer); };
-  }, [shareKey, slug]);
+  }, [shareKey, slug, attempt]);
 
-  if (status === "loading") return <DeliveryState message="Loading report…" />;
-  if (status === "error") return <DeliveryState message="This report is unavailable." />;
+  if (status === "loading" || status === "error") return <PageLoadState scope="page" what="This report" cause={failure} failed={status === "error"} pending={status === "loading"} onRetry={() => setAttempt(value => value + 1)}><DeliveryState message="Loading report…" /></PageLoadState>;
+  if (status === "missing") return <ReaderUnavailable kind="report"/>;
   if (shared) return <SharedReportView payload={shared} />;
   if (!item) return <DeliveryState message="This report is unavailable." />;
+  if (item.sourceKind === "premium_report") return <ReportDeliveryView reportId={item.sourceId}/>;
   if (item.status === "generating") {
-    return <DeliveryState message={`${item.progressLabel ?? "Preparing"}. This page updates automatically when your report is ready.`} />;
+    return <ReportStateCard title="Preparing your report" loading message={item.progressLabel ?? "Preparing"}/>;
   }
   if (item.status === "needs_attention") {
-    const retry = item.retryAllowed === false ? "" : " Return to the page where you started it to try again.";
-    return <DeliveryState message={`${item.statusMessage ?? "This report could not be prepared."}${retry}`} />;
+    return <ReportStateCard title={item.progressLabel ?? "Could not finish"} tone={item.progressLabel === "Needs review" ? "warning" : "error"}
+      message={item.statusMessage ?? "This report could not be prepared."} action={{label:"Back to Reports",href:"/reports/"}}/>;
   }
   if (item.sourceKind === "generated_interpretation") {
     return <GeneratedReportDeliveryView reportId={item.sourceId} />;

@@ -1,0 +1,280 @@
+import assert from 'node:assert/strict';
+import {store,installHoroscopeWriterFixture,writerFixture,weeklyBatchFixtureResult} from '../tests/helpers/sky-article-save-api.mts';
+import {emptyHoroscopeEdition,horoscopeEditionBody,horoscopeEditionKey} from '../apps/web/src/content/horoscopeEditions.mjs';
+import {runHoroscopeWriting} from '../api/admin/horoscope-writing';
+import {runWeeklyHoroscopeBatch} from '../api/_lib/horoscope-batch';
+import {horoscopeEditorRow} from '../api/_lib/horoscope-editor-payload';
+import {decodeWeeklyHistoryRow} from '../api/_lib/horoscope-history-storage';
+import {WEEKLY_PLAN_CHECKS,WEEKLY_REVIEW_CHECKS,validateWeeklyEditorialResult,weeklyEditorialContent,weeklyLexicalSignals,weeklyReviewCurrent} from '../src/astro-writing/weeklyBatchEditorial.mjs';
+import {readerRouteResponse} from '../tests/helpers/content-reader-route.mjs';
+import {installAlternativeHoroscopeProviders} from '../tests/helpers/horoscope-provider-fixture.mts';
+import {defaultHoroscopeProfile} from '../src/astro-writing/horoscopeWritingProfiles.mjs';
+import {HOROSCOPE_SIGNS} from '../apps/web/src/content/horoscopeEditions.mjs';
+import {WEEKLY_OWNER_DIRECTION,WEEKLY_DIRECTION_CHECKS,weeklyDirectionWriterInput,validateWeeklyDirection,weeklyOwnerDirection} from '../src/astro-writing/weeklyConcernDirection.mjs';
+import {horoscopeReviewSchema,horoscopeReviewInstructions,HOROSCOPE_REVIEW_SCHEMA,readHoroscopeReview} from '../src/astro-writing/horoscopeRhetoricalReview.mjs';
+installHoroscopeWriterFixture();
+const savedProfile=await store.invoke('POST',{profile:{...defaultHoroscopeProfile('weekly'),voiceGuidance:'Synthetic complete approved rules. Every sign needs its own concern.',sourceGuidance:'Complete synthetic example opening. A full synthetic example middle. Complete synthetic example final sentence.'},expectedUpdatedAt:null},'/api/admin/generated-content?writingProfiles=true');assert.equal(savedProfile.status,200);
+const latest=(id:string)=>decodeWeeklyHistoryRow(structuredClone(store.rows.get(id)));
+const action=(id:string,action:string,extra:any={})=>runHoroscopeWriting({id,action,expectedUpdatedAt:latest(id).updated_at,...extra},'synthetic-owner');
+const worker=(id:string,maxSteps=100)=>runWeeklyHoroscopeBatch(id,{maxSteps,wait:async()=>{}});
+const output=(value:any)=>({status:'completed',output:[{type:'message',content:[{type:'output_text',text:JSON.stringify(value)}]}]});
+let reviewInput:any;
+const review=(findings:any[]=[])=>({...weeklyBatchFixtureResult(reviewInput),checks:Object.fromEntries(WEEKLY_REVIEW_CHECKS.map(name=>[name,findings.some(f=>f.category===name)?'fail':'pass'])),findings:findings.map(f=>({...f,priorEvidence:[]}))});
+async function create(date:string,complete=false){
+ const facts=await store.invoke('GET',undefined,`/api/admin/generated-content?horoscopeBrief=true&period=weekly&date=${date}&timeZone=America%2FNew_York`);
+ assert.equal(facts.status,200);const {brief,signature}=facts.payload,edition=emptyHoroscopeEdition(brief.window);
+ if(complete)edition.passages.forEach((p:any)=>{p.headline=`Synthetic ${p.sign} reading`;p.body=`The ${p.sign} plan has its own subject. You should say what you want.`;});
+ const result=await store.invoke('POST',{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',status:'DRAFT',lane:'serving',headline:'Synthetic gate edition',body:horoscopeEditionBody(edition),sections:{horoscopeEdition:edition},facts:{horoscopeBrief:{brief,signature}},sourceSnapshot:{horoscopeOutlines:{}}});
+ assert.equal(result.status,200);return result.payload.rows[0].id;
+}
+async function prepare(id:string){const result=await action(id,'prepare');assert.equal(result.status,200,JSON.stringify(result.payload));return result.payload.plan.planHash;}
+const id=await create('2026-11-02'),hash=await prepare(id);
+assert.equal((await action(id,'start-batch',{approvedPlanHash:hash})).status,202);
+await worker(id,1);
+assert.equal(writerFixture.calls,0,'Planning precedes every draft');
+assert.equal(writerFixture.batchCalls,1);
+assert.equal(latest(id).source_snapshot.horoscopeGeneration.weeklyEditorial.pending.phase,'planning');
+assert.equal((await action(id,'plan-weekly',{approvedPlanHash:hash})).status,409,'Cannot double reserve shared work');
+assert.equal((await action(id,'generate',{sign:'aries',approvedPlanHash:hash})).status,409);
+await worker(id,2);assert(latest(id).source_snapshot.horoscopeGeneration.active);
+await action(id,'pause-batch');const resumeHash=await prepare(id);await action(id,'start-batch',{approvedPlanHash:resumeHash});
+assert.equal(latest(id).source_snapshot.horoscopeGeneration.batch.editorialVersion,'weekly-batch-editorial/v1','A fresh approval around a gated active sign retains the final comparison');
+await worker(id);
+let row=latest(id),gate=row.source_snapshot.horoscopeGeneration.weeklyEditorial;
+assert.equal(gate.plan.concerns.length,12);assert.equal(gate.plan.status,'passed');assert.equal(gate.review.status,'passed');
+assert.equal(writerFixture.calls,12);assert.equal(writerFixture.reviewCalls,12);assert.equal(writerFixture.batchCalls,2,'Exactly 26 requests for a complete batch');
+assert.equal(row.status,'DRAFT');assert.equal(gate.review.ownerApproved,false);
+const requests=[...writerFixture.batchRequests.values()];
+assert.equal(JSON.parse(requests[0].input).facts.length,12);
+reviewInput=JSON.parse(requests[1].input);
+assert.deepEqual(JSON.parse(requests[1].input).existingReadings,row.sections.horoscopeEdition.passages,'Judge sees every complete reading');
+assert.deepEqual(JSON.parse(requests[1].input).profile,row.source_snapshot.studioWritingProfile.profile,'Judge sees the entire saved profile');
+const writerConcerns=gate.plan.concerns.map(({priorQuote,priorEditionId,priorSign,...concern}:any)=>concern);
+for(const request of writerFixture.requests.values()){
+ assert(request.input.includes(`SHARED WEEKLY CONCERNS\n${JSON.stringify(writerConcerns)}`));
+ assert(request.input.includes(`CURRENT SIGN CONCERN\n${JSON.stringify(writerConcerns.find((c:any)=>c.sign===request.sign))}`));
+ const snapshot=row.source_snapshot.horoscopeGeneration.readings[request.sign].previousReadings;
+ assert.deepEqual(snapshot.readings.map((p:any)=>p.sign),HOROSCOPE_SIGNS.slice(0,HOROSCOPE_SIGNS.indexOf(request.sign)));
+ assert(request.input.includes(JSON.stringify({previousReadings:snapshot})),'The actual writer receives the saved exact snapshot');
+ assert.deepEqual(snapshot.readings.map(({sign,headline,body}:any)=>({sign,headline,body})),passagesBefore(request.sign));
+}
+function passagesBefore(sign:string){return row.sections.horoscopeEdition.passages.slice(0,HOROSCOPE_SIGNS.indexOf(sign));}
+const calls=writerFixture.calls+writerFixture.reviewCalls+writerFixture.batchCalls;
+await worker(id);await action(id,'poll-weekly');assert.equal(writerFixture.calls+writerFixture.reviewCalls+writerFixture.batchCalls,calls);
+// Semantic paraphrases and repeated endings are explicit judge findings. Transport
+// tests inject verdicts; they do not claim a synthetic response measures quality.
+const passages=row.sections.horoscopeEdition.passages;
+const evidence=passages.slice(0,3).map((p:any)=>({sign:p.sign,quote:p.body.split('\n')[0]}));
+const findings=[{category:'interpretations',reason:'Three readings offer the same interchangeable lesson despite different signs.',evidence},
+ {category:'phrases',reason:'The same explanatory sentence is repeated.',evidence:passages.slice(0,2).map((p:any)=>({sign:p.sign,quote:'Your saved fixture ends here.'}))},
+ {category:'endings',reason:'The endings give the same instruction.',evidence:passages.slice(0,2).map((p:any)=>({sign:p.sign,quote:'Your saved fixture ends here.'}))}];
+const before=structuredClone(row.sections);
+writerFixture.nextBatchResult=output(review(findings));
+writerFixture.batchPendingPolls=1;
+assert.equal((await action(id,'review-weekly',{approvedPlanHash:hash})).status,202);
+const sharedReviewCalls=writerFixture.batchCalls;
+assert.equal((await action(id,'poll-weekly')).status,202);
+assert.equal(writerFixture.batchCalls,sharedReviewCalls,'Retrieving an unfinished shared review never dispatches another request');
+assert.deepEqual(latest(id).sections,before);
+assert.equal((await action(id,'poll-weekly')).status,200);
+row=latest(id);assert.deepEqual(row.sections,before,'A failed review cannot rewrite prose');
+assert.equal(row.source_snapshot.horoscopeGeneration.weeklyEditorial.review.status,'failed');
+assert.equal(horoscopeEditorRow(row).source_snapshot.horoscopeGeneration.weeklyEditorial.review.matchesCurrent,true);
+assert.equal(horoscopeEditorRow(row).source_snapshot.horoscopeGeneration.weeklyEditorial.review.findings.length,3);
+const publication=await action(id,'validate-publication');assert.equal(publication.payload.publication.ready,true);assert.equal(publication.payload.publication.issues.length,0);assert(publication.payload.publication.advisories.some((i:any)=>i.category==='weekly_batch_editorial'));assert.equal(publication.payload.publication.canOverride,false);
+// Complete saved owner readings may publish despite these optional findings.
+// Keep this edition as a draft to exercise exact-text rechecks below.
+// Arbitrary evidence, incomplete checks and unsupported plan facts fail closed.
+const input=JSON.parse(requests[1].input);
+assert.throws(()=>validateWeeklyEditorialResult(review([{...findings[0],evidence:[{sign:'aries',quote:'Invented biography'}]}]),{phase:'batch-review',input}),/not supplied/);
+assert.throws(()=>validateWeeklyEditorialResult(review([{...findings[0],evidence:[evidence[0]]}]),{phase:'batch-review',input}),/two signs/);
+assert.throws(()=>validateWeeklyEditorialResult(review([{category:'endings',reason:'Synthetic wrong location',evidence}]),{phase:'batch-review',input}),/actual ending/);
+assert.throws(()=>validateWeeklyEditorialResult({checks:{interpretations:'pass'},findings:[]},{phase:'batch-review',input}),/Incomplete/);
+const planInput=JSON.parse(requests[0].input),badPlan={concerns:structuredClone(gate.plan.concerns),checks:Object.fromEntries(WEEKLY_PLAN_CHECKS.map(name=>[name,'pass'])),findings:[]};
+badPlan.concerns[0].eventIds=['fabricated'];assert.throws(()=>validateWeeklyEditorialResult(badPlan,{phase:'planning',input:planInput}),/unsupported facts/);
+badPlan.concerns=structuredClone(gate.plan.concerns);badPlan.concerns[1].coreConcern=badPlan.concerns[0].coreConcern;assert.throws(()=>validateWeeklyEditorialResult(badPlan,{phase:'planning',input:planInput}),/repeat/);
+const lexical=weeklyLexicalSignals(passages);assert(lexical.endings.length>0);assert.equal(validateWeeklyEditorialResult(review(),{phase:'batch-review',input}).status,'passed','Lexical leads cannot convict legitimate repeated astrology words');
+// Explicit recheck passes; any later exact text, rules, fact or plan change invalidates it.
+await action(id,'review-weekly',{approvedPlanHash:hash});await action(id,'poll-weekly');row=latest(id);assert(weeklyReviewCurrent(row));
+for(const mutate of [(r:any)=>r.sections.horoscopeEdition.passages[0].body+=' Changed.',(r:any)=>r.source_snapshot.studioWritingProfile.profile.voiceGuidance+=' New rule.',(r:any)=>r.facts.horoscopeBrief.signature+='x',(r:any)=>r.source_snapshot.horoscopeGeneration.weeklyEditorial.plan.requestHash+='x']){
+ const changed=structuredClone(row);mutate(changed);assert.notEqual(weeklyEditorialContent(changed),weeklyEditorialContent(row));assert.equal(weeklyReviewCurrent(changed),false);
+}
+const edited=structuredClone(row.sections);edited.horoscopeEdition.passages[0].body+=' An exact saved owner edit.';
+assert.equal((await store.invoke('PATCH',{id,expectedUpdatedAt:row.updated_at,status:'DRAFT',body:horoscopeEditionBody(edited.horoscopeEdition),sections:edited})).status,200);
+assert.equal((await action(id,'validate-publication')).payload.publication.ready,true);
+// A stale request cannot apply to a new save or silently dispatch a replacement.
+const staleStart=await action(id,'review-weekly',{approvedPlanHash:await prepare(id)});assert.equal(staleStart.status,202,JSON.stringify(staleStart.payload));row=latest(id);
+const pendingVersion=row.updated_at,newer=structuredClone(row.sections);newer.horoscopeEdition.passages[0].body+=' Newer edit.';
+const newerSave=await store.invoke('PATCH',{id,expectedUpdatedAt:row.updated_at,status:'DRAFT',sections:newer,body:horoscopeEditionBody(newer.horoscopeEdition)});assert.equal(newerSave.status,200,JSON.stringify(newerSave.payload));
+const stalePoll=await action(id,'poll-weekly');assert.equal(stalePoll.status,200,JSON.stringify(stalePoll.payload));assert.equal(latest(id).source_snapshot.horoscopeGeneration.weeklyEditorial.review.status,'stale');
+assert.equal((await runHoroscopeWriting({action:'review-weekly',id,expectedUpdatedAt:pendingVersion,approvedPlanHash:hash},'synthetic-owner')).status,409);
+// Malformed verdict preserves the drafts and cannot be treated as pass.
+writerFixture.nextBatchResult=output({checks:{},findings:[]});await action(id,'review-weekly',{approvedPlanHash:await prepare(id)});await action(id,'poll-weekly');assert.equal(latest(id).source_snapshot.horoscopeGeneration.weeklyEditorial.review.status,'unavailable');
+// Unknown send is durably held; progress is free; release is explicit and aged.
+const unknown=await create('2026-11-09'),unknownHash=await prepare(unknown);writerFixture.batchUnknownNext=true;
+const unknownStart=await action(unknown,'plan-weekly',{approvedPlanHash:unknownHash});assert(unknownStart.status>=500);
+const unknownCalls=writerFixture.batchCalls;assert(latest(unknown).source_snapshot.horoscopeGeneration.weeklyEditorial.pending);
+assert.equal((await action(unknown,'poll-weekly')).status,202);assert.equal((await action(unknown,'plan-weekly',{approvedPlanHash:unknownHash})).status,409);
+assert.equal((await action(unknown,'release-weekly',{acknowledgeUnknownOutcome:true})).status,409);
+row=latest(unknown);row.source_snapshot.horoscopeGeneration.weeklyEditorial.pending.startedAt=new Date(Date.now()-311000).toISOString();store.rows.set(unknown,row);
+assert.equal((await action(unknown,'release-weekly')).status,409);assert.equal((await action(unknown,'release-weekly',{acknowledgeUnknownOutcome:true})).status,200);assert.equal(writerFixture.batchCalls,unknownCalls);
+// A failed plan stops before any prose; incomplete sets cannot be reviewed.
+const rejected=await create('2026-11-16'),rejectedHash=await prepare(rejected),beforeDrafts=writerFixture.calls;
+await action(rejected,'start-batch',{approvedPlanHash:rejectedHash});await worker(rejected,1);writerFixture.nextBatchResult=output({concerns:[],checks:{},findings:[]});
+assert.equal((await worker(rejected)).state,'needs_attention');assert.equal(writerFixture.calls,beforeDrafts);
+assert.equal((await action(rejected,'review-weekly',{approvedPlanHash:rejectedHash})).status,409);
+// Manual complete legacy sets can opt into a one-call comparison without prose generation.
+const manual=await create('2026-11-23',true),manualHash=await prepare(manual);const manualText=structuredClone(latest(manual).sections);
+const raceVersion=latest(manual).updated_at,raceCalls=writerFixture.batchCalls;
+const race=await Promise.all([1,2].map(()=>runHoroscopeWriting({action:'review-weekly',id:manual,expectedUpdatedAt:raceVersion,approvedPlanHash:manualHash},'synthetic-owner')));assert.deepEqual(race.map(r=>r.status).sort(),[202,409]);assert.equal(writerFixture.batchCalls,raceCalls+1,'Concurrent approvals dispatch one shared request');
+await action(manual,'poll-weekly');assert.deepEqual(latest(manual).sections,manualText);assert.equal(writerFixture.calls,beforeDrafts);
+row=latest(manual);const published=await store.invoke('PATCH',{id:manual,expectedUpdatedAt:row.updated_at,ownerAction:'publish-owner-content'});assert.equal(published.status,200,JSON.stringify(published.payload));assert.equal(published.payload.rows[0].status,'LIVE');
+const reader=await readerRouteResponse('/api/content-reader',{method:'POST',body:JSON.stringify({ids:[manual]})});assert.equal((await reader.json()).rows[0].body,row.body,'A current passing check plus explicit owner approval reaches the reader intact');
+// Native Claude codecs must also retain the shared concerns and existing prose.
+const nativeTransport=installAlternativeHoroscopeProviders();
+const native=await create('2026-11-30',true);row=latest(native);row.sections.horoscopeEdition.passages[11]={...row.sections.horoscopeEdition.passages[11],headline:'',body:''};row.body=horoscopeEditionBody(row.sections.horoscopeEdition);store.rows.set(native,row);
+const nativeExisting=structuredClone(row.sections.horoscopeEdition.passages.slice(0,11));
+const nativePlan=await action(native,'prepare',{writerChoice:'claude'});assert.equal(nativePlan.status,200);
+await action(native,'plan-weekly',{approvedPlanHash:nativePlan.payload.plan.planHash});await action(native,'poll-weekly');
+const nativeEdits={coreConcern:'Exact native owner concern.',stakes:'Exact native owner stakes.',distinctiveObservation:'Exact native owner observation.'};
+const nativeSaved=await action(native,'save-weekly-concern',{sign:'pisces',concern:nativeEdits,approvedPlanHash:nativePlan.payload.plan.planHash});assert.equal(nativeSaved.status,200);
+await action(native,'start-batch',{approvedPlanHash:nativeSaved.payload.plan.planHash});assert.equal((await runWeeklyHoroscopeBatch(native,{maxSteps:100,wait:()=>new Promise(resolve=>setTimeout(resolve,5))})).state,'complete');
+assert.equal(nativeTransport.requests.length,1);assert.deepEqual(JSON.parse(nativeTransport.requests[0].request.messages[0].content.split('OWNER-EDITED WEEKLY CONCERNS\n')[1].split('\n')[0]),{pisces:nativeEdits});assert(nativeTransport.requests[0].request.messages[0].content.includes('SHARED WEEKLY CONCERNS\n'));assert(nativeTransport.requests[0].request.messages[0].content.includes('CURRENT SIGN CONCERN\n'));
+assert(nativeTransport.requests[0].request.messages[0].content.endsWith(weeklyDirectionWriterInput({version:WEEKLY_OWNER_DIRECTION,sign:'pisces',...nativeEdits})),'Native Claude receives the current sign directions after all other context');
+assert.equal(latest(native).source_snapshot.horoscopeGeneration.readings.pisces.rhetoricalReview.weeklyDirection.ending.outcome,'pass');
+assert(nativeTransport.requests[0].request.system.includes('An opening may need several connected sentences'),'The native Claude system retains the Weekly opening correction');
+assert(nativeTransport.requests[0].request.messages[0].content.includes('without requiring a psychological revelation'),'The native Claude plan retains the ordinary-language correction');
+assert(nativeTransport.requests[0].request.messages[0].content.includes(JSON.stringify({previousReadings:latest(native).source_snapshot.horoscopeGeneration.readings.pisces.previousReadings})));
+assert.deepEqual(latest(native).sections.horoscopeEdition.passages.slice(0,11),nativeExisting);
+// Existing in-flight batches keep their pinned request and paid-stage budget.
+const legacy=await create('2026-12-07'),legacyHash=await prepare(legacy),beforeShared=writerFixture.batchCalls;
+assert.equal((await action(legacy,'generate',{sign:'aries',approvedPlanHash:legacyHash})).status,202);
+assert.equal((await action(legacy,'start-batch',{approvedPlanHash:legacyHash})).status,202);
+assert.equal(latest(legacy).source_snapshot.horoscopeGeneration.batch.editorialVersion,undefined);
+assert.equal((await worker(legacy)).state,'complete');assert.equal(writerFixture.batchCalls,beforeShared,'Never add paid stages to a pinned legacy run');
+// A concurrent free retrieval may win the shared result checkpoint. The worker
+// reconciles that version change without pausing or repeating a paid request.
+const contended=await create('2026-12-14');
+const contendedHash=await prepare(contended),beforeOrderedWriters=writerFixture.requests.size;
+await action(contended,'start-batch',{approvedPlanHash:contendedHash});await worker(contended,1);
+const sharedId=latest(contended).source_snapshot.horoscopeGeneration.weeklyEditorial.pending.responseId;
+const beforeContention=writerFixture.batchCalls,normalFetch=globalThis.fetch;let raced=false;
+globalThis.fetch=async(url:any,options:any={})=>{
+ const response=await normalFetch(url,options);
+ if(!raced&&String(url).endsWith(`/responses/${sharedId}`)){
+  raced=true;assert.equal((await action(contended,'poll-weekly')).status,200);
+ }
+ return response;
+};
+try{assert.equal((await worker(contended,1)).state,'changed');}finally{globalThis.fetch=normalFetch;}
+assert(raced);assert.equal(latest(contended).source_snapshot.horoscopeGeneration.batch.status,'running');
+assert.equal(latest(contended).source_snapshot.horoscopeGeneration.weeklyEditorial.plan.status,'passed');assert.equal(writerFixture.batchCalls,beforeContention);
+assert.equal((await worker(contended)).state,'complete');
+assert.deepEqual([...writerFixture.requests.values()].slice(beforeOrderedWriters).map((request:any)=>request.sign),HOROSCOPE_SIGNS,'The batch drafts in zodiac order');
+// Owner edits are a versioned edition plan, never an additional provider call.
+const editable=await create('2027-01-04'),originalHash=await prepare(editable);
+const beforeEdits={calls:writerFixture.calls,batchCalls:writerFixture.batchCalls};
+assert.equal((await action(editable,'plan-weekly',{approvedPlanHash:originalHash})).status,202);
+assert.equal((await action(editable,'poll-weekly')).status,200);
+const originalRow=latest(editable),originalPlan=structuredClone(originalRow.source_snapshot.horoscopeGeneration.weeklyEditorial.plan);
+let editedHash=originalHash;
+const edits=Object.fromEntries(HOROSCOPE_SIGNS.map(sign=>[sign,{coreConcern:`Exact owner concern for ${sign}.`,stakes:`Exact owner stakes for ${sign}.`,distinctiveObservation:`Exact owner observation for ${sign}.`} ]));
+for(const sign of HOROSCOPE_SIGNS){
+ const result=await action(editable,'save-weekly-concern',{sign,concern:edits[sign],approvedPlanHash:editedHash});
+ assert.equal(result.status,200,JSON.stringify(result.payload));assert.notEqual(result.payload.plan.planHash,editedHash);editedHash=result.payload.plan.planHash;
+ assert.deepEqual(latest(editable).source_snapshot.horoscopeGeneration.weeklyEditorial.plan.concerns.find((c:any)=>c.sign===sign),{...originalPlan.concerns.find((c:any)=>c.sign===sign),...edits[sign]});
+}
+const editedRow=latest(editable);
+assert.deepEqual(editedRow.sections,originalRow.sections);assert.deepEqual(editedRow.facts,originalRow.facts);assert.deepEqual(editedRow.source_snapshot.studioWritingProfile,originalRow.source_snapshot.studioWritingProfile);
+assert.equal(editedRow.source_snapshot.horoscopeGeneration.weeklyEditorial.plan.status,'owner-edited');
+assert.equal((await prepare(editable)),editedHash,'Reloaded preparation retains the edited plan identity');
+assert.equal(writerFixture.calls,beforeEdits.calls);assert.equal(writerFixture.batchCalls,beforeEdits.batchCalls+1,'Saving twelve signs is free');
+assert.equal((await runHoroscopeWriting({action:'save-weekly-concern',id:editable,expectedUpdatedAt:originalRow.updated_at,sign:'aries',concern:edits.aries,approvedPlanHash:originalHash},'synthetic-owner')).status,409);
+assert.equal((await action(editable,'save-weekly-concern',{sign:'aries',concern:{...edits.aries,stakes:''},approvedPlanHash:editedHash})).status,400);
+assert.equal((await action(editable,'save-weekly-concern',{sign:'aries',concern:{...edits.aries,eventIds:['fabricated']},approvedPlanHash:editedHash})).status,400);
+assert.equal((await action(editable,'generate',{sign:'aries',approvedPlanHash:originalHash})).status,409,'Earlier plan approval cannot authorize an edited plan');
+// A fresh planner cannot overwrite the owner's saved choices.
+assert.equal((await action(editable,'plan-weekly',{approvedPlanHash:editedHash})).status,202);
+assert.equal((await action(editable,'save-weekly-concern',{sign:'aries',concern:edits.aries,approvedPlanHash:editedHash})).status,409);
+assert.equal((await action(editable,'poll-weekly')).status,200);
+assert.deepEqual(latest(editable).source_snapshot.horoscopeGeneration.weeklyEditorial.plan.ownerEdits,edits);
+for(const c of latest(editable).source_snapshot.horoscopeGeneration.weeklyEditorial.plan.concerns)for(const [key,value] of Object.entries(edits[c.sign]))assert.equal(c[key],value);
+// Changed saved instructions replan around the edits rather than dropping them.
+const currentProfile=editedRow.source_snapshot.studioWritingProfile;
+assert.equal((await store.invoke('POST',{profile:{...currentProfile.profile,voiceGuidance:currentProfile.profile.voiceGuidance+' An additional scoped instruction.'},expectedUpdatedAt:currentProfile.updatedAt},'/api/admin/generated-content?writingProfiles=true')).status,200);
+editedHash=await prepare(editable);
+const staleScope=latest(editable).source_snapshot.horoscopeGeneration.weeklyEditorial.plan.scopeHash;
+const beforeStaleSave=writerFixture.batchCalls;
+edits.taurus.stakes='Exact owner stakes saved after the profile changed.';
+const staleSaved=await action(editable,'save-weekly-concern',{sign:'taurus',concern:edits.taurus,approvedPlanHash:editedHash});
+assert.equal(staleSaved.status,200,JSON.stringify(staleSaved.payload));editedHash=staleSaved.payload.plan.planHash;
+assert.equal(latest(editable).source_snapshot.horoscopeGeneration.weeklyEditorial.plan.scopeHash,staleScope,'Saving directions does not certify an obsolete shared plan');
+assert.notEqual(staleScope,editedHash);assert.equal(writerFixture.batchCalls,beforeStaleSave,'Editing a stale plan makes no paid request');
+const savedExport=await action(editable,'export');assert.equal(savedExport.status,200);assert.equal(savedExport.payload.writingExport.providerCalls,0);
+const exportedEdits=savedExport.payload.writingExport.text.split('OWNER-EDITED WEEKLY CONCERNS\n').slice(1).map((text:string)=>JSON.parse(text.split('\n')[0]));
+assert.equal(exportedEdits.length,12);for(const fields of exportedEdits)assert.deepEqual(fields,edits);
+assert.equal(writerFixture.batchCalls,beforeStaleSave,'Reading exact writer inputs makes no paid request');
+assert.equal((await action(editable,'generate',{sign:'aries',approvedPlanHash:editedHash})).status,409,'Stale plan still requires fresh planning before single-sign drafting');
+const editedRequests=writerFixture.requests.size,editedReviews=writerFixture.reviewRequests.size;
+await action(editable,'start-batch',{approvedPlanHash:editedHash});
+assert.equal((await action(editable,'save-weekly-concern',{sign:'aries',concern:edits.aries,approvedPlanHash:editedHash})).status,409);
+assert.equal((await worker(editable)).state,'complete');
+for(const request of [...writerFixture.requests.values()].slice(editedRequests)){
+ assert.deepEqual(JSON.parse(request.input.split('OWNER-EDITED WEEKLY CONCERNS\n')[1].split('\n')[0]),edits);
+ assert.deepEqual(JSON.parse(request.input.split('CURRENT SIGN CONCERN\n')[1].split('\n')[0]),latest(editable).source_snapshot.horoscopeGeneration.weeklyEditorial.plan.concerns.map(({priorQuote,priorEditionId,priorSign,...c}:any)=>c).find((c:any)=>c.sign===request.sign));
+ assert(request.input.endsWith(weeklyDirectionWriterInput({version:WEEKLY_OWNER_DIRECTION,sign:request.sign,...edits[request.sign]})),'The final writer instruction binds this exact sign, including its ending');
+}
+for(const request of [...writerFixture.reviewRequests.values()].slice(editedReviews)){
+ const reviewEvidence=JSON.parse(request.input).evidence;
+ assert.deepEqual(reviewEvidence.weeklyOwnerDirection,{version:WEEKLY_OWNER_DIRECTION,sign:request.sign,...edits[request.sign]});
+ assert(request.text.format.schema.required.includes('weeklyDirection'));assert(request.instructions.includes('actual final paragraph'));
+}
+const editedReview=[...writerFixture.batchRequests.values()].at(-1);assert.deepEqual(JSON.parse(editedReview.input).ownerConcernEdits,edits);
+const currentEdited=latest(editable);assert(weeklyReviewCurrent(currentEdited));
+const finalEdit=await action(editable,'save-weekly-concern',{sign:'aries',concern:{...edits.aries,stakes:'A newer exact owner stake.'},approvedPlanHash:editedHash});
+assert.equal(finalEdit.status,200);assert.equal(weeklyReviewCurrent(latest(editable)),false);assert.deepEqual(latest(editable).sections,currentEdited.sections);
+// The existing prose check holds an off-direction ending; it never rewrites or retries.
+const directed=await create('2027-01-11',true);row=latest(directed);
+row.sections.horoscopeEdition.passages[0]={...row.sections.horoscopeEdition.passages[0],headline:'',body:''};row.body=horoscopeEditionBody(row.sections.horoscopeEdition);store.rows.set(directed,row);
+let directedHash=await prepare(directed);await action(directed,'plan-weekly',{approvedPlanHash:directedHash});await action(directed,'poll-weekly');
+directedHash=(await action(directed,'save-weekly-concern',{sign:'aries',concern:edits.aries,approvedPlanHash:directedHash})).payload.plan.planHash;
+const otherReadings=structuredClone(latest(directed).sections.horoscopeEdition.passages.slice(1)),beforeDirected={writer:writerFixture.calls,review:writerFixture.reviewCalls};
+assert.equal((await action(directed,'generate',{sign:'aries',approvedPlanHash:directedHash})).status,202);
+let injected=false;
+for(let steps=0;latest(directed).source_snapshot.horoscopeGeneration.active&&steps<100;steps++){
+ const active=latest(directed).source_snapshot.horoscopeGeneration.active;
+ if(active.phase==='review'&&!injected){
+  const paragraph=active.candidate.body.split(/\n\s*\n/u).at(-1);
+  const weeklyDirection=Object.fromEntries(WEEKLY_DIRECTION_CHECKS.map(key=>[key,{outcome:key==='ending'?'fail':'pass',quote:paragraph,paragraph,reason:key==='ending'?'The final paragraph substitutes a practical task for the saved observation.':'Synthetic transport-only assessment.'}]));
+  writerFixture.nextReviewResult=output({checks:['CORRECTIO','TRICOLON','PURPLE_PROSE'].map(label=>({label,outcome:'pass',reason:'Synthetic transport fixture.'})),findings:[],weeklyDirection});injected=true;
+ }
+ const result=await action(directed,active.state==='ready'?'continue':'poll');assert(result.status<400,JSON.stringify(result.payload));
+ await new Promise(resolve=>setTimeout(resolve,5));
+}
+const held=latest(directed).source_snapshot.horoscopeGeneration.candidateHolds.aries;
+assert(injected);assert.equal(held.code,'weekly_direction_drift');assert.equal(held.review.weeklyDirection.ending.outcome,'fail');
+assert.equal(held.operation.candidate.body,held.candidate.body);assert.equal(latest(directed).sections.horoscopeEdition.passages[0].body,'');
+assert.deepEqual(latest(directed).sections.horoscopeEdition.passages.slice(1),otherReadings);
+assert.equal(writerFixture.calls,beforeDirected.writer+1);assert.equal(writerFixture.reviewCalls,beforeDirected.review+1);
+assert.equal((await action(directed,'poll')).status,200);assert.equal(writerFixture.calls,beforeDirected.writer+1,'No automatic replacement after a failed direction check');
+assert.equal(horoscopeEditorRow(latest(directed)).source_snapshot.horoscopeGeneration.candidateHolds.aries.review.weeklyDirection.ending.outcome,'fail');
+// Exact evidence, complete assessments and actual ending location are required for passes too.
+const candidate={headline:'Synthetic',body:'A complete opening paragraph.\n\nA complete final paragraph.'};
+const assessments=Object.fromEntries(WEEKLY_DIRECTION_CHECKS.map(key=>[key,{outcome:'pass',quote:'complete final',paragraph:'A complete final paragraph.',reason:'Synthetic evidence.'}]));
+const evidenceForDirection={ownerExamples:[{text:'Complete synthetic source.'}],engineFacts:{window:{period:'weekly'},risingSign:'aries'},weeklyOwnerDirection:{version:WEEKLY_OWNER_DIRECTION,sign:'aries',...edits.aries}};
+assert.deepEqual(validateWeeklyDirection(assessments,candidate),assessments);
+for(const mutate of [(v:any)=>delete v.stakes,(v:any)=>v.ending.paragraph='A complete opening paragraph.',(v:any)=>v.concern.quote='Invented wording',(v:any)=>v.observation.outcome='unknown']){
+ const invalid=structuredClone(assessments);mutate(invalid);assert.throws(()=>validateWeeklyDirection(invalid,candidate),/invalid_weekly_direction_review/);
+}
+const rhetoric={checks:['CORRECTIO','TRICOLON','PURPLE_PROSE'].map(label=>({label,outcome:'pass',reason:'Synthetic transport fixture.'})),findings:[]};
+assert.equal(readHoroscopeReview(output({...rhetoric,weeklyDirection:assessments}),candidate,evidenceForDirection).directionBlocked,false);
+assert.throws(()=>readHoroscopeReview(output(rhetoric),candidate,evidenceForDirection),/invalid_weekly_direction_review/);
+assert.equal(horoscopeReviewSchema({...evidenceForDirection,engineFacts:{window:{period:'daily'}}}),HOROSCOPE_REVIEW_SCHEMA,'Other periods keep their exact original schema');
+assert.equal(horoscopeReviewSchema({...evidenceForDirection,weeklyOwnerDirection:undefined}),HOROSCOPE_REVIEW_SCHEMA,'Pinned requests without direction evidence keep the original check');
+assert(!horoscopeReviewInstructions({...evidenceForDirection,weeklyOwnerDirection:undefined}).includes('SAVED WEEKLY DIRECTION CHECK'));
+assert.equal(weeklyOwnerDirection({edition:{window:{period:'daily'}},weeklyConcernEdits:edits},'aries'),null);
+assert.equal(weeklyOwnerDirection({edition:{window:{period:'weekly'}},weeklyConcernEdits:{taurus:edits.taurus}},'aries'),null);
+console.log('PASS Weekly saved-direction continuity: exact per-sign final writer instruction and review evidence, native/OpenAI delivery, failed-ending hold with exact quotes, malformed-pass rejection, period/legacy isolation and no extra requests or rewrites.');
+console.log('PASS editable Weekly concerns: all twelve exact saves/reload, version conflicts, validation, approval and review invalidation, immutable drafts/facts, free saves, and actual writer/reviewer delivery.');
+console.log('PASS Weekly batch editorial gate: plan all twelve before prose, full profile/facts delivery, 26 bounded requests, exact quotes, failed/stale/malformed checks, manual edits, publication, free recovery and unknown-outcome release. Synthetic models only.');
+await store.close();

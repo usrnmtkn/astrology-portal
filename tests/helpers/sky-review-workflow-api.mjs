@@ -3,6 +3,7 @@ import { unlink, readFile } from 'node:fs/promises';
 import { Readable } from 'node:stream';
 import { pathToFileURL, fileURLToPath } from 'node:url';
 import { createApiStore } from './calendar-review-api.mjs';
+import { fixturePublications } from './content-reader-route.mjs';
 import assert from 'node:assert/strict';
 export const original = 'Fixture complete opening. Fixture complete final sentence.';
 export const baseline = { id: 'sky-fixture', content_key: 'sky.aspect.chiron.sextile.nodes.taurus.aquarius', status: 'DRAFT', lane: 'serving', review_state: 'sky-voice-needs-review', block_type: 'sky_aspect', body: original, summary: '', headline: 'Chiron sextile North Node', surface: 'sky', mode: 'feed', target_date: null, provider: 'owner-resource-review', source_snapshot: { sourceType: 'owner-resource-review' }, updated_at: '2026-09-10T12:00:00Z' };
@@ -88,7 +89,9 @@ if (process.argv.includes('--ipc')) {
     const { contentLiveStatuses } = await import('../../api/_lib/content-live-status.ts');
     process.on('message', async ({ id, method, body, url }) => {
         try {
-            const result = method === 'rows' ? [...store.rows.values()] : method === 'statuses' ? contentLiveStatuses([...store.rows.values()].filter(row => body.ids.includes(row.id)), [...store.rows.values()]) : url?.startsWith('/api/admin/sky-draft-writing') ? await store.write(body) : await store.invoke(method, body, url);
+            const result = method === 'publications'
+                ? [...new Map([...fixturePublications([...store.rows.values()]), ...await store.publication.publications()].map(row => [row.content_key, row])).values()]
+                : method === 'rows' ? [...store.rows.values()] : method === 'statuses' ? contentLiveStatuses([...store.rows.values()].filter(row => body.ids.includes(row.id)), [...store.rows.values()]) : url?.startsWith('/api/admin/sky-draft-writing') ? await store.write(body) : await store.invoke(method, body, url);
             process.send({ id, result });
         }
         catch (error) {

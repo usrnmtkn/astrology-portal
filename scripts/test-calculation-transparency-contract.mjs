@@ -5,6 +5,7 @@ import path from "node:path";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const app = await readFile(path.join(root, "apps/web/src/App.tsx"), "utf8");
+const diagnostics = await readFile(path.join(root, "apps/web/src/features/sky/CalculationDiagnosticsPanel.tsx"), "utf8");
 const settingsControls = await readFile(path.join(root, "apps/web/src/components/SettingsControls.tsx"), "utf8");
 const memberSettings = await readFile(path.join(root, "apps/web/src/features/settings/MemberSettingsView.tsx"), "utf8");
 const guestSettings = await readFile(path.join(root, "apps/web/src/features/settings/GuestSettingsView.tsx"), "utf8");
@@ -31,11 +32,14 @@ for (const label of [
   "Cache age",
   "Snapshot verification"
 ]) {
-  assert.match(app, new RegExp(`<dt>${label}</dt>`), `Missing calculation diagnostic: ${label}`);
+  assert.match(diagnostics, new RegExp(`<dt>${label}</dt>`), `Missing calculation diagnostic: ${label}`);
 }
 
 assert.match(app, /import\.meta\.env\.DEV[\s\S]*VITE_ASTRO_DIAGNOSTICS/);
-assert.match(app, /nodeType === "true" \? "True Node"/);
+assert.match(diagnostics, /nodeType === "true" \? "True Node"/);
+assert.match(diagnostics, /import\.meta\.env\.DEV[\s\S]*VITE_ASTRO_DIAGNOSTICS/);
+assert.match(app, /const CalculationDiagnosticsPanel = lazy\(\(\) => import\("\.\/features\/sky\/CalculationDiagnosticsPanel"\)\)/);
+assert.match(app, /<CalculationDiagnosticsPanel/);
 assert.doesNotMatch(app, /Horizons where supported/);
 
 console.log("Calculation transparency contract passed.");

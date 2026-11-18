@@ -3,6 +3,7 @@ import { Readable } from 'node:stream';
 import { PGlite } from '@electric-sql/pglite';
 import { readStudioInventoryPasses, studioInventoryPageSize } from '../apps/admin/src/studioInventoryPagination';
 import { studioInventoryPasses, studioInventoryQuery, studioInventoryRequestPath } from '../apps/admin/src/studioSectionInventory';
+import { matchesStoredInventory } from '../tests/helpers/calendar-review-api.mjs';
 
 process.env.NODE_ENV = 'test';
 process.env.CONTENT_GENERATION_SECRET = 'partition-fixture';
@@ -65,6 +66,15 @@ try {
     return response.payload;
   }, (_rows, complete) => { if (complete) completions++; });
   const expected = await db.query<{ id: string }>('select id from inventory order by id');
+  const fixtureRanges = [
+    '(id.lt.55555555-5555-5555-5555-555555555555)',
+    '(id.gte.55555555-5555-5555-5555-555555555555,id.lt.aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa)',
+    '(id.gte.aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa)'
+  ];
+  const fixtureIds = fixtureRanges.flatMap(and => expected.rows
+    .filter(row => matchesStoredInventory(row, new URLSearchParams({ and }))).map(row => row.id));
+  assert.deepEqual(fixtureIds.sort(), expected.rows.map(row => row.id),
+    'The isolated browser storage must implement exact UUID range boundaries, including gte, without dropping or duplicating rows.');
   assert.deepEqual(rows.map((row: any) => row.id).sort(), expected.rows.map(row => row.id));
   assert.equal(new Set(rows.map((row: any) => row.id)).size, 4805);
   assert(reads.every(count => count > 2), 'Each range must follow its cursor through timestamp ties');

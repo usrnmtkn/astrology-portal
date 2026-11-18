@@ -6,10 +6,6 @@
 
 const markdownDividerLinePattern = /^(?:-{3,}|\*{3,}|_{3,})$/;
 const debugTagPattern = /\[(?:FALLBACK|AUTHORED)\]/gi;
-const metadataOnlyPatterns = [
-  /^imported from approved project\b/i,
-  /\bsource file was not copied into the repository\b/i
-];
 const legacyCopyFingerprintPatterns = [
   { pattern: /\bactive here\b/i, reason: "legacy active-here fallback phrase" },
   { pattern: /\bactive now\b/i, reason: "legacy active-now fallback phrase" },
@@ -57,10 +53,6 @@ export function isReaderFacingCopy(value: string | null | undefined) {
   const normalized = sanitizeReaderFacingCopy(value).replace(/\s+/g, " ").trim();
 
   if (!normalized) {
-    return false;
-  }
-
-  if (metadataOnlyPatterns.some((pattern) => pattern.test(normalized))) {
     return false;
   }
 

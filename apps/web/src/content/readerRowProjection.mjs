@@ -2,10 +2,12 @@
 // This module only projects already-authorized rows; admission happens on the
 // server before projection. Never trim or reconstruct an approved passage here.
 import { resolveStudioVariableRecord } from './studioCustomVariables.mjs';
+import { projectHoroscopeContext } from './horoscopeContext.mjs';
 const strings = names => Object.fromEntries(names.split(/\s+/u).filter(Boolean).map(name => [name, 'string']));
 const numbers = names => Object.fromEntries(names.split(/\s+/u).filter(Boolean).map(name => [name, 'number']));
 const booleans = names => Object.fromEntries(names.split(/\s+/u).filter(Boolean).map(name => [name, 'boolean']));
-const approval = { ...strings('approvalLevel recordPath payloadSha256 approvedAt taskId semanticAuthoritySha256') };
+const approval = { ...strings('approvalLevel recordPath payloadSha256 approvedAt taskId semanticAuthoritySha256'),
+  action: value => value === 'content-studio-publish' ? value : undefined };
 const reference = strings('contentKey field sha256');
 const source = { ...strings('kind text'), reference };
 const ingressSourceNames = `aspectChallengeSentence aspectManifestationSentence1 aspectManifestationSentence2 aspectMechanismSentence aspectResponseSentence astronomySummary challengeSentence closingLine deeperMeaningSentence dignitySentence durationSentence experienceBody experienceCreative experienceGeneral experienceHome experienceMoney experienceRecognition experienceRelationships experienceTime experienceWork historicalCallback introClosingSentence introManifestationSentence manifestationSentence1 manifestationSentence2 manifestationSentence3 openingHook placementCollectiveShadow placementCollectiveTheme placementCorrection placementDignityExpression placementDignityMeaning placementDignityMechanism placementMeaningSentence placementOpportunity placementPractice placementPressure placementShadow placementThesis planetCollectiveExpression planetDescriptor planetFunction planetFunctionSentence planetLore planetProductive planetRole planetShadow planetSignMechanismSentence practiceClosingLine reflectionQuestion responseSentence returnMeaning signCoreDrive signDescriptor signFunctionSentence signGift signMethod signShadow signValues stakesSentence timingFinalPass timingFirstPass timingLongCycle timingReturn timingSinglePass`;
@@ -36,15 +38,19 @@ const packageRecord = {
     exact_text_sha256 body_you_sha256 body_they_sha256 body_you_review_status body_they_review_status
     body_you_authorship body_they_authorship body_you_sourceMechanism body_they_sourceMechanism
     sourceMechanism directionality_mode authoring_name_variable body_they_name_variable
-    placementArticle placementArticleDirect placementArticleRetrograde tldrWhat tldrTakeaway
+    placementArticle placementArticleDirect placementArticleRetrograde tldrWhat tldrTakeaway TLDR_What TLDR_Takeaway
     energy intention ritual focus strategy completion mainEvent weekStart weekEnd weeklyHeadline weeklyOverview
     title tagline preview_note core_theme sign_jurisdiction lived_experience rulership_twist history_echo closing_charge
     reader_content_type content_type`),
   ...numbers('word_count body_you_word_count body_they_word_count variant'),
-  ...booleans('owner_approved owner_authored reader_only serving_enabled studio_owner_wording'),
+  ...booleans('owner_approved owner_authored reader_only serving_enabled studio_owner_wording promotion_authorized'),
+  // Public runtime integrity only; original imports, private notes and omission text stay private.
+  protected_content: { body_sha256: value => typeof value === 'string' && /^[a-f0-9]{64}$/u.test(value) ? value : undefined,
+    ...numbers('char_count word_count') },
+  studio_lunation_revision: strings('schema contentKey approvedAt baselineBodySha256 previousBodySha256 bodySha256'),
   blocks: [lunarBlock], lunarJournal: { blocks: [lunarBlock] },
   approval, body_you_approval: approval, body_they_approval: approval,
-  content_boundary: booleans('mixedOwnerApproved'),
+  content_boundary: { ...booleans('mixedOwnerApproved ownerPublishedWording'), ownerPublication: strings('action payloadSha256 approvedAt recordPath') },
   article_sections: [section], rising_horoscopes: [{ ...strings('body risingSign contentKey'), ...numbers('house') }],
   source_keys: ['string'],
   requiredSlots: ['string'], optionalSlots: ['string'], mainShifts: ['string'],
@@ -82,14 +88,16 @@ const metadata = {
   ownerApproval: { ...booleans('approved'), ...strings('action contentKey templateKey templateHash fixedProseHash compiledHash activeStart activeEnd') }
 };
 const edition = {
-  ...strings('schema format body compiledHash compiledMarkdown contentKey fixedProseHash headline planet sign templateHash templateKey tldr transitEndInstant transitStartInstant validFrom validTo'),
+  ...strings('schema format scope body compiledHash compiledMarkdown contentKey fixedProseHash headline planet sign templateHash templateKey tldr transitEndInstant transitStartInstant validFrom validTo'),
   ...numbers('entryYear'), articleSections: [section],
   housePassages: [{ ...strings('body contentKey risingSign'), ...numbers('house') }],
+  writeupHoroscopes: [strings('sign body')],
   aspectPassages: [strings('aspect body contentKey natalPoint')]
 };
 const relationshipVariant = value => typeof value === 'string' ? value
   : project(value, strings('body summary copy experience advice astro'));
 const sections = {
+  articlePublication: strings('publishAt timeZone'),
   byRelationshipType: Object.fromEntries(['romantic', 'friendship', 'family', 'coworkers', 'creative', 'exes', 'complicated']
     .map(type => [type, relationshipVariant])),
   horoscopeEdition: { ...strings('schema'), window: strings('period audience timeZone startsAt endsAt seasonSign'), passages: [strings('sign headline body')] },
@@ -109,10 +117,11 @@ const sections = {
   articleHoroscopes: { ...strings('schema heading introduction'), passages: [{ ...strings('risingSign heading body'), ...numbers('house') }] }
 };
 const rowContract = {
-  ...strings('id content_key surface mode status lane review_state event_type target_date headline summary body block_type provider model updated_at judge_gate'),
+  ...strings('id content_key surface mode status lane review_state event_type target_date headline summary body block_type provider model updated_at published_at judge_gate'),
   ...numbers('judge_score'),
   source_snapshot: metadata,
-  facts: { ...metadata, ...strings('slug'), related: [strings('label content_key slug')] },
+  facts: { ...metadata, ...strings('slug'), related: [strings('label content_key slug')],
+    lunationHoroscopes: {event:strings('id startsAt sign phase title eclipseType timeZone')} },
   sections
 };
 
@@ -145,10 +154,20 @@ export function projectReaderRow(row, options = {}) {
   }
   const rawRecord = row.sections?.packageRecord;
   const publicRecord = result.sections?.packageRecord;
+  if (row.content_key.startsWith('fallback-hook/natal-aspect-lived/') && publicRecord && typeof rawRecord?.astroHint === 'string') {
+    publicRecord.astroHint = rawRecord.astroHint;
+  }
+  if (row.content_key.startsWith('natal.aspect.') && result.sections && typeof row.sections?.astroHint === 'string') {
+    result.sections.astroHint = row.sections.astroHint;
+  }
   if (publicRecord) {
     // A stored/client flag is never approval proof. Only the server verifies
     // the exact complete copy before requesting this derived transport field.
     delete publicRecord.studio_owner_wording;
+    if (options?.ownerApprovalVerified !== true && publicRecord.content_boundary) {
+      delete publicRecord.content_boundary.ownerPublishedWording;
+      delete publicRecord.content_boundary.ownerPublication;
+    }
     if (options?.ownerApprovalVerified === true && row.status === 'LIVE' && row.lane === 'serving'
       && !row.review_state && publicRecord.review_status === 'approved'
       && /^fallback-hook\/daily-(?:headline|body)\//u.test(row.content_key)) publicRecord.studio_owner_wording = true;
@@ -171,6 +190,10 @@ export function projectReaderRow(row, options = {}) {
   if (/^article\/(?:manual|guide)\/[^/]+$/u.test(row.content_key) && row.sections?.standaloneArticle?._studioVariables?.length) {
     const resolved = resolveStudioVariableRecord({ headline: result.headline, summary: result.summary, body: result.body, _studioVariables: row.sections.standaloneArticle._studioVariables });
     for (const field of ['headline', 'summary', 'body']) if (typeof resolved[field] === 'string') result[field] = resolved[field];
+  }
+  if (row.content_key.startsWith('horoscope/')) {
+    const context = projectHoroscopeContext(row);
+    if (context) result.facts = {...result.facts,horoscopeContext:context};
   }
   return result;
 }

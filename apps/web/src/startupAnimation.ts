@@ -6,7 +6,7 @@ import animationDataUrl from "./assets/startup-celestial.json?url";
 export function startStartupAnimation() {
   const startup = document.getElementById("app-startup");
   // The alternative moon is inline SVG/CSS and needs no Lottie download.
-  if (startup?.dataset.loader === "moon") return;
+  if (startup?.dataset.loader === "moon" || startup?.dataset.loader === "orbit") return;
   const artwork = startup?.querySelector<HTMLElement>(".startup-artwork");
   const container = artwork?.querySelector<HTMLElement>(".startup-artwork__animation");
   if (!startup || !artwork || !container) return;

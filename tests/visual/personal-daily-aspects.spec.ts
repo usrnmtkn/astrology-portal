@@ -1,4 +1,5 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Page } from "../helpers/polish-test";
+import { expectKeyDatesHeaderCentered } from '../helpers/key-dates-panel';
 import { getAstrodienstSky } from "../../apps/web/src/services/ephemeris";
 import { natalSkySnapshotCacheKey, VERIFIED_SKY_CACHE_SCHEMA } from "../../apps/web/src/services/verifiedSkyCache";
 import { bundledPublications } from "../helpers/bundled-publications";
@@ -13,11 +14,11 @@ function sectionPresentation(node: Element) {
 }
 
 async function verifySectionLabels(page: Page) {
-  expect(await page.locator(".section-label").filter({ hasText: /^(Areas of Your Life|Long-term transits|House transits)$/ }).allTextContents())
-    .toEqual(["Areas of Your Life", "Long-term transits", "House transits"]);
-  const longTerm = await page.getByText("Long-term transits", { exact: true }).evaluate(sectionPresentation);
-  expect(longTerm).toEqual(await page.getByText("House transits", { exact: true }).evaluate(sectionPresentation));
-  expect(longTerm.slice(0, 2)).toEqual(["SPAN", null]);
+  const labels=await page.locator('.you-transit-group:not(.lunation-transit) > .you-transit-group__header h2').allTextContents();
+  expect(labels).toEqual(labels.includes('Short-term transits') ? ['Short-term transits','Long-term transits','Planets moving through your houses'] : ['Long-term transits','Planets moving through your houses']);
+  const longTerm=await page.getByRole('heading',{name:'Long-term transits',exact:true}).evaluate(sectionPresentation);
+  expect(longTerm).toEqual(await page.getByRole('heading',{name:'Planets moving through your houses',exact:true}).evaluate(sectionPresentation));
+  expect(longTerm.slice(0,2)).toEqual(['H2',null]);
 }
 
 async function seed(page: Page, theme: string) {
@@ -51,24 +52,81 @@ for (const [width, theme] of [[1440, "light"], [1440, "dark"], [390, "light"], [
     const ongoing = page.getByLabel("Long-term transits", { exact: true });
     await expect(daily.locator(".updates-aspect-row")).toHaveCount(4, { timeout: 60_000 });
     await expect(daily.locator(".updates-aspect-row__meta-line")).toHaveText([
-      /Exact Oct 9, 2026/, /Exact Oct 9, 2026/, /Exact Oct 9, 2026/, /Exact Oct 9, 2026/
+      /^Exact \d+:\d{2} [AP]M EDT · (?:\d+° \d{2}′|<1′)$/, /^Exact \d+:\d{2} [AP]M EDT · (?:\d+° \d{2}′|<1′)$/, /^Exact \d+:\d{2} [AP]M EDT · (?:\d+° \d{2}′|<1′)$/, /^Exact \d+:\d{2} [AP]M EDT · (?:\d+° \d{2}′|<1′)$/
     ]);
+    await expect(daily).toHaveCSS('gap', '24px');
     await expect(daily.locator(".updates-aspect-row__orb").first()).toHaveText(/\d+° \d{2}′|<1′/);
-    await expect(ongoing.locator("button.updates-aspect-row").first()).toBeVisible({ timeout: 60_000 });
-    await expect(ongoing).toContainText("Current contact:");
+    const composed = daily.locator('.personal-transit-card[data-aspect-name="Lilith in Capricorn conjunct your natal Neptune"]');
+    await expect(composed.getByRole('heading', {level: 3, includeHidden: true})).toHaveText('Lilith in Capricorn conjunct your natal Neptune');
+    await expect(composed.locator('.personal-transit-card__aspect-name')).toHaveCount(0);
+    await expect(ongoing.locator(".updates-aspect-row:is(a,button)").first()).toBeVisible({ timeout: 60_000 });
+    await expect(ongoing).not.toContainText("Current contact:");
+    await expect(ongoing.locator(".updates-aspect-row__meta-line").first()).toContainText(/ – .* · /);
     const titlePattern = /^.+ in (?:Aries|Taurus|Gemini|Cancer|Leo|Virgo|Libra|Scorpio|Sagittarius|Capricorn|Aquarius|Pisces) (?:conjunct|opposite|square|trine|sextile) your natal .+$/;
-    for (const title of await daily.locator(".updates-aspect-row__title").allTextContents()) expect(title).toMatch(titlePattern);
-    for (const title of await ongoing.locator(".updates-aspect-row__title").allTextContents()) expect(title).toMatch(titlePattern);
-    const row = daily.locator("button.updates-aspect-row").filter({ hasText: "Moon in Libra square your natal Jupiter" });
-    await expect(row).toBeVisible({ timeout: 60_000 });
+    for (const row of await daily.locator(".personal-transit-card").all()) expect(await row.getAttribute("data-aspect-name")).toMatch(titlePattern);
+    for (const row of await ongoing.locator(".personal-transit-card").all()) expect(await row.getAttribute("data-aspect-name")).toMatch(titlePattern);
+    await expect(page.locator('.you-transit-group:not(.lunation-transit) > .you-transit-group__header h2').first()).toHaveCSS('font-size', '28px');
+    for (const card of await page.locator('.personal-transit-card').all()) {
+      const aspectName = (await card.getAttribute('data-aspect-name'))!;
+      const heading = card.getByRole('heading', {level: 3, includeHidden: true});
+      await expect(heading).toHaveCount(1);
+      await expect(heading).toHaveCSS('font-family', /Newsreader/);
+      await expect(heading).toHaveCSS('font-size', '30px');
+      await expect(heading).toHaveCSS('line-height', '34.5px');
+      await expect(heading).toHaveCSS('font-weight', '400');
+      await expect(heading).toHaveCSS('text-wrap', 'balance');
+      await expect(card).toHaveCSS('border-radius', '36px');
+      await expect(card).toHaveCSS('padding', '36px 32px');
+      await expect(card).toHaveCSS('gap', '12px');
+      await expect(card.locator('.updates-aspect-row__headline, .updates-aspect-row__identity')).toHaveCount(0);
+      await expect(card.locator('.personal-transit-card__aspect-name')).toHaveCount(await heading.textContent() === aspectName ? 0 : 1);
+      if (await heading.textContent() !== aspectName) await expect(card.locator('.personal-transit-card__aspect-name')).toHaveText(aspectName);
+      const timeline = card.locator('.updates-aspect-row__meta-line');
+      await expect(timeline).toHaveCSS('font-size', '16px');
+      await expect(timeline.locator(':scope > :last-child')).toHaveClass('updates-aspect-row__orb');
+      await expect(card.locator('.personal-transit-icon')).toHaveCSS('width', '88px');
+      await expect(card.locator('.personal-transit-icon > svg')).toHaveCSS('width', '34px');
+      await expect(card.locator('.personal-transit-icon > svg')).toHaveAttribute('stroke-width', '1.6');
+      await expect(card.locator('.personal-transit-icon__planet')).toHaveCSS('width', '30px');
+      await expect(card.locator('.personal-transit-icon__planet > span')).toHaveCSS('color', 'rgb(255, 255, 255)');
+      if (await card.locator('.transit-card-preview').count()) {
+        await expect(card.locator('.transit-card-preview')).toHaveCSS('-webkit-line-clamp', '3');
+        await expect(card.locator('.transit-card-preview')).toHaveCSS('font-size', '19px');
+        await expect(card.locator('.transit-card-preview')).toHaveCSS('line-height', '28.5px');
+      }
+      if (await card.getAttribute('href')) {
+        await expect(card.locator('a, button')).toHaveCount(0);
+        await expect(card.locator('.card-read-more')).toHaveCSS('width', '56px');
+        await expect(card.locator('.card-read-more')).toHaveCSS('background-color', 'rgb(238, 241, 245)');
+        await expect(card.locator('.card-read-more')).toHaveCSS('color', 'rgb(28, 31, 38)');
+      }
+    }
+    const row = daily.locator(".updates-aspect-row:is(a,button)").filter({ hasText: "Moon in Libra square your natal Jupiter" });
+    await expect(row).toBeAttached({ timeout: 60_000 });
+    const expand=page.getByRole('region',{name:'Short-term transits',exact:true}).getByRole('button',{name:/See all/});
+    if(await expand.count())await expand.click();
     await row.scrollIntoViewIfNeeded();
     await page.screenshot({ path: `test-results/daily-peaks-${width}-${theme}.png`, fullPage: false });
+    const titleColor = await row.locator('.updates-aspect-row__title').evaluate(node => getComputedStyle(node).color);
+    await row.hover();
+    await expect(row.locator('.updates-aspect-row__title')).toHaveCSS('color', titleColor);
+    const readingHref = (await row.getAttribute("href"))!;
     const description = await row.locator(".transit-card-preview").innerText();
     await row.click();
     const article = page.locator(".you-transit-article");
     await expect(article.getByRole("heading", { level: 1 })).toHaveText("Moon in Libra square your natal Jupiter");
-    await expect(article.locator(".article-eyebrow")).toHaveAttribute("aria-label", "Aspect: Moon square Jupiter");
-    await expect(article.locator(".article-eyebrow__glyphs")).toHaveText("☽□♃");
+    await expect(article.locator(".personal-transit-icon")).toHaveAttribute("data-aspect", "square");
+    await expect(article.locator(".personal-transit-icon__planet")).toHaveText("☽");
+    const keyDates = article.locator('.key-dates-panel');
+    await expect(keyDates).toHaveAttribute('open','');
+    await expectKeyDatesHeaderCentered(keyDates);
+    await keyDates.locator('summary').focus();await page.keyboard.press('Space');
+    await expect(keyDates).not.toHaveAttribute('open','');
+    await page.keyboard.press('Enter');
+    await expect(keyDates).toHaveAttribute('open','');
+    await expectKeyDatesHeaderCentered(keyDates);
+    await expect(keyDates.locator('.article-key-dates__label')).toContainText(['Current contact','Exact · Pass 1','Full transit series']);
+    await expect(keyDates.locator('.key-dates-panel__count')).toHaveText('3');
     await expect(article).toContainText("Current contact");
     await expect(article).toContainText("Full transit series");
     await expect(article).toContainText("Pass 1");
@@ -79,12 +137,20 @@ for (const [width, theme] of [[1440, "light"], [1440, "dark"], [390, "light"], [
     await page.reload();
     await expect(daily.locator(".updates-aspect-row")).toHaveCount(4, { timeout: 60_000 });
     await page.goto("/?date=2026-10-10#you");
-    await expect(daily.locator(".updates-aspect-row__meta-line").first()).toContainText("Oct 10, 2026", { timeout: 60_000 });
+    await expect(daily.locator(".updates-aspect-row__meta-line").first()).toContainText(/^Exact \d+:\d{2} [AP]M EDT · /, { timeout: 60_000 });
     await expect(daily.locator(".updates-aspect-row__meta-line")).not.toContainText(["Exact Oct 9, 2026"]);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     expect(errors).toEqual([]);
     // The new label uses the same established section role as House transits.
     await verifySectionLabels(page);
+    await page.goto(readingHref);
+    await expect(page.locator('.you-transit-article h1')).toHaveText('Moon in Libra square your natal Jupiter', {timeout: 60_000});
+    await page.reload();
+    await expect(page.locator('.you-transit-article h1')).toHaveText('Moon in Libra square your natal Jupiter', {timeout: 60_000});
+    await page.getByRole('button', {name: 'Back to updates', exact: true}).click();
+    await expect(daily.locator('.personal-transit-card')).toHaveCount(4);
+    await page.reload();
+    await expect(daily.locator('.personal-transit-card')).toHaveCount(4, {timeout: 60_000});
   });
 }
 

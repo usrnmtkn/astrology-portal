@@ -1,3 +1,5 @@
+import { GenerationProviderError } from "./generation-provider-error.js";
+import {writingExport} from '../../src/astro-writing/writingExport.mjs';
 import {approvedVoiceStyleReference,approvedVoiceStylePrompt} from '../../src/astro-writing/approvedVoiceStyle.mjs';
 import { advisoryModelViolation, effectiveRulePrompt, governValidationResult } from "../../src/astro-writing/effectiveRuleGovernance.mjs";
 import {buildHellenisticMeaningSupport,hellenisticMeaningPrompt} from '../../src/astro-writing/hellenisticMeaningSupport.mjs';
@@ -18,6 +20,7 @@ import { generatedReportWritingContract } from "./transit-reading-writing-contra
 import { REVIEW_FIELDS } from "../../src/astro-writing/canonicalInstructions.mjs";
 import { GHOSTWRITING_SKILL_INSTRUCTIONS, withGhostwritingSkill } from "../../src/astro-writing/ghostwritingSkill.mjs";
 import { SYNASTRY_EDITORIAL_VERSION, synastryInstructionsForRole } from "../../src/astro-writing/synastryEditorialAuthority.cjs";
+import { SKY_ASPECT_EDITORIAL_VERSION, SKY_ASPECT_STANDARD_SHA256, isCollectiveSkyAspectInput } from "../../src/astro-writing/skyAspectEditorialAuthority.cjs";
 import { prepareSynastrySourceInput, synastryContactOwnership, validateSynastryMeaningPlan, synastrySourceReceipt, synastryMeaningPlanSchema, designatedSynastryVoiceReferences } from "../../src/astro-writing/synastrySourceContext.cjs";
 import { withApprovedSynastryVoice, synastryVoicePromptReferences } from "./synastry-approved-voice.cjs";
 import { withSynastryKnowledgeSources } from "./synastry-knowledge-sources.cjs";
@@ -27,7 +30,7 @@ import { COLD_REVIEW_SCHEMA, REVIEW_SCHEMA } from "../../src/astro-writing/revie
 import { MEANING_PLAN_SCHEMA } from "../../src/astro-writing/resolveAstrology.mjs";
 import { generatedApprovalState, markPipelineReady } from "../../src/astro-writing/approvalGovernance.mjs";
 import { writeGenerationMetadata } from "../../src/astro-writing/generationMetadata.mjs";
-import { callOpenAIResponses, governedInstructionsForRole } from "../../src/astro-writing/openAIResponses.cjs";
+import { callOpenAIResponses, governedInstructionsForRole, inferredPromptContext } from "../../src/astro-writing/openAIResponses.cjs";
 import {
   buildProductionEvidenceShadow,
   recordLegacyPromptShadow
@@ -2630,7 +2633,8 @@ function isSynastryAspectInput(input: GenerateContentInput) {
     );
 }
 
-function synastryInstructionContext(input: GenerateContentInput) {
+function editorialInstructionContext(input: GenerateContentInput) {
+  if (isCollectiveSkyAspectInput(input)) return { surface: 'sky', family: 'sky-aspect' };
   return isSynastryAspectInput(input) ? { surface: "synastry", family: "synastry-aspect" } : {};
 }
 
@@ -4679,6 +4683,26 @@ function buildSynastryPrompt(input: GenerateContentInput, approvedExamples: Appr
   ].filter(Boolean).join("\n\n");
 }
 
+function buildSkyAspectPrompt(input: GenerateContentInput, approvedExamples: ApprovedExample[], qualityFeedback: string) {
+  const styleGuide = readTextFile('packages/astro-knowledge/voice/tldr-astro/style-guide.md');
+  return [
+    synastrySharedStyleGuide(styleGuide).replace('# TLDR Astro shared rules for synastry', '# TLDR Astro shared rules for Sky/Calendar aspects'),
+    'SURFACE\nsky', 'CONTENT FAMILY\nsky-aspect',
+    `EDITORIAL STANDARD ${SKY_ASPECT_EDITORIAL_VERSION}; complete owner standard is supplied in the system instructions.`,
+    'Write one shared collective Sky/Calendar aspect interpretation. Preserve the supplied aspect and each planet or point. Use only supplied signs, timing and calculation method; leave missing facts unknown. This is not natal or personalized transit writing.',
+    `OUTPUT FIELD CONTRACT\n${factualHeadlineFor(input) ? `Use exact headline ${JSON.stringify(factualHeadlineFor(input))}.` : 'Use a factual aspect headline.'} Return all existing JSON schema fields. summary and tldr preview the meaning without depending on later paragraphs. body contains the full interpretation, usually about 100–150 words when appropriate, without a fixed paragraph or sentence formula. action may be empty; no advice is required. timing and timingNote may be empty when calculated timing is absent. sections may be empty. sceneLock records the possible experience, not a required scene or an asserted event. astrologyDrilldown explains only supplied facts, including both planets; do not invent factors to fill a field.`,
+    'ASTROLOGY FACTS', JSON.stringify(input.facts, null, 2),
+    'TARGET DATE', input.targetDate ?? 'not supplied',
+    'SOURCE SNAPSHOT', JSON.stringify(input.sourceSnapshot ?? {}, null, 2),
+    'ASTROLOGY SOURCE MATERIAL — meaning evidence; its advice or structure is not a required ending', sourceBackedRevisionPrompt(input), v4ExamplesPrompt(input),
+    hellenisticMeaningPrompt({facts:input.facts,surface:input.surface,family:'sky-aspect'}),
+    approvedVoiceStylePrompt({surface:input.surface,family:'sky-aspect'}),
+    'COMPLETE APPROVED OWNER EXAMPLES — voice evidence only; retain their complete text without transferring their facts, scenes or structure', approvedExamplesPrompt(approvedExamples),
+    'EXTRA VOICE NOTES', input.voiceNotes ?? 'None.',
+    qualityFeedback ? `QUALITY FEEDBACK FROM PRIOR DRAFT\n${qualityFeedback}` : ''
+  ].filter(Boolean).join('\n\n');
+}
+
 function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExample[] = [], qualityFeedback = "") {
   if (isFriendTransitReadingInput(input)) {
     const brief = friendTransitReadingBriefFromFacts(input.facts);
@@ -4699,6 +4723,7 @@ function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExam
   }
 
   if (isSynastryAspectInput(input)) return buildSynastryPrompt(input, approvedExamples, qualityFeedback);
+  if (isCollectiveSkyAspectInput(input)) return buildSkyAspectPrompt(input, approvedExamples, qualityFeedback);
 
   const styleGuide = readTextFile("packages/astro-knowledge/voice/tldr-astro/style-guide.md");
   const lockedHeadline = factualHeadlineFor(input);
@@ -5402,7 +5427,7 @@ async function reviewColdRenderedContentWithOpenAI({
     output?: Array<{ content?: Array<{ text?: string }> }>;
     error?: { message?: string };
   };
-  if (!response.ok) throw new Error(typedPayload.error?.message ?? `OpenAI cold review failed with ${response.status}.`);
+  if (!response.ok) throw new GenerationProviderError("openai", response.status, typedPayload.error);
   const output = responseOutputText(typedPayload);
   if (!output) throw new Error("OpenAI cold review did not include a verdict.");
   const review = JSON.parse(output) as ColdRenderedProseReview;
@@ -5435,7 +5460,7 @@ async function reviewGeneratedContentWithOpenAI({
   const { response, payload } = await callOpenAIResponses({
     apiKey,
     role: "REVIEWER",
-    ...synastryInstructionContext(input),
+    ...editorialInstructionContext(input),
     taskInstructions: rhetoricalReviewContract(deterministicReaderCopy(draft)),
     request: {
       model,
@@ -5470,7 +5495,7 @@ async function reviewGeneratedContentWithOpenAI({
     output?: Array<{ content?: Array<{ text?: string }> }>;
     error?: { message?: string };
   };
-  if (!response.ok) throw new Error(typedPayload.error?.message ?? `OpenAI review failed with ${response.status}.`);
+  if (!response.ok) throw new GenerationProviderError("openai", response.status, typedPayload.error);
   const output = responseOutputText(typedPayload);
   if (!output) throw new Error("OpenAI review did not include a verdict.");
   const contextualReview = JSON.parse(output) as CanonicalReview;
@@ -5486,7 +5511,9 @@ async function reviewGeneratedContentWithOpenAI({
   const contextualViolations = contextualReview.violations.filter((item) => item.category !== "cold_rendered_prose").map((item): CanonicalReviewViolation => advisoryModelViolation(item));
   const rhetoricalViolations = rhetoric.findings.map(f => ({category:f.label,severity:RHETORICAL_LABELS.some(label=>label===f.label)?'blocking' as const:'nonblocking' as const,location:f.field,text:f.quote,
     reason:`${f.reason} ${f.readerConsequence} ${f.meaningTest}`,paragraph:f.paragraph,
-    revision_instruction:'Regenerate the affected prose from supported meaning, preserving owner sources and factual boundaries.'}));
+    revision_instruction:f.label==='APHORISM'
+      ?'Review this maxim in context. Retain it sparingly when it earns its place, or remove an unnecessary moral; no automatic rewrite is required.'
+      :'Regenerate the affected prose from supported meaning, preserving owner sources and factual boundaries.'}));
   if(rhetoricResult === 'evaluation_unavailable') throw new ContentGenerationQualityError('Rhetorical evaluation is indeterminate; no prose admission.');
   return {
     ...contextualReview,
@@ -5511,7 +5538,7 @@ async function planGeneratedContentWithOpenAI({
   const { response, payload } = await callOpenAIResponses({
     apiKey,
     role: "MEANING_PLANNER",
-    ...synastryInstructionContext(input),
+    ...editorialInstructionContext(input),
     taskInstructions: "Astrology first. Return only the governed structured meaning plan. Do not draft prose.",
     request: {
       model,
@@ -5547,7 +5574,7 @@ async function planGeneratedContentWithOpenAI({
     output?: Array<{ content?: Array<{ text?: string }> }>;
     error?: { message?: string };
   };
-  if (!response.ok) throw new Error(typedPayload.error?.message ?? `OpenAI meaning plan failed with ${response.status}.`);
+  if (!response.ok) throw new GenerationProviderError("openai", response.status, typedPayload.error);
   const output = responseOutputText(typedPayload);
   if (!output) throw new Error("OpenAI meaning planner returned no structured output.");
   const meaningPlan = JSON.parse(output) as Record<string, unknown>;
@@ -5585,7 +5612,7 @@ async function reviseGeneratedContentWithOpenAI({
   const { response, payload } = await callOpenAIResponses({
     apiKey,
     role: "REVISER",
-    ...synastryInstructionContext(input),
+    ...editorialInstructionContext(input),
     request: {
       model,
       ...(reasoningEffort ? { reasoning: { effort: reasoningEffort } } : {}),
@@ -5621,7 +5648,7 @@ async function reviseGeneratedContentWithOpenAI({
     output?: Array<{ content?: Array<{ text?: string }> }>;
     error?: { message?: string };
   };
-  if (!response.ok) throw new Error(typedPayload.error?.message ?? `OpenAI revision failed with ${response.status}.`);
+  if (!response.ok) throw new GenerationProviderError("openai", response.status, typedPayload.error);
   const output = responseOutputText(typedPayload);
   if (!output) throw new Error("OpenAI revision did not include a patch.");
   const patch = JSON.parse(output) as Record<string, string>;
@@ -5635,6 +5662,7 @@ async function reviseGeneratedContentWithOpenAI({
     generation_metadata: writeGenerationMetadata({ role: "REVISER", model, reasoningEffort,
       ...((writingFeedback?.receipt.selected.length || isSynastryAspectInput(input)) ? { evidencePacket: {
         ...(writingFeedback && (isSynastryAspectInput(input) || writingFeedback.receipt.selected.length) ? { writingFeedback: writingFeedback.receipt } : {}),
+        ...(isCollectiveSkyAspectInput(input) ? { skyAspectWritingStandard: { version: SKY_ASPECT_EDITORIAL_VERSION, sourceSha256: SKY_ASPECT_STANDARD_SHA256 } } : {}),
         ...(isSynastryAspectInput(input) ? { synastrySourceContext: { editorialVersion: SYNASTRY_EDITORIAL_VERSION, ...synastrySourceReceipt(input) } } : {})
       } } : {}) })
   };
@@ -5661,7 +5689,7 @@ export async function writeSynastryBodyWithOpenAI(input: GenerateContentInput, r
   const gate = prepareProductionPreCallGate(projected);
   assertProductionRoleGate(gate, "WRITER", projected);
   return callOpenAIResponses({ apiKey: requireEnv("OPENAI_API_KEY"), role: "WRITER",
-    ...synastryInstructionContext(projected), request });
+    ...editorialInstructionContext(projected), request });
 }
 
 export async function generateWithOpenAI(input: GenerateContentInput): Promise<StoredGeneratedContent> {
@@ -5703,7 +5731,7 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
   const { response, payload } = await callOpenAIResponses({
     apiKey,
     role: "WRITER",
-    ...synastryInstructionContext(input),
+    ...editorialInstructionContext(input),
     request: {
       model,
       ...(reasoningEffort ? { reasoning: { effort: reasoningEffort } } : {}),
@@ -5724,7 +5752,7 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
     output?: Array<{ content?: Array<{ text?: string }> }>;
     error?: { message?: string };
   };
-  if (!response.ok) throw new Error(typedPayload.error?.message ?? `OpenAI request failed with ${response.status}.`);
+  if (!response.ok) throw new GenerationProviderError("openai", response.status, typedPayload.error);
   const outputText = responseOutputText(typedPayload);
   if (!outputText) throw new Error("OpenAI response did not include generated text.");
 
@@ -5740,6 +5768,7 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
       reasoningEffort,
       sourceIds: approvedExamples.map((example) => example.contentKey),
       evidencePacket: {approvedVoiceStyle: !input.reportPayload&&!isFriendTransitReadingInput(input)?approvedVoiceStyleReference({surface:input.surface,family:input.eventType})?.receipt??null:null,
+        ...(isCollectiveSkyAspectInput(input) ? { skyAspectWritingStandard: { version: SKY_ASPECT_EDITORIAL_VERSION, sourceSha256: SKY_ASPECT_STANDARD_SHA256 } } : {}),
         ...(isSynastryAspectInput(input) ? { synastrySourceContext: { editorialVersion: SYNASTRY_EDITORIAL_VERSION, ...synastrySourceReceipt(input) } } : {}),
         ...(writingFeedback && (isSynastryAspectInput(input) || writingFeedback.receipt.selected.length)?{writingFeedback:writingFeedback.receipt}:{})}
     })
@@ -5807,7 +5836,7 @@ export async function generateWithClaude(input: GenerateContentInput): Promise<S
   let lastDraft: StoredGeneratedContent | null = null;
 
   for (let attempt = 0; attempt < 2; attempt += 1) {
-    const legacyPrompt = isSynastryAspectInput(input)
+    const legacyPrompt = isSynastryAspectInput(input) || isCollectiveSkyAspectInput(input)
       ? buildPrompt(input, approvedExamples, qualityFeedback)
       : `${buildPrompt(input, approvedExamples, qualityFeedback)}\n\n${RHETORICAL_WRITER_POLICY}`;
     const publicWriterPrompt = productionGate.governedPromptEnabled
@@ -5831,7 +5860,9 @@ export async function generateWithClaude(input: GenerateContentInput): Promise<S
         model,
         max_tokens: 5000,
         system: isSynastryAspectInput(input)
-          ? effectiveRulePrompt(withGhostwritingSkill(synastryInstructionsForRole("WRITER")), synastryInstructionContext(input))
+          ? effectiveRulePrompt(withGhostwritingSkill(synastryInstructionsForRole("WRITER")), editorialInstructionContext(input))
+          : isCollectiveSkyAspectInput(input)
+          ? governedInstructionsForRole('WRITER', editorialInstructionContext(input))
           : GHOSTWRITING_SKILL_INSTRUCTIONS,
         messages: [
           {
@@ -5869,7 +5900,7 @@ export async function generateWithClaude(input: GenerateContentInput): Promise<S
     };
 
     if (!response.ok) {
-      throw new Error(payload.error?.message ?? `Claude request failed with ${response.status}.`);
+      throw new GenerationProviderError("claude", response.status, payload.error);
     }
 
     const toolInput = claudeToolInput(payload);
@@ -5890,7 +5921,8 @@ export async function generateWithClaude(input: GenerateContentInput): Promise<S
           model,
           sourceIds: approvedExamples.map((example) => example.contentKey),
           evidencePacket: {approvedVoiceStyle: !input.reportPayload&&!isFriendTransitReadingInput(input)?approvedVoiceStyleReference({surface:input.surface,family:input.eventType})?.receipt??null:null,
-            ...(isSynastryAspectInput(input) ? { synastrySourceContext: { editorialVersion: SYNASTRY_EDITORIAL_VERSION, ...synastrySourceReceipt(input) } } : {}),
+            ...(isCollectiveSkyAspectInput(input) ? { skyAspectWritingStandard: { version: SKY_ASPECT_EDITORIAL_VERSION, sourceSha256: SKY_ASPECT_STANDARD_SHA256 } } : {}),
+        ...(isSynastryAspectInput(input) ? { synastrySourceContext: { editorialVersion: SYNASTRY_EDITORIAL_VERSION, ...synastrySourceReceipt(input) } } : {}),
             ...(writingFeedback && (isSynastryAspectInput(input) || writingFeedback.receipt.selected.length)?{writingFeedback:writingFeedback.receipt}:{})}
         })
       };
@@ -6088,9 +6120,9 @@ function skyArticleVoiceStyleContext(input: GenerateSkyArticleTemplateSlotsInput
     ? 'sky-ingress-essay' : input.eventType ?? 'sky-article-template-slots' };
 }
 
-export async function generateSkyArticleTemplateSlots(
+async function prepareSkyArticleTemplateSlots(
   input: GenerateSkyArticleTemplateSlotsInput
-): Promise<GeneratedSkyArticleTemplateSlots> {
+) {
   if ((input.surface ?? 'sky') === 'sky' && isSkyIngressEssay(input.facts.articleFormat)) {
     if (!isSkyIngressArticle(input.facts.articleFormat)) throw new Error('Generation for this ingress format is retired. Select Ingress article to use the current ingress writer. Saved text remains unchanged.');
     if (!input.ingressWriting || input.ingressWriting.plan.articleFormat !== input.facts.articleFormat)
@@ -6156,6 +6188,21 @@ export async function generateSkyArticleTemplateSlots(
     blockType: typeof generationInput.facts.blockType === "string" ? generationInput.facts.blockType : "sky_article",
     contentType: typeof generationInput.facts.contentType === "string" ? generationInput.facts.contentType : "sky_article"
   });
+  return {names,datedIngress,providerSlots,memory,generationInput,writingFeedback,productionGate,evidenceShadow,publicPrompt,prompt,writingReceipt,sourceIds,schema,provider};
+}
+
+export async function skyArticleTemplateSlotsExport(input: GenerateSkyArticleTemplateSlotsInput) {
+  const value=await prepareSkyArticleTemplateSlots(input);
+  assertProductionRoleGate(value.productionGate,"WRITER",value.generationInput);
+  const context=value.datedIngress?{surface:'sky',family:'sky-ingress-essay'}:{};
+  const instructions=value.provider==='openai'
+    ? governedInstructionsForRole('WRITER',inferredPromptContext({input:value.prompt},context))
+    : value.datedIngress?governedInstructionsForRole('WRITER',context):GHOSTWRITING_SKILL_INSTRUCTIONS;
+  return writingExport({title:`${input.planet} in ${input.sign} writing plan`,requests:[{label:'Article fields',instructions,input:value.prompt,schema:value.schema}]});
+}
+
+export async function generateSkyArticleTemplateSlots(input: GenerateSkyArticleTemplateSlotsInput): Promise<GeneratedSkyArticleTemplateSlots> {
+  const {names,datedIngress,providerSlots,memory,generationInput,writingFeedback,productionGate,evidenceShadow,publicPrompt,prompt,writingReceipt,sourceIds,schema,provider}=await prepareSkyArticleTemplateSlots(input);
   recordLegacyPromptShadow(evidenceShadow, publicPrompt);
   assertProductionRoleGate(productionGate, "WRITER", generationInput);
 
@@ -6196,7 +6243,7 @@ export async function generateSkyArticleTemplateSlots(
       output?: Array<{ content?: Array<{ text?: string }> }>;
       error?: { message?: string };
     };
-    if (!response.ok) throw new Error(typedPayload.error?.message ?? `OpenAI request failed with ${response.status}.`);
+    if (!response.ok) throw new GenerationProviderError("openai", response.status, typedPayload.error);
     const outputText = responseOutputText(typedPayload);
     if (!outputText) throw new Error("OpenAI response did not include template slot values.");
     const parsed = JSON.parse(outputText) as { slotValues?: unknown };
@@ -6253,7 +6300,7 @@ export async function generateSkyArticleTemplateSlots(
     content?: Array<{ type?: string; name?: string; input?: { slotValues?: unknown } }>;
     error?: { message?: string };
   };
-  if (!response.ok) throw new Error(payload.error?.message ?? `Claude request failed with ${response.status}.`);
+  if (!response.ok) throw new GenerationProviderError("claude", response.status, payload.error);
   const toolInput = payload.content?.find((content) => (
     content.type === "tool_use" && content.name === "tldr_astro_sky_article_template_slots"
   ))?.input;

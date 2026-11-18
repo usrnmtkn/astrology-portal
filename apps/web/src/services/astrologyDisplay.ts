@@ -3,6 +3,11 @@ import type { PlanetPosition } from "../types";
 
 const backgroundRetrogradeBodies = new Set(["Lilith", "North Node", "South Node"]);
 
+export function skyPointDisplayName(planet: string) {
+  const normalized = normalizeSkyBodyName(planet);
+  return normalized === "Lilith" ? "True Black Moon Lilith" : normalized;
+}
+
 export function isLunarNodePoint(planet: string) {
   const normalized = normalizeSkyBodyName(planet);
   return normalized === "North Node" || normalized === "South Node";

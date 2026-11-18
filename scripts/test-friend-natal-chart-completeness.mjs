@@ -186,10 +186,10 @@ assert.match(
   /!selectedFriendNatalChartComplete\s*&& manualChartNeedsNatalRepair\(selectedChart\)/,
   "A saved chart with no snapshot yet must stay behind the completion state while repair runs."
 );
-assert.ok(
-  natalTabSource.indexOf("if (isNatalChartRepairing)") < natalTabSource.indexOf("Big three"),
-  "The repair state must return before any partial Friend placements are rendered."
-);
+const repairIndex = natalTabSource.indexOf("if (isNatalChartRepairing)");
+const placementRenderIndex = natalTabSource.indexOf('<section className="natal-big-three"');
+assert.ok(repairIndex >= 0 && placementRenderIndex >= 0 && repairIndex < placementRenderIndex,
+  "The repair state must return before any partial Friend placements are rendered.");
 
 console.log(JSON.stringify({
   status: "PASS",

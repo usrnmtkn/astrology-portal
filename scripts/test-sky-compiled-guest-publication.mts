@@ -4,6 +4,7 @@ import { syntheticLibrarySkyArticle } from '../tests/helpers/article-library-fix
 const raw = await syntheticLibrarySkyArticle();
 const stamp = '2026-10-09T00:00:00.123456Z';
 const row: any = { contentKey: raw.content_key, id: raw.id, updatedAt: stamp, status: raw.status,
+  headline: raw.headline, summary: raw.summary, body: raw.body,
   lane: raw.lane, reviewState: raw.review_state, sections: raw.sections, sourceSnapshot: raw.source_snapshot };
 const publication: any = { content_key: row.contentKey, state: 'live', revision: 1, row_id: row.id,
   row_updated_at: stamp, updated_at: stamp };

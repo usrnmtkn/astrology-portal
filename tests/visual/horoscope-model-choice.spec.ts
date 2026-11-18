@@ -6,6 +6,21 @@ import {routeStudioInventoryApi} from '../helpers/studio-inventory-route';
 import {emptyHoroscopeEdition,horoscopeEditionBody,horoscopeEditionKey} from '../../apps/web/src/content/horoscopeEditions.mjs';
 
 async function fixture(page:Page,missing=1){
+  let disposing = false;
+  const activeHandlers = new Set<Promise<void>>();
+  const route: Page['route'] = (url, handler, options) =>
+    page.route(url, async (requestRoute, request) => {
+      let finish!: () => void;
+      const finished = new Promise<void>(resolve => { finish = resolve; });
+      activeHandlers.add(finished);
+      try {
+        if (disposing) await requestRoute.abort('aborted');
+        else await handler(requestRoute, request);
+      } finally {
+        activeHandlers.delete(finished);
+        finish();
+      }
+    }, options);
   const child=fork(path.resolve('tests/helpers/sky-article-save-api.mts'),[],{
     env:{...process.env,HOROSCOPE_WRITER_FIXTURE:'1',HOROSCOPE_ALTERNATIVE_PROVIDERS_FIXTURE:'1'},
     execArgv:['--import','tsx'],stdio:['ignore','pipe','pipe','ipc']});
@@ -25,7 +40,7 @@ async function fixture(page:Page,missing=1){
     expect(created.status).toBe(200);const id=created.payload.rows[0].id;
     const latest=async()=>decodeWeeklyHistoryRow((await call({method:'rows'})).find((row:any)=>row.id===id));
     const state={loseBatchStart:false};
-    await routeStudioInventoryApi(page,{call,answer:async(route,url)=>{
+    await routeStudioInventoryApi({route},{call,answer:async(route,url)=>{
       if(url.pathname==='/api/content-reader'){const result=await call({method:'reader',body:route.request().postDataJSON()});await route.fulfill({status:result.status,json:result.payload});return true;}
       if(url.pathname!=='/api/admin/horoscope-writing')return false;
       const body=route.request().postDataJSON();
@@ -34,10 +49,80 @@ async function fixture(page:Page,missing=1){
       await route.fulfill({status:result.status,json:result.payload});return true;
     }});
     await page.addInitScript(()=>localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture'));
-    const open=async()=>{await page.goto('/admin/content#horoscopes');await page.reload();const studio=page.getByRole('region',{name:'Horoscope editions'});await studio.getByText(/^Continue a saved edition/).click();await studio.locator('.admin-horoscope-saved').getByRole('button',{name:/October 5, 2026/}).click();return studio;};
-    return {child,call,latest,state,open,original:edition,id};
+    const open=async()=>{await page.goto('/admin/content#horoscopes');await page.reload();const studio=page.getByRole('region',{name:'Horoscope editions'});await studio.getByText(/^Continue a saved edition/).click();await studio.locator('.admin-horoscope-saved').getByRole('button',{name:/October 5, 2026.*(?:Review \/ Edit|Continue)$/}).click();return studio;};
+    const dispose = async () => {
+      disposing = true;
+      try {
+        // Keep interception registered until callbacks finish: unrouteAll can otherwise
+        // auto-continue a second held request when the first callback completes.
+        while (activeHandlers.size) await Promise.all([...activeHandlers]);
+        await page.unrouteAll({behavior: 'wait'});
+        await page.context().setOffline(true);
+      } finally {
+        child.kill();
+      }
+    };
+    return {child,call,latest,state,open,original:edition,id,dispose,route};
   }catch(error){child.kill();throw error;}
 }
+
+test('Weekly fixture cleanup drains simultaneous reader requests', async ({page}) => {
+  const f = await fixture(page);
+  const releases: Array<() => void> = [];
+  const held = [0, 1].map(() => new Promise<void>(resolve => { releases.push(resolve); }));
+  let entered!: () => void;
+  const started = new Promise<void>(resolve => { entered = resolve; });
+  const urls = ['/api/qa-held-fixture-read/first', '/api/qa-held-fixture-read/second'];
+  let enteredCount = 0;
+  let closing: Promise<void> | undefined;
+  try {
+    const expectedCount = (await f.call({method: 'rows'})).length;
+    await page.goto('/admin/content#templates');
+    await f.route('**/api/qa-held-fixture-read/*', async route => {
+      if (++enteredCount === urls.length) entered();
+      await held[urls.findIndex(url => route.request().url().endsWith(url))];
+      const rows = await f.call({method: 'rows'});
+      await route.fulfill({status: 200, json: {count: rows.length}});
+    });
+    const responses = urls.map(url => page.waitForResponse(value => value.url().endsWith(url)));
+    // Preserve the awaited result below without an unhandled secondary error if an earlier assertion fails.
+    for (const response of responses) void response.catch(() => {});
+    await page.evaluate(paths => { for (const url of paths) void fetch(url).catch(() => {}); }, urls);
+    await started;
+    closing = f.dispose();
+    expect(await Promise.race([closing.then(() => 'closed'), page.evaluate(() => 'responsive')])).toBe('responsive');
+    expect(f.child.killed).toBe(false);
+    const lateUrl = '/api/qa-held-fixture-read/late';
+    const lateResult = await page.evaluate(async url => {
+      try {
+        const response = await fetch(url);
+        return {outcome: 'response', status: response.status, contentType: response.headers.get('content-type')};
+      } catch {
+        return {outcome: 'rejected'};
+      }
+    }, lateUrl);
+    for (const [index, response] of responses.entries()) {
+      releases[index]();
+      const completed = await response;
+      expect(completed.status()).toBe(200);
+      expect(await completed.finished()).toBeNull();
+      expect(completed.headers()['content-type']).toContain('application/json');
+      expect(await completed.json()).toEqual({count: expectedCount});
+      if (index === 0) {
+        expect(await Promise.race([closing.then(() => 'closed'), page.evaluate(() => 'responsive')])).toBe('responsive');
+        expect(f.child.killed).toBe(false);
+      }
+    }
+    expect(lateResult).toEqual({outcome: 'rejected'});
+    expect(enteredCount).toBe(urls.length);
+    await closing;
+    expect(f.child.killed).toBe(true);
+  } finally {
+    for (const release of releases) release();
+    if (closing) await closing;
+    else await f.dispose();
+  }
+});
 
 // Faults now occur at the provider/storage boundary: the browser does not send
 // generate/continue for each sign. API regressions cover reservation, lease and
@@ -58,7 +143,15 @@ for(const [width,theme,choice] of [[1440,'light','gemini'],[390,'dark','gemini']
    await expect(studio.getByText('Generating the approved batch. You can leave this page.',{exact:true})).toBeVisible();
    await expect(selector).toBeDisabled();
    await expect.poll(async()=>(await f.call({method:'writer-state'})).calls).toBeGreaterThan(0);
-   await page.goto('/admin/content#templates');
+   await page.getByRole('dialog',{name:'Edit horoscopes',exact:true}).getByRole('button',{name:'Minimize',exact:true}).click();
+   await expect(page.getByRole('button',{name:'Resume editing horoscopes',exact:true})).toBeFocused();
+   const navigation=page.getByRole('button',{name:'Open Content Studio navigation',exact:true});
+   if(width===390)await expect(navigation).toBeVisible();
+   if(await navigation.isVisible())await navigation.click();
+   await page.locator('#admin-content-navigation').getByRole('button',{name:'Composition',exact:true}).click();
+   await page.getByRole('navigation',{name:'Composition workspace',exact:true}).getByRole('button',{name:'Templates',exact:true}).click();
+   await expect(page).toHaveURL(/#templates$/);
+   await expect(page.getByRole('dialog',{name:'Edit horoscopes',exact:true})).toHaveCount(0);
    await f.call({method:'writer-state',body:{pendingPolls:0}});
    await expect.poll(async()=>(await f.latest()).source_snapshot.horoscopeGeneration.batch.status,{timeout:120000,intervals:[1000]}).toBe('complete');
    let saved=await f.latest();
@@ -83,9 +176,30 @@ for(const [width,theme,choice] of [[1440,'light','gemini'],[390,'dark','gemini']
     await studio.getByRole('button',{name:'Save edition draft',exact:true}).click();
     await expect(studio.getByRole('status')).toContainText('Saved edition draft.');
     const approvedEdition=(await f.latest()).sections;
-    await f.open();await studio.getByRole('button',{name:'4 · Publish',exact:true}).click();
+    await f.open();
+    const publicationCheck=page.waitForResponse(response=>response.url().includes('/api/admin/horoscope-writing')
+      &&response.request().method()==='POST'&&response.request().postDataJSON()?.action==='validate-publication'
+      &&response.request().postDataJSON()?.id===f.id);
+    await studio.getByRole('button',{name:'4 · Publish',exact:true}).click();
+    const checkedResponse=await publicationCheck;
+    expect(checkedResponse.status()).toBe(200);
+    const savedForPublication=await f.latest(),checked=await checkedResponse.json();
+    expect(checkedResponse.request().postDataJSON()).toMatchObject({id:savedForPublication.id,expectedUpdatedAt:savedForPublication.updated_at});
+    expect(checked.publication).toMatchObject({id:savedForPublication.id,updatedAt:savedForPublication.updated_at,ready:true,canOverride:false,issues:[]});
+    expect(checked.publication.advisories).toEqual(expect.arrayContaining([expect.objectContaining({category:'weekly_batch_editorial'})]));
+    expect(savedForPublication.status).toBe('DRAFT');expect(savedForPublication.sections).toEqual(approvedEdition);
+    await expect(studio.getByText('Checking all saved readings before publication…',{exact:true})).toHaveCount(0);
     await expect(studio.getByRole('region',{name:'Pisces reading preview'})).toContainText(edited);
     const approval=studio.getByLabel('I have reviewed and approve the exact wording of every saved reading in this edition.');
+    await expect(approval).toBeEnabled();await expect(approval).not.toBeChecked();
+    await expect(studio.getByRole('button',{name:'Publish edition',exact:true})).toBeDisabled();
+    const batchReview=studio.getByRole('region',{name:'Weekly batch editorial gate'});
+    await expect(batchReview).toContainText('out of date');
+    const loadBatchPlan=batchReview.getByRole('button',{name:'Load batch review plan',exact:true});
+    if(await loadBatchPlan.isVisible())await loadBatchPlan.click();
+    await batchReview.getByRole('button',{name:'Review all twelve · 1 AI request',exact:true}).click();
+    await batchReview.getByRole('button',{name:'Check saved batch progress',exact:true}).click();
+    await expect(batchReview).toContainText('current twelve-sign set passed its batch comparison');
     await expect(approval).toBeEnabled();await expect(approval).not.toBeChecked();await approval.check();
     await studio.getByRole('button',{name:'Publish edition',exact:true}).click();
     await expect(studio.getByRole('status')).toContainText('Published the complete edition.');
@@ -96,7 +210,7 @@ for(const [width,theme,choice] of [[1440,'light','gemini'],[390,'dark','gemini']
     await expect(page.getByRole('article',{name:'Pisces horoscope'})).toContainText(edited);
     await page.reload();await expect(page.getByRole('article',{name:'Pisces horoscope'})).toContainText(edited);
    }
-  }finally{f.child.kill();}
+  }finally{await f.dispose();}
  });
 }
 
@@ -113,7 +227,7 @@ test('Pause persists after reload and resume reuses the saved batch approval',as
   await expect.poll(async()=>(await f.latest()).source_snapshot.horoscopeGeneration.batch.status).toBe('paused');
   const batchId=(await f.latest()).source_snapshot.horoscopeGeneration.batch.id;
   await page.reload();await f.open();
-  await expect(studio.getByText('The batch is paused. Resume to continue its saved approval.',{exact:true})).toBeVisible();
+  await expect(studio.getByText('The batch is paused. Sent requests can still finish; resume with its saved approval.',{exact:true})).toBeVisible();
   await f.call({method:'writer-state',body:{pendingPolls:0}});
   const resumed=page.waitForResponse(response=>response.url().includes('/api/admin/horoscope-writing')&&response.request().postDataJSON()?.action==='resume-batch');
   await studio.getByRole('button',{name:'Resume generation',exact:true}).click();
@@ -127,7 +241,7 @@ test('Pause persists after reload and resume reuses the saved batch approval',as
   await expect.poll(async()=>(await f.latest()).source_snapshot.horoscopeGeneration.batch.status,{timeout:45000}).toBe('complete');
   expect((await f.latest()).source_snapshot.horoscopeGeneration.batch.id).toBe(batchId);
   expect(await f.call({method:'writer-state'})).toMatchObject({calls:2,reviewCalls:2});
- }finally{f.child.kill();}
+ }finally{await f.dispose();}
 });
 
 for(const [width,theme] of [[1440,'light'],[390,'dark']] as const){
@@ -146,7 +260,7 @@ for(const [width,theme] of [[1440,'light'],[390,'dark']] as const){
    await studio.getByRole('button',{name:'Edit saved Aquarius draft',exact:true}).click();
    await expect(studio.getByLabel('Complete reading')).toHaveValue(saved.source_snapshot.horoscopeGeneration.candidateHolds.aquarius.candidate.body);
    expect(await f.call({method:'writer-state'})).toMatchObject({calls:2,reviewCalls:2});
-  }finally{f.child.kill();}
+  }finally{await f.dispose();}
  });
 }
 
@@ -157,7 +271,7 @@ test('Unavailable provider is visible but cannot be selected',async({page})=>{
     await expect(selector).toBeEnabled();await expect(selector.locator('option[value="gemini"]')).toHaveAttribute('disabled','');
     await expect(studio.getByText('Gemini 3.1 Pro (preview) needs its server API connection.')).toBeVisible();
     await expect(selector).toHaveValue('current');expect((await f.call({method:'writer-state'})).calls).toBe(0);
-  }finally{f.child.kill();}
+  }finally{await f.dispose();}
 });
 
 
@@ -178,5 +292,80 @@ test('A stale model choice reloads the current Weekly plan without overwriting a
   await selector.selectOption('gemini');await expect(studio.getByRole('status')).toContainText('Writing model saved');
   await expect(selector).toHaveValue('gemini');
   expect((await f.call({method:'provider-state'})).requests).toEqual([]);
- }finally{f.child.kill();}
+ }finally{await f.dispose();}
 });
+
+for(const [width,theme] of [[1440,'light'],[390,'dark']] as const){
+ test(`Generate only selected Weekly sign ${width} ${theme}`,async({page})=>{
+  test.setTimeout(180000);await page.setViewportSize({width,height:1000});
+  await page.addInitScript(theme=>localStorage.setItem('tldrastro:studio-theme',theme),theme);
+  const f=await fixture(page,12);try{
+   const requests:any[]=[];page.on('request',request=>{if(request.url().includes('/api/admin/horoscope-writing'))requests.push(request.postDataJSON());});
+   const studio=await f.open();
+   await studio.getByRole('group',{name:'Writing plans by sign'}).getByRole('button',{name:'Aquarius',exact:true}).click();
+   const generate=studio.getByRole('button',{name:'Generate Aquarius',exact:true});
+   await expect(generate).toBeDisabled();
+   await studio.getByLabel('I approve this writing plan for generation.').check();
+   await generate.click();
+   await expect(studio.getByText('1/12 readings ready',{exact:false})).toBeVisible({timeout:120000});
+   await studio.getByRole('button',{name:'3 · Review',exact:true}).click();
+   await studio.getByRole('group',{name:'Readings by sign'}).getByRole('button',{name:/Aquarius/}).click();
+   await expect(studio.getByLabel('Complete reading',{exact:true})).toHaveValue(/Your saved fixture ends here/,{timeout:120000});
+   const saved=await f.latest();expect(saved.status).toBe('DRAFT');
+   expect(saved.sections.horoscopeEdition.passages.filter((p:any)=>p.body.trim())).toHaveLength(1);
+   for(const p of saved.sections.horoscopeEdition.passages.filter((p:any)=>p.sign!=='aquarius'))expect(p).toEqual(f.original.passages.find((original:any)=>original.sign===p.sign));
+   expect(requests.filter(r=>r.action==='generate').map(r=>r.sign)).toEqual(['aquarius']);
+   expect(requests.some(r=>['start-batch','resume-batch'].includes(r.action))).toBe(false);
+   expect(await f.call({method:'writer-state'})).toMatchObject({calls:1,reviewCalls:1});
+   await f.open();await studio.getByRole('button',{name:'3 · Review',exact:true}).click();
+   await studio.getByRole('group',{name:'Readings by sign'}).getByRole('button',{name:/Aquarius/}).click();
+   await expect(studio.getByLabel('Complete reading',{exact:true})).toHaveValue(saved.sections.horoscopeEdition.passages.find((p:any)=>p.sign==='aquarius').body);
+   await studio.getByRole('button',{name:'2 · Generate',exact:true}).click();
+   await studio.getByRole('group',{name:'Writing plans by sign'}).getByRole('button',{name:'Aquarius',exact:true}).click();
+   await expect(studio.getByRole('button',{name:'Generate Aquarius',exact:true})).toBeDisabled();
+   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  }finally{await f.dispose();}
+ });
+}
+
+for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dark']] as const){
+ test(`Manually completed Weekly revision prepares its own plan ${width} ${theme}`,async({page})=>{
+  test.setTimeout(90000);await page.setViewportSize({width,height:1000});
+  await page.addInitScript(theme=>localStorage.setItem('tldrastro:studio-theme',theme),theme);
+  const f=await fixture(page);
+  const preparedIds:string[]=[];
+  page.on('requestfinished',async request=>{if(request.url().includes('/api/admin/horoscope-writing')){const body=request.postDataJSON();if(body?.action==='prepare'&&(await request.response())?.status()===200)preparedIds.push(body.id);}});
+  try {
+   const studio=await f.open();
+   await expect(studio.getByLabel('I approve this writing plan for generation.')).toBeVisible();
+   await expect.poll(()=>preparedIds).toContain(f.id);
+   await studio.getByLabel('I approve this writing plan for generation.').check();
+   await studio.getByRole('button',{name:'3 · Review',exact:true}).click();
+   await studio.getByRole('group',{name:'Readings by sign'}).getByRole('button',{name:/Pisces/}).click();
+   await studio.getByLabel('Reading headline',{exact:true}).fill('Manual Pisces fixture');
+   await studio.getByLabel('Complete reading',{exact:true}).fill('You can read the complete manual fixture. Your manual fixture ends here.');
+   await studio.getByRole('button',{name:'Save edition draft',exact:true}).click();
+   await expect(studio.getByRole('status')).toContainText('Saved edition draft.');
+   await studio.getByRole('button',{name:'Continue to publish',exact:true}).click();
+   await studio.getByLabel('I have reviewed and approve the exact wording of every saved reading in this edition.').check();
+   await studio.getByRole('button',{name:'Publish edition',exact:true}).click();
+   await expect(studio.getByRole('link',{name:'Read published edition',exact:true})).toBeVisible();
+   const published=structuredClone(await f.latest());
+   expect(published.status).toBe('LIVE');
+   await studio.getByRole('button',{name:'3 · Review',exact:true}).click();
+   await studio.getByRole('group',{name:'Readings by sign'}).getByRole('button',{name:/Pisces/}).click();
+   await studio.getByLabel('Reading headline',{exact:true}).fill('');
+   await studio.getByLabel('Complete reading',{exact:true}).fill('');
+   await studio.getByRole('button',{name:'Save edition draft',exact:true}).click();
+   await expect(studio.getByRole('status')).toContainText('Saved edition draft.');
+   const revision=(await f.call({method:'rows'})).find((row:any)=>row.event_type==='horoscope-edition-revision');
+   expect(revision.id).not.toBe(f.id);
+   expect(await f.latest()).toEqual(published);
+   await studio.getByRole('button',{name:'2 · Generate',exact:true}).click();
+   await expect.poll(()=>preparedIds).toContain(revision.id);
+   await expect(studio.getByLabel('I approve this writing plan for generation.')).not.toBeChecked();
+   expect(await f.call({method:'writer-state'})).toMatchObject({calls:0,reviewCalls:0,batchCalls:0});
+   expect(await f.latest()).toEqual(published);
+  } finally {await f.dispose();}
+ });
+}

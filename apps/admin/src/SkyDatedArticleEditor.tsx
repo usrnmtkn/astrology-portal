@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { Suspense, useEffect, useMemo, useRef, useState, type ComponentProps } from 'react';
+import { studioLazy as lazy } from './studioLazy';
 import { AdminDisclosureSummary, AdminSelect } from './AdminNativeControls';
 import { StudioButton, StudioInput, StudioTextarea } from './StudioControls';
 import SkyPlacementVariableKey from './SkyPlacementVariableKey';
@@ -13,6 +14,10 @@ import { ZODIAC_SEASON_VARIABLES, zodiacSeasonSourceKey } from '../../web/src/co
 import { skyPlacementArticleVariableSegments } from '../../web/src/content/fallbackArchitectureV3/resolver/skyPlacementArticleVariables.mjs';
 // @ts-ignore Shared calculated fact contract.
 import { skyPlacementVariableFacts } from '../../web/src/content/fallbackArchitectureV3/resolver/skyPlacementVariables.mjs';
+import type { ArticleEventFacts } from './skyArticleRelatedContent';
+
+const SkyArticleAspects = lazy(() => import('./SkyArticleAspects'));
+const SkyArticleHoroscopes = lazy(() => import('./SkyArticleHoroscopes'));
 
 type Field = 'headline' | 'tldr' | 'body';
 type RecordValue = Record<string, any>;
@@ -24,6 +29,7 @@ type Props = {
   onChange: (fields: SkyArticleEditableFields, variables: SkyArticleVariableDraft | null) => void;
   onLoadSource: (key: string) => Promise<RecordValue | undefined>;
   onOpenSource: (key: string, field: string) => void;
+  relatedHoroscopes?: Omit<ComponentProps<typeof SkyArticleHoroscopes>, 'window' | 'placement'>;
 };
 const fieldLabels = { headline: 'Headline', tldr: 'TL;DR', body: 'General article' };
 
@@ -100,6 +106,10 @@ export default function SkyDatedArticleEditor(props: Props) {
     <p role="status" aria-label="Sky draft save status">{props.saveState === 'saved' && props.publishedUnchanged ? 'Published copy unchanged.' : `${props.saveState === 'saved' ? 'Draft saved' : props.saveState === 'error' ? 'Draft save failed. Your edits are still here.' : props.saveState === 'saving' ? 'Saving draft…' : 'Unsaved changes'} · Changes are not published.`}</p>
     <p className="admin-field-hint">Drafts also save automatically as you write.</p>
     {issue && <p role="alert">{issue}</p>}
+    {props.relatedHoroscopes && <Suspense fallback={<p role="status">Loading related article content…</p>}>
+      <SkyArticleHoroscopes {...props.relatedHoroscopes} window={edition} placement={edition} />
+      <SkyArticleAspects window={edition} facts={props.engineFacts as ArticleEventFacts | undefined} request={props.relatedHoroscopes.request} />
+    </Suspense>}
     <details className="admin-workspace-details" aria-label="Passage variable values">
       <AdminDisclosureSummary>How this article is assembled</AdminDisclosureSummary>
       <p>Captured values used in {fieldLabels[target]}.</p>

@@ -49,7 +49,7 @@ try {
   assert.equal((await fixture.invoke("/feed/not-a-token.ics")).status, 404);
   assert.equal((await fixture.invoke(`/feed/${"Z".repeat(43)}.ics`)).status, 404);
   assert.equal((await fixture.invoke("/api/calendar-subscriptions", "PATCH", { ...options, ...subscription, manageToken: second.manageToken, expectedUpdatedAt: subscription.updatedAt })).status, 409);
-  const event = { title: "Community calendar session", description: "Complete first paragraph.\n\nFinal sentence; preserved, exactly. 🌙", start: "2026-10-04T18:00:00.000Z", end: "2026-10-04T19:00:00.000Z", allDay: false, category: "key", url: "https://example.com/event" };
+  const event = { title: "Community calendar session", description: "Synthetic Tarot opening.\n\nEditor notes: deliberate owner prose — heaven, 2025, and whether. Complete final sentence 🌙.", start: "2026-10-04T18:00:00.000Z", end: "2026-10-04T19:00:00.000Z", allDay: false, category: "key", url: "https://example.com/event" };
   let saved = (await fixture.invoke("/api/admin/calendar-feed-events", "POST", { action: "draft", event }, owner)).json().event;
   assert.equal((await fixture.invoke(readingPath(`event-${saved.id}`, "2026-10-04"))).status, 404, "Drafts cannot be opened through public links");
   const draftFeed = await fixture.invoke(path); assert.equal(draftFeed.status, 200); assert(!draftFeed.body.includes(event.title));

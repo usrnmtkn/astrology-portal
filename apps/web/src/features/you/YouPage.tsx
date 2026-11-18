@@ -1,17 +1,31 @@
+import { LunationTransitSection, LunationTransitCard, type LunationTransitCardProps } from "../../components/LunationTransitSection";
+import { NatalPatternsInsights } from "./NatalPatternsInsights";
+import { ArticleKeyDates, type ArticleKeyDate } from "../../components/ArticleKeyDates";
+import { PersonalTransitIcon } from "../../components/PersonalTransitCard";
+import "../../styles/profile-overview.css";
+import "../../styles/you-transits.css";
+import { ChartFullscreenButton } from "../../components/charts/ChartFullscreenButton";
+import type { ChartReportSource } from "../../services/chartReport";
+import { NatalPlacementSections } from "../../components/NatalPlacementSections";
 import { NatalChartReadings } from "../../components/NatalChartReadings";
+import { NatalInsightPage } from "../../components/NatalInsightPage";
+import { NatalSectPage } from "../../components/NatalSectPage";
+import { useNatalReadingRoute } from "../../hooks/useNatalReadingRoute";
 import { ViewportMenu } from "../../components/ViewportMenu";
 import { FormattedProse } from "../../components/FormattedProse";
 import { ArticlePills, type ArticlePillData } from "../../components/ArticlePills";
 import { TransitFacts } from "../../components/ArticleFacts";
 import { Fragment, isValidElement, useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode } from "react";
-import { ChevronLeft, MoreVertical, Pencil, Sparkles } from "lucide-react";
+import { ChevronLeft, ChevronRight, MoreVertical, Pencil, Sparkles } from "lucide-react";
 import { DailyMoonContextTags, type DailyMoonContext } from "../../components/DailyMoonContextTags";
 import { ProfileAvatar } from "../../components/ProfileAvatar";
-import { PageLoading, PageLoadError } from "../../components/PageLoading";
+import { PageLoading, PageLoadError, PageLoadState } from "../../components/PageLoading";
 import { SegmentedControl } from "../../components/SegmentedControl";
 import { AspectGlyphs } from "../../components/charts/PlacementRows";
+import { AspectBadge } from "../../components/charts/AspectBadge";
 import { NatalChartDataTable, type NatalChartDataTableRow } from "../../components/charts/NatalChartDataTable";
 import { SkyWheel, type HouseSignLabelStyle, type InterChartAspectLine } from "../../components/charts/Wheels";
+import { InteractiveZodiacWheel } from "../../components/charts/LazyInteractiveZodiacWheel";
 import type { SkySnapshot } from "../../types";
 import type { NatalAspectPatternActivationTimingWindow, NatalAspectPatternReaderItem } from "../../services/natalAspectPatterns";
 import { isReaderFacingCopy } from "../../content/readerSafety";
@@ -19,7 +33,6 @@ import { generatedContentParagraphs, generatedContentSections, type LiveGenerate
 import { aspectGiftOrLesson } from "../../services/aspectGiftLesson";
 import {
   NatalAspectPatternActivationsSection,
-  NatalAspectPatternsSection,
   type NatalAspectPatternsSectionStatus
 } from "./NatalAspectPatternsSection";
 import { resolvedNatalAspectPatternSectionLabel } from "./natalAspectPatternLabels";
@@ -27,7 +40,6 @@ import { dedupeArticleSectionHeadings } from "../../utils/articleHeadings";
 import { articleAspectGlyphPartsFromHeading } from "../../utils/articleAspects";
 import { aspectGlyph, pointGlyph } from "../../components/charts/chartAssets";
 import type { WeeklyHoroscopeAssembly } from "../../services/weeklyHoroscope";
-import { canonicalNatalAspectsForSnapshot } from "../../services/natalAspectFacts";
 import { updateYouTabUrl, youTabFromUrl, type YouTab } from "./youRouting";
 import { YouReportActions, type YouAccountRecovery } from "./YouReportActions";
 
@@ -76,9 +88,12 @@ export type DailyHoroscopeAssembly = {
 };
 
 export type YouTransitArticle = {
+  natalPlacement?: boolean;
   natalPlanetReading?: import("../../content/natalChartReadings").NatalPlanetReadingContext;
   pills?: ArticlePillData;
   transitDescription?: string;
+  keyDates?: ArticleKeyDate[];
+  personalTransit?: { aspect: string; planet: string };
   id: string;
   title: string;
   glyph?: string;
@@ -165,8 +180,10 @@ export type YouPageProps = {
   transitCopyLoading?: boolean;
   transitCopyError?: boolean;
   onRetryTransitCopy?: () => void;
-  weeklyTransitRows?: ReactNode[];
+  weeklyTransitRows?: LunationTransitCardProps[];
   transitArticle?: YouTransitArticle | null;
+  natalPlacementContentStatus?: 'loading' | 'ready' | 'error';
+  onRetryNatalPlacementContent?: () => void;
 };
 
 type NatalAspectPatternDetailSelection = {
@@ -257,27 +274,7 @@ function YouEmptyState({
   );
 }
 
-function YouProfileSummary({
-  displayMoon,
-  displayRising,
-  displaySun,
-  onEditProfile,
-  profileAvatarUrl,
-  profileEmail,
-  profileHandle,
-  profileName,
-  signaturesReady
-}: {
-  displayMoon: string;
-  displayRising: string;
-  displaySun: string;
-  onEditProfile: () => void;
-  profileAvatarUrl?: string;
-  profileEmail: string;
-  profileHandle?: string | null;
-  profileName: string;
-  signaturesReady: boolean;
-}) {
+function YouProfileOptions({ onEditProfile }: { onEditProfile: () => void }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
@@ -312,6 +309,57 @@ function YouProfileSummary({
   }, [menuOpen]);
 
   return (
+    <div className="you-profile-actions" ref={menuRef}>
+      <button
+        className="manual-chart-menu-trigger you-profile-menu-trigger"
+        type="button"
+        aria-label="Profile options"
+        aria-expanded={menuOpen}
+        onClick={() => setMenuOpen((current) => !current)}
+      >
+        <MoreVertical size={22} aria-hidden="true" />
+      </button>
+      {menuOpen ? (
+        <ViewportMenu className="manual-chart-overflow-menu you-profile-overflow-menu" aria-label="Profile options">
+          <button
+            type="button"
+            role="menuitem"
+            onClick={() => {
+              setMenuOpen(false);
+              onEditProfile();
+            }}
+          >
+            <Pencil size={17} aria-hidden="true" />
+            <span>Edit details</span>
+          </button>
+        </ViewportMenu>
+      ) : null}
+    </div>
+  );
+}
+
+function YouProfileSummary({
+  displayMoon,
+  displayRising,
+  displaySun,
+  profileAvatarUrl,
+  profileEmail,
+  profileHandle,
+  profileName,
+  signaturesReady
+}: {
+  displayMoon: string;
+  displayRising: string;
+  displaySun: string;
+  profileAvatarUrl?: string;
+  profileEmail: string;
+  profileHandle?: string | null;
+  profileName: string;
+  signaturesReady: boolean;
+}) {
+  const [copied, setCopied] = useState(false);
+
+  return (
     <div className="you-profile-card" aria-label="Profile summary">
       <ProfileAvatar
         avatarUrl={profileAvatarUrl}
@@ -323,10 +371,12 @@ function YouProfileSummary({
       <div className="you-profile-copy">
         <div className="you-profile-name-row">
           <h1>{profileName}</h1>
-          {profileHandle ? <span className="you-profile-handle">@{profileHandle}</span> : null}
+          {profileHandle ? <button type="button" className="you-profile-handle" aria-label="Copy profile link" onClick={() => {
+            void navigator.clipboard.writeText(new URL(`/${profileHandle}`, window.location.origin).href).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000); }).catch(() => setCopied(false));
+          }}>{copied ? "Copied" : `@${profileHandle}`} <span aria-hidden="true">⧉</span></button> : null}
         </div>
         {signaturesReady ? (
-          <div className="you-signature-row" aria-label="Big three">
+          <div className="you-signature-row sr-only" aria-label="Big three">
             <span><span aria-hidden="true">☉</span>{displaySun}</span>
             <span><span aria-hidden="true">☽</span>{displayMoon}</span>
             <span><span aria-hidden="true">↑</span>{displayRising}</span>
@@ -334,32 +384,6 @@ function YouProfileSummary({
         ) : (
           <PageLoading compact message="Calculating chart signatures" />
         )}
-      </div>
-      <div className="you-profile-actions" ref={menuRef}>
-        <button
-          className="manual-chart-menu-trigger you-profile-menu-trigger"
-          type="button"
-          aria-label="Profile options"
-          aria-expanded={menuOpen}
-          onClick={() => setMenuOpen((current) => !current)}
-        >
-          <MoreVertical size={22} aria-hidden="true" />
-        </button>
-        {menuOpen ? (
-          <ViewportMenu className="manual-chart-overflow-menu you-profile-overflow-menu" aria-label="Profile options">
-            <button
-              type="button"
-              role="menuitem"
-              onClick={() => {
-                setMenuOpen(false);
-                onEditProfile();
-              }}
-            >
-              <Pencil size={17} aria-hidden="true" />
-              <span>Edit details</span>
-            </button>
-          </ViewportMenu>
-        ) : null}
       </div>
     </div>
   );
@@ -372,7 +396,8 @@ function YouNatalChartPanel({
   natalChartError,
   onViewModeChange,
   tableContent,
-  viewMode
+  viewMode,
+  report
 }: {
   ariaLabel?: string;
   natalChart: ReactNode;
@@ -381,6 +406,7 @@ function YouNatalChartPanel({
   onViewModeChange?: (value: NatalChartViewMode) => void;
   tableContent?: ReactNode;
   viewMode?: NatalChartViewMode;
+  report?: ChartReportSource;
 }) {
   const showViewToggle = Boolean(onViewModeChange && tableContent);
 
@@ -391,6 +417,7 @@ function YouNatalChartPanel({
       data-chart-calculation-status={natalChartStatus}
     >
       {showViewToggle && viewMode ? (
+        <div className="natal-chart-controls">
         <SegmentedControl
           value={viewMode}
           options={[
@@ -402,8 +429,11 @@ function YouNatalChartPanel({
           className="natal-chart-view-toggle"
           compact
         />
+        {natalChart && viewMode === "circle" && <ChartFullscreenButton title="Natal chart" report={report}>{natalChart}</ChartFullscreenButton>}
+        </div>
       ) : null}
       {viewMode === "table" && tableContent ? tableContent : natalChart}
+      {!showViewToggle && natalChart && <div className="natal-chart-controls"><div className="you-transit-legend" aria-label="Chart rings"><span>Sky · outer</span><span>You · inner</span></div><ChartFullscreenButton title="Transit chart" report={report}>{natalChart}</ChartFullscreenButton></div>}
       {(natalChartStatus === "idle" || natalChartStatus === "loading") && (
         <section className="you-empty-card you-calculating-card" aria-label="Chart calculation">
           <span>Chart</span>
@@ -427,6 +457,7 @@ function YouNatalChartPanel({
 }
 
 function YouNatalTab({
+  natalSky,
   bigThreeRows,
   elementalSummaryLabel,
   elementalSummarySentence,
@@ -439,6 +470,7 @@ function YouNatalTab({
   signatureBody,
   signatureTitle
 }: {
+  natalSky?: SkySnapshot | null;
   bigThreeRows: ReactNode[];
   elementalSummaryLabel: string;
   elementalSummarySentence: string;
@@ -453,6 +485,17 @@ function YouNatalTab({
 }) {
   return (
     <div className="subpane" id="sub-chart">
+      <section className="natal-big-three" aria-label="Big Three">
+        <h2 className="eyebrow section-label">Big Three</h2>
+        <div className="list you-list-card planet-placement-list" aria-label="Natal placements">
+          {bigThreeRows.map((row, index) => index === 0 ? <div className="natal-sun-card" key="sun">{row}<NatalChartReadings snapshot={natalSky} audience="you" presentation="sect" /></div> : row)}
+        </div>
+      </section>
+      <NatalPlacementSections snapshot={natalSky} items={planetRows.map((node, index) => ({
+        id: String(isValidElement(node) ? node.key ?? index : index),
+        pointName: isValidElement<{ pointName?: string }>(node) ? node.props.pointName ?? "" : "",
+        node
+      }))} emptyHouses={emptyHouseRows} />
       {showNatalSignatures && (
         <>
           <span className="eyebrow section-label">Your signatures</span>
@@ -472,71 +515,28 @@ function YouNatalTab({
         </>
       )}
 
-      {natalAspectPatternStatus && (
-        <NatalAspectPatternsSection
-          items={natalAspectPatternItems ?? []}
-          onOpenDetail={onOpenNatalAspectPatternDetail}
-          status={natalAspectPatternStatus}
-        />
-      )}
+      <NatalPatternsInsights snapshot={natalSky} audience="you" items={natalAspectPatternItems} status={natalAspectPatternStatus} onOpenPattern={onOpenNatalAspectPatternDetail}/>
 
-      <span className="eyebrow section-label">Big Three</span>
-      <div className="list you-list-card planet-placement-list" aria-label="Natal placements">
-        {bigThreeRows}
-      </div>
-
-      {planetRows.length > 0 && (
-        <>
-          <span className="eyebrow section-label">Planets</span>
-          <div className="list you-list-card planet-placement-list" aria-label="Bodies in signs and houses">
-            {planetRows}
-          </div>
-        </>
-      )}
-
-      {emptyHouseRows.length > 0 && (
-        <>
-          <span className="eyebrow section-label">Empty houses</span>
-          <div className="list you-list-card planet-placement-list" aria-label="Empty houses">
-            {emptyHouseRows}
-          </div>
-        </>
-      )}
 
     </div>
   );
 }
 
-function YouMacroView({ headline, body }: { headline: string; body: string }) {
+function YouTransitGroup({ title, label, rows }: { title: string; label: string; rows: ReactNode[] }) {
   const [expanded, setExpanded] = useState(false);
-  const bodyId = useId();
-  // Match the owner's requested preview length; the expanded passage stays intact.
-  const hasMore = body.length > 575;
-  const preview = hasMore
-    ? `${body.slice(0, 575).replace(/\s+\S*$/u, "").trimEnd()}…`
-    : body;
-
+  const listId = useId();
   return (
-    <article className="weekly-horoscope__macro daily-horoscope-summary you-horoscope-card">
-      <span className="eyebrow section-label">The macro view</span>
-      <h3>{headline}</h3>
-      <div id={bodyId} className="weekly-horoscope__macro-body">
-        {(expanded ? body : preview)
-          .split(/\n{2,}/)
-          .map((paragraph, index) => <FormattedProse key={index} text={paragraph} />)}
+    <section className="you-transit-group" aria-label={title}>
+      <div className="you-transit-group__header">
+        <h2>{title}</h2>
+        {rows.length > 3 ? <button type="button" className="you-transit-group__toggle" aria-expanded={expanded} aria-controls={listId} onClick={() => setExpanded(current => !current)}>
+          {expanded ? "Show less" : `See all ${rows.length}`}<ChevronRight size={16} aria-hidden="true" />
+        </button> : null}
       </div>
-      {hasMore ? (
-        <button
-          type="button"
-          className="card-read-more weekly-horoscope__toggle"
-          aria-expanded={expanded}
-          aria-controls={bodyId}
-          onClick={() => setExpanded((current) => !current)}
-        >
-          {expanded ? "Read less" : "Read more"}
-        </button>
-      ) : null}
-    </article>
+      <div className="updates-aspect-list you-transit-grid" id={listId} aria-label={label}>
+        {rows.map((row, index) => <div className="you-transit-group__item" key={isValidElement(row) ? row.key ?? index : index} hidden={!expanded && index >= 3}>{row}</div>)}
+      </div>
+    </section>
   );
 }
 
@@ -561,7 +561,8 @@ function YouUpdatesTab({
   transitLoadingMessage = "Adding today’s transits.",
   transitsLoading = false,
   transitSourceFeedback,
-  weeklyTransitRows = []
+  weeklyTransitRows = [],
+  reportAvatar
 }: {
   accountId: string | null | undefined;
   accountRecovery?: YouAccountRecovery;
@@ -584,8 +585,11 @@ function YouUpdatesTab({
   transitLoadingMessage?: string;
   transitsLoading?: boolean;
   transitSourceFeedback?: ReactNode;
-  weeklyTransitRows?: ReactNode[];
+  weeklyTransitRows?: LunationTransitCardProps[];
+  reportAvatar: ReactNode;
 }) {
+  const lunationRow = weeklyTransitRows.find(row => row.reading.source === "lunation");
+  const otherWeeklyRows = weeklyTransitRows.filter(row => row.reading.source !== "lunation");
   const dailyHeadline = dailyUpdateSummary?.headline.trim();
   const showDailyHeadline = dailyHeadline && dailyHeadline.toLowerCase() !== "tldr";
   const dailyWriteup = dailyUpdateSummary?.writeup?.filter((section) => section.body.length > 0) ?? [];
@@ -597,53 +601,17 @@ function YouUpdatesTab({
   const visibleDailySpecialSections = weeklyLunationCardOwnsExactDay
     ? []
     : dailyHoroscopeAssembly?.specialSections ?? [];
-  const weeklyTransitSection = !hasSavedCurrentCity ? null : weeklyHoroscopeAssembly?.status === "error" ? (
-    <section className="you-empty-card" aria-label="Weekly transits unavailable">
-      <span>This week</span>
-      <h3>Your weekly transits are not available yet.</h3>
-      <p>We could not calculate this week. Try again in a moment.</p>
-    </section>
-  ) : !weeklyHoroscopeAssembly || weeklyHoroscopeAssembly.status === "loading" ? (
-    <section className="weekly-horoscope__loading you-horoscope-card" aria-label="Loading weekly transits">
-      <PageLoading compact message="Loading weekly transits…" />
-    </section>
-  ) : weeklyTransitRows.length === 0 && !weeklyHoroscopeAssembly.macro ? null : (
-    <section className="weekly-horoscope weekly-horoscope--embedded" aria-label="This week's transits">
-      {weeklyHoroscopeAssembly.macro ? (
-        <YouMacroView
-          key={`${weeklyHoroscopeAssembly.weekStart}:${weeklyHoroscopeAssembly.macro.body}`}
-          headline={weeklyHoroscopeAssembly.macro.headline}
-          body={weeklyHoroscopeAssembly.macro.body}
-        />
-      ) : null}
-      {weeklyTransitRows.length > 0 ? (
-        <div className="updates-aspect-list weekly-horoscope__transits" aria-label="Weekly transit cards">
-          {weeklyTransitRows}
-        </div>
-      ) : null}
-    </section>
-  );
-
   return (
     <div className="subpane updates-section" id="sub-transits">
+      <div className="you-transit-overview">
       {hasSavedCurrentCity && transitsLoading && !transitSourceFeedback && (
         <PageLoading compact message={transitLoadingMessage} />
       )}
-      {hasSavedCurrentCity ? (
-        <YouReportActions
-          accountId={accountId}
-          accountRecovery={accountRecovery}
-          dailyAspectsReady={dailyAspectsReady}
-          dailyHoroscopeAssembly={dailyHoroscopeAssembly}
-          dailyUpdateSummary={dailyUpdateSummary}
-          weeklyHoroscopeAssembly={weeklyHoroscopeAssembly}
-          transitDateLabel={transitDateLabel}
-        />
-      ) : null}
       {transitSourceFeedback ?? <>
       {hasSavedCurrentCity && dailyUpdateSummary && (
         <section className={`daily-horoscope-summary you-horoscope-card${dailyUpdateSummary.status === "loading" ? " is-loading" : ""}`} aria-label="Daily horoscope summary">
-          {showDailyHeadline ? <h3>{dailyHeadline}</h3> : null}
+          <span className="eyebrow section-label">Today for you · {transitDateLabel}</span>
+          {showDailyHeadline ? <h2>{dailyHeadline}</h2> : null}
           <FormattedProse text={dailyUpdateSummary.summary} />
           {dailyUpdateSummary.secondary ? <p className="daily-horoscope-summary__secondary">{dailyUpdateSummary.secondary}</p> : null}
           {dailyUpdateSummary.status === "loading" ? (
@@ -680,18 +648,7 @@ function YouUpdatesTab({
             </div>
           </section>
         ) : null}
-      {visibleDailySpecialSections.map((section) => (
-        <section className="daily-special-section you-horoscope-card" key={section.headline}>
-          <span className="eyebrow section-label">{transitDateLabel} sky</span>
-          <h3>{section.headline}</h3>
-          {section.body.split(/\n{2,}/).map((paragraph) => <FormattedProse key={paragraph} text={paragraph} />)}
-        </section>
-      ))}
-      {weeklyTransitSection}
-      {hasSavedCurrentCity && natalAspectPatternItems && (
-        <NatalAspectPatternActivationsSection items={natalAspectPatternItems} timingOverrides={natalAspectPatternTimingOverrides} />
-      )}
-      <span className="eyebrow section-label">Areas of Your Life</span>
+      </>}
       {!hasSavedCurrentCity && (
         <section className="you-empty-card" aria-label="Current city needed">
           <span>Updates</span>
@@ -700,6 +657,28 @@ function YouUpdatesTab({
           <button type="button" onClick={onCreateChart}>Add current city →</button>
         </section>
       )}
+      </div>
+      {hasSavedCurrentCity ? (
+        <YouReportActions
+          avatar={reportAvatar}
+          accountId={accountId}
+          accountRecovery={accountRecovery}
+          dailyAspectsReady={dailyAspectsReady}
+          dailyHoroscopeAssembly={dailyHoroscopeAssembly}
+          dailyUpdateSummary={dailyUpdateSummary}
+          weeklyHoroscopeAssembly={weeklyHoroscopeAssembly}
+          transitDateLabel={transitDateLabel}
+        />
+      ) : null}
+      <div className="you-transit-details">
+      {!transitSourceFeedback && <>
+      {visibleDailySpecialSections.map((section) => (
+        <section className="daily-special-section you-horoscope-card" key={section.headline}>
+          <span className="eyebrow section-label">{transitDateLabel} sky</span>
+          <h3>{section.headline}</h3>
+          {section.body.split(/\n{2,}/).map((paragraph) => <FormattedProse key={paragraph} text={paragraph} />)}
+        </section>
+      ))}
       {hasSavedCurrentCity && dailyAspectsLoading ? <PageLoading compact message="Calculating daily aspect peaks…" /> : null}
       {hasSavedCurrentCity && dailyAspectsError ? (
         <section className="you-empty-card" aria-label="Daily aspects unavailable">
@@ -711,27 +690,26 @@ function YouUpdatesTab({
         <p className="daily-horoscope-summary__secondary">No daily aspect highlights for {transitDateLabel}.</p>
       ) : null}
       {hasSavedCurrentCity && aspectRows.length > 0 && (
-        <div className="updates-aspect-list" aria-label="Areas of your life">
-          {aspectRows}
+        <YouTransitGroup title="Short-term transits" label="Areas of your life" rows={aspectRows} />
+      )}
+      {hasSavedCurrentCity && (backgroundAspectRows.length > 0 || otherWeeklyRows.length > 0) ? (
+        <div className="you-transit-flow">
+          {backgroundAspectRows.length > 0 ? (
+            <YouTransitGroup title="Long-term transits" label="Long-term transit cards" rows={backgroundAspectRows} />
+          ) : null}
+          {otherWeeklyRows.length > 0 ? <div className="updates-aspect-list you-transit-grid weekly-horoscope__transits" aria-label="Weekly transit cards">
+            {otherWeeklyRows.map(row => <LunationTransitCard key={row.reading.sourceUnits.join("-") || row.reading.headline} {...row} />)}
+          </div> : null}
         </div>
-      )}
-      {hasSavedCurrentCity && backgroundAspectRows.length > 0 ? (
-        <>
-          <span className="eyebrow section-label">Long-term transits</span>
-          <div className="updates-aspect-list" aria-label="Long-term transits">
-            {backgroundAspectRows}
-          </div>
-        </>
       ) : null}
+      {hasSavedCurrentCity ? <LunationTransitSection assembly={weeklyHoroscopeAssembly}>{lunationRow ? <LunationTransitCard {...lunationRow} /> : null}</LunationTransitSection> : null}
       {hasSavedCurrentCity && standaloneTransitRows.length > 0 && (
-        <>
-          <span className="eyebrow section-label">House transits</span>
-          <div className="updates-aspect-list" aria-label="House transits">
-            {standaloneTransitRows}
-          </div>
-        </>
+        <YouTransitGroup title="Planets moving through your houses" label="House transits" rows={standaloneTransitRows} />
       )}
-      {hasSavedCurrentCity && !transitsLoading && !dailyAspectsLoading && dailyAspectsReady && !dailyAspectsError && aspectRows.length === 0 && backgroundAspectRows.length === 0 && standaloneTransitRows.length === 0 && (
+      {hasSavedCurrentCity && natalAspectPatternItems && (
+        <NatalAspectPatternActivationsSection items={natalAspectPatternItems} timingOverrides={natalAspectPatternTimingOverrides} />
+      )}
+      {hasSavedCurrentCity && !transitsLoading && !dailyAspectsLoading && dailyAspectsReady && !dailyAspectsError && aspectRows.length === 0 && backgroundAspectRows.length === 0 && standaloneTransitRows.length === 0 && weeklyTransitRows.length === 0 && (
         <section className="you-empty-card" aria-label="Transit setup">
           <span>Updates</span>
           <h3>No major updates are active for {transitDateLabel}.</h3>
@@ -762,6 +740,7 @@ function YouUpdatesTab({
         </>
       ) : null}
       </>}
+      </div>
     </div>
   );
 }
@@ -921,10 +900,12 @@ function articleEyebrowGlyphs(article: YouTransitArticle) {
 
 function YouTransitArticlePage({
   article,
+  sourceFeedback,
   backAriaLabel = "Back to updates",
   onClose
 }: {
   article: YouTransitArticle;
+  sourceFeedback?: ReactNode;
   backAriaLabel?: string;
   onClose: () => void;
 }) {
@@ -1039,7 +1020,6 @@ function YouTransitArticlePage({
     ...group,
     sections: aspectSections.filter((section) => section.group === group.id)
   })).filter((group) => group.sections.length > 0);
-  const hasReadableBody = Boolean(displaySummary || displayIntroParagraphs.length || sections.length);
   const passKeyDates = displayArticle.meta.filter((row) => (
     /^Pass \d+$/u.test(row.label)
     || displayArticle.id.startsWith("personal-aspect:") && ["Current contact", "Full transit series"].includes(row.label)
@@ -1050,16 +1030,18 @@ function YouTransitArticlePage({
   const eyebrowDescription = eyebrowAspect
     ? `${eyebrowAspect.from} ${eyebrowAspect.aspect} ${eyebrowAspect.to}`
     : eyebrowGlyphs.join(" ");
+  const readingPage = Boolean(eyebrowAspect || displayArticle.transitDescription || /transit/iu.test(displayArticle.id));
   const headerDateRange = cleanArticleText(
     displayArticle.meta.find((row) => {
       const label = row.label.trim().toLowerCase();
-      return label === "date range" || label === "duration";
-    })?.value
+      return label === "date range" || label === "duration" || readingPage && label === "timing";
+    })?.value || (readingPage ? displayArticle.pills?.durationLabel : "")
   );
+  const keyDates = displayArticle.keyDates ?? passKeyDates.map(row => ({ date: cleanArticleText(row.value), label: row.label }));
 
   return (
     <section
-      className="article-page sky-detail-page you-transit-article-page"
+      className={`article-page sky-detail-page you-transit-article-page${readingPage ? " transit-aspect-article-page" : ""}`}
       aria-label={`${displayArticle.title} article`}
       aria-labelledby="you-transit-article-title"
     >
@@ -1070,7 +1052,7 @@ function YouTransitArticlePage({
       <article className="article-shell sky-detail-article you-transit-article">
         <div className="article-card sky-detail-card">
           <header className="article-id sky-detail-id">
-            <div className="article-eyebrow" aria-label={eyebrowGlyphs.length ? `${eyebrowLabel}: ${eyebrowDescription}` : eyebrowLabel}>
+            {displayArticle.personalTransit ? <PersonalTransitIcon {...displayArticle.personalTransit} /> : eyebrowAspect ? <AspectBadge aspect={eyebrowAspect.aspect} planet={eyebrowAspect.from} /> : readingPage && displayArticle.glyph ? <span className="article-planet-badge" aria-hidden="true">{displayArticle.glyph}</span> : <div className="article-eyebrow" aria-label={eyebrowGlyphs.length ? `${eyebrowLabel}: ${eyebrowDescription}` : eyebrowLabel}>
               <span>{eyebrowLabel}</span>
               {eyebrowGlyphs.length ? (
                 <>
@@ -1082,10 +1064,10 @@ function YouTransitArticlePage({
                   </span>
                 </>
               ) : null}
-            </div>
+            </div>}
             <h1 className="article-title" id="you-transit-article-title">{displayArticle.title}</h1>
             {headerDateRange ? <p className="article-duration">{headerDateRange}</p> : null}
-            <ArticlePills pills={displayArticle.pills} />
+            <ArticlePills pills={readingPage ? { ...displayArticle.pills, durationLabel: null } : displayArticle.pills} />
             {articleTldr ? (
               <div className="article-tldr">
                 <span className="ui-pill ui-pill--neutral article-tldr__label">TLDR</span>
@@ -1094,7 +1076,7 @@ function YouTransitArticlePage({
             ) : null}
           </header>
 
-          {hasReadableBody ? <hr className="article-rule" /> : null}
+          {sourceFeedback}
 
           {displaySummary || displayIntroParagraphs.length || mainSections.length ? (
           <div className="article-body-card sky-detail-body">
@@ -1132,19 +1114,6 @@ function YouTransitArticlePage({
                 );
               })}
               {displayArticle.natalPlanetReading ? <NatalChartReadings {...displayArticle.natalPlanetReading} /> : null}
-              {passKeyDates.length ? (
-                <section className="article-section sky-detail-section sky-placement-key-dates" aria-labelledby="you-transit-key-dates-title">
-                  <h2 id="you-transit-key-dates-title">Key dates</h2>
-                  <dl>
-                    {passKeyDates.map((row) => (
-                      <div key={`${row.label}-${row.value}`}>
-                        <dt>{cleanArticleText(row.value)}</dt>
-                        <dd>{row.label}</dd>
-                      </div>
-                    ))}
-                  </dl>
-                </section>
-              ) : null}
               {displayArticle.relatedAspects?.rows.length ? (
                 <section className="article-related-aspects" aria-label="Placement aspects">
                   <h2 className="sr-only">Placement aspects</h2>
@@ -1167,11 +1136,13 @@ function YouTransitArticlePage({
                 </section>
               ) : null}
               <TransitFacts description={displayArticle.transitDescription} />
-              <div className="sky-detail-end" aria-hidden="true">✦</div>
+              {!readingPage ? <div className="sky-detail-end" aria-hidden="true">✦</div> : null}
             </div>
           </div>
           ) : null}
         </div>
+
+        <ArticleKeyDates dates={keyDates} titleId="you-transit-key-dates-title" />
 
         {aspectGroups.length ? aspectGroups.map((group) => (
           <Fragment key={group.id}>
@@ -1268,11 +1239,14 @@ export function YouPage({
   transitsLoading = false,
   weeklyTransitRows = [],
   transitArticle,
+  natalPlacementContentStatus,
+  onRetryNatalPlacementContent,
   transitCopyLoading = false,
   transitCopyError = false,
   onRetryTransitCopy
 }: YouPageProps) {
   const [profileTab, setProfileTab] = useState<YouTab>(youTabFromUrl);
+  const sectRoute = useNatalReadingRoute();
   const [natalChartViewMode, setNatalChartViewMode] = useState<NatalChartViewMode>("circle");
   const [natalAspectPatternDetail, setNatalAspectPatternDetail] = useState<NatalAspectPatternDetailSelection | null>(null);
 
@@ -1294,21 +1268,10 @@ export function YouPage({
     setProfileTab(nextTab);
     updateYouTabUrl(nextTab);
   };
-  const natalOnlyAspects = canonicalNatalAspectsForSnapshot(natalSky);
   const natalChart = natalSky ? (
     <div className="wheel natal-wheel chart-shell" id="wheel-natal" aria-label="Natal chart wheel">
       <div className="chart-frame">
-        <SkyWheel
-          positions={natalSky.positions}
-          aspects={natalOnlyAspects}
-          ascendant={natalSky.ascendant}
-          ascendantLongitude={natalSky.ascendantLongitude}
-          midheavenLongitude={natalSky.midheavenLongitude}
-          showHouses
-          houseSignLabelStyle={houseSignLabelStyle}
-          variant="natal"
-          aspectInspector
-        />
+        <InteractiveZodiacWheel snapshot={natalSky} mode="natal" />
       </div>
     </div>
   ) : null;
@@ -1350,20 +1313,65 @@ export function YouPage({
     );
   }
 
+  if (sectRoute?.audience === "you") {
+    const ReadingPage = sectRoute.kind === "sect" ? NatalSectPage : NatalInsightPage;
+    return <ReadingPage snapshot={natalSky} audience="you" loading={natalChartStatus === "loading" || natalChartStatus === "idle"} />;
+  }
+
   const transitSourceFeedback = transitCopyError && onRetryTransitCopy
     ? <PageLoadError message="The transit readings could not load. Please try again." onRetry={onRetryTransitCopy} />
     : transitCopyLoading ? <PageLoading message="Loading transit readings…" /> : null;
   if (transitArticle && onCloseTransitArticle) {
+    if (transitArticle.natalPlacement) {
+      const missing = !transitArticle.sections.some(section => section.body.trim());
+      const feedback = missing && (natalPlacementContentStatus === 'loading'
+        ? <PageLoading message="Loading natal reading…" />
+        : <PageLoadError message="The natal reading could not load. Please try again." onRetry={onRetryNatalPlacementContent ?? (() => window.location.reload())} />);
+      return <YouTransitArticlePage article={transitArticle} sourceFeedback={feedback} onClose={onCloseTransitArticle} />;
+    }
     if (transitSourceFeedback) return transitSourceFeedback;
     return <YouTransitArticlePage article={transitArticle} onClose={onCloseTransitArticle} />;
   }
 
   return (
-    <section className="you-page you-chart-page page-shell" aria-label="You">
+    <section className="you-page you-chart-page page-shell" aria-label="You" data-profile-view={profileTab}>
       <div className="chart-layout">
+        <header className="profile-heading">
+          <YouProfileSummary
+            displayMoon={displayMoon}
+            displayRising={displayRising}
+            displaySun={displaySun}
+            profileAvatarUrl={profileAvatarUrl}
+            profileEmail={profileEmail}
+            profileHandle={profileHandle}
+            profileName={profileName}
+            signaturesReady={signaturesReady}
+          />
+
+          <div className="you-profile-controls">
+            <SegmentedControl
+              id="you-subtabs"
+              value={profileTab}
+              options={[
+                { value: "transits", label: "Transits" },
+                { value: "chart", label: "Natal Chart" }
+              ]}
+              onChange={selectProfileTab}
+              ariaLabel="Profile sections"
+              className="app-tabs profile-tabs you-profile-tabs you-chart-tabs"
+            />
+            <YouProfileOptions onEditProfile={onCreateChart} />
+          </div>
+
+        </header>
+        <PageLoadState scope="page" what="Your chart" cause={natalChartError} failed={natalChartStatus === "error"}
+          pending={natalChartStatus === "idle" || natalChartStatus === "loading"} onRetry={() => window.location.reload()}>
         <YouNatalChartPanel
           ariaLabel={activeChartLabel}
           natalChart={activeChart}
+          report={natalSky ? profileTab === "transits" && currentSky
+            ? { kind: "transit", primary: currentSky, secondary: natalSky, primaryLabel: "Sky · outer", secondaryLabel: `${profileName || "You"} · inner`, subtitle: transitDateLabel }
+            : { kind: "natal", primary: natalSky, primaryLabel: profileName || "You" } : undefined}
           natalChartStatus={natalChartStatus}
           natalChartError={natalChartError}
           onViewModeChange={profileTab === "chart" ? setNatalChartViewMode : undefined}
@@ -1372,34 +1380,12 @@ export function YouPage({
         />
 
         <main className="chart-layout__content">
-          <YouProfileSummary
-            displayMoon={displayMoon}
-            displayRising={displayRising}
-            displaySun={displaySun}
-            onEditProfile={onCreateChart}
-            profileAvatarUrl={profileAvatarUrl}
-            profileEmail={profileEmail}
-            profileHandle={profileHandle}
-            profileName={profileName}
-            signaturesReady={signaturesReady}
-          />
-
-          <SegmentedControl
-            id="you-subtabs"
-            value={profileTab}
-            options={[
-              { value: "transits", label: "Transits" },
-              { value: "chart", label: "Natal Chart" }
-            ]}
-            onChange={selectProfileTab}
-            ariaLabel="Profile sections"
-            className="app-tabs profile-tabs you-profile-tabs you-chart-tabs"
-          />
 
           {profileTab === "chart" && (
             <>
-            <NatalChartReadings snapshot={natalSky} audience="you" />
+
             <YouNatalTab
+              natalSky={natalSky}
               bigThreeRows={bigThreeRows}
               elementalSummaryLabel={elementalSummaryLabel}
               elementalSummarySentence={elementalSummarySentence}
@@ -1419,6 +1405,7 @@ export function YouPage({
 
           {profileTab === "transits" && (
             <YouUpdatesTab
+              reportAvatar={<ProfileAvatar avatarUrl={profileAvatarUrl} className="you-report-avatar" email={profileEmail} name={profileName} size="large" />}
               transitSourceFeedback={transitSourceFeedback}
               accountId={accountId}
               accountRecovery={accountRecovery}
@@ -1444,6 +1431,7 @@ export function YouPage({
             />
           )}
         </main>
+        </PageLoadState>
       </div>
     </section>
   );

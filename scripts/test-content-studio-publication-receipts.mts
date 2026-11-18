@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { randomUUID, randomBytes } from 'node:crypto';
 import { createPublicationDb, seedPublicationRow, callPublicationRpc } from '../tests/helpers/studio-publication-db.mjs';
 const db = await createPublicationDb();
 const targetId = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa';
@@ -57,6 +58,39 @@ try {
   await assert.rejects(callPublicationRpc(db,'content_studio_publication_receipt',args),/permission denied/);
   await assert.rejects(publish(),/permission denied/);
   await db.exec('reset role');
+ }
+ // The same publication transaction admits reusable Composite sources and keeps personal and sample rows private.
+ const sharedTargets = ['composite.moon', 'composite.house.north_node.house_12', 'composite.aspect.mars.trine.pluto',
+   'composite-venus-house7', 'composite-south-node-in-leo'];
+ const forbidden = [
+   {content_key:'composite-mars-trine-pluto'}, {content_key:'composite.house.mars.house_13'}, {surface:'relationship'},
+   {facts:{sampleOnly:true}}, {source_snapshot:{sampleOnly:true}}, {mode:'article'}, {lane:'reference'},
+   {provider:'tldrastro-fallback-architecture-v3'}, {target_date:'2026-11-12'}
+ ];
+ for (const [allowed, changes, proposalChanges] of [
+   ...sharedTargets.map(content_key => [true, {content_key}, {}] as const),
+   ...forbidden.map(fields => [false, fields, {}] as const),
+   [false, {}, {facts:{sampleOnly:true}}], [false, {}, {surface:'synastry'}],
+   [false, {}, {source_snapshot:{sampleOnly:true}}], [false, {}, {facts:{differentContext:true}}]
+ ] as [boolean, Record<string,unknown>, Record<string,any>][]) {
+   const source = {...target, id:randomUUID(), content_key:'composite.aspect.sun.trine.moon', surface:'composite', mode:'feed', ...changes};
+   const draft = {...source, ...proposalChanges, id:randomUUID(), status:'DRAFT', lane:'reference', review_state:'owner-review-required',
+     mode:'studio-draft', event_type:'standalone-article-revision', body:passage,
+     source_snapshot:{targetRowId:source.id, targetContentKey:source.content_key, targetRowUpdatedAt:version, ...proposalChanges.source_snapshot}};
+   await seedPublicationRow(db,source);
+   await seedPublicationRow(db,draft);
+   const current = await db.query('select to_jsonb(p) as value from content_publications p where content_key=$1',[source.content_key]);
+   const input = {...args, p_operation_id:randomBytes(32).toString('hex'), p_action:'publish-standalone-article-revision',
+     p_target_id:source.id, p_proposal_id:draft.id, p_validation_context:{targetPublication:current.rows[0]?.value ?? null},
+     p_patch:{body:passage, sections:{}, status:'LIVE',lane:'serving',review_state:null}};
+   if (allowed) {
+     const receipt = await publish(input);
+     assert.equal(receipt.row.body,passage);
+     assert.equal(receipt.targetId,source.id);
+   } else {
+     await assert.rejects(publish(input),{code:'22023'});
+     assert.equal((await db.query('select body from generated_interpretations where id=$1',[source.id])).rows[0].body,source.body);
+   }
  }
  console.log('PASS actual publication SQL: exact versions, target/proposal/ledger/history atomicity, late fault rollback, exact copy, immutable receipt, replay identity, later retirement and access control.');
 } finally { await db.close(); }

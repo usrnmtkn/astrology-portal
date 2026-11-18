@@ -15,9 +15,11 @@ import {
 import { debugInfoForZonedDateTime } from "./timezones.js";
 import { assertCanonicalSkyPoints } from "./canonicalSkyAspectProfile.js";
 import { memoizeSwissCalculation } from "./swissCalculationCache.js";
+import { calendarSkyEventMatches, parseCalendarSkyEventRoute } from "./calendarSkyEventIdentity.js";
 import { traditionalSignRulers } from "../content/skySunSeason.js";
 import { SKY_PLACEMENT_ASPECT_TARGETS, transitAspectDefinitions } from "../astrologyConfig.js";
 import { PERSONAL_DAILY_ORB, personalDayBounds, personalTransitId, type PersonalDailyPeak } from "./personalDailyTransits.js";
+import { calculateRelationshipForecastDay, type NatalForecastInput } from "./relationshipForecast.js";
 import { calculateRetrogradeHistory, retrogradeHistoryPlanets, type RetrogradeHistory } from "./retrogradeHistory.js";
 
 const retrogradeHistoryCache: RetrogradeHistory[] = [];
@@ -336,6 +338,15 @@ export async function preloadSwissEphemeris() {
   await getSwissEph();
 }
 
+export async function relationshipForecastDayFor(pairs: NatalForecastInput[], date: string, timeZone: string) {
+  const swe = await getSwissEph();
+  return calculateRelationshipForecastDay(pairs,date,timeZone,(planet,time) => {
+    const id = skyPointPlanetId(swe,planet);
+    if (id === null) throw new Error("Unsupported relationship forecast planet.");
+    return exactPlanetLongitude(swe,id,new Date(time));
+  });
+}
+
 function utcHour(date: Date) {
   return date.getUTCHours() + date.getUTCMinutes() / 60 + date.getUTCSeconds() / 3600;
 }
@@ -361,12 +372,21 @@ export function validateSwissEphemerisReturnFlag(
   }
 }
 
+// The shipped *_18.se1 files and calculation API cover 1800 through 2399.
+// Optional history can exhaust that coverage without invalidating current facts.
+const swissEphemerisStartJd = Date.UTC(1800, 0, 1) / 86_400_000 + 2_440_587.5;
+const swissEphemerisEndJd = Date.UTC(2400, 0, 1) / 86_400_000 + 2_440_587.5;
+class SwissEphemerisCoverageError extends Error {}
+
 const calculateSwissUt = memoizeSwissCalculation(function calculateSwissUt(
   swe: SwissEphInstance,
   julianDay: number,
   body: number,
   flags: number
 ): SwissCalculation {
+  if (julianDay < swissEphemerisStartJd || julianDay >= swissEphemerisEndJd) {
+    throw new SwissEphemerisCoverageError("Calculation exceeds the packaged Swiss Ephemeris date range.");
+  }
   const resultPointer = swe.SweModule._malloc(6 * Float64Array.BYTES_PER_ELEMENT);
   const errorPointer = swe.SweModule._malloc(256);
 
@@ -643,16 +663,23 @@ function signResidencyWindowFor(
   currentSign: string,
   longitudeOffset = 0
 ): SignTransitWindow {
-  if (["Sun", "Moon"].includes(planet)) {
-    const pass = signTransitWindowFor(swe, planet, planetId, date, currentSign, longitudeOffset);
-    return pass.transitStart && pass.transitEnd
-      ? { ...pass, residencyPasses: [{ entryDate: pass.transitStart, exitDate: pass.transitEnd,
-        entryMotion: exactPlanetSpeed(swe, planetId, new Date(pass.transitStart)) < 0 ? "retrograde" : "direct",
-        previousSign: exactPlanetSign(swe, planetId, new Date(Date.parse(pass.transitStart) - 300000), longitudeOffset)
-      }] }
-      : pass;
+  try {
+    if (["Sun", "Moon"].includes(planet)) {
+      const pass = signTransitWindowFor(swe, planet, planetId, date, currentSign, longitudeOffset);
+      return pass.transitStart && pass.transitEnd
+        ? { ...pass, residencyPasses: [{ entryDate: pass.transitStart, exitDate: pass.transitEnd,
+          entryMotion: exactPlanetSpeed(swe, planetId, new Date(pass.transitStart)) < 0 ? "retrograde" : "direct",
+          previousSign: exactPlanetSign(swe, planetId, new Date(Date.parse(pass.transitStart) - 300000), longitudeOffset)
+        }] }
+        : pass;
+    }
+    return multiPassSignResidencyFor(swe, planet, planetId, date, currentSign, longitudeOffset);
+  } catch (error) {
+    // A valid instant can belong to a residency extending beyond the shipped
+    // ephemeris. Keep its calculated positions/aspects; never clip the residency.
+    if (error instanceof SwissEphemerisCoverageError) return {};
+    throw error;
   }
-  return multiPassSignResidencyFor(swe, planet, planetId, date, currentSign, longitudeOffset);
 }
 
 function previousSameSignResidencyFor(
@@ -675,7 +702,15 @@ function previousSameSignResidencyFor(
     // fall back to Moshier or to guess a historical window.
     if (sample.getUTCFullYear() < 1800) return null;
     if (exactPlanetSign(swe, planetId, sample, longitudeOffset) === sign) {
-      const previousWindow = signResidencyWindowFor(swe, planet, planetId, sample, sign, longitudeOffset);
+      let previousWindow: SignTransitWindow;
+      try {
+        previousWindow = signResidencyWindowFor(swe, planet, planetId, sample, sign, longitudeOffset);
+      } catch (error) {
+        // A sample inside coverage can belong to a residency whose earlier
+        // passes cross its boundary. That complete history is unverified.
+        if (error instanceof SwissEphemerisCoverageError) return null;
+        throw error;
+      }
       if (
         previousWindow.transitStart
         && previousWindow.transitEnd
@@ -744,18 +779,22 @@ function moonSunPhaseAngle(swe: SwissEphInstance, date: Date) {
   );
 }
 
+// Week and month calculations format many instants in the same time zone.
+let calendarPartsFormatter: { zone: string; formatter: Intl.DateTimeFormat } | undefined;
+
+function zonedDateTimeParts(date: Date, timeZone: string) {
+  if (calendarPartsFormatter?.zone !== timeZone) {
+    const formatter = new Intl.DateTimeFormat("en-US", {
+      timeZone, hourCycle: "h23", year: "numeric", month: "2-digit", day: "2-digit",
+      hour: "2-digit", minute: "2-digit", second: "2-digit"
+    });
+    calendarPartsFormatter = { zone: timeZone, formatter };
+  }
+  return Object.fromEntries(calendarPartsFormatter.formatter.formatToParts(date).map(part => [part.type, part.value]));
+}
+
 function timeZoneOffsetMs(date: Date, timeZone: string) {
-  const parts = new Intl.DateTimeFormat("en-US", {
-    timeZone,
-    hourCycle: "h23",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit"
-  }).formatToParts(date);
-  const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  const values = zonedDateTimeParts(date, timeZone);
   const asUtc = Date.UTC(
     Number(values.year),
     Number(values.month) - 1,
@@ -781,16 +820,7 @@ function zonedDateTimeToUtc(timeZone: string, year: number, month: number, day: 
 
 function localDayRange(date: Date, timeZone?: string) {
   const zone = timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
-  const parts = new Intl.DateTimeFormat("en-US", {
-    timeZone: zone,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit"
-  }).formatToParts(date);
-  const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
-  const year = Number(values.year);
-  const month = Number(values.month);
-  const day = Number(values.day);
+  const { year, month, day } = localDateParts(date, zone);
   const start = zonedDateTimeToUtc(zone, year, month, day);
   const end = zonedDateTimeToUtc(zone, year, month, day + 1);
 
@@ -1361,14 +1391,7 @@ export async function getInitialSkySourceSelection(location: LocationInput, date
 }
 
 function localDateParts(date: Date, timeZone: string) {
-  const parts = new Intl.DateTimeFormat("en-US", {
-    timeZone,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit"
-  }).formatToParts(date);
-  const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
-
+  const values = zonedDateTimeParts(date, timeZone);
   return {
     year: Number(values.year),
     month: Number(values.month),
@@ -1511,18 +1534,69 @@ function eclipseTypeForLunation(
     return null;
   }
 
-  const nodeLongitude = exactPlanetLongitude(swe, swe.SE_TRUE_NODE, date);
-  const lunationLongitude = exactPlanetLongitude(
-    swe,
-    targetPhase === 0 ? swe.SE_SUN : swe.SE_MOON,
-    date
-  );
-  const nearestNodeDistance = Math.min(
-    angularSeparation(lunationLongitude, nodeLongitude),
-    angularSeparation(lunationLongitude, normalizeDegrees(nodeLongitude + 180))
-  );
-
-  return nearestNodeDistance <= 17.5 ? targetPhase === 0 ? "solar" : "lunar" : null;
+  const jd = swe.julday(date.getUTCFullYear(), date.getUTCMonth() + 1, date.getUTCDate(), utcHour(date));
+  const flags = swe.SEFLG_SWIEPH;
+  const module = swe.SweModule;
+  const geography = module._malloc(10 * Float64Array.BYTES_PER_ELEMENT);
+  const attributes = module._malloc(20 * Float64Array.BYTES_PER_ELEMENT);
+  const error = module._malloc(256);
+  try {
+    const at = (instant: number) => {
+      // Eclipse masks do not expose ephemeris provenance. Validate each
+      // bounded instant before invoking the native shadow calculation.
+      calculateSwissUt(swe, instant, swe.SE_SUN, flags);
+      calculateSwissUt(swe, instant, swe.SE_MOON, flags);
+      new Float64Array(module.HEAPF64.buffer, geography, 10).fill(0);
+      new Float64Array(module.HEAPF64.buffer, attributes, 20).fill(0);
+      new Uint8Array(module.HEAPF64.buffer, error, 256).fill(0);
+      let result = module.ccall(
+        targetPhase === 0 ? "swe_sol_eclipse_where" : "swe_lun_eclipse_how",
+        "number",
+        ["number", "number", "pointer", "pointer", "pointer"],
+        // A null lunar observer requests the global shadow, without a horizon.
+        [instant, flags, targetPhase === 0 ? geography : 0, attributes, error]
+      );
+      if (targetPhase === 0 && result === 0 && new Float64Array(module.HEAPF64.buffer, attributes, 20)[0] > 0) {
+        // Swiss' global search also confirms a grazing overlap at the maximum
+        // location when the shadow-location mask itself is still zero.
+        new Float64Array(module.HEAPF64.buffer, geography, 10)[2] = 0;
+        result = module.ccall("swe_sol_eclipse_how", "number",
+          ["number", "number", "pointer", "pointer", "pointer"], [instant, flags, geography, attributes, error]);
+      }
+      const message = module.UTF8ToString(error).trim();
+      if (!Number.isFinite(result) || result < 0) {
+        throw new Error(`Swiss eclipse calculation failed${message ? `: ${message}` : "."}`);
+      }
+      if (/moshier/iu.test(message)) throw new Error("Swiss eclipse calculation provenance mismatch.");
+      return { result, magnitude: new Float64Array(module.HEAPF64.buffer, attributes, 20)[targetPhase === 0 ? 0 : 1] };
+    };
+    const exact = at(jd);
+    if (exact.result > 0) return targetPhase === 0 ? "solar" : "lunar";
+    const kind = targetPhase === 0 ? "solar" : "lunar";
+    // A grazing eclipse can peak away from the geocentric New or Full Moon.
+    // Maximize the native magnitude within this same syzygy, never
+    // search another eclipse or run beyond the packaged ephemeris interval.
+    let left = Math.max(swissEphemerisStartJd, jd - 0.5);
+    let right = Math.min(swissEphemerisEndJd - 1 / 86400000, jd + 0.5);
+    const ratio = (Math.sqrt(5) - 1) / 2;
+    let a = right - ratio * (right - left), b = left + ratio * (right - left);
+    let first = at(a), second = at(b);
+    for (let index = 0; index < 32; index += 1) {
+      if (first.result > 0 || second.result > 0) return kind;
+      if (first.magnitude > second.magnitude) {
+        right = b; b = a; second = first;
+        a = right - ratio * (right - left); first = at(a);
+      } else {
+        left = a; a = b; first = second;
+        b = left + ratio * (right - left); second = at(b);
+      }
+    }
+    return first.result > 0 || second.result > 0 ? kind : null;
+  } finally {
+    module._free(geography);
+    module._free(attributes);
+    module._free(error);
+  }
 }
 
 function lunationTitle(name: string, sign: string, eclipseType: LunarCalendarEclipseType | null) {
@@ -2151,7 +2225,7 @@ function aspectDistanceAt(
 }
 
 // At conjunction/opposition, unsigned separation touches zero rather than crossing it.
-// The overview range adapter opts into the signed crossing, rejecting the wrap discontinuity.
+// Every exact-event feed uses signed crossings and rejects the wrap discontinuity.
 function aspectCrossingDistanceAt(swe: SwissEphInstance, first: number, second: number, date: Date, degrees: number) {
   if (degrees !== 0 && degrees !== 180) return aspectDistanceAt(swe, first, second, date, degrees);
   return ((planetLongitudeAt(swe, first, date) - planetLongitudeAt(swe, second, date) - degrees + 540) % 360) - 180;
@@ -2163,10 +2237,9 @@ function refineAspectEvent(
   secondPlanetId: number,
   targetDegrees: number,
   lowerDate: Date,
-  upperDate: Date,
-  signedCrossings = false
+  upperDate: Date
 ) {
-  const distanceAt = signedCrossings ? aspectCrossingDistanceAt : aspectDistanceAt;
+  const distanceAt = aspectCrossingDistanceAt;
   let lower = lowerDate;
   let upper = upperDate;
   let lowerDistance = distanceAt(swe, firstPlanetId, secondPlanetId, lower, targetDegrees);
@@ -2361,9 +2434,11 @@ function findResidualBoundary(
   stepDays: number,
   maxDays: number
 ) {
+  if (Math.min(...residualsAt(from).map(Math.abs)) > presentationDegrees) return null;
   let near = from;
-  for (let elapsed = stepDays; elapsed <= maxDays; elapsed += stepDays) {
-    const far = addDays(from, direction * elapsed);
+  for (let elapsed = stepDays; ; elapsed += stepDays) {
+    const searchDays = Math.min(elapsed, maxDays);
+    const far = addDays(from, direction * searchDays);
     if (Math.min(...residualsAt(far).map(Math.abs)) > presentationDegrees) {
       let inside = near;
       let outside = far;
@@ -2377,9 +2452,9 @@ function findResidualBoundary(
       }
       return new Date((inside.getTime() + outside.getTime()) / 2);
     }
+    if (searchDays === maxDays) return null;
     near = far;
   }
-  return addDays(from, direction * maxDays);
 }
 
 function stationFallsNearNatal(
@@ -2501,7 +2576,8 @@ export async function natalDailyTransitPeaksFor(
       if (!longitudes.has(time)) longitudes.set(time, exactPlanetLongitude(swe, planetId, date));
       return longitudes.get(time)!;
     };
-    const speed = Math.abs(exactPlanetSpeed(swe, planetId, reference));
+    const signedSpeed = exactPlanetSpeed(swe, planetId, reference);
+    const speed = Math.abs(signedSpeed);
     for (const target of natalTargets) {
       if (!Number.isFinite(target.longitude)) continue;
       const natalLongitude = normalizeDegrees(target.longitude + (planet === "South Node" ? 180 : 0));
@@ -2518,8 +2594,9 @@ export async function natalDailyTransitPeaksFor(
         const dailyPasses = scanResidualPasses(residualsAt, start, end, 1 / 8)
           .filter(date => date >= start && date < end);
         if (!dailyPasses.length && orbDegrees > PERSONAL_DAILY_ORB) continue;
-        const change = orbAt(addDays(reference, 1 / 24)) - orbDegrees;
-        const direction = Math.abs(change) < 1e-8 ? "stationary" : change < 0 ? "applying" : "separating";
+        const closestResidual = residualsAt(reference).sort((a, b) => Math.abs(a) - Math.abs(b))[0];
+        const change = closestResidual * signedSpeed;
+        const direction = Math.abs(signedSpeed) < 1e-8 ? "stationary" : change < 0 ? "applying" : "separating";
         // Only search the current tight contact for the nearest pass. A future
         // retrograde return after leaving orb cannot make a separating contact
         // appear to be applying or keep it in the daily list for months.
@@ -2528,12 +2605,19 @@ export async function natalDailyTransitPeaksFor(
           ? findResidualBoundary(residualsAt, PERSONAL_DAILY_ORB, reference, -1, step, 400) : start;
         const contactEnd = orbDegrees <= PERSONAL_DAILY_ORB
           ? findResidualBoundary(residualsAt, PERSONAL_DAILY_ORB, reference, 1, step, 400) : end;
+        // Unobserved boundaries only limit this internal exact-root search;
+        // they must never become published contact dates.
         const passes = scanResidualPasses(residualsAt,
-          new Date(Math.max(contactStart.getTime(), recentStart.getTime())), contactEnd, step);
+          new Date(Math.max(contactStart?.getTime() ?? recentStart.getTime(), recentStart.getTime())),
+          contactEnd ?? addDays(reference, 400), step);
         const allPasses = [...passes, ...dailyPasses].sort((a, b) => a.getTime() - b.getTime());
         result.push({
           id: personalTransitId(planet, aspect.type, target.planet), referenceAt, dateKey, timeZone,
           orbDegrees, direction, exactToday: dailyPasses.map(date => date.toISOString()),
+          ...(dailyPasses.length ? { exactPosition: {
+            sign: signForLongitude(longitudeAt(dailyPasses[0]) + (planet === "South Node" ? 180 : 0)).sign,
+            motion: exactPlanetSpeed(swe, planetId, dailyPasses[0]) < 0 ? "retrograde" as const : "direct" as const
+          } } : {}),
           previousExactAt: allPasses.filter(date => date <= reference).at(-1)?.toISOString() ?? null,
           nextExactAt: allPasses.find(date => date > reference)?.toISOString() ?? null
         });
@@ -2681,15 +2765,18 @@ function aspectPassSeriesTiming({
   if (allowUnperfectedWindow && !(orbAt(reference) <= presentationDegrees)) return null;
   const estimatedDurationDays = (presentationDegrees * 2) / relativeSpeed;
   const boundaryStepDays = Math.max(0.125, Math.min(5, presentationDegrees / (fastestSpeed * 4)));
-  const maxBoundaryDays = Math.max(60, Math.min(maxBoundaryCapDays, estimatedDurationDays * 4));
+  // Instantaneous speed can change near a station. Continue to the bounded
+  // search limit instead of publishing the shorter speed estimate as an exit.
+  const maxBoundaryDays = maxBoundaryCapDays;
   const currentStart = findResidualBoundary(residualsAt, presentationDegrees, reference, -1, boundaryStepDays, maxBoundaryDays);
   const currentEnd = findResidualBoundary(residualsAt, presentationDegrees, reference, 1, boundaryStepDays, maxBoundaryDays);
+  if (!currentStart || !currentEnd) return null;
   // A search horizon is not an observed orb crossing. Never publish its cap as
-  // the calculated start/end of a natal report contact.
+  // the calculated start/end of a contact.
   const crossesBoundary = (date: Date, direction: number) =>
     orbAt(new Date(date.getTime() - direction * 1000)) <= presentationDegrees
     && orbAt(new Date(date.getTime() + direction * 1000)) >= presentationDegrees;
-  if (allowUnperfectedWindow && (!crossesBoundary(currentStart, -1) || !crossesBoundary(currentEnd, 1))) return null;
+  if (!crossesBoundary(currentStart, -1) || !crossesBoundary(currentEnd, 1)) return null;
   const passStepDays = Math.max(1 / 24, Math.min(2, presentationDegrees / (fastestSpeed * 8)));
   const currentPasses = scanResidualPasses(residualsAt, currentStart, currentEnd, passStepDays);
   if (!currentPasses.length) {
@@ -2713,6 +2800,7 @@ function aspectPassSeriesTiming({
   const engagementPasses = linkedPasses.length > 1 && !linkedPasses.some(motionIsRetrogradeAt) ? currentPasses : linkedPasses;
   const engagementStart = findResidualBoundary(residualsAt, presentationDegrees, engagementPasses[0], -1, boundaryStepDays, maxBoundaryDays);
   const engagementEnd = findResidualBoundary(residualsAt, presentationDegrees, engagementPasses.at(-1)!, 1, boundaryStepDays, maxBoundaryDays);
+  if (!engagementStart || !engagementEnd || !crossesBoundary(engagementStart, -1) || !crossesBoundary(engagementEnd, 1)) return null;
   const durationDays = Math.max(0, (engagementEnd.getTime() - engagementStart.getTime()) / 86_400_000);
   const group: SkyAspectTiming["group"] = durationDays <= 10 ? "this-week" : durationDays < 365 ? "this-season" : "undercurrent";
   const closestIndex = engagementPasses.reduce((best, pass, index) => Math.abs(pass.getTime() - reference.getTime()) < Math.abs(engagementPasses[best].getTime() - reference.getTime()) ? index : best, 0);
@@ -2870,10 +2958,9 @@ function findSkyAspects(
   swe: SwissEphInstance,
   start: Date,
   end: Date,
-  timeZone: string,
-  signedCrossings = false
+  timeZone: string
 ): LunarCalendarEvent[] {
-  const distanceAt = signedCrossings ? aspectCrossingDistanceAt : aspectDistanceAt;
+  const distanceAt = aspectCrossingDistanceAt;
   const planetIds = [
     swe.SE_SUN,
     swe.SE_MOON,
@@ -2905,8 +2992,8 @@ function findSkyAspects(
           const currentDate = new Date(time);
           const currentDistance = distanceAt(swe, firstPlanetId, secondPlanetId, currentDate, degrees);
 
-          if (previousDistance === 0 || previousDistance * currentDistance < 0 && (!signedCrossings || Math.abs(currentDistance - previousDistance) < 180)) {
-            const occursAt = refineAspectEvent(swe, firstPlanetId, secondPlanetId, degrees, previousDate, currentDate, signedCrossings);
+          if (previousDistance === 0 || previousDistance * currentDistance < 0 && Math.abs(currentDistance - previousDistance) < 180) {
+            const occursAt = refineAspectEvent(swe, firstPlanetId, secondPlanetId, degrees, previousDate, currentDate);
             const dateKey = localDateKey(occursAt, timeZone);
             const title = `${firstPlanet} ${aspect} ${secondPlanet}`;
 
@@ -3069,6 +3156,66 @@ export async function getLunarCalendarDayEvents(location: LocationInput, anchor:
   }
   const dayKey = localDateKey(anchor, timeZone);
   return (await pending).filter(event => event.dateKey === dayKey);
+}
+
+export type CalendarSkyEventSnapshot = {
+  event: LunarCalendarEvent;
+  sky: SkySnapshot;
+  eventPosition?: PlanetPosition;
+};
+
+/** Reconstruct dated article facts from the same Calendar engine on reload. */
+export async function getCalendarSkyEventSnapshot(location: LocationInput, route: string): Promise<CalendarSkyEventSnapshot | null> {
+  const identity = parseCalendarSkyEventRoute(route);
+  if (!identity) return null;
+  const matches = (await getLunarCalendarDayEvents(location, identity.date))
+    .filter(event => calendarSkyEventMatches(identity.variant === "retrograde-passage" && event.phase === "retrograde-passage"
+      // An ongoing entry belongs to the requested local civil day. Its midnight
+      // changes with the selected zone; exact physical events retain their instant.
+      ? { ...identity, date: new Date(event.startsAt) } : identity, event));
+  if (matches.length !== 1) return null;
+  const event = matches[0];
+  const instant = event.phase === "retrograde-passage"
+    ? localNoon(new Date(event.startsAt), location.timeZone || "UTC") : new Date(event.startsAt);
+  const sign = event.toSign ?? event.sign;
+  const placement = event.planet && event.planet !== "Moon"
+    && !(event.planet === "Lilith" && /^station-/u.test(event.phase ?? ""));
+  const sky = placement && sign
+    ? await getSkyPlacementSnapshot(location, event.planet!, sign, instant, true, "placement")
+    : await getAstrodienstSky(location, instant, { includeTransitWindows: event.type === "lunation", transitWindowPlanets: [], includeDailyEvents: false });
+  const position = sky.positions.find(value => value.planet === event.planet);
+  if (!position) return { event, sky };
+  if (sign && position.sign !== sign) throw new Error("Calendar article placement does not match its calculated event.");
+  let eventPosition = { ...position };
+  if (event.direction === "retrograde" && event.planet !== "Lilith") {
+    if (event.phase === "station-retrograde" || event.type === "ingress") {
+      const swe = await getSwissEph();
+      const planetId = skyPointPlanetId(swe, event.planet!);
+      if (planetId === null) throw new Error("Unsupported Calendar station point.");
+      // Station direction is calculated just after the zero-speed instant.
+      // Use that same side to obtain its cycle, retaining event-time positions.
+      const cycle = retrogradeCycleFactsFor(swe, event.planet!, planetId,
+        event.phase === "station-retrograde" ? addDays(instant, 1) : instant, event.direction);
+      if (!cycle.retrogradeStart || !cycle.retrogradeEnd
+        || event.phase === "station-retrograde" && Math.abs(Date.parse(cycle.retrogradeStart) - +instant) > 2000) {
+        throw new Error("The dated Calendar station cycle is unavailable.");
+      }
+      eventPosition = { ...eventPosition, retrogradeStart: cycle.retrogradeStart, retrogradeEnd: cycle.retrogradeEnd,
+        retrogradeWindowSource: cycle.retrogradeWindowSource, retrogradePhase: cycle.retrogradePhase,
+        retrogradeShadowStart: cycle.retrogradeShadowStart, retrogradeShadowEnd: cycle.retrogradeShadowEnd };
+      if (sky.placementAspectFacts) sky.placementAspectFacts = { ...sky.placementAspectFacts,
+        retrogradeStart: cycle.retrogradeStart, retrogradeEnd: cycle.retrogradeEnd,
+        retrograde: rankPlacementEvents(findSkyPlacementResidencyAspects(swe, new Date(cycle.retrogradeStart),
+          new Date(cycle.retrogradeEnd), location.timeZone || "UTC", event.planet!), event.planet!) };
+    }
+  }
+  if (event.type === "station") {
+    eventPosition = { ...eventPosition, motion: event.direction ?? position.motion,
+      retrogradeStart: event.retrogradeStart ?? eventPosition.retrogradeStart,
+      retrogradeEnd: event.retrogradeEnd ?? eventPosition.retrogradeEnd,
+      cazimi: event.cazimi ?? eventPosition.cazimi, cazimiOrb: event.cazimiOrb ?? eventPosition.cazimiOrb };
+  }
+  return { event, sky, eventPosition };
 }
 
 function buildLunarCalendarRange(
@@ -3326,7 +3473,7 @@ export async function getHoroscopeCalendarRangeEvents(
   const searchEnd = new Date(end.getTime() + 2 * 86_400_000);
   return [...lunar, ...findIngresses(swe, searchStart, searchEnd, timeZone),
     ...findMoonIngresses(swe, searchStart, searchEnd, timeZone),
-    ...(options.includeAspects ? findSkyAspects(swe, searchStart, searchEnd, timeZone, true)
+    ...(options.includeAspects ? findSkyAspects(swe, searchStart, searchEnd, timeZone)
       .filter(event => event.planets?.every(planet => ["Sun","Mercury","Venus","Mars","Jupiter","Saturn","Uranus","Neptune","Pluto"].includes(planet))
         && ["conjunction", "sextile", "square", "trine", "opposition"].includes(event.aspect ?? "")) : [])]
     .sort((first, second) => first.startsAt.localeCompare(second.startsAt));
@@ -3513,9 +3660,10 @@ export type SkyPlacementTransitFacts = {
 };
 
 function placementPlanet(swe: SwissEphInstance, requestedPlanet: string) {
-  const key = requestedPlanet.trim().toLowerCase();
+  const key = requestedPlanet.trim().toLowerCase().replace(/[_\s]+/gu, "-");
   const supported = [
     ["sun", "Sun", swe.SE_SUN],
+    ["moon", "Moon", swe.SE_MOON],
     ["mercury", "Mercury", swe.SE_MERCURY],
     ["venus", "Venus", swe.SE_VENUS],
     ["mars", "Mars", swe.SE_MARS],

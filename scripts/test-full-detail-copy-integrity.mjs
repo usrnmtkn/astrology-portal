@@ -5,6 +5,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { tsImport } from "tsx/esm/api";
+import postcss from "postcss";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (relativePath) => fs.readFileSync(path.join(repoRoot, relativePath), "utf8");
@@ -67,6 +68,10 @@ requireFullDetailBoundary({
   token: "fullDetailReaderFacingParagraphs"
 });
 
+for (const name of ["NatalSectPage", "NatalInsightPage"]) {
+  requireFullDetailBoundary({ file: `apps/web/src/components/${name}.tsx`, name, token: "natalReadingBody" });
+}
+
 const placementSectionSource = read("apps/web/src/content/natalPlacementReaderSections.ts");
 assert.match(
   placementSectionSource,
@@ -90,18 +95,24 @@ assert.match(
 const cssRoot = path.join(repoRoot, "apps/web/src/styles");
 const allowedLineClampSelectors = new Set([
   ".placement-section .planet-placement-row__description",
-  ".transit-card-preview"
+  ".transit-card-preview",
+  ".natal-insight-card__preview",
+  ".friends-timing-card__body",
+  // The day sheet previews a complete, separately linked personal article.
+  // friends-pair-forecast.spec.ts verifies the full approved source survives.
+  ".pair-forecast-transit-preview",
+  ":is(.natal-placement-sections, .natal-big-three) .placement-table-row__description",
+  ".sky-page .planet-placement-row__description",
+  ".horoscope-planet-grid .planet-placement-row__description",
+  ".sky-page .sky-placement-group .planet-placement-row__description"
 ]);
 const lineClampSelectors = [];
 for (const entry of fs.readdirSync(cssRoot, { withFileTypes: true })) {
   if (!entry.isFile() || !entry.name.endsWith(".css")) continue;
   const css = fs.readFileSync(path.join(cssRoot, entry.name), "utf8");
-  const rulePattern = /([^{}]+)\{([^{}]*-webkit-line-clamp\s*:[^{}]+)\}/gu;
-  let match;
-
-  while ((match = rulePattern.exec(css))) {
-    const selectors = match[1].split(",").map((selector) => selector.trim()).filter(Boolean);
-    for (const selector of selectors) {
+  postcss.parse(css, { from: entry.name }).walkRules(rule => {
+    if (!rule.nodes.some(node => node.type === "decl" && node.prop === "-webkit-line-clamp")) return;
+    for (const selector of rule.selectors) {
       lineClampSelectors.push(`${entry.name}:${selector}`);
       assert.equal(
         allowedLineClampSelectors.has(selector),
@@ -109,7 +120,7 @@ for (const entry of fs.readdirSync(cssRoot, { withFileTypes: true })) {
         `${entry.name}:${selector} adds a text line clamp outside an approved preview surface.`
       );
     }
-  }
+  });
 }
 assert.equal(
   lineClampSelectors.length,
@@ -181,7 +192,7 @@ for (const passage of protectedPassages.values()) {
 console.log(JSON.stringify({
   status: "PASS",
   protectedMultiParagraphPassages: protectedPassages.size,
-  fullDetailConsumers: 15,
+  fullDetailConsumers: 17,
   approvedPreviewLineClamps: lineClampSelectors.sort(),
   passagesBySurface: Object.fromEntries([...surfaceCounts.entries()].sort(([a], [b]) => a.localeCompare(b)))
 }, null, 2));

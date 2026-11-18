@@ -1,5 +1,8 @@
+import { natalReadingRoute } from "../../services/natalReadingPath.ts";
+import { pushArticleUrl } from "../../services/articleNavigation.ts";
+
 export type FriendProfileTab = "compatibility" | "transits" | "natal" | "synastry" | "composite";
-export type FriendsMainView = "circle" | "charts" | "requests" | "profile";
+export type FriendsMainView = "feed" | "circle" | "charts" | "requests" | "profile";
 export type FriendsTab = Exclude<FriendsMainView, "profile">;
 
 export type FriendsRouteState = {
@@ -9,7 +12,7 @@ export type FriendsRouteState = {
   detail: string | null;
 };
 
-const friendsTabs: FriendsTab[] = ["circle", "charts", "requests"];
+const friendsTabs: FriendsTab[] = ["feed", "circle", "charts", "requests"];
 const friendProfileTabs: FriendProfileTab[] = ["compatibility", "transits", "natal", "synastry", "composite"];
 const friendsTabStorageKey = "tldrastro:friendsTab";
 const reservedFriendHandlePaths = new Set([
@@ -132,7 +135,7 @@ export async function prepareFriendProfileRoute(href: string) {
 }
 
 export function parseFriendsTab(value: string | null): FriendsTab {
-  return value === "charts" || value === "requests" || value === "circle" ? value : "circle";
+  return value === "feed" || value === "charts" || value === "requests" || value === "circle" ? value : "feed";
 }
 
 export function parseFriendProfileTab(value: string | null): FriendProfileTab {
@@ -151,6 +154,8 @@ export function friendsHashParts(hash: string) {
 export function friendsRouteStateFromHref(href: string): FriendsRouteState | null {
   try {
     const url = new URL(href);
+    const sect = natalReadingRoute(url.pathname);
+    if (sect?.audience === "they") return { tab: "charts", chartId: sect.chartId, view: "natal", detail: null };
     const { path, params } = friendsHashParts(url.hash);
     const routeParams = url.pathname === "/friends" ? url.searchParams : path === "friends" ? params : null;
 
@@ -225,7 +230,7 @@ export function isFriendsHref(href: string) {
     const profileRoute = friendProfilePathParts(url);
 
     return (
-      url.pathname === "/friends"
+      url.pathname === "/friends" || natalReadingRoute(url.pathname)?.audience === "they"
       || path === "friends"
       || Boolean(profileRoute && chartIdByHandle.has(profileRoute.handle))
     );
@@ -243,7 +248,7 @@ export function friendsTabHref(href: string, tab: FriendsTab) {
   const profileRoute = friendProfilePathParts(url);
   const isReadableProfile = Boolean(profileRoute && chartIdByHandle.has(profileRoute.handle));
 
-  if (url.pathname === "/friends" || isReadableProfile) {
+  if (url.pathname === "/friends" || isReadableProfile || natalReadingRoute(url.pathname)?.audience === "they") {
     url.pathname = "/friends";
     url.search = "";
     url.hash = "";
@@ -360,7 +365,9 @@ async function replaceSocialFriendProfileWithReadableUrl(
       return;
     }
 
-    window.history.replaceState({}, "", friendHandleProfileHref(window.location.href, handle, view, detail));
+    const href = friendHandleProfileHref(window.location.href, handle, view, detail);
+    const state = window.history.state;
+    window.history.replaceState(state?.articleUrl === window.location.href ? { ...state, articleUrl: href } : state, "", href);
   } catch {
     // Keep the legacy friend URL if the social handle cannot be resolved.
   }
@@ -374,7 +381,8 @@ export function updateFriendProfileUrl(
 ) {
   try {
     const href = friendProfileHref(window.location.href, chartId, view, detail);
-    window.history[mode === "replace" ? "replaceState" : "pushState"]({}, "", href);
+    if (mode === "push" && detail) pushArticleUrl(new URL(href));
+    else window.history[mode === "replace" ? "replaceState" : "pushState"]({}, "", href);
     void replaceSocialFriendProfileWithReadableUrl(chartId, view, detail);
   } catch {
     // URL state is an enhancement; keep the friend profile usable if history is unavailable.

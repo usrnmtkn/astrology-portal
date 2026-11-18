@@ -117,6 +117,16 @@ if ([...skyListReaderFiles].some(file => /fallback-content-sky-placement-(?!mani
 if ([...skyReaderFiles, ...skyListReaderFiles].some(file => file.includes("studio-editor-tools-"))) {
   throw new Error("The Sky reader downloads Studio editor tools through a shared dependency.");
 }
+const lunarReaderKey = "src/content/lunationArticleHoroscopes.ts";
+if (!manifest[lunarReaderKey]) throw new Error("The lunar article reader is missing from the build manifest.");
+if ([...collectStaticManifestGraph(manifest, [lunarReaderKey])].some(file => file.includes("studio-editor-tools-"))) {
+  throw new Error("The lunar article reader downloads Studio editor tools through a shared dependency.");
+}
+const calendarReaderKey = "src/features/calendar/LunarCalendar.tsx";
+if (!manifest[calendarReaderKey]) throw new Error("The Calendar reader is missing from the build manifest.");
+if ([...collectStaticManifestGraph(manifest, [calendarReaderKey])].some(file => file.includes("studio-editor-tools-"))) {
+  throw new Error("The Calendar reader downloads Studio editor tools through a shared dependency.");
+}
 const appItem = filesByName.get(manifest[appKey].file);
 const deferredTransitFallbackItem = javaScriptFiles.find((item) => item.file.includes("fallback-content-transit-"));
 const deferredRelationshipFallbackItems = javaScriptFiles.filter((item) => item.file.includes("fallback-content-relationships-"));
@@ -173,6 +183,22 @@ const failures = Object.entries(budgets).flatMap(([metric, limit]) => {
     ? [`${metric}: ${actual.toLocaleString("en-US")} bytes exceeds ${limit.toLocaleString("en-US")} bytes by ${(actual - limit).toLocaleString("en-US")} bytes`]
     : [];
 });
+
+const wheelEntries = Object.values(manifest).filter(item => item.name === "InteractiveZodiacWheel");
+const wheelEntry = wheelEntries[0];
+if (wheelEntries.length !== 1 || !wheelEntry?.isDynamicEntry) failures.push("Interactive wheel must remain an on-demand chart entry.");
+else if ([wheelEntry.file, ...(wheelEntry.css ?? [])].some(file => bootFiles.has(file) || readerStyleFiles.has(file))) {
+  failures.push("Interactive wheel drawing and inspection styles must stay outside reader startup.");
+}
+
+for (const name of ["FullChartView", "chartDownload"]) {
+  const entries = Object.values(manifest).filter(item => item.name === name);
+  const entry = entries[0];
+  if (entries.length !== 1 || !entry.isDynamicEntry) failures.push(`${name} must remain an on-demand chart entry.`);
+  else if ([entry.file, ...(entry.css ?? [])].some(file => bootFiles.has(file) || readerStyleFiles.has(file))) {
+    failures.push(`${name} and its styles must stay outside reader startup.`);
+  }
+}
 
 const formattingChunks = javaScriptFiles.filter(item => /\/(?:studio-rich-text|writing-markdown|FormattedWritingContent)-/u.test(item.file));
 if (!deferredCalendarItem || bootFiles.has(deferredCalendarItem.file)) {

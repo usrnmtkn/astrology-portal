@@ -1,5 +1,7 @@
 import { calendarTransitionPhraseRecordForKey } from "./calendar-transition-phrase-sources.js";
+import { isLunationHoroscopeKey, isLunationAspectKey } from "../../src/shared/lunationHoroscopeIdentity.js";
 import { calendarMoonIngressPackageRecordForKey } from "./calendar-moon-ingress-sources.js";
+import { calendarPassageIdentity, calendarPassageErrors } from '../../src/calendar-writing/passageContract.js';
 import { isRegisteredLunarJournalKey } from "./content-studio-package-admission.js";
 import { isZodiacSeasonSourceKey } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
 import { isRetiredCompositionKey } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/retiredCompositions.mjs";
@@ -13,6 +15,7 @@ import { createPackageManifest } from "../../apps/web/src/content/fallbackArchit
 import { createRequire } from "node:module";
 import { createHash } from "node:crypto";
 import { hasExactStudioOwnerApproval } from "./studio-owner-publication.js";
+import { articlePublicationIsDue, articlePublishAt } from "../../src/shared/articleLibrary.js";
 import { isFallbackDashboardRecordAllowed } from "../../apps/web/src/content/fallbackArchitectureV3/dashboardExtensions.js";
 import { selectLatestLiveServingDashboardRows } from "../../apps/web/src/services/fallbackArchitectureV3DashboardOverlay.js";
 import { contentWiringStatus } from "../../apps/admin/src/contentWiringStatus.js";
@@ -21,12 +24,17 @@ import { fallbackArchitectureV3DashboardPackageDestination } from "../../apps/we
 import { isReaderServableGeneratedContentRow, isGeneratedContentReaderBoundaryAllowed, generatedRowPackageRole } from "../../apps/web/src/content/generatedContentEligibility.js";
 import { astro101IsLiveOnLearn, isAstro101ContentKey } from "../../apps/web/src/content/astro101.js";
 import { hasExactSkyArticleOwnerApproval, skyArticleEditionRecord } from "../../apps/web/src/content/skyArticleTemplateCompiler.js";
-import { currentSkySummaryWording, skyDailySummaryFields, skySummaryTemplateErrors } from "../../apps/web/src/content/skyDailySummaryCatalog.js";
+import { currentSkySummaryWording, skyDailySummaryFields, skySummarySigns, skySummaryTemplateErrors } from "../../apps/web/src/content/skyDailySummaryCatalog.js";
+import { calendarSeasonTransitionEndsBridge, calendarSeasonTransitionSummaryKey } from '../../src/shared/features/calendar/calendarSeasonTransitionBridge.js';
 
 export { isSkyPartitionKey, servingPackageRecords };
 
 // These are the same defaults consumed by the Daily Sky reader, not CMS drafts.
-export const builtinContentRecords = new Map(skyDailySummaryFields.map(field => [field.key, {
+export const builtinContentRecords = new Map([...skyDailySummaryFields, ...skySummarySigns.map((from, index) => {
+  const to = skySummarySigns[(index + 1) % skySummarySigns.length];
+  return { key: calendarSeasonTransitionSummaryKey(from, to), label: `${from} to ${to} · Sun summary`,
+    body: calendarSeasonTransitionEndsBridge(from, to), readerEnabled: true };
+})].map(field => [field.key, {
   id: `builtin:${field.key}`, content_key: field.key, body: field.body, headline: field.label, readerEnabled: field.readerEnabled
 }]));
 
@@ -138,8 +146,38 @@ export function contentLiveStatuses(rows: LiveStatusRow[], candidates: LiveStatu
     if (row.provider && approved.has(reviewStatus) && isReaderServableGeneratedContentRow(row) && isGovernedReaderEligible({ ...source, contentKey: row.content_key, review_status: reviewStatus })) overlays.set(row.content_key, row);
   }
   return rows.map((row) => {
-    if (row.source_snapshot?.studioOwnerApproval && !hasExactStudioOwnerApproval(row)) return { id: row.id, live: false, label: "Not live", source: null, detail: "The saved wording differs from its owner approval.", updatedAt: row.updated_at ?? null } as ContentLiveStatus;
+    if ((row.source_snapshot?.studioOwnerApproval || (row.sections?.packageRecord as any)?.content_boundary?.ownerPublishedWording === true) && !hasExactStudioOwnerApproval(row)) return { id: row.id, live: false, label: "Not live", source: null, detail: "The saved wording differs from its owner approval.", updatedAt: row.updated_at ?? null } as ContentLiveStatus;
+    if (row.status === "LIVE" && allowsPublication(row) && !articlePublicationIsDue(row)) return { id: row.id, live: false, label: "Not live", source: null,
+      detail: articlePublishAt(row) ? `Scheduled for ${articlePublishAt(row)}. Readers cannot open this version before its publish date.` : "This article has an invalid publish date.",
+      updatedAt: row.updated_at ?? null } as ContentLiveStatus;
     if (isRetiredCompositionKey(row.content_key)) return { id: row.id, live: false, label: "Not live", source: null, detail: "Superseded composition. Use the canonical Personal Transit source.", updatedAt: row.updated_at ?? null } as ContentLiveStatus;
+    if (isLunationAspectKey(row.content_key)) {
+      const current = [...candidates].sort((a, b) => (b.updated_at ?? '').localeCompare(a.updated_at ?? ''))
+        .find(candidate => candidate.content_key === row.content_key && candidate.status === 'LIVE'
+          && candidate.lane === 'serving' && !candidate.review_state && candidate.body?.trim()
+          && hasExactStudioOwnerApproval(candidate) && isReaderServableGeneratedContentRow(candidate)
+          && isGeneratedContentReaderBoundaryAllowed(candidate));
+      const live = Boolean(current && row.status !== 'ARCHIVED' && row.body === current.body);
+      return { id: row.id, live, label: live ? 'Live' : 'Not live', source: live ? 'studio' : null,
+        detail: live ? 'Readers can receive this exact passage in matching New Moon or Full Moon articles.'
+          : 'This lunation aspect revision is not published.', updatedAt: row.updated_at ?? null,
+        servingRowId: live ? current?.id ?? null : null } as ContentLiveStatus;
+    }
+    // Dated daily overviews are selected directly by Calendar, outside the bundled package keys.
+    if (row.content_key.startsWith('calendar-passage/daily/')) {
+      const identity = calendarPassageIdentity(row.content_key);
+      const current = identity ? [...candidates].sort((a, b) => (b.updated_at ?? '').localeCompare(a.updated_at ?? ''))
+        .find(candidate => candidate.content_key === row.content_key && allowsPublication(candidate)
+          && candidate.status === 'LIVE' && candidate.lane === 'serving' && !candidate.review_state
+          && candidate.body?.trim() && !calendarPassageErrors(candidate.body).length
+          && isReaderServableGeneratedContentRow(candidate) && isGeneratedContentReaderBoundaryAllowed(candidate)) : undefined;
+      const requested = row.sections?.packageDraft?.body ?? row.body;
+      const live = Boolean(current && row.status !== 'ARCHIVED' && requested === current.body);
+      return { id: row.id, live, label: live ? 'Live' : 'Not live', source: live ? 'studio' : null,
+        detail: live ? `Readers can receive this ${identity?.date ? 'date-only daily overview' : 'shared daily overview template'}.`
+          : 'This Calendar daily overview revision is not published.', updatedAt: row.updated_at ?? null,
+        servingRowId: live ? current?.id ?? null : null } as ContentLiveStatus;
+    }
     if (isRegisteredLunarJournalKey(row.content_key)) {
       const current = [...candidates].sort((a,b)=>(b.updated_at??"").localeCompare(a.updated_at??""))
         .find(candidate=>candidate.content_key===row.content_key && allowsPublication(candidate)
@@ -163,6 +201,19 @@ export function contentLiveStatuses(rows: LiveStatusRow[], candidates: LiveStatu
       const live = Boolean(servingBody && requestedBody === servingBody);
       return { id: row.id, live, label: live ? "Live" : "Not live", source: live ? current ? "studio" : "package" : null,
         detail: live ? `Readers can receive this ${phrase ? "Calendar transition phrase" : "complete Moon ingress passage"}.` : `This revision is not the published ${phrase ? "Calendar transition phrase" : "Moon ingress passage"}.`,
+        updatedAt: row.updated_at ?? null, servingRowId: live ? current?.id ?? null : null } as ContentLiveStatus;
+    }
+    if (isLunationHoroscopeKey(row.content_key)) {
+      const current = [...candidates].sort((a, b) => (b.updated_at ?? "").localeCompare(a.updated_at ?? ""))
+        .find(candidate => candidate.content_key === row.content_key && candidate.status === "LIVE"
+          && candidate.lane === "serving" && !candidate.review_state && candidate.body?.trim()
+          && isReaderServableGeneratedContentRow(candidate) && isGeneratedContentReaderBoundaryAllowed(candidate));
+      const baseline = servingPackageRecords.get(row.content_key);
+      const servingBody = current?.body ?? (allowsPublication(row) ? baseline?.body : null);
+      const requested = row.sections?.packageDraft?.body ?? row.body ?? row.sections?.packageRecord?.body;
+      const live = Boolean(servingBody && requested === servingBody);
+      return { id: row.id, live, label: live ? "Live" : "Not live", source: live ? current ? "studio" : "package" : null,
+        detail: live ? "Readers can receive this complete lunation horoscope." : "This horoscope revision is not published.",
         updatedAt: row.updated_at ?? null, servingRowId: live ? current?.id ?? null : null } as ContentLiveStatus;
     }
     const builtin = builtinContentRecords.get(row.content_key);

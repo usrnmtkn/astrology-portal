@@ -1,6 +1,8 @@
 import {hasExactStudioOwnerApproval} from './_lib/studio-owner-publication.js';
-import { articleLibraryPrefixes } from "../src/shared/articleLibrary.js";
+import { skyArticleCompiledHashMatches } from './_lib/sky-article-reader-integrity.js';
+import { articleLibraryPrefixes, articlePublicationIsDue } from "../src/shared/articleLibrary.js";
 import { createHash } from "node:crypto";
+import { isStudioLunationRevision } from '../apps/web/src/content/fallbackArchitectureV3/resolver/lunationStudioRevision.mjs';
 import { SKY_SEASON_FALLBACK_PREFIX } from "../apps/web/src/content/skySeasonFallback.js";
 import { calendarPassageIdentity } from '../src/calendar-writing/passageContract.js';
 import { skyArticleDashboardScopeFilter, skyDashboardScopeFilter, skyListDashboardScopeFilter } from "../apps/web/src/services/skyDashboardScope.js";
@@ -14,11 +16,11 @@ import { publicationAllowsContent, publicationLedgerKey, validContentPublication
 import type { ContentPublication } from '../apps/web/src/content/contentPublicationState.js';
 import type { GeneratedContentRow } from '../apps/web/src/services/generatedContent.js';
 import { astro101IsLiveOnLearn, isAstro101ContentKey } from '../apps/web/src/content/astro101.js';
-import { HOROSCOPE_PERIODS, horoscopeEditionFromRow, validHoroscopeTimeZone, canonicalHoroscopeTimeZone } from '../apps/web/src/content/horoscopeEditions.mjs';
+import { HOROSCOPE_PERIODS, horoscopeEditionFromRow, validHoroscopeTimeZone, horoscopeReaderTimeZones, type HoroscopePeriod } from '../apps/web/src/content/horoscopeEditions.mjs';
 
 loadLocalWebEnv();
 const pageSize = 250;
-const select = 'id,content_key,surface,mode,status,lane,review_state,event_type,target_date,facts,source_snapshot,headline,summary,body,sections,block_type,flags,provider,model,updated_at,judge_score,judge_gate';
+const select = 'id,content_key,surface,mode,status,lane,review_state,event_type,target_date,facts,source_snapshot,headline,summary,body,sections,block_type,flags,provider,model,updated_at,published_at,judge_score,judge_gate';
 const providers = new Set(['tldrastro-fallback-architecture-v3', 'tldrastro-fallback-architecture-v3-sky-placement']);
 const surfaces = new Set(['sky', 'you', 'natal', 'synastry', 'composite', 'relationship', 'modifier', 'year_ahead', 'education']);
 type Query = { provider?: string; keys?: string[]; ids?: string[]; prefix?: string; surfaces?: string[]; targetDate?: string; afterId?: string; scope?: "sky" | "sky-list" | "sky-article"; vocabularyOnly?: boolean; latestVersion?: boolean; horoscope?: {period:string; at:string; timeZone?:string} };
@@ -54,9 +56,13 @@ async function readQuery(req: IncomingMessage): Promise<Query> {
 }
 
 export function readerRowIsEligible(row: GeneratedContentRow) {
+  if ((row.sections as Record<string, any> | null)?.packageRecord?.content_boundary?.ownerPublishedWording === true && !hasExactStudioOwnerApproval(row)) return false;
   if (row.status !== 'LIVE' || row.lane !== 'serving' || row.review_state != null) return false;
+  if (row.event_type === 'sky-article-edition' && !skyArticleCompiledHashMatches((row.sections as Record<string, unknown> | null)?.skyArticleEdition)) return false;
+  if (!articlePublicationIsDue(row)) return false;
   if (row.content_key.startsWith('sample-') || row.facts?.sampleOnly || row.source_snapshot?.sampleOnly) return false;
-  if (row.flags?.some(flag => ['REFERENCE_ONLY_NEVER_SERVE_VERBATIM', 'PARAPHRASE_PENDING', 'BLOCKLIST_MATCH'].includes(flag))) return false;
+  if (row.flags?.some(flag => ['REFERENCE_ONLY_NEVER_SERVE_VERBATIM', 'PARAPHRASE_PENDING'].includes(flag)
+    || flag === 'BLOCKLIST_MATCH' && !hasExactStudioOwnerApproval(row))) return false;
   if (row.content_key.startsWith(SKY_SEASON_FALLBACK_PREFIX) && (row.source_snapshot?.ownerApproval as {copySha256?: string} | undefined)?.copySha256
     !== createHash('sha256').update(JSON.stringify([row.headline, row.summary, row.body])).digest('hex')) return false;
   if (row.content_key.startsWith('horoscope/')) return Boolean(horoscopeEditionFromRow(row));
@@ -67,6 +73,8 @@ export function readerRowIsEligible(row: GeneratedContentRow) {
   const record = (row.sections as Record<string, unknown> | null)?.packageRecord;
   if (record && typeof record === 'object' && !Array.isArray(record)) {
     const value = record as Record<string, unknown>;
+    if (value.studio_lunation_revision && (!isStudioLunationRevision(value) || typeof value.body !== 'string'
+      || value.body !== row.body || createHash('sha256').update(value.body).digest('hex') !== (value.protected_content as any)?.body_sha256)) return false;
     const approvedReviews = new Set(['approved', 'approved_reuse', 'reviewed']);
     const declaredReviews = [value.review_status, value.body_you_review_status, value.body_they_review_status,
       row.source_snapshot?.review_status];
@@ -112,7 +120,10 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     if (query.provider) params.set('provider', `eq.${query.provider}`);
     if (query.horoscope) {
       params.set('content_key', `like.horoscope/${query.horoscope.period}/*`);
-      if (query.horoscope.timeZone) params.set('sections->horoscopeEdition->window->>timeZone', `eq.${canonicalHoroscopeTimeZone(query.horoscope.timeZone)}`);
+      if (query.horoscope.timeZone) {
+        const zones = horoscopeReaderTimeZones(query.horoscope.period as HoroscopePeriod, query.horoscope.timeZone);
+        params.set('sections->horoscopeEdition->window->>timeZone', zones.length === 1 ? `eq.${zones[0]}` : `in.(${zones.join(',')})`);
+      }
       params.set('sections->horoscopeEdition->window->>startsAt', `lte.${query.horoscope.at}`);
       params.set('sections->horoscopeEdition->window->>endsAt', `gt.${query.horoscope.at}`);
     }
@@ -161,7 +172,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const admitted = rows.filter(row => (!row.source_snapshot?.studioOwnerApproval || hasExactStudioOwnerApproval(row)) && readerRowIsEligible(row)
       && publicationAllowsContent(row.content_key, row.id, row.updated_at, row.target_date, publications));
     res.end(JSON.stringify({ schema: READER_ROW_SCHEMA, rows: admitted.map(row => projectReaderRow(row, {
-      ownerApprovalVerified: /^fallback-hook\/daily-(?:headline|body)\//u.test(row.content_key) && hasExactStudioOwnerApproval(row)
+      ownerApprovalVerified: hasExactStudioOwnerApproval(row)
     })).filter(Boolean), publications: ledger,
       nextCursor: rows.length === pageSize ? rows.at(-1)!.id : null }));
   } catch (error) {

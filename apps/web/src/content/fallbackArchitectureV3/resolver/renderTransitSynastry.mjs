@@ -20,6 +20,7 @@ import { isGovernedReaderEligible, synastryReaderTier, transitReaderTier } from 
 import { normalizeLunationSign } from "./lunationNormalization.mjs";
 import { sharedLunationEclipseSectionKey } from "./lunationEclipseSectionKeys.mjs";
 import { sha256Text } from "./contentIntegrity.mjs";
+import { isStudioLunationRevision, isPinnedLunationBookRevision } from './lunationStudioRevision.mjs';
 import { personalTransitCopyVersion } from "./personalTransitCopyVersions.mjs";
 
 const here = path.dirname(url.fileURLToPath(import.meta.url));
@@ -2310,9 +2311,11 @@ function renderLunationHoroscopeReference({ kind, sign, risingSign, eventDate, m
     return matchingNewMoonSlotCache;
   };
   const renderStoredBody = (stored) => {
+    if (isStudioLunationRevision(stored) && sha256Text(stored.body ?? '') !== stored.protected_content?.body_sha256)
+      throw new SourceGapError(`LUNATION_REVISION_MODIFIED: ${stored.contentKey}`);
     const needsMatchingNewMoon = /\{\{matchingNewMoon(?:Sign|Date)\}\}/u.test(stored.body ?? "");
     const renderedBookBody = needsMatchingNewMoon
-      ? fill(stored.body, matchingNewMoonSlots())
+      ? stored.body.replace(/\{\{(matchingNewMoonSign|matchingNewMoonDate)\}\}/gu, (_match, key) => matchingNewMoonSlots()[key])
       : stored.body;
     if (/\{\{/u.test(renderedBookBody)) {
       throw new SourceGapError(`SOURCE_GAP: unresolved lunation book slot in ${stored.contentKey}`);
@@ -2335,6 +2338,8 @@ function renderLunationHoroscopeReference({ kind, sign, risingSign, eventDate, m
   };
   const assertProtectedEclipseBookBody = (stored, source) => {
     assertStoredEclipseSectionIntegrity(stored);
+    if (isStudioLunationRevision(stored)) return;
+    if (isPinnedLunationBookRevision(stored, source, sha256Text(source.body ?? ''), sha256Text(stored.body ?? ''))) return;
     const sourceBody = source.body ?? "";
     const sourceHash = sha256Text(sourceBody);
     const protectedSourceHash = source.protected_content?.body_sha256;

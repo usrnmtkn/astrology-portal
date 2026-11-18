@@ -21,8 +21,10 @@ for(const period of ['daily','weekly','monthly','seasonal'] as const){
  const created=await store.invoke('POST',{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',status:'DRAFT',lane:'serving',headline:'Automatic instructions fixture',body:horoscopeEditionBody(edition),sections:{horoscopeEdition:edition},facts:{horoscopeBrief:packet},sourceSnapshot:{studioWritingProfile:first,horoscopeOutlines:{},horoscopeGeneration:{readings:{historical:{profileHash:'original immutable receipt'}},rejections:[]}}});
  assert.equal(created.status,200,JSON.stringify(created.payload));let row=created.payload.rows[0];
  const action=(action:string,extra:any={})=>invokeHoroscopeWriting({action,id:row.id,expectedUpdatedAt:row.updated_at,...extra});
- const original=structuredClone(row);
+ let original=structuredClone(row);
  const initial=await action('prepare');assert.equal(initial.status,200);
+ assert.deepEqual(initial.payload.rows[0].sections,original.sections);
+ row=initial.payload.rows[0];original=structuredClone(row); // Free Weekly preparation saves its comparison metadata once.
  const second=await saveProfile(first,`Latest ${period} guidance, complete and exact.`);
  assert.deepEqual(store.rows.get(row.id),original,'Saving a profile alone never mutates an edition');
  const calls=writerFixture.calls;
@@ -41,7 +43,10 @@ for(const period of ['daily','weekly','monthly','seasonal'] as const){
  const repeated=await action('prepare');assert.equal(repeated.status,200);assert.equal(repeated.payload.rows[0].updated_at,row.updated_at,'No write when already current');
  const started=await action('generate',{sign,approvedPlanHash:refreshed.payload.plan.planHash});assert.equal(started.status,202,JSON.stringify(started.payload));row=started.payload.rows[0];
  const active=structuredClone(row.source_snapshot.horoscopeGeneration.active);
- const actualDraft=(period==='monthly'?active.draftRequest:period==='seasonal'?editorialFixtureRows.get(active.id).state.input.template:writerFixture.requests.get(active.responseId)).input;
+ const actualRequest=period==='monthly'?active.draftRequest:period==='seasonal'?editorialFixtureRows.get(active.id).state.input.template:writerFixture.requests.get(active.responseId);
+ const actualDraft=actualRequest.input;
+ for(const direction of ['No separate concluding paragraph is required in a horoscope.','a meaningful new implication, a sharper contrast, or something the reader can recognize in their own life','makes older wrap-up paragraph instructions optional'])
+  assert(actualRequest.instructions.includes(direction),`${period} must receive the complete current ending rule at its provider boundary`);
  const style=JSON.parse(actualDraft.match(/OWNER-APPROVED STYLE REFERENCE\n([^\n]+)/u)![1]);
  assert.equal(style.reference.ownerAuthored,false);assert.equal(style.reference.ownerApproved,true);
  assert.equal(style.reference.textSha256,'bd9e64d07024c4899150056265b4f7a22afd074a4c9eb94b1b126319d6994fca');
@@ -102,9 +107,9 @@ const weeklyFacts=await prepareHoroscopeBrief(new URL('http://localhost/?period=
 const weeklyEdition=emptyHoroscopeEdition(weeklyFacts.brief.window);
 const weeklyCreated=await store.invoke('POST',{contentKey:horoscopeEditionKey(weeklyEdition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',status:'DRAFT',lane:'serving',headline:'Weekly isolation fixture',body:horoscopeEditionBody(weeklyEdition),sections:{horoscopeEdition:weeklyEdition},facts:{horoscopeBrief:weeklyFacts},sourceSnapshot:{studioWritingProfile:weeklyProfile,horoscopeOutlines:{},horoscopeGeneration:{readings:{},rejections:[]}}});
 assert.equal(weeklyCreated.status,200,JSON.stringify(weeklyCreated.payload));
-const weeklyRow=weeklyCreated.payload.rows[0];
+let weeklyRow=weeklyCreated.payload.rows[0];
 const prepareWeekly=()=>invokeHoroscopeWriting({action:'prepare',id:weeklyRow.id,expectedUpdatedAt:weeklyRow.updated_at});
-const planBefore=await prepareWeekly();assert.equal(planBefore.status,200);
+const planBefore=await prepareWeekly();assert.equal(planBefore.status,200);weeklyRow=planBefore.payload.rows[0];
 const captureRequest=async(row:any)=>{
  const prepared=prepareHoroscopeWriting(row);
  const stop=new Error('Stop at the unbilled provider boundary');let request:any;

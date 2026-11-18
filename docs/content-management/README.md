@@ -14,6 +14,9 @@ The short version:
 
 ## Read these before changing content
 
+- [Interactive wheel tooltips](./WHEEL_TOOLTIPS.md): shared hover and house-ruler
+  wording, calculated variables, draft/publication behavior and safe preview access.
+
 - [Connection transit detail](./connection-transits.md): separate personal transit,
   exact activation and editable bridge sources, without borrowing bond openings.
 - [Reader-facing content contract](../../CONTENT-CONTRACT.md): the governing
@@ -26,6 +29,8 @@ The short version:
   by Sky and Calendar, with normal article editing and publication controls.
 - [Placement composition](./SKY_PLACEMENT_V5.md): editable sentence sources,
   named variables, ordered sections, calculated previews, and publication checks.
+- [Personalized placement aspect bridges](./SKY_PLACEMENT_ASPECT_BRIDGES.md):
+  editable house/contact bridges, intact aspect sources, and a single timing layer.
 - [Governed approvals](./GOVERNED-APPROVALS.md): atomic owner decisions,
   unresolved queues, and the generated approved-only serving projection.
 - [Sky aspect surface contract](./SKY-ASPECT-SURFACE-CONTRACT.md): required
@@ -167,6 +172,29 @@ scripts/
 
 ## Content Studio access
 
+### Natal aspect writing
+
+**Natal Aspects** includes exact `fallback-hook/natal-aspect-lived/` sources and
+the six standalone `natal.aspect.sun.*.moon` write-ups. Either planet order finds
+the same entries. The cards show saved You, Friend and Astrology hint coverage;
+the editor exposes each exact audience even when its field is empty.
+
+**Astrology hint** edits the separate line above the You passage. Exact sources
+retain it in the package proposal; standalone Sun–Moon sources use their saved
+sections. Save draft, reopen and publication use the existing version checks.
+The public reader exposes this field only for these natal aspect families.
+
+The standalone Sun–Moon passage supplies You. An exact Friend source takes
+precedence over the legacy conversion for Friends. **Write Friend passage**
+creates that separate source when absent, without filling the You field.
+
+**Shared fallback sources** remains available alongside exact writing. It opens
+the pair passage, You/Friend template, aspect explanation, aspect wording and
+movement, and both planet/point meanings. These sources affect their other
+usages as well. An aspect without a composed resolver group does not advertise
+unused shared sources. Browsing and opening sources never creates or publishes
+content; the normal draft and owner publication actions remain separate.
+
 ### Sky reader preview
 
 **Reader date** is shared by the source panel, Published/Draft preview,
@@ -272,6 +300,49 @@ updates its captured value. Source-only edits can publish without changing any
 reader wording. Existing conflict checks, publication review and history remain.
 
 ### Editing assembled sections
+
+**Variables** opens with all built-in variables visible. Search by token, meaning,
+planet, sign, or source; filter by library and surface. The directory includes
+Calendar conditions, chart-wheel tooltips, dignity summaries, and Friction and
+Flow as well as the shared phrase and placement libraries. Tokens retain their
+surface's syntax: some use single braces, others double braces, and Calendar
+conditions enclose wording in an opening/closing block.
+
+**Export all values** downloads CSV or JSON from authenticated, read-only pages.
+It includes complete packaged and current saved source fields, custom values and
+overrides, calculated examples, and explicit empty-field states. Saved draft and
+package values remain distinct; a saved row's status is not a claim that readers
+currently receive it. Calculated values depend on the selected chart/date.
+
+The page and export share one complete catalog. Hook-backed passages such as
+`houseMeaning`, `placementHouseSentences`, `modifierSentences`, `planetIntro`,
+and `natalCore` retain their actual source keys and individual reader fields.
+Each usage records its template fields; a resolver dependency without a direct
+insertion field is identified as such. Unmapped providers fail the catalog
+build. Coverage tests independently scan reader fields and declared slots.
+
+Shared planet/sign references export the hash-validated source text, with the
+reference in a separate column. Reference target revisions are read even across
+export pages. Field contracts are deduplicated in API responses and restored
+in full before CSV/JSON download. No saved source is changed by an export.
+
+The owner retained the approved legacy empty-house rows. `placementLine` and
+`rulerHouseJurisdiction` remain visible as retired variables; the current V14
+renderer consumes complete house/sign/ruler passages instead. This preserves
+the approved source wording and does not make those old slots active.
+After the scoped natal retrograde release, the former shared retrograde template
+is also listed as retired. It is not an active `modifierSentences` provider.
+The catalog records `ownerName` in the Friend field of exact natal passages and
+the planet/house retrograde additions; those raw passages do not acquire the
+House Meaning scalar-variable contract.
+
+The editor's Variables panel lists supported variables before they are used;
+**Only variables used in this row** narrows that list. The shared Natal House
+Meaning hook supports the scalar context supplied by the natal placement
+resolver, including `planetTopic`, `planetCore`, and `houseOrdinal`. The picker
+and save validation share that contract in `natalPlacementVariables.mjs`.
+Other source families retain their own runtime contracts. A token's existence
+elsewhere does not establish that the current renderer can resolve it.
 
 Variable controls use readable labels alongside the unchanged saved tokens.
 Sky supports search by name, meaning, token, or existing wording; type and

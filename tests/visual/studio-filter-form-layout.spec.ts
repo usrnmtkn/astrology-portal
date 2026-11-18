@@ -1,4 +1,4 @@
-import { openSkyPlacementSourceDetails } from '../helpers/sky-placement-workspace-navigation';
+import { openSkyPlacementChooser, openSkyPlacementSourceDetails } from '../helpers/sky-placement-workspace-navigation';
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import { normalizeTransitNatalPreviewInput, renderTransitNatalDraftStarter, renderTransitNatalPreviewState } from "../../api/admin/transit-natal-preview";
 
@@ -153,6 +153,7 @@ test("placement filters keep the composition, keyword results, advanced filters 
   await expect(list).toContainText("Saturn in Aries");
   await expect(list).not.toContainText("Mars in Taurus");
   await filters.getByLabel("Sky placement zodiac sign").selectOption("aries");
+  await openSkyPlacementChooser(page);
   await filters.getByLabel("Sky write-up motion").selectOption("direct");
   await openSkyPlacementSourceDetails(page);
   await page.getByText("Content library sources", { exact: true }).click();
@@ -277,7 +278,7 @@ test("Daily Sky Summary keeps assembly flat and uses the shared canvas for neste
   await expect(assembly).toBeVisible();
   expect(await assembly.evaluate(element => element.classList.contains("studio-surface"))).toBe(false);
   expect(await assembly.evaluate(element => getComputedStyle(element).backgroundColor)).toBe("rgba(0, 0, 0, 0)");
-  const writing = studio.locator("details").filter({ has: page.locator("summary", { hasText: "Writing system" }) });
+  const writing = studio.getByLabel("Daily Sky summary system details", { exact: true });
   await expect(writing).toBeVisible();
   const canvas = await page.locator("main.admin-dashboard").evaluate(element => getComputedStyle(element).backgroundColor);
   expect(await writing.evaluate(element => getComputedStyle(element).backgroundColor)).toBe(canvas);

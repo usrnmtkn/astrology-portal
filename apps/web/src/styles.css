@@ -1,11 +1,11 @@
 /*
 Type system:
-Newsreader is for display and titles. The system sans stack is for narrative
-body copy. Geist Mono is for UI, data, labels, highlighted content, and the TLDR Astro wordmark.
+Newsreader is for display, titles, and narrative readings. The system sans stack
+is for profile summaries and UI controls. Geist Mono is for technical labels. Narrative highlights inherit the body type.
 Noto Sans Symbols is reserved for astrological glyphs.
 
 Type scale:
-Text sizes snap to 11 / 12 / 13 / 14 / 15 / 16 / 18 / 20 / 24px, plus
+Text sizes snap to 11 / 12 / 13 / 14 / 15 / 16 / 17 / 18 / 20 / 24px, plus
 intentional display clamp() values.
 */
 
@@ -23,7 +23,6 @@ intentional display clamp() values.
 @import url("./styles/settings.css");
 @import url("./styles/sky.css");
 @import url("./styles/sky-debility.css");
-@import url("./styles/sky-placements.css");
 @import url("./styles/tables.css");
 @import url("./styles/aspects.css");
 @import url("./styles/weekly-horoscope.css");
@@ -39,4 +38,7 @@ intentional display clamp() values.
 @import url("./styles/card-systems.css");
 @import url("./styles/lazy-reveal.css");
 @import url("./styles/live-ds.css");
-@import url("./styles/learn.css");
+@import url("./styles/sky-overview.css");
+@import url("./styles/account-overview.css");
+@import url("./styles/article-overview.css");
+@import url("./styles/aspect-cards.css");

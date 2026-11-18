@@ -301,7 +301,9 @@ export async function reviewDraft({
   const rhetoricDecision = rhetoricalDecision(rhetoric);
   const rhetoricViolations = rhetoric.findings.map(f => ({category:f.label,severity:RHETORICAL_LABELS.includes(f.label)?'blocking':'nonblocking',location:f.field,text:f.quote,
     reason:`${f.reason} ${f.readerConsequence} ${f.meaningTest}`,paragraph:f.paragraph,
-    revision_instruction:'Regenerate the affected prose from its supported meaning; do not alter owner evidence or astrology.'}));
+    revision_instruction:f.label==='APHORISM'
+      ?'Review this maxim in context. Retain it sparingly when it earns its place, or remove an unnecessary moral; no automatic rewrite is required.'
+      :'Regenerate the affected prose from its supported meaning; do not alter owner evidence or astrology.'}));
   const advisoryModelViolations = modelReview.violations
     .filter((item) => item.category !== "cold_rendered_prose")
     .map(advisoryModelViolation);

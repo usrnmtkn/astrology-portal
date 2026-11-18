@@ -26,7 +26,8 @@ compiled article record, not reconstructed from old workspace slot values.
 ## Dated draft workflow
 
 1. Open an existing saved visit, or choose a date during the selected placement
-   and select **Load calculated dates**. The existing authenticated facts API
+   and select **Write article**. The writing controls share the selected reader
+   date. The existing authenticated facts API
    identifies the visit. A different calculated sign is an error, not a new
    destination silently substituted for the selected pair.
 2. Edit the title, separately authored summary and article body. Draft text
@@ -34,7 +35,7 @@ compiled article record, not reconstructed from old workspace slot values.
    the placement or page warns about unsaved writing; an in-flight operation
    blocks navigation.
 3. **Save draft** compiles a new dated article with the existing deterministic
-   v3 renderer. It neither generates prose nor copies template prose over the
+   v3 renderer. Saving neither generates prose nor copies template prose over the
    article. The current source template is retained as provenance where one
    exists; otherwise provenance identifies the built-in v3 layout.
 4. Existing articles use the normal version-checked
@@ -48,6 +49,42 @@ Visits use calculated entry/exit instants. Separate retrograde return visits
 retain distinct dated identities even within one year. Long stays can cross
 years. Moon-sign visits remain separate from New Moon / Full Moon articles;
 existing lunar, node and Lilith default source structures are retained.
+
+## Full-visit generation and existing day documents
+
+**Generate draft** loads the full calculated visit and opens a review panel.
+Opening this panel sends no writer request. **Generate this draft** is the
+explicit paid action; it uses the existing configured ingress writer and
+unchanged instructions. A fresh exact-identity read prevents generation over an
+already saved article. Existing writing opens intact instead.
+
+Returned fields remain separate from the passage until **Use this draft**.
+Saving then retains the generated fields and receipt alongside any subsequent
+editor changes, without adding the compiled date line or Key dates twice.
+Requests are not retried automatically. Leaving the panel aborts its client
+request and prevents a late preflight response from starting generation.
+
+New articles cover the full calculated visit. For example, October 28 selects
+the Moon-in-Gemini visit containing that reference date, not an October-28-only
+article. Existing `sky-article/moon/{sign}/{year}/day/{date}` documents retain
+their complete writing, Eastern day bounds, scope and content keys. They remain
+editable; a revision cannot change their scope. The new controls do not convert
+them or offer day-only generation. Previously approved day articles retain
+their reader precedence for their saved day; full-visit articles remain the
+primary reading for the rest of their matching visit. Drafts never displace
+published writing or fallback sources.
+
+The standard Moon layout is an application layout reference, not a fabricated
+approval of a stored template. Requests that name a stored template still
+require its existing approval. The older built-in Moon identifier is accepted
+for full-visit generation, while explicit day-generation requests stop before
+dispatch. Read-only input inspection accepts the calculated planet/sign when
+there is no saved approved Moon template. Shared writer facts, instructions,
+profiles, owner evidence, and bundle limits are unchanged by this reconciliation.
+
+The reconciled browser/API cases are prepared for the final test slot. Their
+execution and final-base results must be recorded separately; the historical
+acceptance results below do not verify this change.
 
 **Currently live** checks saved LIVE dated candidates with the authenticated
 publication-status API and the existing exact-approval/time-window selector.

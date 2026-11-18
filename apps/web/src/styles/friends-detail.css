@@ -64,7 +64,6 @@
   grid-column: 2;
   grid-row: 1;
   width: 100%;
-  max-width: var(--friend-detail-content-max);
 }
 
 .relationship-detail-layout > .friend-detail-chart-column,
@@ -72,18 +71,7 @@
   grid-column: 1;
   grid-row: 1;
   width: 100%;
-  max-width: var(--friend-detail-chart-max);
   align-self: start;
-}
-
-.relationship-detail-no-chart {
-  grid-template-columns: minmax(0, var(--friend-detail-no-chart-max));
-  justify-content: center;
-  width: min(var(--friend-detail-no-chart-max), calc(100vw - clamp(32px, 8vw, 144px)));
-}
-
-.relationship-detail-no-chart > .friend-detail-content-column {
-  max-width: var(--friend-detail-no-chart-max);
 }
 
 .relationship-detail-no-chart > .friend-detail-chart-column {
@@ -96,19 +84,7 @@
   width: 100%;
   max-width: 100%;
   min-width: 0;
-  gap: var(--friend-wheel-stack-gap);
   overflow: visible;
-}
-
-.chart-shell--composite-inspector,
-.chart-shell--composite-inspector > .chart-frame {
-  height: auto;
-  aspect-ratio: auto;
-}
-
-.friend-chart-page--synastry,
-.friend-chart-page--composite {
-  --friend-wheel-stack-gap: var(--ds-friends-detail-friend-wheel-stack-gap);
 }
 
 .friend-synastry-wheel-shell > .natal-chart-view-toggle {
@@ -215,7 +191,7 @@
   color: var(--card-title-color);
   font-family: var(--font-display);
   font-size: var(--text-card-title);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-regular);
   letter-spacing: var(--tracking-title);
   line-height: var(--leading-title);
 }
@@ -246,31 +222,6 @@
   line-height: var(--leading-meta);
 }
 
-.composite-placements-section {
-  display: grid;
-  gap: calc(var(--space-3) + var(--space-1) / 2);
-  min-width: 0;
-}
-
-.composite-placements-section .friend-section-label {
-  margin: 0;
-}
-
-.friend-chart-page .composite-placements-section .placement-table-card {
-  width: 100%;
-}
-
-.friend-chart-page .composite-placements-section .friend-placement-row-compact .placement-table-row {
-  grid-template-columns: max-content minmax(0, 1fr);
-  align-items: center;
-  gap: var(--space-4);
-  padding: var(--card-row-padding-compact);
-}
-
-.composite-placements-section .placement-table-row__glyph {
-  align-self: center;
-}
-
 .friend-chart-legend {
   display: flex;
   justify-content: center;
@@ -280,6 +231,7 @@
   max-width: var(--shared-chart-size);
   margin: 0 auto;
   color: var(--ink);
+  font-family: var(--font-ui);
   font-size: var(--text-section-label-size);
   font-weight: var(--weight-regular);
   letter-spacing: var(--tracking-label);
@@ -331,625 +283,58 @@
   letter-spacing: var(--tracking-pill);
 }
 
-.synastry-placements-comparison,
-.synastry-placement-rows {
-  display: grid;
-  gap: calc(var(--space-3) + var(--space-1) / 2);
-}
-
-.synastry-placements-comparison {
-  container-type: inline-size;
-}
-
-.synastry-placement-columns {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: calc(var(--space-4) + var(--space-1) / 2);
-  align-items: start;
-}
-
-@container (max-width: 480px) {
-  .synastry-placement-columns {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-
-/* This surface is lazy loaded after the global responsive sheet. Keep its
-   narrow layout with the component so loading order cannot restore two
-   desktop columns on a phone. */
+.friend-chart-page:has(.friend-compatibility-stage) > .friend-detail-main,
+.friend-compatibility-stage,
+.friend-compatibility-stage > .compatibility-column { display: contents; }
+.friend-compatibility-stage .friend-daily-forecast { grid-column: 2; grid-row: 2; }
+.friend-chart-page.friend-profile-view.friend-chart-page--compatibility.relationship-detail-layout > .friend-detail-chart-rail,
+.friend-chart-page.friend-profile-view.friend-chart-page--compatibility .compatibility-overview { align-self: start; }
+.friend-compatibility-stage :is(.compatibility-comparisons, .compatibility-dynamics) { grid-column: 1 / -1; }
+.compatibility-comparisons { display: grid; gap: var(--space-4); }
+.friend-chart-page .compatibility-comparisons > .chart-section-title { font-family: var(--font-ui); font-size: var(--type-section-heading-size); font-weight: var(--weight-semibold); line-height: var(--leading-section-heading); letter-spacing: var(--tracking-normal); text-transform: none; }
+.friend-chart-page .compatibility-card-list { display: grid; grid-template-columns: var(--layout-card-columns); gap: var(--space-6); }
+.friend-chart-page .compatibility-card { display: flex; flex-direction: column; align-items: center; gap: var(--space-4); padding: var(--space-8) var(--space-7) var(--space-7); text-align: center; }
+.friend-chart-page .compatibility-card__header { display: contents; }
+.friend-chart-page .compatibility-card__signs { display: grid; justify-items: start; gap: var(--space-2); font-size: var(--type-ui-copy-size); }
+.friend-chart-page .compatibility-card__preview { max-height: calc(var(--text-body) * var(--leading-body) * 6); overflow: hidden; mask-image: var(--card-preview-fade); }
+.friend-chart-page .compatibility-card__action { margin-top: auto; }
+.compatibility-card:hover .compatibility-card__action { background: var(--accent); color: var(--surface); border-color: var(--accent); }
+.compatibility-card__match { display: inline-flex; align-items: center; justify-content: center; min-height: var(--lunar-space-28); padding: var(--space-1) var(--space-3); border-radius: var(--radius-pill); background: linear-gradient(90deg, var(--comparison-start, var(--surface-2)), var(--comparison-end, var(--surface-2))); color: var(--ink); font-family: var(--font-ui); font-size: var(--type-meta-size); line-height: var(--leading-meta); }
+.compatibility-card__match.is-same-sign { background: var(--surface-2); }
+.compatibility-card[data-you-element="Fire"] { --comparison-start: var(--element-chip-fire-bg); }
+.compatibility-card[data-you-element="Earth"] { --comparison-start: var(--element-chip-earth-bg); }
+.compatibility-card[data-you-element="Air"] { --comparison-start: var(--element-chip-air-bg); }
+.compatibility-card[data-you-element="Water"] { --comparison-start: var(--element-chip-water-bg); }
+.compatibility-card[data-friend-element="Fire"] { --comparison-end: var(--element-chip-fire-bg); }
+.compatibility-card[data-friend-element="Earth"] { --comparison-end: var(--element-chip-earth-bg); }
+.compatibility-card[data-friend-element="Air"] { --comparison-end: var(--element-chip-air-bg); }
+.compatibility-card[data-friend-element="Water"] { --comparison-end: var(--element-chip-water-bg); }
 @media (max-width: 800px) {
-  .synastry-placements-comparison .synastry-placement-columns {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .synastry-placement-table > .synastry-placement-row {
-    grid-template-columns: max-content max-content minmax(0, 1fr);
-    grid-template-areas: "glyph sign meta";
-    gap: var(--space-2);
-    padding: var(--card-row-padding-compact);
-  }
-
-  .synastry-placement-row .synastry-placement-lead {
-    grid-area: glyph;
-  }
-
-  .synastry-placement-row .synastry-placement-sign {
-    grid-area: sign;
-  }
-
-  .synastry-placement-row .synastry-placement-meta {
-    grid-area: meta;
-    display: flex;
-    gap: var(--space-1);
-    width: auto;
-  }
-}
-
-.synastry-placement-column,
-.synastry-placement-panel {
-  display: grid;
-  min-width: 0;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  overflow: visible;
-}
-
-.synastry-placement-column {
-  align-self: start;
-  display: grid;
-  min-width: 0;
-  gap: var(--space-3);
-}
-
-.synastry-placement-column-inner {
-  border-color: transparent;
-}
-
-.synastry-placement-column-header,
-.synastry-placement-panel-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: var(--space-3);
-  padding: 0 0 calc(var(--space-3) - var(--space-1) / 4);
-  border-bottom: var(--border-width-thin) solid var(--line);
-}
-
-.synastry-placement-column-header h3 {
-  margin: 0;
-  overflow-wrap: anywhere;
-}
-
-.synastry-placement-column-header {
-  border-bottom: 0;
-}
-
-.synastry-placement-panel-title {
-  color: var(--muted);
-  font-weight: var(--weight-semibold);
-  font-size: var(--text-section-label-size);
-  letter-spacing: var(--tracking-label);
-  text-transform: uppercase;
-}
-
-.synastry-placement-column-inner .synastry-placement-table {
-  background: transparent;
-}
-
-.synastry-placement-row {
-  --row-bg: var(--card-bg);
-  --synastry-placement-meta-width: var(--ds-friends-detail-synastry-placement-meta-width);
-
-  display: grid;
-  grid-template-columns: minmax(58px, max-content) 34px var(--synastry-placement-meta-width);
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-4);
-  padding: var(--space-3) calc(var(--space-3) + var(--space-1) / 2);
-  border: var(--border-width-thin) solid var(--card-border);
-  border-bottom: 0;
-  border-radius: 0;
-  box-shadow: var(--shadow-flat);
-  overflow: visible;
-}
-
-.synastry-placement-column-inner .synastry-placement-row {
-  border-color: var(--card-border);
-  background: var(--synastry-row-bg);
-}
-
-/* Both people share geometry; only their surface and glyph colors differ. */
-.synastry-placement-table > .synastry-placement-row {
-  grid-template-columns: max-content max-content minmax(0, 1fr);
-  gap: var(--space-2);
-  padding: var(--card-row-padding-compact);
-  border: var(--border-width-thin) solid var(--card-border);
-  border-radius: var(--card-radius);
-  background: var(--card-bg);
-  box-shadow: var(--card-shadow);
-}
-
-.synastry-placement-table > .synastry-placement-row-inner {
-  background: var(--synastry-row-bg);
-}
-
-.synastry-placement-row-empty {
-  visibility: hidden;
-}
-
-.friend-chart-page .synastry-placement-degree,
-.friend-chart-page .synastry-placement-house,
-.friend-chart-page .synastry-placement-meta {
-  color: var(--card-meta-color);
-  font-size: var(--type-meta-size);
-}
-
-.synastry-placement-lead {
-  display: inline-grid;
-  grid-template-columns: 34px auto;
-  align-items: center;
-  justify-content: center;
-  justify-items: start;
-  gap: calc(var(--space-1) + var(--space-1) / 2);
-  min-width: 0;
-}
-
-.synastry-placement-glyph {
-  position: relative;
-  display: inline-flex;
-  place-items: center;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  min-width: 34px;
-  height: 32px;
-  transform: translateY(-1px);
-  color: var(--wheel-glyph);
-  font-family: var(--font-glyph);
-  font-size: var(--text-glyph);
-  line-height: var(--leading-label);
-}
-
-.synastry-rx-glyph-svg {
-  display: block;
-  width: 23px;
-  height: auto;
-  filter: var(--filter-synastry-outer-glyph);
-  overflow: visible;
-  object-fit: contain;
-}
-
-.synastry-placement-rx-mark {
-  color: var(--wheel-glyph);
-  font-family: var(--font-display);
-  font-size: var(--type-meta-size);
-  font-weight: var(--weight-semibold);
-  letter-spacing: var(--tracking-label);
-  line-height: var(--leading-label);
-  text-transform: none;
-  white-space: nowrap;
-}
-
-.synastry-placement-column-inner .synastry-rx-glyph-svg,
-.synastry-placement-row-inner .synastry-rx-glyph-svg {
-  filter: var(--filter-synastry-inner-glyph);
-}
-
-.synastry-placement-column-inner .synastry-placement-rx-mark,
-.synastry-placement-row-inner .synastry-placement-rx-mark {
-  color: var(--synastry-accent);
-}
-
-:is(.theme-dark, [data-theme="dark"]) .synastry-rx-glyph-svg,
-:is(.theme-dark, [data-theme="dark"]) .synastry-placement-column-inner .synastry-rx-glyph-svg {
-  opacity: 1;
-}
-
-.synastry-placement-sign {
-  min-width: 0;
-}
-
-.synastry-placement-sign {
-  display: inline-grid;
-  place-items: center;
-  width: 28px;
-  height: 28px;
-  line-height: var(--leading-label);
-  max-width: 100%;
-  overflow: visible;
-  text-overflow: clip;
-  white-space: nowrap;
-}
-
-.synastry-placement-chip b {
-  display: block;
-  color: var(--ink);
-  font-family: var(--font-display);
-  font-size: var(--text-row-title-size);
-  font-weight: var(--weight-medium);
-  letter-spacing: var(--tracking-title);
-  line-height: var(--leading-title);
-}
-
-.synastry-placement-sign-svg {
-  display: block;
-  width: 24px;
-  height: 24px;
-  filter: var(--filter-glyph-current);
-  object-fit: contain;
-}
-
-.synastry-placement-sign {
-  color: var(--ink);
-}
-
-.synastry-placement-column-inner .synastry-placement-glyph,
-.synastry-placement-column-inner .synastry-placement-sign,
-.synastry-placement-row-inner .synastry-placement-glyph,
-.synastry-placement-row-inner .synastry-placement-sign {
-  color: var(--synastry-accent);
-}
-
-.synastry-placement-column-inner .synastry-placement-sign-svg,
-.synastry-placement-row-inner .synastry-placement-sign-svg {
-  filter: var(--filter-synastry-inner-glyph);
-}
-
-.synastry-placement-degree,
-.synastry-placement-house {
-  display: inline-flex;
-  align-items: center;
-  min-height: 1em;
-  color: var(--muted);
-  font-size: var(--type-meta-size);
-  font-weight: var(--weight-regular);
-  line-height: var(--leading-label);
-  text-align: right;
-  white-space: nowrap;
-}
-
-.synastry-placement-degree {
-  justify-content: flex-end;
-}
-
-.synastry-placement-house {
-  justify-content: flex-start;
-  text-align: left;
-}
-
-.synastry-placement-meta {
-  display: grid;
-  grid-template-columns: minmax(52px, 1fr) 4px 28px;
-  align-items: center;
-  justify-self: end;
-  justify-content: end;
-  column-gap: var(--space-2);
-  width: var(--synastry-placement-meta-width);
-  color: var(--muted);
-  font-family: var(--font-body);
-  font-size: var(--type-meta-size);
-  font-weight: var(--weight-regular);
-  line-height: var(--leading-label);
-  min-width: 0;
-  white-space: nowrap;
-}
-
-.synastry-placement-meta-separator {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--card-meta-color);
-  line-height: var(--leading-label);
-}
-
-.synastry-placement-chip small,
-.synastry-placement-empty {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: var(--space-1) var(--space-2);
-  color: var(--muted);
-  font-family: var(--font-body);
-  font-size: var(--type-meta-size);
-  font-weight: var(--weight-regular);
-  line-height: var(--leading-meta);
-  min-width: 0;
-  white-space: nowrap;
-}
-
-.synastry-placement-empty {
-  padding: 0 calc(var(--space-7) - var(--space-1)) var(--space-6);
-}
-
-.friend-placement-column {
-  position: relative;
-  overflow: visible;
-  min-width: 0;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  box-shadow: var(--shadow-flat);
-}
-
-.friend-placement-column-title {
-  margin: 0;
-  padding: var(--space-5) var(--space-6);
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  color: var(--muted);
-  font-size: var(--type-xs);
-  font-weight: var(--weight-semibold);
-  line-height: var(--leading-title);
-  letter-spacing: var(--tracking-label);
-  text-transform: uppercase;
-}
-
-.friend-placement-table {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--friend-placement-row-gap);
-  width: 100%;
-  max-width: none;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  box-shadow: var(--shadow-flat);
-  overflow: visible;
-}
-
-.friend-chart-page .friend-placement-column-title {
-  padding: var(--friend-placement-column-title-padding);
-  color: var(--card-meta-color);
-}
-
-.friend-placement-main {
-  display: contents;
-}
-
-.friend-placement-symbol {
-  grid-area: symbol;
-  width: 42px;
-  min-width: 42px;
-  font-size: var(--type-small-display-size);
-  text-align: center;
-}
-
-.friend-chart-page .friend-placement-symbol {
-  font-size: var(--friend-placement-symbol-size);
-}
-
-.friend-placement-label {
-  grid-area: label;
-  min-width: 0;
-  overflow: visible;
-  font-size: var(--type-lg);
-  font-weight: var(--weight-semibold);
-  line-height: var(--leading-title);
-  text-overflow: clip;
-  white-space: normal;
-}
-
-.friend-chart-page .friend-placement-label {
-  font-size: var(--friend-placement-label-size);
-  line-height: var(--leading-h1);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.friend-placement-meta {
-  display: inline-flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: var(--glyph-gap-sm);
-  grid-area: meta;
-  justify-self: end;
-  min-width: 0;
-  color: var(--card-meta-color);
-  font-size: var(--type-sm);
-  font-weight: var(--weight-medium);
-  line-height: var(--leading-title);
-  white-space: nowrap;
-}
-
-.friend-chart-page .friend-placement-meta {
-  color: var(--card-meta-color);
-  font-size: var(--friend-placement-meta-size);
-  font-weight: var(--weight-semibold);
-}
-
-.friend-placement-summary {
-  grid-area: summary;
-  color: var(--card-body-color);
-  font-size: var(--type-sm);
-  line-height: var(--leading-description);
-  overflow-wrap: normal;
-}
-
-.friend-chart-page .friend-placement-summary {
-  margin-top: 0;
-  color: var(--card-body-color);
-  font-size: var(--friend-placement-summary-size);
-  font-weight: var(--weight-regular);
-  line-height: var(--leading-meta);
-}
-
-.friend-placement-row,
-.friend-chart-page .friend-placement-row,
-.friend-chart-page .friend-placement-row-compact,
-.friend-placement-column-compact .friend-placement-row {
-  display: block;
-  min-width: 0;
-  min-height: 0;
-  padding: 0;
-  border-bottom: 0;
-  background: transparent;
-  overflow: visible;
-}
-
-.friend-placement-table > .friend-placement-row:first-child :where(.planet-placement-row, .placement-table-row) {
-  border-radius: var(--card-radius);
-}
-
-.friend-placement-column-title + .friend-placement-table > .friend-placement-row:first-child :where(.planet-placement-row, .placement-table-row) {
-  border-radius: var(--card-radius);
-}
-
-.friend-placement-table > .friend-placement-row:last-child :where(.planet-placement-row, .placement-table-row) {
-  border-radius: var(--card-radius);
-}
-
-.friend-chart-page .friend-placement-row-compact .planet-placement-row {
-  padding: var(--friend-placement-compact-padding);
-}
-
-.friend-chart-page .friend-placement-row-compact .placement-table-row {
-  padding: var(--friend-placement-compact-padding);
-}
-
-.synastry-placement-table {
-  display: grid;
-  position: relative;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--friend-placement-row-gap);
-  margin-top: 0;
-  overflow: visible;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  box-shadow: var(--shadow-flat);
-}
-
-.synastry-placement-table .planet-placement-row {
-  border: var(--border-width-thin) solid var(--friend-placement-row-border, var(--card-border));
-  border-radius: var(--card-radius);
-  background: var(--friend-placement-row-bg, var(--card-bg));
-  box-shadow: var(--card-shadow);
-}
-
-.synastry-placement-table > .synastry-placement-row:first-child,
-.synastry-placement-table > .friend-placement-row:first-child :where(.planet-placement-row, .placement-table-row) {
-  border-radius: var(--card-radius);
-  background-clip: padding-box;
-}
-
-.synastry-placement-table > .synastry-placement-row:last-child,
-.synastry-placement-table > .friend-placement-row:last-child :where(.planet-placement-row, .placement-table-row) {
-  border-radius: var(--card-radius);
-  background-clip: padding-box;
-}
-
-.friend-placement-row .planet-placement-row,
-.friend-placement-row .placement-table-row {
-  border-color: var(--friend-placement-row-border, var(--card-border));
-  border-radius: var(--card-radius);
-  background: var(--friend-placement-row-bg, var(--card-bg));
-  box-shadow: var(--card-shadow);
-}
-
-:is(.theme-dark, [data-theme="dark"]) .friend-chart-page :where(
-  .synastry-placement-column,
-  .synastry-placement-panel,
-  .synastry-placement-column-inner,
-  .synastry-placement-column-header,
-  .synastry-placement-panel-header
-) {
-  border-color: transparent;
-  background: transparent;
-  box-shadow: var(--shadow-flat);
-}
-
-:is(.theme-dark, [data-theme="dark"]) .friend-chart-page :where(
-  .synastry-placement-column-header,
-  .synastry-placement-panel-header
-) {
-  padding-bottom: var(--space-2);
-}
-
-:is(.theme-dark, [data-theme="dark"]) :where(
-  .friend-chart-page .synastry-placement-table,
-  .friend-chart-page .friend-placement-column,
-  .friend-chart-page .friend-placement-table
-) {
-  border-color: transparent;
-  background: transparent;
-  box-shadow: var(--shadow-flat);
-}
-
-:is(.theme-dark, [data-theme="dark"]) .friend-chart-page .synastry-placement-row {
-  border-bottom-color: var(--card-border);
-  background: var(--card-bg);
-}
-
-:is(.theme-dark, [data-theme="dark"]) .friend-chart-page .synastry-placement-column-inner .synastry-placement-table,
-:is(.theme-dark, [data-theme="dark"]) .friend-chart-page .synastry-placement-column-inner .synastry-placement-row,
-:is(.theme-dark, [data-theme="dark"]) .friend-chart-page .synastry-placement-row-inner {
-  background: var(--synastry-row-bg);
-}
-
-.friend-chart-page .aspect-row,
-.friend-chart-page .aspect-row-button,
-.friend-chart-page .aspect-row-static {
-  --aspect-row-template: var(--ds-friends-detail-aspect-row-template);
-  --aspect-row-gap: var(--ds-aspect-row-gap-wide);
-  --aspect-row-padding: calc(var(--space-4) + var(--space-1) / 2) calc(var(--space-5) + var(--space-1) / 2);
-  --aspect-row-glyph-width: var(--updates-aspect-glyph-width);
-  --aspect-row-glyph-size: var(--type-glyph-size);
-  --aspect-row-copy-margin: var(--space-1);
-  --aspect-row-copy-color: var(--card-body-color);
-  --aspect-row-copy-size: var(--friend-row-description-size);
-  --aspect-row-copy-line: var(--leading-body);
-  --aspect-row-meta-width: var(--ds-friends-detail-aspect-row-meta-width);
-  --aspect-row-meta-size: var(--type-meta-size);
-  --aspect-row-meta-weight: var(--weight-regular);
-  --aspect-row-action-margin: var(--space-2);
-  --aspect-row-action-color: var(--app-text);
-  border-color: var(--card-border);
-}
-
-.friend-chart-page .aspect-row-meta {
-  justify-self: end;
-  justify-content: flex-end;
-  text-align: right;
-}
-
-.friend-placement-column-compact .friend-placement-table {
-  grid-template-columns: minmax(0, 1fr);
-}
-
-.friend-placement-column-compact .friend-placement-row {
-  border-right: 0;
-}
-
-/* FriendDetail is lazy-loaded after the global responsive stylesheet. Keep
-   the mobile one-column contract in this boundary so its desktop grid cannot
-   win merely because this CSS chunk arrives later. */
+  .friend-compatibility-stage .friend-daily-forecast { grid-column: 1; grid-row: auto; }
+  .friend-chart-page .compatibility-card-list { grid-template-columns: minmax(0, 1fr); }
+  .friend-chart-page .compatibility-card { padding: var(--lunar-space-28) var(--space-6) var(--space-6); }
+}
+
+/* Story groups follow the wheel and overview across the complete profile rail. */
+.friend-chart-page:has(.friend-transits-stage, .friend-synastry-stage) > .friend-detail-main,
+:is(.friend-transits-stage, .friend-synastry-stage),
+:is(.friend-transits-stage, .friend-synastry-stage) > .friend-profile-copy-column { display: contents; }
+.friend-chart-page:has(.friend-transits-stage) > .friend-detail-chart-rail { grid-row: 2 / span 2; }
+.friend-transits-stage > .friend-profile-copy-column > :is(.friend-transit-group, .natal-patterns-section, .friend-transit-reading), .friend-synastry-stage .friend-natal-aspect-group { grid-column: 1 / -1; }
+.friend-transits-stage .friend-daily-forecast,
+.friend-synastry-stage .relationship-explainer-card { grid-column: 2; grid-row: 2; }
+.friend-transits-stage .friend-transit-guidance { grid-column: 2; grid-row: 3; }
+.friend-transits-stage .friend-transit-reading { grid-row: 4; }
+.friend-transit-list { display: grid; grid-template-columns: var(--layout-card-columns); gap: var(--space-6); }
+.friend-transit-group > .friend-section-label,
+.friend-synastry-stage .friend-natal-aspect-group > .friend-section-label { font-family: var(--font-ui); font-size: var(--type-section-heading-size); font-weight: var(--weight-semibold); line-height: var(--leading-section-heading); letter-spacing: var(--tracking-normal); text-transform: none; }
 @media (max-width: 800px) {
-  .app-shell.mode-friends .friend-profile-panel.friend-chart-page {
-    grid-template-columns: minmax(0, 1fr);
-    width: 100%;
-    max-width: 100%;
-  }
-
-  .app-shell.mode-friends .friend-profile-panel.relationship-detail-layout > .friend-detail-content-column,
-  .app-shell.mode-friends .friend-profile-panel.relationship-detail-layout > .friend-detail-chart-column {
-    grid-column: 1;
-    grid-row: auto;
-    width: 100%;
-    max-width: 100%;
-  }
-
-  .app-shell.mode-friends .friend-profile-panel.relationship-detail-layout > .friend-detail-content-column {
-    order: 2;
-  }
-
-  .app-shell.mode-friends .friend-profile-panel.relationship-detail-layout > .friend-detail-chart-column {
-    position: relative;
-    top: auto;
-    order: 1;
-  }
+  .friend-transit-list { grid-template-columns: minmax(0, 1fr); }
+  .friend-transits-stage .friend-daily-forecast,
+  .friend-synastry-stage .relationship-explainer-card,
+  .friend-transits-stage .friend-transit-guidance,
+  .friend-transits-stage .friend-transit-reading { grid-column: 1; grid-row: auto; }
+  .friend-chart-page:has(.friend-transits-stage) > .friend-detail-chart-rail { grid-row: 2; }
 }
 
 @media (max-width: 480px) {

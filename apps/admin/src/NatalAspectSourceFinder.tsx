@@ -2,23 +2,22 @@ import { StudioButton } from "./StudioControls";
 import { PageLoading } from "../../../src/shared/components/PageLoading";
 import { AdminSelect } from "./AdminNativeControls";
 import { MetricCard } from "./studio-ds/patterns";
-import { Grid, Stack, Text } from "./studio-ds/primitives";
+import { Grid, Stack } from "./studio-ds/primitives";
 import { metricGrid, surfaceSection } from "./studio-ds/recipes";
 import ContentLiveStatusBadge from "./ContentLiveStatus";
 import {
-  natalAspectComposedSources,
   natalAspectComposedStatusRow,
-  natalAspectDisplayTitle,
   natalAspectMatchesSelection,
   natalAspectSelectionOptions,
-  natalAspectSourceDraft,
   parseNatalAspectContentKey,
-  type NatalAspectSelection,
-  type NatalAspectSourceDraft
-} from "./natalAspectSources";
+  natalAspectComposedSources, natalAspectSourceFields
+} from "./natalAspectFinderSources";
+
+import { natalAspectContentKeyPrefix, natalAspectDisplayTitle, natalAspectSourceDraft, natalAspectTitleCase as titleCase, type NatalAspectSelection, type NatalAspectSourceDraft } from "./natalAspectSources";
 
 type PreviewRow = {
   id?: string | null;
+  inventory_only?: boolean;
   updated_at?: string | null;
   body: string | null;
   content_key: string;
@@ -39,19 +38,9 @@ type Props = {
   second: string;
 };
 
-function titleCase(value: string) {
-  return value.split("-").map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(" ");
-}
-
-
 function previewForRow(row: PreviewRow) {
-  const sections = row.sections && typeof row.sections === "object" ? row.sections as Record<string, unknown> : null;
-  const packageRecord = sections?.packageRecord && typeof sections.packageRecord === "object"
-    ? sections.packageRecord as Record<string, unknown>
-    : null;
-  const packageYou = typeof packageRecord?.body_you === "string" ? packageRecord.body_you.trim() : "";
-  const packageBody = typeof packageRecord?.body === "string" ? packageRecord.body.trim() : "";
-  return row.body?.trim() || packageYou || packageBody || row.summary?.trim() || row.headline?.trim() || "";
+  const fields = natalAspectSourceFields(row);
+  return fields.body_you.trim() || fields.body_they.trim() || row.summary?.trim() || row.headline?.trim() || "";
 }
 
 export default function NatalAspectSourceFinder({
@@ -64,7 +53,13 @@ export default function NatalAspectSourceFinder({
   rows,
   second
 }: Props) {
-  const exactRows = rows.filter((row) => parseNatalAspectContentKey(row.content_key));
+  const sourceRows = [...rows.reduce((latest, row) => {
+    if (row.status === 'ARCHIVED') return latest;
+    const previous = latest.get(row.content_key);
+    if (!previous || (row.updated_at ?? '') > (previous.updated_at ?? '')) latest.set(row.content_key, row);
+    return latest;
+  }, new Map<string, PreviewRow>()).values()];
+  const exactRows = sourceRows.filter(row => parseNatalAspectContentKey(row.content_key));
   const options = natalAspectSelectionOptions(exactRows);
   const hasSelection = Boolean(first || aspect || second);
   const fullSelection = Boolean(first && aspect && second);
@@ -79,6 +74,7 @@ export default function NatalAspectSourceFinder({
       ? "Choose the remaining values"
       : "Choose a natal aspect";
   const composedSources = fullSelection ? natalAspectComposedSources({ first, aspect, second }) : [];
+  const hasExactSource = matches.some(row => row.content_key.startsWith(natalAspectContentKeyPrefix));
 
   return (
     <section className="admin-natal-placement-finder" aria-label="Find natal aspect source writing">
@@ -121,10 +117,8 @@ export default function NatalAspectSourceFinder({
       )}
 
       {!isLoading && fullSelection && matches.length === 0 && (
-        <>
           <div className="admin-empty-state">
             <strong>No exact pair-specific passage is saved for {selectedTitle}.</strong>
-            <p>The You page currently uses composed natal aspect writing for this pair. Create exact You and Friend passages only if this selection needs its own writing.</p>
             <StudioButton
               type="button"
               className="primary"
@@ -133,37 +127,6 @@ export default function NatalAspectSourceFinder({
               Write {selectedTitle}
             </StudioButton>
           </div>
-          <section className={`${surfaceSection} admin-natal-source-group`} aria-label="Live composed natal aspect sources">
-            <header>
-              <h3>Live composed sources</h3>
-            </header>
-            <div className="admin-natal-source-grid">
-              {composedSources.map((source) => {
-                const savedRow = source.candidateKeys
-                  .map((contentKey) => rows.find((row) => row.content_key === contentKey))
-                  .find((row): row is PreviewRow => Boolean(row));
-                const contentKey = savedRow?.content_key ?? source.candidateKeys[0];
-                const preview = savedRow ? previewForRow(savedRow) : "";
-                return (
-                  <article className="admin-natal-source-card" key={source.id}>
-                    <div className="admin-natal-source-card-copy">
-                      <div className="admin-natal-source-card-heading">
-                        <h4>{source.label}</h4>
-                        <ContentLiveStatusBadge row={natalAspectComposedStatusRow(savedRow, contentKey)} />
-                      </div>
-                      <Text size="body" tone="secondary">{source.scope}</Text>
-                      <p className="admin-natal-source-key"><span>Source key</span><code>{contentKey}</code></p>
-                      {preview && <blockquote>{preview}</blockquote>}
-                    </div>
-                    <StudioButton type="button" onClick={() => onOpenSource(contentKey, source.label)} disabled={isLoading}>
-                      {savedRow ? "Edit source" : "Load and edit"}
-                    </StudioButton>
-                  </article>
-                );
-              })}
-            </div>
-          </section>
-        </>
       )}
 
       {!isLoading && hasSelection && !fullSelection && matches.length === 0 && (
@@ -181,18 +144,29 @@ export default function NatalAspectSourceFinder({
             </Stack>
           </header>
           <div className="admin-natal-source-grid">
+            {!hasExactSource && fullSelection && (
+              <div className="admin-empty-state">
+                <StudioButton type="button" onClick={() => onCreateSource(natalAspectSourceDraft({ first, aspect, second }))}>
+                  Write Friend passage
+                </StudioButton>
+              </div>
+            )}
             {matches.map((row) => {
               const parsed = parseNatalAspectContentKey(row.content_key) as NatalAspectSelection;
               const title = natalAspectDisplayTitle(parsed);
               const preview = previewForRow(row);
+              const fields = natalAspectSourceFields(row);
+              const standalone = row.content_key.startsWith('natal.aspect.');
               return (
-                <article className="admin-natal-source-card" key={row.content_key}>
+                <article className="admin-natal-source-card" aria-label={`${standalone ? 'Standalone' : 'Exact'} ${title}`} key={row.content_key}>
                   <div className="admin-natal-source-card-copy">
                     <div className="admin-natal-source-card-heading">
                       <h4>{title}</h4>
                       <ContentLiveStatusBadge row={row} />
                     </div>
-                    <Text size="body" tone="secondary">Exact natal aspect writing for the reader’s birth chart.</Text>
+                    {row.inventory_only && row.body == null
+                      ? <p>Open to inspect saved fields.</p>
+                      : <p>You: {fields.body_you.trim() ? 'saved' : 'empty'}. Friend: {fields.body_they.trim() ? 'saved' : standalone ? 'automatic conversion' : 'empty'}. Astrology hint: {fields.astroHint.trim() ? 'saved' : 'empty'}.</p>}
                     <p className="admin-natal-source-key"><span>Source key</span><code>{row.content_key}</code></p>
                     {preview && <blockquote>{preview}</blockquote>}
                   </div>
@@ -203,6 +177,39 @@ export default function NatalAspectSourceFinder({
           </div>
         </section>
       )}
+      {fullSelection && composedSources.length > 0 && (
+          <section className={`${surfaceSection} admin-natal-source-group`} aria-label="Shared natal aspect fallback sources">
+            <header>
+              <h3>Shared fallback sources</h3>
+            </header>
+            <p>Used when You or Friend has no exact passage.</p>
+            <div className="admin-natal-source-grid">
+              {composedSources.map((source) => {
+                const savedRow = source.candidateKeys
+                  .map((contentKey) => sourceRows.find((row) => row.content_key === contentKey))
+                  .find((row): row is PreviewRow => Boolean(row));
+                const contentKey = savedRow?.content_key ?? source.candidateKeys[0];
+                const preview = savedRow ? previewForRow(savedRow) : "";
+                return (
+                  <article className="admin-natal-source-card" key={source.id}>
+                    <div className="admin-natal-source-card-copy">
+                      <div className="admin-natal-source-card-heading">
+                        <h4>{source.label}</h4>
+                        <ContentLiveStatusBadge row={natalAspectComposedStatusRow(savedRow, contentKey)} />
+                      </div>
+                      <p className="admin-natal-source-key"><span>Source key</span><code>{contentKey}</code></p>
+                      {preview && <blockquote>{preview}</blockquote>}
+                    </div>
+                    <StudioButton type="button" onClick={() => onOpenSource(contentKey, source.label)} disabled={isLoading}>
+                      {savedRow ? "Edit source" : "Load and edit"}
+                    </StudioButton>
+                  </article>
+                );
+              })}
+            </div>
+          </section>
+      )}
+
     </section>
   );
 }

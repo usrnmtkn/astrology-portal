@@ -1,3 +1,21 @@
+import { articleTransitKeyDates } from "../../services/articleTransitDates";
+import { emptyNatalHouseNumbers } from "../../services/natalHouseCards";
+import { LunationTransitCard, lunationTransitReading } from "../../components/LunationTransitSection";
+import type { WeeklyHoroscopeAssembly, WeeklyHoroscopeReading } from "../../services/weeklyHoroscope";
+import { returnToArticleParent } from "../../services/articleNavigation";
+import { skySnapshotDate } from "../../services/skySelection";
+import { compatibilityCardParagraphs } from "./compatibilityCardCopy";
+import { FriendsFeed, type FriendsFeedCard } from "./FriendsFeed";
+import { useFriendsFeedDailyPeaks, useFriendsFeedTiming } from "./useFriendsFeedTiming";
+import { selectFriendsFeedTransits } from "./friendsFeedTransits";
+import { personalDailyPeakLabel, precisePersonalOrb } from "../../services/personalDailyTransits";
+import { useRelationshipForecast } from "./useRelationshipForecast";
+import { FriendsPairForecast } from "./FriendsPairForecast";
+import { friendsFeedPeople, readFriendsFeedFilter, saveFriendsFeedFilter, selectFriendsFeedPeople, type FriendsFeedFilter } from "./friendsFeedSources";
+import { articleHistoryChangeEvent } from "../../services/articleNavigation";
+import { useNatalReadingRoute } from "../../hooks/useNatalReadingRoute";
+import { NatalInsightPage } from "../../components/NatalInsightPage";
+import { NatalSectPage } from "../../components/NatalSectPage";
 import { PortalVisibility } from "../../components/portalVisibility";
 import { transitArticleDescription } from "../../services/transitArticleDescription";
 import { connectionTransitContext } from "../../services/connectionTransitContext";
@@ -7,7 +25,6 @@ import { useConnectionTransitSources, publishedConnectionCopy, connectionBridgeC
 import { connectionTransitReading } from "./connectionTransitReading";
 import { PageLoading, PageLoadError } from "../../components/PageLoading";
 import { FriendDetail } from "./FriendDetail";
-import { X } from "lucide-react";
 import {
   Suspense,
   lazy,
@@ -29,7 +46,7 @@ import type {
   YouTransitArticle,
   friendsViewModelDependencies
 } from "../../App";
-import { ModalPortal } from "../../components/ModalPortal";
+import { FriendChartDeleteDialog } from "./FriendChartDeleteDialog";
 import { profileInitials } from "../../components/ProfileAvatar";
 import { CitySearchField } from "../../components/CitySearchField";
 import {
@@ -37,10 +54,6 @@ import {
   socialPlacementRows,
   type SocialPlacementRow
 } from "../../components/charts/PlacementRows";
-import {
-  completeNatalChartTableRows,
-  natalChartTableRowFromSocial
-} from "../../components/charts/natalChartTableRows";
 import { aspectGlyph, pointGlyph } from "../../components/charts/chartAssets";
 import type { InterChartAspectLine } from "../../components/charts/Wheels";
 import {
@@ -62,10 +75,10 @@ import {
 import {
   calculatedSynastryContacts,
   relationshipCompositeSky,
-  samePlanetExactAspect,
   selectDailyGlanceDriverPool,
   synastryWheelAspectLines,
   wholeSignHouseForSign,
+  zodiacLongitude,
   zodiacSignGlyphs
 } from "../../services/chartMath";
 import { groupAspectsByGiftLesson } from "../../services/aspectGiftLesson";
@@ -112,9 +125,7 @@ import {
   cleanGeneratedSectionHeading
 } from "../../utils/articleText";
 import type { RelationshipChartFullscreenMode } from "./RelationshipChartFullscreen";
-import type { FriendNatalChartViewMode } from "./FriendNatalViewControl";
 import type {
-  CompatibilityDynamic,
   CompatibilityPlanetCard
 } from "./CompatibilityTab";
 import type { FriendCompositeAspectGroup } from "./FriendCompositeTab";
@@ -159,7 +170,6 @@ import { useManualChartsController } from "./useManualChartsController";
 import { useRelationshipCompare } from "./useRelationshipCompare";
 import { resolvedNatalAspectPatternSectionLabel } from "../you/natalAspectPatternLabels";
 import type { SkyDetail } from "../sky/SkyDetailArticle";
-import { wholeDegreeOrb } from "../sky/skyHelpers";
 import { friendDetailHasReaderFacingContent } from "./friendDetailAvailability";
 import { selectEligibleFriendTransits } from "./friendTransitEligibility";
 import { scheduleFriendChartRepair } from "./friendChartLoading";
@@ -171,13 +181,15 @@ function FriendChartRailPlaceholder() {
       <div className="friend-synastry-wheel-shell">
         <div className="chart-shell">
           <div className="wheel natal-wheel friend-wheel chart-frame">
-            <svg viewBox="0 0 100 100" width="100%" />
+            <PageLoading layout="wheel" announce={false} message="Loading your chart…" />
           </div>
         </div>
       </div>
     </div>
   );
 }
+
+const compatibilityPlanets = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"] as const;
 
 const FriendsWorkspaceShell = lazy(() =>
   import("./FriendsWorkspaceShell").then((module) => ({
@@ -297,7 +309,7 @@ export function ManualChartsPanel({
   onCalculationReadinessChange: (readiness: FriendCalculationReadiness) => void;
   onFriendProfileContentRequest: (tab: FriendProfileTab) => void;
   onOpenDetail: (detail: SkyDetail) => void;
-  onSignIn: () => void;
+  onSignIn: (intent?: "login" | "create") => void;
   viewModel: typeof friendsViewModelDependencies;
 }) {
   const {
@@ -305,8 +317,6 @@ export function ManualChartsPanel({
     buildNatalTransitItems,
     natalTransitTargets,
     bondEffectFamily,
-    compatibilityDynamicHeading,
-    compatibilityPlanets,
     createNatalGeneratedCopyForOwnerConverter,
     currentSkyHouseActivations,
     dailyGlanceDriver,
@@ -446,7 +456,7 @@ export function ManualChartsPanel({
     // driver and select one deterministically from chart id + date + driver.
 
     try {
-      const dateKey = currentSky.generatedAt.slice(0, 10);
+      const dateKey = skySnapshotDate(currentSky);
       const reference = ownerDisplayPronouns(ownerName, ownerPronouns);
       const preferredName = ownerPreferredName?.trim()
         || ownerName.trim().split(/\s+/u)[0]
@@ -552,7 +562,7 @@ export function ManualChartsPanel({
     }
 
     try {
-      const targetDate = currentSky.generatedAt.slice(0, 10);
+      const targetDate = skySnapshotDate(currentSky);
       const rendered = transitSynastryFallbackRendererV3.renderDoDont({
         voice: "they",
         planet: natalPoint,
@@ -786,10 +796,7 @@ export function ManualChartsPanel({
         return [];
       }
 
-      const exactAspect = yourPosition ? samePlanetExactAspect(yourPosition, friendPosition) : null;
-      const hasExactAspect = Boolean(exactAspect);
       const comparisonLabel = comparisonIsSelf ? "You" : comparisonName;
-      const comparisonPossessive = relationshipComparisonPossessive(comparisonName, comparisonIsSelf);
       let rendered: ReturnType<typeof transitSynastryFallbackRendererV3.renderCompat>;
 
       try {
@@ -823,6 +830,7 @@ export function ManualChartsPanel({
         id: `compatibility-${normalizeContentIdPart(planet)}`,
         glyph: yourPosition?.glyph || pointGlyph(planet),
         planet,
+        headline: rendered.headline,
         comparisonLabel,
         youSign: yourSign,
         friendName: chart.displayName,
@@ -840,38 +848,8 @@ export function ManualChartsPanel({
           relationship,
           contentTrace
         },
-        exactAspectLabel: hasExactAspect && exactAspect
-          ? `${comparisonPossessive} ${planet} ${exactAspect.type} their ${planet} · orb ${wholeDegreeOrb(exactAspect.orbValue)}`
-          : undefined,
         contentTrace
       }];
-    });
-  }
-
-  function compatibilityDynamicsFromContacts(
-    contacts: SynastryContact[],
-    friendName: string,
-    comparisonName: string,
-    comparisonIsSelf: boolean,
-    friendPronouns?: PronounChoice | null,
-    comparisonPronouns?: PronounChoice | null
-  ): CompatibilityDynamic[] {
-    void comparisonName;
-    void comparisonIsSelf;
-    void friendPronouns;
-    void comparisonPronouns;
-
-    return contacts.map((contact) => {
-      const rendered = renderReaderDirectedSynastryContact(contact, friendName);
-
-      return {
-        id: `compatibility-dynamic-${contact.id}`,
-        heading: compatibilityDynamicHeading(contact.aspect),
-        glyphs: `${contact.yourPoint.glyph} ${aspectGlyph(contact.aspect)} ${contact.friendPoint.glyph}`,
-        title: rendered?.headline ?? `${contact.yourPoint.name} ${contact.aspect} ${contact.friendPoint.name}`,
-        summary: rendered?.body ?? contact.summary,
-        meta: rendered?.tag ?? wholeDegreeOrb(contact.orb)
-      };
     });
   }
 
@@ -946,6 +924,12 @@ export function ManualChartsPanel({
   const friendRouteDetailRefreshKeyRef = useRef("");
   const [connectionNavigation, setConnectionNavigation] = useState(0);
   const [socialFriends, setSocialFriends] = useState<ConnectedSocialFriend[]>([]);
+  const [feedSelection,setFeedSelection] = useState(() => ({owner:chartOwnerUserId,value:readFriendsFeedFilter(chartOwnerUserId)}));
+  const feedFilter = feedSelection.owner === chartOwnerUserId ? feedSelection.value : readFriendsFeedFilter(chartOwnerUserId);
+  const updateFeedFilter = (value:FriendsFeedFilter) => {
+    setFeedSelection({owner:chartOwnerUserId,value});
+    saveFriendsFeedFilter(chartOwnerUserId,value);
+  };
   const socialFriendCharts = useMemo(
     () => socialFriends.map(socialFriendToChart),
     [socialFriends]
@@ -979,7 +963,6 @@ export function ManualChartsPanel({
   });
   const [friendsMainView, setFriendsMainView] = useState<FriendsMainView>(() => initialFriendsTab());
   const [friendProfileTab, setFriendProfileTab] = useState<FriendProfileTab>("compatibility");
-  const [friendNatalChartViewMode, setFriendNatalChartViewMode] = useState<FriendNatalChartViewMode>("circle");
   const [relationshipChartFullscreenMode, setRelationshipChartFullscreenMode] = useState<RelationshipChartFullscreenMode | null>(null);
   const [relationshipComparisonChartId, setRelationshipComparisonChartId] = useState("self");
   const [relationshipComparisonPickerOpen, setRelationshipComparisonPickerOpen] = useState(false);
@@ -994,7 +977,7 @@ export function ManualChartsPanel({
   );
   const editingChart = charts.find((chart) => chart.id === editingChartId) ?? null;
   const selectedChart = allFriendCharts.find((chart) => chart.id === selectedChartId) ?? null;
-  const friendTransitReadingSelectionKey = `${selectedChart?.id ?? ""}|${currentSky?.generatedAt.slice(0, 10) ?? ""}`;
+  const friendTransitReadingSelectionKey = `${selectedChart?.id ?? ""}|${currentSky ? skySnapshotDate(currentSky) : ""}`;
   const friendTransitReadingSelectionKeyRef = useRef(friendTransitReadingSelectionKey);
   friendTransitReadingSelectionKeyRef.current = friendTransitReadingSelectionKey;
   const selectedFriendNatalChartComplete = selectedChart
@@ -1016,7 +999,7 @@ export function ManualChartsPanel({
   const resolvedFriendsMainView = friendsMainView === "profile" && !selectedChart ? "charts" : friendsMainView;
 
   useEffect(() => {
-    onCalculationReadinessChange(friendCalculationReadiness({
+    onCalculationReadinessChange(resolvedFriendsMainView === "feed" ? { currentSky: true, profileNatal: true } : friendCalculationReadiness({
       activeTab: friendProfileTab,
       isEventChart: Boolean(selectedChartIsEvent),
       profileActive: resolvedFriendsMainView === "profile" && Boolean(selectedChart)
@@ -1036,7 +1019,7 @@ export function ManualChartsPanel({
   useEffect(() => {
     const profileActive = resolvedFriendsMainView === "profile" && Boolean(selectedChart);
 
-    if (profileActive || !chartsReady || allFriendCharts.length === 0) {
+    if (profileActive || resolvedFriendsMainView === "feed" || !chartsReady || allFriendCharts.length === 0) {
       return undefined;
     }
     if (profileNatalSky) {
@@ -1079,7 +1062,6 @@ export function ManualChartsPanel({
   const relationshipComparisonManualChart = relationshipComparisonChartId === "self"
     ? null
     : allFriendCharts.find((chart) => chart.id === relationshipComparisonChartId) ?? null;
-  const relationshipComparisonPronouns = relationshipComparisonManualChart?.pronouns ?? null;
   const selectedRelationshipContextType = relationshipComparisonIsSelf
     ? selectedChart?.relationshipType
     : "friend";
@@ -1111,6 +1093,14 @@ export function ManualChartsPanel({
     settings: relationshipApiSettings
   });
   const friendProfileWork = friendProfileWorkForTab(friendProfileTab);
+  const feedPeople = useMemo(() => selectFriendsFeedPeople(friendsFeedPeople(socialFriends,charts,chartOwnerUserId),feedFilter),[socialFriends,charts,chartOwnerUserId,feedFilter]);
+  const dailyPeakRequests = currentSky && !currentSkyLoading
+    ? (resolvedFriendsMainView === "feed" ? feedPeople : friendProfileWork.transits && selectedChart && selectedFriendReadyNatalChart && !selectedChartIsEvent
+      ? [{ id: selectedChart.id, chart: selectedChart }] : []).map(person => ({ id: person.id,
+        targets: natalTransitTargets(person.chart.natalChart!, manualChartHasReliableBirthTime(person.chart))
+          .map(position => ({ planet: position.planet, longitude: position.longitude ?? zodiacLongitude(position) })) }))
+    : [];
+  const feedDailyPeaks = useFriendsFeedDailyPeaks(dailyPeakRequests, currentSky?.positions.map(position => position.planet) ?? [], currentSky?.generatedAt ?? "", currentSky?.location.timeZone ?? "UTC");
   const selectedSynastryContacts = useMemo(() => {
     if (!friendProfileWork.synastryContacts || !selectedChart || !selectedFriendReadyNatalChart || selectedChartIsEvent) {
       return [];
@@ -1145,8 +1135,6 @@ export function ManualChartsPanel({
   ), [friendProfileWork.synastry, selectedSynastryContacts]);
   const selectedSynastryViewGroups = useMemo<FriendSynastryAspectGroup[]>(() => (
     selectedSynastryAspectGroups.map((group) => ({
-      key: group.key,
-      label: group.label,
       contacts: group.aspects.map((contact) => {
         const rendered = renderReaderDirectedSynastryContact(contact, selectedChart?.displayName ?? "Friend");
 
@@ -1155,8 +1143,7 @@ export function ManualChartsPanel({
           aspect: contact.aspect,
           orb: contact.orb,
           title: rendered?.headline ?? `Your ${contact.yourPoint.name} ${contact.aspect} ${selectedChart?.displayName ?? "Friend"}'s ${contact.friendPoint.name}`,
-          subtitle: rendered?.tag ?? relationshipThemeTitle(contact.yourPoint.name, contact.friendPoint.name, contact.aspect),
-          description: rendered?.body ? textPreview(rendered.body) : "",
+          description: rendered?.body ?? "",
           yourPoint: contact.yourPoint,
           friendPoint: contact.friendPoint
         };
@@ -1204,26 +1191,6 @@ export function ManualChartsPanel({
     )
     && profileNatalCalculationStatus !== "error"
   );
-  const selectedCompatibilityDynamics = useMemo(() => (
-    friendProfileWork.compatibility
-      ? compatibilityDynamicsFromContacts(
-          selectedSynastryContacts,
-          selectedChart?.displayName ?? "Friend",
-          relationshipComparisonName,
-          relationshipComparisonIsSelf,
-          selectedChart?.pronouns,
-          relationshipComparisonPronouns
-        )
-      : []
-  ), [
-    friendProfileWork.compatibility,
-    relationshipComparisonIsSelf,
-    relationshipComparisonName,
-    relationshipComparisonPronouns,
-    selectedChart?.displayName,
-    selectedChart?.pronouns,
-    selectedSynastryContacts
-  ]);
   const selectedSynastryAspectLines = useMemo<InterChartAspectLine[]>(() => (
     (friendProfileWork.compatibility || friendProfileWork.synastry) && selectedChart && selectedFriendReadyNatalChart && !selectedChartIsEvent
       ? synastryWheelAspectLines(relationshipComparisonSky, selectedChart)
@@ -1318,10 +1285,13 @@ export function ManualChartsPanel({
   const renderFriendChartRail = Boolean(friendChartRailRenderKey) && renderedFriendChartRailKey === friendChartRailRenderKey;
   const selectedFriendTransitCandidates = useMemo(() => (
     (friendProfileWork.transits || friendProfileWork.compatibility) && currentSky && selectedChart && selectedFriendReadyNatalChart && !selectedChartIsEvent
-      ? dedupeSameBeatPersonalTransits(
-          rankTransitsByLifeAreaFocus(rankedFriendTransits(currentSky, selectedChart, sunriseOrbDegrees), lifeAreaFocus),
-          currentSky.generatedAt
-        )
+      && (!friendProfileWork.transits || feedDailyPeaks.peaks?.has(selectedChart.id))
+      ? (() => {
+          const contacts = rankTransitsByLifeAreaFocus(rankedFriendTransits(currentSky, selectedChart, sunriseOrbDegrees,
+            feedDailyPeaks.peaks?.get(selectedChart.id)), lifeAreaFocus);
+          return [...contacts.filter(transit => transit.dailyPeak?.exactToday.length),
+            ...dedupeSameBeatPersonalTransits(contacts.filter(transit => !transit.dailyPeak?.exactToday.length), currentSky.generatedAt)];
+        })()
       : []
   ), [
     currentSky,
@@ -1331,7 +1301,8 @@ export function ManualChartsPanel({
     selectedChart,
     selectedChartIsEvent,
     selectedFriendReadyNatalChart,
-    sunriseOrbDegrees
+    sunriseOrbDegrees,
+    feedDailyPeaks.peaks
   ]);
   const selectedFriendTransits = useMemo(
     () => selectedFriendTransitCandidates.slice(0, 8),
@@ -1352,7 +1323,7 @@ export function ManualChartsPanel({
               fallbackV3ApprovalLevelForContentKey
             ).length > 0;
           },
-          8
+          Math.max(8, selectedFriendTransitCandidates.filter(transit => transit.dailyPeak?.exactToday.length).length)
         )
       : []
   ), [
@@ -1361,6 +1332,9 @@ export function ManualChartsPanel({
     selectedChart,
     selectedFriendTransitCandidates
   ]);
+  const selectedFriendTransitTiming = useFriendsFeedTiming(friendProfileWork.transits
+    ? selectedFriendEligibleTransits.map(transit => ({ id: transit.id, transit })) : [],
+    currentSky?.generatedAt ?? "", currentSky?.location.timeZone ?? "UTC");
   const selectedFriendDailyForecast = useMemo(() => (
     currentSky && selectedChart && selectedFriendReadyNatalChart && !selectedChartIsEvent
       ? friendDailyGlance(
@@ -1374,6 +1348,28 @@ export function ManualChartsPanel({
         )
       : null
   ), [currentSky, selectedChart, selectedChartIsEvent, selectedFriendReadyNatalChart]);
+  const lunationSelectionKey = `${selectedChart?.id ?? ""}|${currentSky?.generatedAt ?? ""}|${selectedFriendReadyNatalChart?.generatedAt ?? ""}`;
+  const [friendLunation, setFriendLunation] = useState<{ key: string; assembly: WeeklyHoroscopeAssembly } | null>(null);
+  const friendLunationAssembly = friendLunation?.key === lunationSelectionKey ? friendLunation.assembly : null;
+  const friendLunationReading = lunationTransitReading(friendLunationAssembly);
+  useEffect(() => {
+    setFriendLunation(null);
+    if (!friendProfileWork.transits || !currentSky || currentSkyLoading || !selectedChart || selectedChartIsEvent
+      || !manualChartHasReliableBirthTime(selectedChart) || !selectedFriendReadyNatalChart?.ascendant) return;
+    let cancelled = false;
+    void import("../../services/weeklyHoroscope").then(({ buildWeeklyHoroscope }) => buildWeeklyHoroscope({
+      userId: selectedChart.id,
+      natalSky: selectedFriendReadyNatalChart,
+      risingSign: selectedFriendReadyNatalChart.ascendant!,
+      location: currentSky.location,
+      now: new Date(currentSky.generatedAt)
+    })).then(assembly => {
+      if (!cancelled) setFriendLunation({ key: lunationSelectionKey, assembly });
+    }).catch(error => {
+      if (!cancelled) console.warn("Friend lunation could not be loaded.", error);
+    });
+    return () => { cancelled = true; };
+  }, [friendProfileWork.transits, currentSky, currentSkyLoading, selectedChart, selectedChartIsEvent, selectedFriendReadyNatalChart, lunationSelectionKey, fallbackArchitectureV3Version]);
   const selectedFriendDailyDoDont = useMemo(() => (
     currentSky && selectedFriendReadyNatalChart && !selectedChartIsEvent
       ? friendDailyDoDont(currentSky, selectedFriendReadyNatalChart, selectedFriendTransits)
@@ -1385,7 +1381,6 @@ export function ManualChartsPanel({
     }
 
     return currentSkyHouseActivations(currentSky, selectedFriendReadyNatalChart)
-      .slice(0, 4)
       .map((activation) => {
         const transit = {
           id: activation.id,
@@ -1480,7 +1475,7 @@ export function ManualChartsPanel({
       return null;
     }
 
-    const isoDate = currentSky.generatedAt.slice(0, 10);
+    const isoDate = skySnapshotDate(currentSky);
     const readerChartId = profile.charts[0]?.id ?? profile.id;
     const pairVariant = stablePairDailyVariant(readerChartId, selectedChart.id, isoDate);
 
@@ -1541,7 +1536,7 @@ export function ManualChartsPanel({
   const selectedPairDaily = useMemo(() => {
     if (!selectedPairDailySelection || !currentSky || !selectedChart) return null;
 
-    const isoDate = currentSky.generatedAt.slice(0, 10);
+    const isoDate = skySnapshotDate(currentSky);
 
     const renderShared = (shared: typeof selectedPairDailySelection.shared) => (
       transitSynastryFallbackRendererV3.renderPairDaily({
@@ -1574,7 +1569,7 @@ export function ManualChartsPanel({
       }
 
       return rendered.body
-        ? { body: rendered.body, dateLabel: formatPairDailyDate(isoDate) }
+        ? { body: rendered.body, opening: rendered.parts[0]?.replace(/\s{2,}/g, " ").trim(), dateLabel: formatPairDailyDate(isoDate) }
         : null;
     } catch (error) {
       if (error instanceof FallbackV3SourceGapError) return null;
@@ -1616,6 +1611,7 @@ export function ManualChartsPanel({
       effectBody: card.effectBody,
       activationBody: card.activationBody,
       transitPlanet: card.transitPlanet,
+      aspect: card.activation.aspect,
       detailAvailable: Boolean(selectedBondTransitSections.get(card.id)?.length)
     }))
   ), [selectedBondTransitCards, selectedBondTransitSections]);
@@ -1648,7 +1644,12 @@ export function ManualChartsPanel({
     }
 
     return (["short", "long"] as const).flatMap((durationClass) => {
-      const transits = selectedFriendEligibleTransits.filter((transit) => transit.term === durationClass);
+      // Report sources, previews, and the opened article must use the same
+      // searched window; the initial estimate can cross a civil-date boundary.
+      const transits = selectedFriendEligibleTransits.flatMap((transit) => {
+        const timing = selectedFriendTransitTiming.timings?.get(transit.id);
+        return transit.term === durationClass && timing ? [{ ...transit, timing }] : [];
+      });
 
       if (transits.length === 0 || !selectedChart) {
         return [];
@@ -1704,7 +1705,7 @@ export function ManualChartsPanel({
         })
       }];
     });
-  }, [currentSky, fallbackArchitectureV3Version, relationshipGeneratedContent, selectedChart, selectedFriendEligibleTransits]);
+  }, [currentSky, fallbackArchitectureV3Version, relationshipGeneratedContent, selectedChart, selectedFriendEligibleTransits, selectedFriendTransitTiming.timings]);
   const selectedFriendPlacementRows = useMemo(() => {
     if (!friendProfileWork.natal || !selectedChart || !selectedFriendReadyNatalChart) {
       return [];
@@ -1786,16 +1787,6 @@ export function ManualChartsPanel({
       ? selectedFriendPlacementRows
       : selectedFriendPlacementRows.filter((row) => !isSocialBigThreeRow(row))
   ), [selectedChartIsEvent, selectedFriendPlacementRows]);
-  const selectedFriendNatalTableRows = useMemo(() => {
-    if (!friendProfileWork.natal || !selectedFriendReadyNatalChart) {
-      return [];
-    }
-
-    return completeNatalChartTableRows(
-      selectedFriendReadyNatalChart,
-      selectedFriendPlacementRows.map(natalChartTableRowFromSocial)
-    );
-  }, [friendProfileWork.natal, selectedFriendPlacementRows, selectedFriendReadyNatalChart]);
   const selectedFriendNatalAspectPatternItems = useMemo(() => (
     showFriendNatalAspectPatterns && (friendProfileWork.natal || friendProfileWork.transits) && selectedChart
       ? natalAspectPatternReaderItemsForOwner(
@@ -1848,7 +1839,7 @@ export function ManualChartsPanel({
     selectedFriendPersonalTransitGroups,
     transitDateLabel
   ]);
-  const selectedFriendTransitReadingDate = currentSky?.generatedAt.slice(0, 10) ?? "";
+  const selectedFriendTransitReadingDate = currentSky ? skySnapshotDate(currentSky) : "";
   const selectedFriendTransitReadingAvailable = Boolean(
     selectedFriendTransitReadingDate
     && selectedChart
@@ -1902,14 +1893,7 @@ export function ManualChartsPanel({
       return [];
     }
 
-    const occupiedHouses = new Set(
-      selectedFriendReadyNatalChart.positions
-        .filter((position) => ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"].includes(position.planet))
-        .map((position) => position.house)
-        .filter((house): house is number => typeof house === "number")
-    );
-
-    return Array.from({ length: 12 }, (_, index) => index + 1).filter((house) => !occupiedHouses.has(house));
+    return emptyNatalHouseNumbers(selectedFriendReadyNatalChart.positions);
   }, [friendProfileWork.natal, selectedChartIsEvent, selectedFriendReadyNatalChart]);
   const selectedFriendEmptyHouseViewRows = useMemo<FriendNatalEmptyHouseRow[]>(() => {
     const friendNatalChart = selectedFriendReadyNatalChart;
@@ -1982,10 +1966,11 @@ export function ManualChartsPanel({
     if (!selectedChart) return;
     openFriendDetail({
       routePath: friendDetailRoutePath(selectedChart.id, "composite", `aspect-${aspect.from}-${aspect.type}-${aspect.to}`),
+      aspectType: aspect.type,
       glyph: aspectGlyph(aspect.type),
       kicker: "Composite",
       title: `${aspect.from} ${aspect.type} ${aspect.to}`,
-      meta: wholeDegreeOrb(aspect.orb),
+      meta: precisePersonalOrb(aspect.orb),
       plainBody: true,
       suppressTldr: true,
       body: aspect.summary.split(/\n{2,}/)
@@ -2018,6 +2003,16 @@ export function ManualChartsPanel({
       body: paragraphs
     });
   };
+  useEffect(() => {
+    const route = friendsRouteStateFromUrl();
+    if (!route?.detail || route.view !== "compatibility" || route.chartId !== selectedChart?.id) return;
+    const card = selectedCompatibilityCards.find(candidate => candidate.id === route.detail);
+    if (!card) return;
+    const refreshKey = `compatibility:${connectionNavigation}:${route.chartId}:${route.detail}:${fallbackArchitectureV3Version}`;
+    if (friendRouteDetailRefreshKeyRef.current === refreshKey) return;
+    friendRouteDetailRefreshKeyRef.current = refreshKey;
+    openFriendCompatibilityCardDetail(card, compatibilityCardParagraphs(card));
+  }, [connectionNavigation, selectedChart?.id, selectedCompatibilityCards, fallbackArchitectureV3Version]);
   const openFriendNatalAspectDetail = (aspect: SkySnapshot["aspects"][number]) => {
     const ownerName = selectedChart?.displayName ?? "This chart";
     const ownerKind = selectedChartIsEvent ? "chart" : "person";
@@ -2033,6 +2028,7 @@ export function ManualChartsPanel({
         friendProfileTab,
         `natal-aspect-${normalizeContentIdPart(aspect.from)}-${normalizeContentIdPart(aspect.type)}-${normalizeContentIdPart(aspect.to)}`
       ) : undefined,
+      aspectType: aspect.type,
       glyph: article.glyph || pointGlyph(aspect.from),
       kicker: "",
       title: article.title,
@@ -2063,7 +2059,7 @@ export function ManualChartsPanel({
       const patternCopy = patternItem.copy.content;
       const prefix = patternIndex === 0 ? "" : `${patternCopy.headline}: `;
 
-      return patternCopy.sections
+      const sections = patternCopy.sections
         .map((section) => ({
           heading: resolvedNatalAspectPatternSectionLabel(section),
           body: section.body.trim()
@@ -2073,6 +2069,10 @@ export function ManualChartsPanel({
           heading: `${prefix}${section.heading}`,
           body: section.body
         }));
+      return patternIndex === 0 ? sections : [
+        { heading: `Supporting pattern: ${patternCopy.headline}`, body: patternCopy.overview },
+        ...sections
+      ];
     });
 
     openFriendDetail({
@@ -2087,7 +2087,6 @@ export function ManualChartsPanel({
       meta: copy.eyebrow || "Chart pattern",
       suppressTldr: true,
       bodyBeforeSections: true,
-      plainBody: true,
       body: [copy.overview],
       sections: detailSections
     });
@@ -2216,6 +2215,27 @@ export function ManualChartsPanel({
       }))
     });
   };
+  const openFriendLunation = (reading: WeeklyHoroscopeReading) => {
+    if (!selectedChart) return;
+    openFriendDetail({
+      routePath: friendDetailRoutePath(selectedChart.id, "transits", `lunation-${reading.dateKey}`),
+      glyph: "○",
+      kicker: "Transit",
+      title: reading.headline,
+      meta: reading.dayLabel,
+      body: [reading.body],
+      sections: []
+    });
+  };
+  useEffect(() => {
+    const route = friendsRouteStateFromUrl();
+    if (!friendLunationReading || route?.chartId !== selectedChart?.id || route?.view !== "transits"
+      || route.detail !== `lunation-${friendLunationReading.dateKey}`) return;
+    const refreshKey = `lunation:${connectionNavigation}:${lunationSelectionKey}:${fallbackArchitectureV3Version}`;
+    if (friendRouteDetailRefreshKeyRef.current === refreshKey) return;
+    friendRouteDetailRefreshKeyRef.current = refreshKey;
+    openFriendLunation(friendLunationReading);
+  }, [connectionNavigation, friendLunationReading, selectedChart?.id, lunationSelectionKey, fallbackArchitectureV3Version]);
   const openFriendHouseTransitById = (cardId: string) => {
     const card = selectedFriendHouseTransitCards.find((candidate) => candidate.contentKey === cardId);
 
@@ -2281,8 +2301,11 @@ export function ManualChartsPanel({
       transitDescription: description,
       meta: [card.transitSign, card.timingRange].filter(Boolean).join(" · "),
       bodyBeforeSections: true,
-      body: transitSections.map(section => section.body),
-      sections: [connectionFacts, ...activatedConnectionSections]
+      body: [card.effectBody, card.activationBody].filter(Boolean),
+      sections: [
+        { heading: "Personal transit", body: transitSections.map(section => section.body).join("\n\n") },
+        connectionFacts, ...activatedConnectionSections
+      ]
     });
   };
   const openBondTransitById = (cardId: string) => {
@@ -2320,20 +2343,34 @@ export function ManualChartsPanel({
 
     openFriendDetail({
       routePath: friendDetailRoutePath(selectedChart.id, "synastry", `synastry-${contact.id}`),
+      aspectType: contact.aspect,
       glyph: `${pointGlyph(contact.friendPoint.name)} ${aspectGlyph(contact.aspect)} ${pointGlyph(contact.yourPoint.name)}`,
       kicker: "Synastry",
       title,
-      meta: `${subtitle.toUpperCase()} · ${wholeDegreeOrb(contact.orb)}`,
+      meta: `${subtitle.toUpperCase()} · ${precisePersonalOrb(contact.orb)}`,
       pills: { labels: [{ label: subtitle, tone: "muted" }] },
       body: rendered?.body ? [rendered.body] : [],
       content: emptyContentFallback(rendered?.templateKey ?? contact.contentKeys[0] ?? contact.id).bundle
     });
   };
+  useEffect(() => {
+    const route = friendsRouteStateFromUrl();
+    if (!route?.detail || route.view !== "synastry" || route.chartId !== selectedChart?.id) return;
+    const contact = selectedSynastryContacts.find(candidate => `synastry-${candidate.id}` === route.detail);
+    if (!contact) return;
+    const refreshKey = `synastry:${connectionNavigation}:${route.chartId}:${route.detail}:${fallbackArchitectureV3Version}`;
+    if (friendRouteDetailRefreshKeyRef.current === refreshKey) return;
+    friendRouteDetailRefreshKeyRef.current = refreshKey;
+    openFriendSynastryContactDetail(contact.id);
+  }, [connectionNavigation, selectedChart?.id, selectedSynastryContacts, fallbackArchitectureV3Version]);
   const openFriendTransitDetail = (transit: TransitItem) => {
     if (!currentSky || !selectedChart) {
       return;
     }
 
+    const searchedTiming = selectedFriendTransitTiming.timings?.get(transit.id);
+    if (!searchedTiming) return;
+    transit = { ...transit, timing: searchedTiming };
     const timing = transitItemTimingDisplay(transit, currentSky.generatedAt);
     const normalized = normalizePersonalTransitSurface(
       transit,
@@ -2341,7 +2378,7 @@ export function ManualChartsPanel({
       selectedChart.displayName
     );
     const title = friendTransitTitle(transit, selectedChart.displayName);
-    const orbLabel = wholeDegreeOrb(transitOrbValue(transit));
+    const orbLabel = precisePersonalOrb(transitOrbValue(transit));
     const directionSentence = transit.direction
       ? ` The aspect is ${transit.direction}.`
       : "";
@@ -2362,10 +2399,16 @@ export function ManualChartsPanel({
       ),
       glyph: `${pointGlyph(transit.transitPlanet)} ${aspectGlyph(transit.aspect)} ${pointGlyph(transit.natalPoint)}`,
       kicker: "Transit",
+      aspectType: transit.aspect,
       title,
-      duration: timing.rangeLabel,
-      pills: { durationLabel: timing.durationLabel },
+      keyDates: articleTransitKeyDates(transit.timing, currentSky.generatedAt, transit.timeZone ?? transit.timing?.timeZone),
+      duration: transit.dailyPeak?.exactToday.length ? personalDailyPeakLabel(transit.dailyPeak) : timing.rangeLabel,
+      pills: { labels: [
+        { label: transit.term === "long" ? "Long-term" : "Short-term", tone: "term" as const },
+        ...(transit.natalHouse ? houseLifeAreaKeywords(transit.natalHouse).map(label => ({ label, tone: "muted" as const })) : [])
+      ] },
       meta: [
+        transit.dailyPeak?.exactToday.length ? personalDailyPeakLabel(transit.dailyPeak) : "",
         timing.rangeLabel,
         `${orbLabel} orb`,
         transit.natalPoint
@@ -2415,8 +2458,10 @@ export function ManualChartsPanel({
     if (!transit) {
       return;
     }
+    if (!selectedFriendTransitTiming.timings?.has(transit.id)) return;
 
     const refreshKey = [
+      connectionNavigation,
       routeState.chartId,
       routeState.detail,
       fallbackArchitectureV3Version,
@@ -2429,10 +2474,12 @@ export function ManualChartsPanel({
     friendRouteDetailRefreshKeyRef.current = refreshKey;
     openFriendTransitDetail(transit);
   }, [
+    connectionNavigation,
     currentSky,
     fallbackArchitectureV3Version,
     selectedChart?.id,
-    selectedFriendTransits
+    selectedFriendEligibleTransits,
+    selectedFriendTransitTiming.timings
   ]);
   function selectFriendsTab(nextTab: FriendsTab, historyMode: "push" | "replace" = "push") {
     storeFriendsTab(nextTab);
@@ -2513,13 +2560,12 @@ export function ManualChartsPanel({
       activeTab: friendProfileTab,
       profileActive: resolvedFriendsMainView === "profile" && Boolean(selectedChart)
     });
-    if (requestedTab) {
-      onFriendProfileContentRequest(requestedTab);
-    }
+    if (resolvedFriendsMainView === "feed") onFriendProfileContentRequest("transits");
+    else if (requestedTab) onFriendProfileContentRequest(requestedTab);
   }, [friendProfileTab, onFriendProfileContentRequest, resolvedFriendsMainView, selectedChart?.id]);
 
   useEffect(() => {
-    function handlePopState() {
+    function handleArticleHistoryChange() {
       if (!applyFriendsRouteStateFromUrl()) {
         const nextTab = initialFriendsTab();
         storeFriendsTab(nextTab);
@@ -2532,12 +2578,10 @@ export function ManualChartsPanel({
       }
     }
 
-    window.addEventListener("popstate", handlePopState);
-    window.addEventListener("hashchange", handlePopState);
+    window.addEventListener(articleHistoryChangeEvent, handleArticleHistoryChange);
 
     return () => {
-      window.removeEventListener("popstate", handlePopState);
-      window.removeEventListener("hashchange", handlePopState);
+      window.removeEventListener(articleHistoryChangeEvent, handleArticleHistoryChange);
     };
   }, []);
 
@@ -2660,15 +2704,15 @@ export function ManualChartsPanel({
     setDeleteCandidateChart(chart);
   }
 
-  function openFriendProfile(chart: ManualChart) {
+  function openFriendProfile(chart: ManualChart, view: FriendProfileTab = "compatibility", detail?: string) {
     setOpenChartMenuId(null);
-    requestFriendProfileTab(chart.chartType === "event" ? "natal" : "compatibility");
+    requestFriendProfileTab(chart.chartType === "event" ? "natal" : view);
     setSelectedChartId(chart.id);
-    setFriendProfileTab(chart.chartType === "event" ? "natal" : "compatibility");
+    setFriendProfileTab(chart.chartType === "event" ? "natal" : view);
     setRelationshipComparisonChartId("self");
     setRelationshipComparisonPickerOpen(false);
     setFriendsMainView("profile");
-    updateFriendProfileUrl(chart.id, chart.chartType === "event" ? "natal" : "compatibility");
+    updateFriendProfileUrl(chart.id, chart.chartType === "event" ? "natal" : view, "push", detail);
   }
 
   function changeFriendProfileTab(tab: FriendProfileTab) {
@@ -2723,6 +2767,44 @@ export function ManualChartsPanel({
   }
 
   const isFriendDetailView = resolvedFriendsMainView === "profile" && Boolean(selectedChart);
+  const sectRoute = useNatalReadingRoute();
+
+  const feedCandidates = useMemo(() => resolvedFriendsMainView === "feed" && currentSky && !transitCopyLoading && !transitCopyError && feedDailyPeaks.peaks
+    ? feedPeople.flatMap(friend => {
+      const chart = friend.chart;
+      const contacts = rankTransitsByLifeAreaFocus(rankedFriendTransits(currentSky, chart, sunriseOrbDegrees, feedDailyPeaks.peaks?.get(friend.id)),lifeAreaFocus);
+      const ongoing = new Set(dedupeSameBeatPersonalTransits(contacts.filter(transit => !transit.dailyPeak?.exactToday.length), currentSky.generatedAt));
+      const candidates = contacts.filter(transit => transit.dailyPeak?.exactToday.length || ongoing.has(transit));
+      return selectFriendsFeedTransits(candidates.flatMap(transit => {
+        if (typeof transit.natalLongitude !== "number" || typeof transit.aspectDegrees !== "number") return [];
+        const sections = acceptedOwnerApprovedTransitSections(normalizePersonalTransitSurface(transit, currentSky.generatedAt, friend.displayName).sections, fallbackV3ApprovalLevelForContentKey);
+        const body = sections.map(section => section.body).join("\n\n");
+        if (!body) return [];
+        const titlePrefix = `${transit.transitPlanet}${transit.transitSign ? ` in ${transit.transitSign}` : ""} ${connectionAspectWord(transit.aspect)} `;
+        return [{ id: `${friend.id}:${transit.id}`, friendId: friend.id, source:friend.source, friendName: friend.displayName, avatarUrl: friend.avatarUrl,
+          title: `${titlePrefix}${possessiveLabel(friend.displayName)} natal ${transit.natalPoint}`, friendNameStart: titlePrefix.length,
+          body, transit, chart, priorityIndex: contacts.indexOf(transit),
+          dailyPeak: transit.dailyPeak,
+          orb: precisePersonalOrb(transitOrbValue(transit)), aspect: normalizeFallbackV3Aspect(transit.aspect) }];
+      }));
+    }) : [], [resolvedFriendsMainView,currentSky,transitCopyLoading,transitCopyError,feedPeople,sunriseOrbDegrees,fallbackArchitectureV3Version,lifeAreaFocus,feedDailyPeaks.peaks]);
+  const feedTiming=useFriendsFeedTiming(feedCandidates,currentSky?.generatedAt??"",currentSky?.location.timeZone??"UTC");
+  const pairForecast=useRelationshipForecast(feedPeople,profileNatalSky,currentSky?.generatedAt??new Date().toISOString(),currentSky?.location.timeZone??"UTC",resolvedFriendsMainView==="feed" && Boolean(currentSky),profile.charts[0]?.birthDate??"");
+  const feedCards:FriendsFeedCard[]=feedCandidates.flatMap(card=>{
+    const timing=feedTiming.timings?.get(card.id);
+    if(!timing||!currentSky)return [];
+    const sections=acceptedOwnerApprovedTransitSections(normalizePersonalTransitSurface({...card.transit,timing},currentSky.generatedAt,card.friendName).sections,fallbackV3ApprovalLevelForContentKey);
+    const body=sections.map(section=>section.body).join("\n\n");
+    return body?[{...card,body,exactAt:card.transit.dailyPeak?.exactToday ?? [],startsAt:timing.engagementStart,endsAt:timing.engagementEnd,onOpen:()=>openFriendProfile(card.chart,"transits",`transit-${normalizeContentIdPart(card.transit.id)}`)}]:[];
+  });
+
+  if (sectRoute?.audience === "they") {
+    const matches = selectedChart?.id === sectRoute.chartId;
+    const ReadingPage = sectRoute.kind === "sect" ? NatalSectPage : NatalInsightPage;
+    return <ReadingPage snapshot={matches && !selectedChart.birthTimeUnknown && !selectedChartIsEvent ? selectedFriendReadyNatalChart : null}
+      audience="they" ownerName={matches ? selectedChart.displayName : undefined} chartId={sectRoute.chartId ?? undefined}
+      loading={isLoadingCharts || matches && selectedFriendNatalChartRepairing} />;
+  }
 
   return (
     <Suspense fallback={<FeatureLoadingFallback />}>
@@ -2744,10 +2826,19 @@ export function ManualChartsPanel({
         }}
         detailVariant={friendProfileTab}
         isDetailView={isFriendDetailView}
-        onBackToCharts={() => selectFriendsTab("charts")}
+        backLabel={typeof window.history.state?.articleParent === "string" && new URL(window.history.state.articleParent,window.location.href).searchParams.has("flowPair") ? "Feed" : "Charts"}
+        onBackToCharts={() => { if (!returnToArticleParent()) selectFriendsTab("charts"); }}
         socialPanelProps={{
           activeView: resolvedFriendsMainView === "profile" ? "charts" : resolvedFriendsMainView,
           chartCount: friendChartListItems.length,
+          feedFilter,
+          onFeedFilterChange:updateFeedFilter,
+          feedContent: <FriendsFeed cards={feedCards} filter={feedFilter} now={currentSky?.generatedAt ?? new Date().toISOString()} timeZone={currentSky?.location.timeZone ?? "UTC"}
+            pairForecast={<FriendsPairForecast key={chartOwnerUserId} pairs={pairForecast.pairs} readerName={profile.name} readerAvatar={profile.avatarUrl} ownerId={chartOwnerUserId} timeZone={currentSky?.location.timeZone??"UTC"} normalize={normalizePersonalTransitSurface} copyLoading={transitCopyLoading} copyError={transitCopyError} onRetryCopy={onRetryTransitCopy}
+              loading={pairForecast.eligibleCount>0 && (profileNatalCalculationStatus==="loading" || profileNatalCalculationStatus==="idle")} error={pairForecast.eligibleCount>0 && profileNatalCalculationStatus==="error"}
+              onRetry={pairForecast.retry} onOpenFriend={friend=>openFriendProfile(friend.chart)}/>}
+            charts={allFriendCharts} chartsLoading={isLoadingCharts} onOpenChart={chart => openFriendProfile(chart, "natal")}
+            loading={currentSkyLoading || transitCopyLoading || feedDailyPeaks.loading || feedTiming.loading || (feedFilter!=="circle" && isLoadingCharts)} error={transitCopyError || feedDailyPeaks.error || feedTiming.error} onRetry={()=>{feedDailyPeaks.retry();feedTiming.retry();onRetryTransitCopy?.();}} />,
           onAddChart: openAddChartModal,
           onFriendsChange: setSocialFriends,
           onOpenFriend: (friend) => openFriendProfile(socialFriendToChart(friend)),
@@ -2788,51 +2879,17 @@ export function ManualChartsPanel({
         />
       )}
       {deleteCandidateChart && (
-        <ModalPortal
-          className="friend-chart-delete-modal-root"
-          panelClassName="chart-modal friend-chart-delete-modal add-chart-modal"
-          titleId="friend-chart-delete-title"
-          width="440px"
+        <FriendChartDeleteDialog
+          name={deleteCandidateChart.displayName}
+          restoreFocusId={`friend-menu-${deleteCandidateChart.id}`}
+          pending={status === "deleting"}
           onClose={() => {
             if (status !== "deleting") {
               setDeleteCandidateChart(null);
             }
           }}
-        >
-          <section className="manual-chart-form friend-chart-delete-form add-chart-form">
-            <button
-              className="chart-modal-close modal-close add-chart-modal__close"
-              type="button"
-              aria-label="Close"
-              disabled={status === "deleting"}
-              onClick={() => setDeleteCandidateChart(null)}
-            >
-              <X size={20} aria-hidden="true" />
-            </button>
-            <div className="manual-chart-form-heading friend-chart-modal-heading add-chart-modal__heading">
-              <h2 id="friend-chart-delete-title">Delete {deleteCandidateChart.displayName}?</h2>
-              <p className="add-chart-modal__subtitle">This removes the saved chart and cannot be undone.</p>
-            </div>
-            <div className="modal-actions friend-chart-delete-actions">
-              <button
-                className="secondary-button"
-                type="button"
-                disabled={status === "deleting"}
-                onClick={() => setDeleteCandidateChart(null)}
-              >
-                Cancel
-              </button>
-              <button
-                className="manual-chart-save manual-chart-delete-confirm"
-                type="button"
-                disabled={status === "deleting"}
-                onClick={() => void removeChart(deleteCandidateChart)}
-              >
-                {status === "deleting" ? "Deleting..." : "Delete chart"}
-              </button>
-            </div>
-          </section>
-        </ModalPortal>
+          onDelete={() => void removeChart(deleteCandidateChart)}
+        />
       )}
       {selectedChart && relationshipChartFullscreenMode && !selectedChartIsEvent && (
         <FriendProfileChartFullscreen
@@ -2870,25 +2927,24 @@ export function ManualChartsPanel({
                 activeTab={friendProfileTab}
                 chartIsEvent={selectedChartIsEvent}
                 chartName={selectedChart.displayName}
+                birthTimeUnknown={selectedChart.birthTimeUnknown}
+                pronouns={selectedChart.pronouns}
                 comparisonIsSelf={relationshipComparisonIsSelf}
                 comparisonName={relationshipComparisonName}
                 comparisonOptions={relationshipComparisonOptions}
                 comparisonPickerOpen={relationshipComparisonPickerOpen}
                 comparisonSelectedId={selectedRelationshipComparison?.id ?? "self"}
                 compositeSky={selectedCompositeSky}
+                currentSky={currentSky}
                 currentSkyPositions={currentSky?.positions ?? []}
                 houseSignLabelStyle={houseSignLabelStyle}
                 natalSky={selectedFriendReadyNatalChart}
-                natalTableRows={selectedFriendNatalTableRows}
-                natalViewMode={friendNatalChartViewMode}
                 onComparisonSelect={(id) => {
                   setRelationshipComparisonChartId(id);
                   setRelationshipComparisonPickerOpen(false);
                 }}
                 onComparisonToggle={() => setRelationshipComparisonPickerOpen((current) => !current)}
-                onNatalViewModeChange={setFriendNatalChartViewMode}
                 onOpenFullscreen={setRelationshipChartFullscreenMode}
-                outerInitials={profileInitials(selectedChart.displayName, selectedChart.displayName)}
                 relationshipComparisonSky={relationshipComparisonSky}
                 synastryAspects={selectedSynastryAspectLines}
                 transitAspects={selectedFriendTransitAspectLines}
@@ -2941,7 +2997,6 @@ export function ManualChartsPanel({
               <CompatibilityTab
                 cards={selectedCompatibilityCards}
                 daily={selectedPairDaily}
-                dynamics={selectedCompatibilityDynamics}
                 friendName={selectedChart.displayName}
                 onOpenCard={openFriendCompatibilityCardDetail}
               />
@@ -2960,6 +3015,7 @@ export function ManualChartsPanel({
 
           {friendProfileTab === "natal" && (
             <FriendNatalTab
+              chartId={selectedChart.id}
               natalSky={selectedFriendReadyNatalChart}
               bigThreeRows={selectedFriendBigThreeDisplayRows}
               birthTimeUnknown={selectedChart.birthTimeUnknown}
@@ -2978,11 +3034,13 @@ export function ManualChartsPanel({
             />
           )}
 
-          {friendProfileTab === "transits" && (transitCopyError && onRetryTransitCopy
-            ? <PageLoadError message="The transit readings could not load. Please try again." onRetry={onRetryTransitCopy} />
+          {friendProfileTab === "transits" && (transitCopyError || feedDailyPeaks.error || selectedFriendTransitTiming.error
+            ? <PageLoadError message="The transit readings could not load. Please try again." onRetry={() => { feedDailyPeaks.retry(); selectedFriendTransitTiming.retry(); onRetryTransitCopy?.(); }} />
             : <FriendTransitsTab
               brief={selectedFriendTransitsBrief}
-              isLoading={currentSkyLoading || transitCopyLoading}
+              lunationAssembly={friendLunationAssembly}
+              lunationCard={friendLunationReading ? <LunationTransitCard reading={friendLunationReading} preview={transitCardPreview(friendLunationReading.body)} onOpen={() => openFriendLunation(friendLunationReading)} /> : null}
+              isLoading={currentSkyLoading || transitCopyLoading || feedDailyPeaks.loading || selectedFriendTransitTiming.loading}
               onGenerateReading={generateSelectedFriendTransitReading}
               onOpenBondTransit={openBondTransitById}
               onOpenHouseTransit={openFriendHouseTransitById}
@@ -3001,17 +3059,15 @@ export function ManualChartsPanel({
               contactGroups={selectedSynastryViewGroups}
               explainer={`Where ${possessiveLabel(selectedChart.displayName)} planets meet ${relationshipComparisonIsSelf ? "yours" : `${relationshipComparisonPossessive(relationshipComparisonName, relationshipComparisonIsSelf)} planets`} and what happens when they do. Why some things come easily between you and others take more work.`}
               friendName={selectedChart.displayName}
-              innerIsSelf={relationshipComparisonIsSelf}
-              innerName={relationshipComparisonName}
-              innerSky={relationshipComparisonSky}
               onOpenContact={openFriendSynastryContactDetail}
-              outerSky={selectedFriendReadyNatalChart}
             />
           )}
 
           {friendProfileTab === "composite" && (
             <FriendCompositeTab
               aspectGroups={selectedCompositeViewGroups}
+              compositeSky={selectedCompositeSky}
+              housesReliable={selectedFriendReadyNatalChart?.birthTimeKnown === true && relationshipComparisonSky?.birthTimeKnown === true}
               compositeAvailable={Boolean(selectedCompositeSky)}
               placementRows={selectedCompositePlacementRows}
               onPlacementClick={openCompositePlacementDetail}

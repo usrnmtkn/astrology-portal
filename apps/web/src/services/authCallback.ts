@@ -1,5 +1,26 @@
 import { getSupabaseClient } from "./auth";
-import { rememberReaderReturnPath } from "./readerAuthReturn";
+import { clearReaderReturnPath, rememberReaderReturnPath } from "./readerAuthReturn";
+
+// Navigation after sign-in shares the deferred callback boundary, so guest
+// startup does not download recovery code it cannot use.
+export function returnToReaderAfterSignIn(isCancelled = () => false) {
+  const path = rememberReaderReturnPath();
+  clearReaderReturnPath();
+  if (!path) return false;
+  const { location } = window;
+  const current = new URL(location.href);
+  const target = new URL(path, current);
+  if (target.href === current.href) return false;
+  const recovery = (window as Window & { __tldrastroRecoverPageAssets?: () => Promise<void> | undefined }).__tldrastroRecoverPageAssets?.();
+  if (recovery) {
+    void recovery.then(() => {
+      if (!isCancelled() && location.href === current.href) location.replace(path);
+    });
+    return true;
+  }
+  location.replace(path);
+  return target.pathname !== current.pathname || target.search !== current.search;
+}
 
 function restartSignIn() {
   const returnPath = rememberReaderReturnPath();

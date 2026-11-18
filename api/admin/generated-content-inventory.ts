@@ -111,6 +111,14 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const view = requestUrl.searchParams.get("view") ?? (id || contentKey || contentKeys.length ? "detail" : "inventory");
     const inventoryView = view === "inventory" && !id && !contentKey && contentKeys.length === 0;
     const partition = requestUrl.searchParams.get("partition");
+    const excludeArchivedArticleRevisions = requestUrl.searchParams.get("excludeArchivedArticleRevisions");
+    if (excludeArchivedArticleRevisions !== null && excludeArchivedArticleRevisions !== "true") {
+      throw new AdminHttpError(400, "excludeArchivedArticleRevisions must be true when provided.");
+    }
+    const excludeArchivedPackageRevisions = requestUrl.searchParams.get("excludeArchivedPackageRevisions");
+    if (excludeArchivedPackageRevisions !== null && excludeArchivedPackageRevisions !== "true") {
+      throw new AdminHttpError(400, "excludeArchivedPackageRevisions must be true when provided.");
+    }
     if (partition !== null && (!/^[0-2]$/u.test(partition) || !inventoryView || scope !== "all" || contentKeyPrefix || mode)) {
       throw new AdminHttpError(400, "partition is only supported for full inventory lists.");
     }
@@ -162,6 +170,14 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       const filters = [bounds[index] && `id.gte.${bounds[index]}`, bounds[index + 1] && `id.lt.${bounds[index + 1]}`].filter(Boolean);
       params.set("and", `(${filters.join(",")})`);
     }
+    if (!id && excludeArchivedArticleRevisions === "true") {
+      // Filter before limit: a published revision must not hide its live target.
+      // Original articles can have no event type and remain accessible when archived.
+      params.append("or", "(event_type.is.null,event_type.neq.standalone-article-revision,status.neq.ARCHIVED)");
+    }
+    if (!id && excludeArchivedPackageRevisions === "true") {
+      params.append("or", "(event_type.is.null,event_type.neq.studio-package-source-draft,status.neq.ARCHIVED)");
+    }
 
     const url = supabaseUrl();
     const key = serviceRoleKey();
@@ -180,11 +196,24 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     if (!response.ok) {
       throw new AdminHttpError(502, "Content storage could not return the inventory list.");
     }
-    const rows: Array<Record<string, unknown>> = adminStorageRows<Record<string, unknown>>(response.payload).map((row) => {
+    let rows: Array<Record<string, unknown>> = adminStorageRows<Record<string, unknown>>(response.payload).map((row) => {
       if (inventoryView) return inventoryRow(row);
       const { studio_facts: _listingFacts, ...document } = row;
       return { ...document, inventory_only: false };
     });
+    if (!inventoryView && rows.some(row => row.status !== "ARCHIVED" && row.sections && typeof row.sections === "object"
+      && Object.hasOwn(row.sections, "packageRecord"))) {
+      const { studioPackageSourceRecord } = await import("../_lib/studio-package-sources.js");
+      rows = rows.map(row => {
+        if (row.status === "ARCHIVED" || !row.sections || typeof row.sections !== "object" || Array.isArray(row.sections)) return row;
+        const sections = row.sections as Record<string, unknown>;
+        if (!sections.packageRecord || typeof sections.packageRecord !== "object" || Array.isArray(sections.packageRecord)) return row;
+        return { ...row, sections: { ...sections,
+          packageRecord: studioPackageSourceRecord(String(row.content_key), sections.packageRecord as Record<string, unknown>,
+            sections.packageDraft && typeof sections.packageDraft === "object" && !Array.isArray(sections.packageDraft)
+              ? sections.packageDraft as Record<string, unknown> : {}) } };
+      });
+    }
     const nextCursor = !id && rows.length === limit
       ? scopeFilter
         ? String(rows.at(-1)?.id ?? "")

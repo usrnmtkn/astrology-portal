@@ -3,6 +3,8 @@ import { expect, test, type Page } from "@playwright/test";
 import { bundledPublications } from "../helpers/bundled-publications";
 import { builtinContentRecords, contentLiveStatuses } from "../../api/_lib/content-live-status";
 import { studioListingFacts, studioListingRow } from "../../api/_lib/studio-listing-facts";
+import { studioApiStore } from "../helpers/studio-api-store";
+import { routeStudioInventoryApi } from "../helpers/studio-inventory-route";
 
 const readerBaseURL = `http://127.0.0.1:${process.env.SKY_READER_TEST_PORT ?? "4294"}`;
 
@@ -54,13 +56,10 @@ for (const width of [390, 1440]) {
       };
       const summaryHeadingStyle = await heading.evaluate(typeStyle);
       const systemDetails = studio.getByLabel("Daily Sky summary system details", { exact: true });
-      await systemDetails.getByText("Writing system & versions", { exact: true }).click();
+      await systemDetails.getByText("Writing reference", { exact: true }).click();
       await expect(systemDetails).toContainText("Daily summary assembly");
-      await expect(systemDetails).toContainText("Moon source variants · V6");
-      await expect(systemDetails).toContainText("35 supplied passages and 25 empty entries");
-      await expect(systemDetails).toContainText("empty entries do not reuse the older V5 copy");
-      await expect(systemDetails.locator("strong")).toHaveText(["Daily summary assembly", "Summary templates and wording", "Moon source variants · V6", "Moon writing proposal · V5"]);
-      expect(await systemDetails.locator("p").first().evaluate(typeStyle)).toEqual(await studio.locator(".admin-template-reader-copy p").first().evaluate(typeStyle));
+      await expect(systemDetails.locator("strong")).toHaveText("Daily summary assembly");
+      await expect(systemDetails.getByRole('link',{name:'Writing documentation ↗'})).toHaveAttribute('href',/SKY_WRITING_SYSTEMS\.md$/);
       expect(await systemDetails.evaluate(el => el.scrollWidth - el.clientWidth)).toBeLessThanOrEqual(1);
       await systemDetails.scrollIntoViewIfNeeded();
       await page.screenshot({ path: `test-results/sky-summary-system-${width}-${theme}.png` });
@@ -69,9 +68,9 @@ for (const width of [390, 1440]) {
       await expect(analogousHeading).toBeVisible();
       expect(summaryHeadingStyle).toEqual(await analogousHeading.evaluate(typeStyle));
       await page.goto("/#sky-writeups?view=daily-summary");
-      await expect(page.locator(".admin-main h1, .admin-main h2, .admin-main h3")).toHaveText(["Sky Write-ups", "Sky writing workspaces", "Daily Sky Summary", "Things may take more effort right now"]);
+      await expect(page.locator(".admin-main h1, .admin-main h2, .admin-main h3")).toHaveText(["Sky Write-ups", "Sky writing workspaces", "Daily Sky Summary"]);
       const nav = page.getByLabel("Sky Write-ups sections");
-      await expect(nav.locator("button")).toHaveText(["Daily Sky Summary", "Transit to Natal Charts", "House Transits", "Preview without saving"]);
+      await expect(nav.locator("button")).toHaveText(["Daily Sky Summary", "Transit to Natal Charts", "House Transits", "House × aspect bridges", "Preview without saving"]);
       await expect(nav.getByRole("button", { name: "Daily Sky Summary", includeHidden: true })).toHaveAttribute("aria-current", "page");
       await expect(studio.getByRole("article", { name: "Sun in Virgo", exact: true })).toContainText("turns our attention to the daily rituals and systems we rely on, helping us see which support us and which have become too rigid, demanding, or punishing");
       await expect(studio.getByRole("article", { name: "Sun in Aries", exact: true })).toContainText("puts more emphasis on starting");
@@ -308,7 +307,7 @@ test('Daily Sky retirement and an unavailable publication never reveal older bun
   publication.state = 'live'; publication.revision = 2;
   await page.reload();
   await expect(summary).toContainText('The daily summary could not load.');
-  await expect(summary.getByRole('button', { name: 'Retry', exact: true })).toBeVisible();
+  await expect(summary.getByRole('button', { name: 'Try again', exact: true })).toBeVisible();
   await expect(summary).not.toContainText('turns our attention to the daily rituals');
 });
 
@@ -329,7 +328,7 @@ test("reader composes selected-day events with a dedicated ingress TLDR", async 
   await expect(summary).not.toContainText("Venus enters");
   await expect(summary.getByRole("link", { name: "Saturn squares Lilith", exact: true })).toHaveAttribute("href", `#sky/aspect/saturn/square/lilith/at/${encodeURIComponent(event.startsAt)}`);
   await summary.getByRole("link", { name: "Mercury enters Libra", exact: true }).click();
-  await expect(reader).toHaveURL(/#sky\/placement\/mercury\/libra/);
+  await expect(reader).toHaveURL(`${readerBaseURL}/#sky/event/ingress/mercury/libra/at/${encodeURIComponent(event.startsAt)}`);
 });
 
 
@@ -425,6 +424,85 @@ test("inline connecting words preserve variables, publish and reach the reader",
   await expect(summary).toContainText("Today, the Sun moving through Virgo at 15° turns our attention");
   await expect(summary).toContainText("the places, people, and memories that nurture us.");
   await expect(summary.locator('a[href="#sky/placement/sun/virgo"]')).toHaveText("Sun moving through Virgo at 15°");
+});
+
+for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
+  test(`unsaved sentence wording survives source switches ${width} ${theme}`, async ({ page }) => {
+    const stored: any[] = [];
+    await mockStudio(page, stored);
+    await page.addInitScript(theme => localStorage.setItem("tldrastro:studio-theme", theme), theme);
+    await page.setViewportSize({ width, height: 1000 });
+    await page.goto("/#sky-writeups?view=daily-summary");
+    const assembly = page.getByRole("region", { name: "Full summary assembly", exact: true });
+    const selected = assembly.getByLabel("Sentence template", { exact: true });
+    const direct = "cms/sky-daily-summary/assembly/stationDirectFirst";
+    const retrograde = "cms/sky-daily-summary/assembly/stationRetrogradeFirst";
+    await selected.selectOption(direct);
+    const directWords = assembly.getByRole("textbox", { name: "Station Direct First connecting words 2", exact: true });
+    await directWords.fill(" Synthetic direct final sentence.");
+    await expect(assembly.getByRole("button", { name: "Review and save wording", exact: true })).toBeVisible();
+    await selected.selectOption(retrograde);
+    await assembly.getByRole("textbox", { name: "Station Retrograde First connecting words 2", exact: true }).fill(" Synthetic retrograde final sentence.");
+    await selected.selectOption(direct);
+    await expect(directWords).toHaveText(" Synthetic direct final sentence.");
+    await selected.selectOption(retrograde);
+    await expect(assembly.getByRole("textbox", { name: "Station Retrograde First connecting words 2", exact: true })).toHaveText(" Synthetic retrograde final sentence.");
+    await assembly.getByRole("button", { name: "Discard wording changes", exact: true }).click();
+    await expect(assembly.getByRole("button", { name: "Review and save wording", exact: true })).toHaveCount(0);
+    await assembly.getByRole("button", { name: "Edit paragraph 2 wording", exact: true }).click();
+    await assembly.getByRole("button", { name: "Show all assembly templates", exact: true }).click();
+    await selected.selectOption(direct);
+    await expect(directWords).toHaveText(" Synthetic direct final sentence.");
+    await expect(assembly.getByLabel("Sentence wording editor", { exact: true })).toContainText("station List Synthetic direct final sentence.");
+    await assembly.getByRole("button", { name: "Review and save wording", exact: true }).click();
+    const editor = page.getByRole("dialog", { name: "Generated content editor" });
+    await expect(editor.getByRole("textbox", { name: "Summary wording", exact: true })).toHaveValue("{stationList} Synthetic direct final sentence.");
+    expect(stored).toEqual([]);
+  });
+}
+
+test("retained sentence draft saves, reloads and refuses a newer source version", async ({ page, context }) => {
+  const store = await studioApiStore([], { uuidIds: true });
+  try {
+    const publicationsBefore = await store.call({ method: "publications" });
+    await context.addInitScript(() => localStorage.setItem("tldrastro:contentAdminSecret", "calendar-api-fixture"));
+    await routeStudioInventoryApi(page, { call: store.call, actualDocumentRoute: true });
+    await page.goto("/#sky-writeups?view=daily-summary");
+    const assembly = page.getByRole("region", { name: "Full summary assembly", exact: true });
+    const selected = assembly.getByLabel("Sentence template", { exact: true });
+    const key = "cms/sky-daily-summary/assembly/stationDirectFirst";
+    const retained = "{stationList} Synthetic retained final sentence.";
+    await selected.selectOption(key);
+    await assembly.getByRole("textbox", { name: "Station Direct First connecting words 2", exact: true }).fill(" Synthetic retained final sentence.");
+    await selected.selectOption("cms/sky-daily-summary/assembly/stationRetrogradeFirst");
+    await selected.selectOption(key);
+    await assembly.getByRole("button", { name: "Review and save wording", exact: true }).click();
+    const editor = page.getByRole("dialog", { name: "Generated content editor" });
+    const body = editor.getByRole("textbox", { name: "Summary wording", exact: true });
+    await expect(body).toHaveValue(retained);
+    await editor.getByRole("button", { name: "Save draft", exact: true }).click();
+    await expect.poll(async () => (await store.call({ method: "rows" })).find((row: any) => row.content_key === key)?.body).toBe(retained);
+    await editor.getByRole("button", { name: "Close", exact: true }).click();
+    await page.reload();
+    await selected.selectOption(key);
+    await assembly.getByRole("button", { name: "Edit sentence template", exact: true }).click();
+    await expect(body).toHaveValue(retained);
+    const saved = (await store.call({ method: "rows" })).find((row: any) => row.content_key === key);
+    const newer = "{stationList} Synthetic newer final sentence.";
+    const external = await store.call({ method: "PATCH", url: "/api/admin/generated-content", body: {
+      id: saved.id, expectedUpdatedAt: saved.updated_at, body: newer
+    } });
+    expect(external.status).toBe(200);
+    const unsent = "{stationList} Synthetic unsent final sentence.";
+    await body.fill(unsent);
+    await editor.getByRole("button", { name: "Save draft", exact: true }).click();
+    await expect(editor.getByRole("alert").first()).toContainText(/changed|newer|reload/i);
+    await expect(body).toHaveValue(unsent);
+    const rows = await store.call({ method: "rows" });
+    expect(rows.find((row: any) => row.id === saved.id).body).toBe(newer);
+    expect(rows.every((row: any) => row.status === "DRAFT")).toBe(true);
+    expect(await store.call({ method: "publications" })).toEqual(publicationsBefore);
+  } finally { store.close(); }
 });
 
 test("V6 Moon event sources stay separate and missing copy stays blank", async ({ page, context }) => {

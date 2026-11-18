@@ -1,3 +1,4 @@
+import { canonicalPublicationLedger, publicationLedgerTag } from '../../apps/web/src/services/publicationLedgerTransport';
 import { readerResponse } from '../helpers/reader-response';
 import { expect, test, type Page } from '@playwright/test';
 import { skyPlacementSourceRecords } from '../../api/_lib/sky-placement-sources';
@@ -65,6 +66,10 @@ async function installSources(page: Page, includeCore = false) {
   await page.route('**/content-studio-last-known-good.json', route => route.fulfill({
     json: { schema: 'content-studio-last-known-good-v2', rows: [], publications: [], rowCount: 0 }
   }));
+  await page.route('**/api/content-publications*', async route => {
+    const ledger=canonicalPublicationLedger(publications());
+    await route.fulfill({headers:{etag:await publicationLedgerTag(ledger)},json:{schema:'tldr-publications/v1',publications:ledger}});
+  });
   await page.route('**/rest/v1/**', async route => {
     const url = new URL(route.request().url());
     if (url.pathname.endsWith('/content_publications')) {
@@ -263,10 +268,10 @@ test('known live placement failure shows retry rather than another authored vers
   const sources = await installSources(page);
   sources.fail();
   await page.goto('/?date=2026-09-13#sky/placement/sun/virgo');
-  await expect(page.getByText('The placement reading could not load. Please try again.')).toBeVisible({ timeout: 60_000 });
+  await expect(page.getByRole('alert').filter({hasText:'This placement could not load.'})).toBeVisible({ timeout: 60_000 });
   expect(await page.locator('.sky-detail-article .article-body-inner').first().count()).toBe(0);
   sources.recover();
-  await page.getByRole('button', { name: 'Retry', exact: true }).click();
+  await page.getByRole('button', { name: 'Try again', exact: true }).click();
   await expect(page.locator('.sky-detail-article .article-body-inner').first()).toContainText(firstCopy, { timeout: 60_000 });
   const states = await page.evaluate(() => (window as any).__readingStates);
   expect(states.filter((s: any) => s.article).every((s: any) => s.article.includes(firstCopy))).toBe(true);
@@ -323,7 +328,7 @@ for (const width of [390, 1440]) test(`WASM initialization failure recovers thro
     await route.fulfill({ status, contentType: 'application/json', body });
   });
   await page.goto('/?date=2026-09-13#sky/placement/sun/virgo');
-  await expect(page.getByText('The placement reading could not load. Please try again.', { exact: true })).toBeVisible({ timeout: 60_000 });
+  await expect(page.getByRole('alert').filter({hasText:'This placement could not load.'})).toBeVisible({ timeout: 60_000 });
   expect(failedFetches).toBeGreaterThanOrEqual(2);
   const article = page.locator('.sky-detail-article .article-body-inner').first();
   await expect(article).toHaveCount(0);
@@ -354,7 +359,7 @@ for (const width of [390, 1440]) test(`WASM initialization failure recovers thro
 
   failAsset = false;
   stage = 'retry';
-  await page.getByRole('button', { name: 'Retry', exact: true }).click();
+  await page.getByRole('button', { name: 'Try again', exact: true }).click();
   await expect(article).toContainText(firstCopy, { timeout: 60_000 });
   expect(restoredFetches).toBeGreaterThan(0);
   const recovered = await page.evaluate(() => (window as any).__swissRetry);
@@ -370,6 +375,7 @@ for (const width of [390, 1440]) test(`WASM initialization failure recovers thro
     bodyTags: [...root.querySelectorAll('.article-body-inner p,.article-body-inner em,.article-body-inner strong,.article-body-inner li')]
       .map(element => [element.tagName, element.textContent])
   }));
+  await expect(page.locator('.sky-detail-article').getByRole('heading', {name:'Key dates',exact:true})).toBeVisible();
   const completePresentation = await presentation();
   expect(completePresentation.dates.length).toBeGreaterThan(0);
   expect(completePresentation.dates.every(date => date?.trim())).toBe(true);
@@ -381,6 +387,6 @@ for (const width of [390, 1440]) test(`WASM initialization failure recovers thro
   await expect(article).toContainText(firstCopy, { timeout: 60_000 });
   expect(await article.textContent()).toBe(completeBody);
   expect(await page.locator('#sky-detail-title').textContent()).toBe(title);
-  expect(await presentation()).toEqual(completePresentation);
+  await expect.poll(presentation).toEqual(completePresentation);
   expect(errors.filter(error => error.stage !== 'failed')).toEqual([]);
 });

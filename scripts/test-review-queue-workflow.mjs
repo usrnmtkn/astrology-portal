@@ -208,8 +208,10 @@ const selected = resolveSkyAspectGeneratedContent({ first: 'moon', second: 'uran
 assert.equal(selected?.body, revised);
 const threeParagraphs = 'Synthetic opening for a document you usually review before marking the complete source revision ready.\n\nA separate synthetic middle paragraph stays in the saved document exactly as the owner entered it.\n\nComplete synthetic final sentence.';
 const { default: skyLint } = await import('../packages/astro-knowledge/scripts/lint-sky-voice.js');
-assert.ok(skyLint.lintCard(threeParagraphs).findings.some(f => f.term === 'paragraph-count' && f.severity === 'fail'),
-  'Generator template checks retain their existing enforcement');
+assert.ok(skyLint.lintCard(threeParagraphs).findings.some(f => f.term === 'paragraph-count' && f.severity === 'note'),
+  'The current Sky/Calendar aspect standard leaves paragraph choices to the owner');
+assert.ok(skyLint.lintCard(threeParagraphs, { mode: 'collective-placement-card' }).findings.some(f => f.term === 'paragraph-count' && f.severity === 'fail'),
+  'The aspect-specific standard must not change placement template checks');
 saved = await actual.invoke('PATCH', { id: current.id, expectedUpdatedAt: current.updated_at, body: threeParagraphs });
 assert.equal(saved.status, 200, JSON.stringify(saved));
 current = saved.payload.rows[0];

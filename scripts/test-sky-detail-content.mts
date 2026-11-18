@@ -54,6 +54,12 @@ try {
     { from: "Lilith", to: "Sun", type: "square", fromSign: "Sagittarius", toSign: "Virgo", orb: 1 }
   ] } as unknown as SkySnapshot;
   assert.ok(skySnapshotAspectContentKeys(facts).some(key => key.includes("sagittarius") && key.includes("virgo")));
+  const localDayFacts = { ...facts, generatedAt: "2026-11-04T17:00:00Z", location: {
+    label: "Auckland, New Zealand", latitude: -36.8485, longitude: 174.7633, timeZone: "Pacific/Auckland"
+  } };
+  const localKeys = skySnapshotAspectContentKeys(localDayFacts);
+  assert.ok(localKeys.some(key => key.includes("2026-11-05")), "Dated Sky copy requests follow the selected city's local day.");
+  assert.ok(!localKeys.some(key => key.includes("2026-11-04")), "The UTC day cannot select a different dated passage.");
   const key = "sky.aspect.sun.square.lilith";
   const stale = new Map(content);
   stale.set(key, { ...content.get(key)!, updatedAt: "2000-01-01T00:00:00Z" });

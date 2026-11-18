@@ -12,6 +12,9 @@ type SkyArticleFactsSnapshot = {
     planet: string;
     sign: string;
     motion?: "direct" | "retrograde";
+    retrogradeStart?: string | null;
+    retrogradeEnd?: string | null;
+    retrogradeWindowSource?: string | null;
     transitStart?: string | null;
     transitEnd?: string | null;
     longitude?: number;
@@ -61,7 +64,15 @@ function stayLengthLabel(start: string, end: string) {
   return `${days} days`;
 }
 
-export function skyArticleEditionFactsFromSnapshot(snapshot: SkyArticleFactsSnapshot, requestedPlanet: string, format?: SkyArticleFormat) {
+export type SkyArticlePeriod = 'visit' | 'current';
+
+export function skyArticlePeriod(value: unknown): SkyArticlePeriod {
+  if (value === undefined || value === null || value === 'visit') return 'visit';
+  if (value === 'current') return 'current';
+  throw new Error('Choose current motion period or full sign visit.');
+}
+
+export function skyArticleEditionFactsFromSnapshot(snapshot: SkyArticleFactsSnapshot, requestedPlanet: string, format?: SkyArticleFormat, period: SkyArticlePeriod = 'visit') {
   const planet = normalizeToken(requestedPlanet);
   const position = snapshot.positions.find((candidate) => normalizeToken(candidate.planet) === planet);
   if (!position) throw new Error(`${titleCase(planet)} is not present in the calculated Sky snapshot.`);
@@ -69,10 +80,23 @@ export function skyArticleEditionFactsFromSnapshot(snapshot: SkyArticleFactsSnap
     throw new Error(`The calculation layer did not return a complete sign-residency window for ${position.planet}.`);
   }
   const timeZone = isSkyIngressEssay(format) ? defaultTimeZone : snapshot.location.timeZone || defaultTimeZone;
-  const pass = isSkyIngressEssay(format) ? position.residencyPasses?.find(pass => Date.parse(pass.entryDate) <= Date.parse(snapshot.generatedAt)
+  const pass = isSkyIngressEssay(format) || period === 'current' ? position.residencyPasses?.find(pass => Date.parse(pass.entryDate) <= Date.parse(snapshot.generatedAt)
     && Date.parse(snapshot.generatedAt) < Date.parse(pass.exitDate)) : undefined;
-  const start = pass?.entryDate ?? position.transitStart;
-  const end = pass?.exitDate ?? position.transitEnd;
+  let start = pass?.entryDate ?? position.transitStart;
+  let end = pass?.exitDate ?? position.transitEnd;
+  const retrograde = isDisplayRetrograde({ planet: position.planet, motion: position.motion ?? 'direct' });
+  if (period === 'current') {
+    const at = Date.parse(snapshot.generatedAt);
+    if (retrograde) {
+      const rxStart = Date.parse(position.retrogradeStart ?? '');
+      const rxEnd = Date.parse(position.retrogradeEnd ?? '');
+      if (position.retrogradeWindowSource !== 'station' || !(rxStart <= at && at < rxEnd))
+        throw new Error('The calculated retrograde stations are unavailable. Retry before writing this period.');
+      start = new Date(Math.max(Date.parse(start), rxStart)).toISOString();
+      end = new Date(Math.min(Date.parse(end), rxEnd)).toISOString();
+    }
+    if (!(Date.parse(start) <= at && at < Date.parse(end))) throw new Error('The calculated article period does not contain the selected date.');
+  }
   const validFrom = dateKey(start, timeZone);
   const validTo = dateKey(end, timeZone);
 
@@ -80,6 +104,7 @@ export function skyArticleEditionFactsFromSnapshot(snapshot: SkyArticleFactsSnap
     schema: "tldrastro-sky-article-engine-facts-v1",
     calculationSource: "local Swiss Ephemeris sign-residency calculation",
     generatedAt: snapshot.generatedAt,
+    ...(period === 'current' ? { articlePeriod: period, motion: position.motion ?? 'direct', periodLabel: retrograde ? 'Retrograde in this sign' : 'Full sign visit' } : {}),
     ...(isSkyIngressEssay(format) ? { articleFormat: format, templateFields: isSkyIngressArticle(format) ? ingressArticleFields() : skyIngressFieldsForFormat(format), calculationProvenance: snapshot.calculationProvenance,
       retrievedAt: new Date().toISOString(), request: { planet, referenceInstant: snapshot.generatedAt, timeZone } } : {}),
     referenceTimeZone: timeZone,
@@ -110,13 +135,13 @@ export function ingressTimeLabel(instant: string) {
 }
 
 /** Use the same packaged Swiss engine as the reader and astrology facts API. */
-export async function calculateSkyArticleEditionFacts(referenceInstant: Date, requestedPlanet: string, format?: SkyArticleFormat) {
+export async function calculateSkyArticleEditionFacts(referenceInstant: Date, requestedPlanet: string, format?: SkyArticleFormat, period: SkyArticlePeriod = 'visit') {
   const { defaultLocation, getAstrodienstSky, getSkyIngressArticleEvents, getRetrogradeHistory } = await import("../../apps/web/src/services/ephemeris.js");
   const snapshot = await getAstrodienstSky(defaultLocation, referenceInstant, {
     includeDailyEvents: false,
     includeTransitWindows: true
   });
-  const placementFacts = skyArticleEditionFactsFromSnapshot(snapshot, requestedPlanet, format);
+  const placementFacts = skyArticleEditionFactsFromSnapshot(snapshot, requestedPlanet, format, period);
   const retrogradeHistory = await getRetrogradeHistory({ planet: placementFacts.planet, sign: placementFacts.sign, referenceDate: referenceInstant });
   const facts = { ...placementFacts, retrogradeHistory };
   if (!isSkyIngressEssay(format)) return facts;

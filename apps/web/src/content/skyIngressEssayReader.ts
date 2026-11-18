@@ -1,7 +1,9 @@
+import { writeupRisingHoroscopes } from '../../../../src/shared/skyWriteupHoroscopes.js';
 import { approvedSkySeasonFallback } from "./skySeasonFallback.js";
-import { assertCompiledSkyArticleEdition, selectActiveSkyArticleEdition, skyArticleEditionRecord, type SkyArticleEditionCandidate } from "./skyArticleTemplateCompiler.js";
+import { assertCompiledSkyArticleEdition, selectActiveSkyArticleEdition, skyArticleEditionRecord, skyArticleReaderHoroscopeIntroduction, type SkyArticleEditionCandidate } from "./skyArticleTemplateCompiler.js";
 import { isSkyIngressEssay } from "./skyIngressEssay.mjs";
 import { publicationTimestamp, type ContentPublication } from "./contentPublicationState.js";
+import { approvedSkyArticleReaderEdition } from './skyArticleEditionReader.js';
 export {skyIngressEssayPublicationKeys} from './skyIngressEssayPublicationKeys.js';
 
 /** Receives the reader-admitted inventory, never Studio drafts. Keep selection
@@ -12,9 +14,14 @@ export function skyIngressEssayReaderSection(
   publicationFor?: (key: string) => ContentPublication | undefined
 ) {
   const rows = [...candidates];
-  const selected = selectActiveSkyArticleEdition(rows.filter(row => row.status === "LIVE"
-    && isSkyIngressEssay(skyArticleEditionRecord((row.sections as { skyArticleEdition?: unknown } | undefined)?.skyArticleEdition)?.format)), context);
-  if (!selected || !isSkyIngressEssay(selected.edition.format)) {
+  const eligible = rows.filter(row => approvedSkyArticleReaderEdition({
+    content_key: row.contentKey, status: row.status, lane: row.lane, review_state: row.reviewState,
+    headline: row.headline, summary: row.summary, body: row.body, sections: row.sections, source_snapshot: row.sourceSnapshot
+  }));
+  // Stable selector ordering retains the existing ingress when coverage ties.
+  const ingress = (row: (typeof rows)[number]) => isSkyIngressEssay(skyArticleEditionRecord((row.sections as { skyArticleEdition?: unknown })?.skyArticleEdition)?.format);
+  const selected = selectActiveSkyArticleEdition([...eligible.filter(ingress), ...eligible.filter(row => !ingress(row))], context);
+  if (!selected) {
     if (publicationFor) return null;
     const active = Date.parse(context.activeInstant);
     const fallback = rows.flatMap(row => {
@@ -33,6 +40,7 @@ export function skyIngressEssayReaderSection(
     };
   }
   const edition = assertCompiledSkyArticleEdition(selected.edition);
+  const introduction = skyArticleReaderHoroscopeIntroduction(edition);
   if (publicationFor) {
     // Loading requirements need the selected candidate's exact version; the
     // generic dated-row allowance is intentionally broader than this proof.
@@ -48,7 +56,8 @@ export function skyIngressEssayReaderSection(
     tier: "fallback-architecture-v3-authored" as const,
     sourceKeys: ["compiled-sky-article-edition-v2", edition.contentKey],
     heading: edition.headline, tldr: edition.tldr, body: edition.body,
-    articleSections: edition.articleSections.map(section => ({ ...section, kind: "ingress-essay" })),
-    risingHoroscopes: [], keyDates: [], tagline: null, closingCharge: null
+    articlePeriod: { startsAt: edition.transitStartInstant, endsAt: edition.transitEndInstant },
+    articleSections: [...edition.articleSections, ...(introduction ? [introduction] : [])].map(section => ({ ...section, kind: isSkyIngressEssay(edition.format) ? "ingress-essay" : "saved-template" })),
+    risingHoroscopes: edition.writeupHoroscopes ? writeupRisingHoroscopes(edition.writeupHoroscopes, edition.sign) : edition.housePassages.map(passage => ({ ...passage })), keyDates: [], tagline: null, closingCharge: null
   };
 }

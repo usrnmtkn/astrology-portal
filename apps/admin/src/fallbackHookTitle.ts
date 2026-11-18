@@ -122,6 +122,7 @@ function fallbackHookDisplayTitleUncached(contentKey: string) {
 
   const family = parts[1];
   const args = parts.slice(2);
+  if (family === 'sky-house-aspect-bridge' && args.length === 4) return `House ${args[0]} bridge · ${words(args[1])} ${args[2]} your ${words(args[3])}`;
   if (family === "pair-daily") return pairDailyTitle(args);
   const pair = pairTitle(family, args);
   if (pair) return pair;
@@ -141,8 +142,12 @@ function fallbackHookDisplayTitleUncached(contentKey: string) {
     return `${words(args[0])} in the ${ordinalHouse(args[1])} · ${familyLabel(family)}${args.length > 2 ? ` · ${args.slice(2).map(variant).join(" · ")}` : ""}`;
   }
 
+  if (family === "natal-retrograde-modifier" && args.length === 2) {
+    return `${words(args[0])} retrograde in the ${ordinalHouse(args[1])} · Retrograde modifier`;
+  }
+
   if (family === "natal-you-placement-complete-final" && args.length >= 3) {
-    return `${words(args[0])} in ${words(args[1])} in the ${ordinalHouse(args[2])} · ${familyLabel(family)}`;
+    return `${words(args[0])}${args[3] === "retrograde" ? " retrograde" : ""} in ${words(args[1])} in the ${ordinalHouse(args[2])} · ${familyLabel(family)}`;
   }
 
   if (["placement-sentence", "placement-sign-lived", "natal-you-placement-sign-final"].includes(family) && args.length >= 2) {

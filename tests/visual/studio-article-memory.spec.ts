@@ -42,7 +42,7 @@ for (const width of [390,1440]) for (const colorScheme of ['light','dark'] as co
       } });
       await page.goto('/admin/content#exact-content');
       await expect(page.locator('[data-studio-theme]').first()).toHaveAttribute('data-studio-theme',colorScheme);
-      await page.locator('.admin-content-row').getByRole('button',{name:'Edit',exact:true}).click();
+      await page.locator('.admin-content-row').getByRole('button',{name:initialPublished?/^(?:Open article|Edit published article)$/u:'Continue draft',exact:true}).click();
       const editor=page.locator('.admin-editor-panel');
       const memory=editor.getByLabel('Studio memory corrections');
       await memory.locator('summary').first().click();
@@ -54,9 +54,11 @@ for (const width of [390,1440]) for (const colorScheme of ['light','dark'] as co
       expect(savedRevision).toBeTruthy();
       const writesBeforeReopen=writes.length;
       await editor.getByRole('button',{name:'Close',exact:true}).click();
+      await page.goBack();
+      await expect(page.getByRole('heading',{name:'Content Library',exact:true})).toBeVisible();
       await page.reload();
       await expect(page.locator('[data-studio-theme]').first()).toHaveAttribute('data-studio-theme',colorScheme);
-      await page.locator('.admin-content-row').filter({hasText:savedRevision.content_key}).getByRole('button',{name:'Edit',exact:true}).click();
+      await page.locator('.admin-content-row').filter({hasText:savedRevision.content_key}).getByRole('button',{name:'Continue draft',exact:true}).click();
       await editor.getByLabel('Dated article variable target').selectOption('tldr');
       await expect(editor.getByLabel('Sky article TL;DR',{exact:true})).toHaveValue('Synthetic revised summary. Complete final sentence.');
       await expect(editor.getByRole('button',{name:'Review & publish',exact:true})).toBeVisible();

@@ -41,10 +41,9 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
   const map = page.getByRole('region', { name: 'Sky placement composition map' });
   await expect(map.getByRole('heading')).toHaveText('Saturn Rx in Aries');
   const systemDetails = map.getByLabel('Placement writing system details', { exact: true });
-  await systemDetails.getByText('Writing system & versions', { exact: true }).click();
+  await systemDetails.getByText('Writing reference', { exact: true }).click();
   await expect(systemDetails).toContainText('Placement composition · format 5');
-  await expect(systemDetails).toContainText('Historical review');
-  await expect(systemDetails).toContainText('Superseded proposals');
+  await expect(systemDetails.getByRole('link',{name:'Writing documentation ↗'})).toHaveAttribute('href',/SKY_PLACEMENT_V5\.md$/);
   const labelStyle = (el: Element) => { const s = getComputedStyle(el); return [s.fontFamily, s.fontSize, s.fontWeight, s.lineHeight, s.letterSpacing, s.marginTop, s.marginBottom, s.textTransform, s.textAlign]; };
   expect(await systemDetails.locator('strong').first().evaluate(labelStyle)).toEqual(await map.getByLabel('Selected sources').locator('strong').first().evaluate(labelStyle));
   const selectionRules = map.getByLabel('Placement reader selection', { exact: true });
@@ -65,6 +64,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
   await map.getByRole('button', { name: 'Set up placement composition' }).click();
   const editor = page.getByRole('dialog');
   await expect(editor).toBeVisible();
+  await editor.getByLabel('Advanced writing tools', { exact: true }).locator('summary').filter({ hasText: /^Advanced$/u }).click();
   await editor.locator('summary').filter({ hasText: /^Writing library & placement composition$/u }).click();
   await editor.getByRole('button', { name: 'Add prefilled placement composition' }).click();
   const composer = editor.getByRole('region', { name: 'Placement composition' });

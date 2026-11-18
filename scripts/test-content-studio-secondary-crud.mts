@@ -69,7 +69,7 @@ try {
       if (!row || url.searchParams.get('updated_at') !== `eq.${row.updated_at}`) return Response.json([]);
       row = { ...row, ...JSON.parse(String(init.body)) }; return Response.json([row]);
     };
-    for (const body of ['QA complete first paragraph.\n\nQA final sentence. ', '']) {
+    for (const body of ['QA complete first paragraph.\n\nQA final sentence. ', 'Editor notes: deliberate owner prose. Tarot — heaven, 2025, and whether.', '']) {
       const result = await invoke(personalized, 'PATCH', { ...input, expectedUpdatedAt: row.updated_at, body });
       assert.equal(result.status, 200); assert.equal(result.rows[0].body, body);
       assert.equal((await invoke(personalized, 'GET')).rows[0].body, body);

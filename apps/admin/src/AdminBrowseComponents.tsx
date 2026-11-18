@@ -57,9 +57,10 @@ export type AdminBrowseRow = {
   checked: boolean;
   onSelect: () => void;
   onOpen?: () => void;
+  openLabel?: ReactNode;
 };
 
-function AdminContentTableRow({ row }: { row: AdminBrowseRow }) {
+function AdminContentTableRow({ row, showDestination }: { row: AdminBrowseRow; showDestination: boolean }) {
   const [expanded, setExpanded] = useState(false);
   const detailsId = useId();
   return (
@@ -82,8 +83,8 @@ function AdminContentTableRow({ row }: { row: AdminBrowseRow }) {
         <span className="admin-content-mobile-status">{row.status}</span>
       </td>
       <td className="admin-col-visibility">{row.status}</td>
-      {row.destination && <td className="admin-content-location admin-col-destination">
-        <strong>{row.destination.label}</strong><small>{row.destination.detail}</small>
+      {showDestination && <td className="admin-content-location admin-col-destination">
+        {row.destination ? <><strong>{row.destination.label}</strong><small>{row.destination.detail}</small></> : <span className="admin-field-hint">Other content</span>}
       </td>}
       <td className="admin-col-source" onClick={(event) => event.stopPropagation()}>
         <AdminDisclosureButton aria-expanded={expanded} aria-controls={detailsId} onClick={() => setExpanded(value => !value)}>
@@ -91,11 +92,11 @@ function AdminContentTableRow({ row }: { row: AdminBrowseRow }) {
         </AdminDisclosureButton>
       </td>
       <td className="admin-col-edit">
-        {row.onOpen && <StudioButton className="admin-edit-row-button" type="button" onClick={(event) => { event.stopPropagation(); row.onOpen?.(); }}>Edit</StudioButton>}
+        {row.onOpen && <StudioButton className="admin-edit-row-button" type="button" onClick={(event) => { event.stopPropagation(); row.onOpen?.(); }}>{row.openLabel ?? 'Edit'}</StudioButton>}
       </td>
     </tr>
     <tr className="admin-content-expanded-row" hidden={!expanded}>
-      <td colSpan={row.destination ? 5 : 4}>
+      <td colSpan={showDestination ? 5 : 4}>
         <div id={detailsId} className="admin-content-expanded-body" role="region" aria-label={`Details for ${row.title}`}>
           <code className="admin-content-row-key">{row.contentKey}</code>
           {row.details}
@@ -106,20 +107,20 @@ function AdminContentTableRow({ row }: { row: AdminBrowseRow }) {
   );
 }
 
-export function AdminContentTable({ rows, showDestination, emptyMessage }: { rows: AdminBrowseRow[]; showDestination: boolean; emptyMessage: string }) {
+export function AdminContentTable({ rows, showDestination, emptyMessage, className = '', destinationLabel = 'App destination' }: { rows: AdminBrowseRow[]; showDestination: boolean; emptyMessage: string; className?: string; destinationLabel?: string }) {
   return (
     <div className="admin-content-table-scroll admin-browse-table">
-      <table className="admin-content-table admin-content-table--browse">
+      <table className={`admin-content-table admin-content-table--browse ${className}`}>
         <caption className="sr-only">Content rows. Open a row to edit its writing.</caption>
         <thead className="admin-content-table-head"><tr>
           <th className="admin-col-select" scope="col">Select</th>
           <th className="admin-col-content" scope="col">Content</th>
           <th className="admin-col-visibility" scope="col">Status</th>
-          {showDestination && <th className="admin-col-destination" scope="col">App destination</th>}
+          {showDestination && <th className="admin-col-destination" scope="col">{destinationLabel}</th>}
           <th className="admin-col-source" scope="col">Details</th>
           <th className="admin-col-edit" scope="col"><span className="sr-only">Edit</span></th>
         </tr></thead>
-        {rows.map((row) => <AdminContentTableRow key={row.id} row={row} />)}
+        {rows.map((row) => <AdminContentTableRow key={row.id} row={row} showDestination={showDestination} />)}
       </table>
       {rows.length === 0 && <p className="admin-empty" role="status">{emptyMessage}</p>}
     </div>

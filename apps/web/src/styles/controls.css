@@ -47,8 +47,8 @@
   border-radius: var(--segmented-item-radius);
   background: transparent;
   color: var(--segmented-inactive-fg);
-  font-family: var(--font-body);
-  font-size: var(--text-meta-size);
+  font-family: var(--font-ui);
+  font-size: var(--text-button-size);
   font-weight: var(--weight-medium);
   line-height: var(--leading-label);
   letter-spacing: var(--tracking-number);
@@ -87,5 +87,35 @@
 .segmented-control--compact .segmented-control__item {
   height: var(--segmented-item-height);
   padding: 0 var(--segmented-item-px);
-  font-size: var(--text-meta-size);
+  font-size: var(--text-button-size);
+}
+.primary-button,
+.secondary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--button-height);
+  padding: 0 var(--button-padding-x);
+  border: 0;
+  border-radius: var(--button-radius);
+  background: var(--surface-2);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: var(--type-ui-copy-size);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-label);
+  letter-spacing: var(--tracking-normal);
+  text-decoration: none;
+}
+
+.primary-button {
+  background: var(--button-bg);
+  color: var(--button-fg);
+}
+
+.primary-button:disabled,
+.secondary-button:disabled {
+  cursor: default;
+  opacity: var(--opacity-muted);
 }

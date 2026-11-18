@@ -1,8 +1,10 @@
-import { X } from "lucide-react";
+import { CompositeWheel } from "../../components/charts/CompositeWheel";
+import { FullChartView } from "../../components/charts/LazyFullChartView";
+import type { ChartReportSource } from "../../services/chartReport";
 import type { ReactNode } from "react";
 import { ModalPortal } from "../../components/ModalPortal";
 import { SynastryWheel } from "../../components/charts/SynastryWheel";
-import { SkyWheel, type HouseSignLabelStyle, type InterChartAspectLine } from "../../components/charts/Wheels";
+import { type HouseSignLabelStyle, type InterChartAspectLine } from "../../components/charts/Wheels";
 import type { SkySnapshot } from "../../types";
 import { RelationshipComparePicker, type RelationshipComparisonOption } from "./RelationshipComparePicker";
 
@@ -10,13 +12,14 @@ export type RelationshipChartFullscreenMode = "synastry" | "composite";
 
 type RelationshipChartFullscreenProps = {
   children: ReactNode;
+  report: ChartReportSource;
   comparisonOptions: RelationshipComparisonOption[];
   comparisonPickerOpen: boolean;
   comparisonSelectedId: string;
   mode: RelationshipChartFullscreenMode;
   outerInitials?: string;
   outerName?: string;
-  title: string;
+  restoreFocusId?: string;
   onClose: () => void;
   onComparisonSelect: (id: string) => void;
   onComparisonToggle: () => void;
@@ -24,13 +27,14 @@ type RelationshipChartFullscreenProps = {
 
 export function RelationshipChartFullscreen({
   children,
+  report,
   comparisonOptions,
   comparisonPickerOpen,
   comparisonSelectedId,
   mode,
   outerInitials,
   outerName,
-  title,
+  restoreFocusId,
   onClose,
   onComparisonSelect,
   onComparisonToggle
@@ -40,48 +44,16 @@ export function RelationshipChartFullscreen({
   return (
     <ModalPortal
       className="chart-fullscreen-modal-root"
-      panelClassName="chart-fullscreen-panel"
+      panelClassName="full-chart-panel"
       titleId={titleId}
-      width="1240px"
+      restoreFocusId={restoreFocusId}
       onClose={onClose}
     >
-      <div className="chart-fullscreen-overlay">
-        <div className="chart-fullscreen-header">
-          <h2 className="chart-fullscreen-title" id={titleId}>{title}</h2>
-          <button className="chart-fullscreen-close" type="button" aria-label="Close full-screen chart" onClick={onClose}>
-            <X size={18} aria-hidden="true" />
-          </button>
-        </div>
-
-        <div className="chart-fullscreen-wheel-wrap">
-          <div className="chart-shell chart-shell--fullscreen">
-            <div className="wheel natal-wheel friend-wheel chart-frame" aria-label={title}>
-              {children}
-            </div>
-          </div>
-        </div>
-
-        <div className="chart-fullscreen-footer">
-          {mode === "composite" ? (
-            <div className="friend-chart-legend chart-fullscreen-legend" aria-label="Composite chart label">
-              <span>Composite chart</span>
-            </div>
-          ) : null}
-
-          <div className="chart-fullscreen-controls">
-            <RelationshipComparePicker
-              variant={mode}
-              outerName={mode === "synastry" ? outerName : undefined}
-              outerInitials={mode === "synastry" ? outerInitials : undefined}
-              options={comparisonOptions}
-              selectedId={comparisonSelectedId}
-              open={comparisonPickerOpen}
-              onToggle={onComparisonToggle}
-              onSelect={onComparisonSelect}
-            />
-          </div>
-        </div>
-      </div>
+      <FullChartView source={report} titleId={titleId} onClose={onClose} controls={
+        <RelationshipComparePicker variant={mode} outerName={mode === "synastry" ? outerName : undefined}
+          outerInitials={mode === "synastry" ? outerInitials : undefined} options={comparisonOptions}
+          selectedId={comparisonSelectedId} open={comparisonPickerOpen} onToggle={onComparisonToggle} onSelect={onComparisonSelect}/>
+      }>{children}</FullChartView>
     </ModalPortal>
   );
 }
@@ -89,7 +61,7 @@ export function RelationshipChartFullscreen({
 type WheelSky = Pick<
   SkySnapshot,
   "positions" | "aspects" | "ascendant" | "ascendantLongitude" | "midheavenLongitude"
->;
+> & Partial<Pick<SkySnapshot, "generatedAt" | "birthTimeKnown" | "solarHorizon" | "sharedNatalSect">>;
 
 type FriendProfileChartFullscreenProps = {
   chartName: string;
@@ -129,13 +101,14 @@ export function FriendProfileChartFullscreen({
   if (mode === "synastry" && natalSky && relationshipComparisonSky) {
     return (
       <RelationshipChartFullscreen
+        restoreFocusId="friend-profile-chart-expand"
         comparisonOptions={comparisonOptions}
         comparisonPickerOpen={comparisonPickerOpen}
         comparisonSelectedId={comparisonSelectedId}
         mode="synastry"
         outerName={chartName}
         outerInitials={outerInitials}
-        title={`${chartName} × ${comparisonName} · Synastry`}
+        report={{ kind: "synastry", primary: natalSky, secondary: relationshipComparisonSky, primaryLabel: `${chartName} · outer`, secondaryLabel: `${comparisonName} · inner` }}
         onClose={onClose}
         onComparisonSelect={onComparisonSelect}
         onComparisonToggle={onComparisonToggle}
@@ -162,16 +135,17 @@ export function FriendProfileChartFullscreen({
   if (mode === "composite" && compositeSky) {
     return (
       <RelationshipChartFullscreen
+        restoreFocusId="friend-profile-chart-expand"
         comparisonOptions={comparisonOptions}
         comparisonPickerOpen={comparisonPickerOpen}
         comparisonSelectedId={comparisonSelectedId}
         mode="composite"
-        title={`${chartName} × ${comparisonName} · Composite`}
+        report={{ kind: "composite", primary: compositeSky, subtitle: `${chartName} × ${comparisonName}` }}
         onClose={onClose}
         onComparisonSelect={onComparisonSelect}
         onComparisonToggle={onComparisonToggle}
       >
-        <SkyWheel
+        <CompositeWheel
           positions={compositeSky.positions}
           aspects={compositeSky.aspects}
           ascendant={compositeSky.ascendant}
@@ -179,7 +153,6 @@ export function FriendProfileChartFullscreen({
           midheavenLongitude={compositeSky.midheavenLongitude}
           showHouses
           houseSignLabelStyle={houseSignLabelStyle}
-          variant="composite"
           aspectInspector
         />
       </RelationshipChartFullscreen>

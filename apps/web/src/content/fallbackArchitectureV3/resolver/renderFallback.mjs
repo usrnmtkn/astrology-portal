@@ -1,3 +1,5 @@
+import { natalPlacementOwnerCopy } from "./natalPlacementVariables.mjs";
+import { natalRetrogradeModifierKey } from '../../natalRetrogradeModifier.js';
 import { bindStudioVariableReference } from "../../studioCustomVariables.mjs";
 import { assertNodePublicationKey, guardPublicationMap } from "./publicationGuard.mjs";
 import { zodiacSeasonTemplateContext, zodiacSeasonVariableNames } from "./zodiacSeasonVariables.mjs";
@@ -181,7 +183,7 @@ const getTemplate = (key, opts = {}) => {
 };
 
 export function natalPlacementMotionExactKey(facts) {
-  if (!facts?.house) return null;
+  if (!facts?.house || !facts.sign) return null;
   const directKey = `fallback-hook/natal-you-placement-complete-final/${facts.planet}/${facts.sign}/${facts.house}`;
   return facts.isRetrograde ? `${directKey}/retrograde` : directKey;
 }
@@ -190,7 +192,8 @@ function renderNatalPlacementReference(facts, opts = {}) {
   // facts: { planet, sign, house?, voice: "you" | name, dignity?, isRetrograde?, sect? }
   // Returns a TWO-PART result: parts[0] = planet-in-sign paragraph,
   // parts[1] (when house is known) = house-context paragraph.
-  const { planet, sign, house } = facts;
+  const { planet, sign = "", house } = facts;
+  if (!sign && !house) throw new SourceGapError("SOURCE_GAP: natal placement requires a sign or house");
   const allowUnreviewed = opts.allowUnreviewed ?? false;
   const voice = facts.voice === "you" ? "you" : "they";
   const exactCompleteKey = natalPlacementMotionExactKey(facts);
@@ -198,7 +201,7 @@ function renderNatalPlacementReference(facts, opts = {}) {
     ? getReaderLivedRow(exactCompleteKey, voice, { allowUnreviewed })
     : null;
   if (exactCompleteLived) {
-    const body = exactCompleteLived.body ?? "";
+    const body = natalPlacementOwnerCopy(exactCompleteLived.body ?? "", facts.voice);
     return {
       headline: `${title(planet)} in ${title(sign)} in the ${ordinal(house)} house`,
       parts: [body],
@@ -225,30 +228,33 @@ function renderNatalPlacementReference(facts, opts = {}) {
   const genericHouseLived = house
     ? getReaderLivedRow(`fallback-hook/house-lived/${house}`, voice, { allowUnreviewed })
     : null;
-  const exactSignLived = getReaderLivedRow(`fallback-hook/natal-you-placement-sign-final/${planet}/${sign}`, voice, { allowUnreviewed })
-    ?? getReaderLivedRow(`fallback-hook/placement-sign-lived/${planet}/${sign}`, voice, { allowUnreviewed });
-  const genericSignLived = getReaderLivedRow(`fallback-hook/sign-lived/${sign}`, voice, { allowUnreviewed });
+  const exactSignLived = sign ? getReaderLivedRow(`fallback-hook/natal-you-placement-sign-final/${planet}/${sign}`, voice, { allowUnreviewed })
+    ?? getReaderLivedRow(`fallback-hook/placement-sign-lived/${planet}/${sign}`, voice, { allowUnreviewed }) : null;
+  const genericSignLived = sign ? getReaderLivedRow(`fallback-hook/sign-lived/${sign}`, voice, { allowUnreviewed }) : null;
 
   const needsArticle = planet === "sun" || planet === "moon" || planet.endsWith("-node");
   const possessive = facts.voice === "you" ? "Your" : `${facts.voice}'s`;
   const ctx = {
     possessive,
+    ...(house ? { houseOrdinal: ordinal(house) } : {}),
     planetTitle: title(planet),
     planetRef: needsArticle ? `the ${title(planet)}` : title(planet),
     planetRefCap: needsArticle ? `The ${title(planet)}` : title(planet),
-    signTitle: title(sign),
-    planetTopic: getVocab(`fallback-vocab/planet-topic/${planet}`, voice, { allowUnreviewed }),
-    planetExcess: getVocab(`fallback-vocab/planet-excess/${planet}`, voice, { allowUnreviewed }),
-    planetProductive: getVocab(`fallback-vocab/planet-productive/${planet}`, voice, { allowUnreviewed }),
-    planetCore: getVocab(`fallback-vocab/planet-core/${planet}`, voice, { allowUnreviewed }),
-    signStyle: getVocab(`fallback-vocab/sign-style/${sign}`, voice, { allowUnreviewed }),
-    signNeed: getVocab(`fallback-vocab/sign-need/${sign}`, voice, { allowUnreviewed }),
-    planetVerb: getVocab(`fallback-vocab/planet-verb/${planet}`, voice, { allowUnreviewed }),
-    signAdverb: getVocab(`fallback-vocab/sign-adverb/${sign}`, voice, { allowUnreviewed }),
-    planetIntro: getHook(`fallback-hook/natal/planet-intro/${planet}`, voice, { allowUnreviewed }),
-    planetBest: getHook(`fallback-hook/planet-best/${planet}`, facts.voice === "you" ? "you" : "they", { allowUnreviewed }),
-    placementSentences: getHook(`fallback-hook/placement-sentence/${planet}/${sign}`, voice, { allowUnreviewed }),
-    placementGerundText: getVocabList(`fallback-vocab/placement-gerund/${planet}/${sign}`, voice, { allowUnreviewed }).join(", or ") || null,
+    ...(sign ? {
+      signTitle: title(sign),
+      planetTopic: getVocab(`fallback-vocab/planet-topic/${planet}`, voice, { allowUnreviewed }),
+      planetExcess: getVocab(`fallback-vocab/planet-excess/${planet}`, voice, { allowUnreviewed }),
+      planetProductive: getVocab(`fallback-vocab/planet-productive/${planet}`, voice, { allowUnreviewed }),
+      planetCore: getVocab(`fallback-vocab/planet-core/${planet}`, voice, { allowUnreviewed }),
+      signStyle: getVocab(`fallback-vocab/sign-style/${sign}`, voice, { allowUnreviewed }),
+      signNeed: getVocab(`fallback-vocab/sign-need/${sign}`, voice, { allowUnreviewed }),
+      planetVerb: getVocab(`fallback-vocab/planet-verb/${planet}`, voice, { allowUnreviewed }),
+      signAdverb: getVocab(`fallback-vocab/sign-adverb/${sign}`, voice, { allowUnreviewed }),
+      planetIntro: getHook(`fallback-hook/natal/planet-intro/${planet}`, voice, { allowUnreviewed }),
+      planetBest: getHook(`fallback-hook/planet-best/${planet}`, facts.voice === "you" ? "you" : "they", { allowUnreviewed }),
+      placementSentences: getHook(`fallback-hook/placement-sentence/${planet}/${sign}`, voice, { allowUnreviewed }),
+      placementGerundText: getVocabList(`fallback-vocab/placement-gerund/${planet}/${sign}`, voice, { allowUnreviewed }).join(", or ") || null,
+    } : {}),
   };
 
   // modifiers (attach to the house paragraph when present, else the sign paragraph)
@@ -265,7 +271,6 @@ function renderNatalPlacementReference(facts, opts = {}) {
     if (specific) mods.push(specific);
     else mod(`fallback-template/natal.modifier.dignity-${facts.dignity}`);
   }
-  if (facts.isRetrograde) mod("fallback-template/natal.modifier.retrograde");
   if (facts.sect?.hasReliableSect && facts.sect.effect) {
     mod(`fallback-template/natal.modifier.sect-${facts.sect.isDayChart ? "day" : "night"}`, { sectEffect: facts.sect.effect });
   }
@@ -276,18 +281,18 @@ function renderNatalPlacementReference(facts, opts = {}) {
   const withModifiers = (body, include) => [body, ...(include ? mods : [])].filter(Boolean).join("\n\n");
 
   const isNode = planet === "north-node" || planet === "south-node";
-  if (isNode) {
+  if (isNode && sign) {
     const j = getHook(`fallback-hook/node-journey/${planet}`, facts.voice === "you" ? "you" : "they", { allowUnreviewed });
     const oppSign = OPPOSITE_SIGN[sign];
     const oppDir = getVocab(`fallback-vocab/node-direction/${oppSign}`, voice, { allowUnreviewed });
     ctx.nodeJourney = j ? j.replace(/\{\{oppositeSignTitle\}\}/g, title(oppSign)).replace(/\{\{oppositeDirection\}\}/g, oppDir ?? "") : null;
   }
-  const signTemplate = findTemplate(`fallback-template/natal.planet-in-sign/${planet}`, { allowUnreviewed })
-    ?? getTemplate(isNode ? "fallback-template/natal.node-in-sign" : "fallback-template/natal.planet-in-sign");
-  if (exactSignLived) {
+  const signTemplate = sign ? findTemplate(`fallback-template/natal.planet-in-sign/${planet}`, { allowUnreviewed })
+    ?? getTemplate(isNode ? "fallback-template/natal.node-in-sign" : "fallback-template/natal.planet-in-sign") : null;
+  if (signTemplate && exactSignLived) {
     parts.push(withModifiers(exactSignLived.body, !house));
     partKeys.push(exactSignLived.contentKey);
-  } else {
+  } else if (signTemplate) {
     try {
       parts.push(renderTemplate(signTemplate, { ...ctx, modifierSentences: house ? [] : mods }, gapLabel, voice));
       partKeys.push(signTemplate.contentKey);
@@ -333,8 +338,15 @@ function renderNatalPlacementReference(facts, opts = {}) {
     }
   }
 
+  const retrogradeKey = facts.isRetrograde ? natalRetrogradeModifierKey(planet, house) : null;
+  const retrograde = retrogradeKey ? getReaderLivedRow(retrogradeKey, voice, { allowUnreviewed }) : null;
+  if (retrograde) {
+    parts.push(natalPlacementOwnerCopy(retrograde.body, facts.voice));
+    partKeys.push(retrogradeKey);
+  }
+
   return {
-    headline: exactHouseLived
+    headline: !sign || exactHouseLived
       ? `${title(planet)} in the ${ordinal(house)} house`
       : fixArticles(mustache(headlineTemplate.headline, ctx)),
     parts,

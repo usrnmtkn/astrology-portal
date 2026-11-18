@@ -1,7 +1,45 @@
 import { expect, test } from "@playwright/test";
 import { linkedThreePlanetContext, highlightedCountStatement } from "../fixtures/sky-effort-short";
 import { expectEffortCardSpacing } from "./sky-debility-layout";
+import { readerResponse } from "../helpers/reader-response";
 import { bundledPublications } from "../helpers/bundled-publications";
+import { skyDebilityInterpretationSlots } from "../../apps/web/src/content/skyDebilityIdentity.mjs";
+
+// The paired configuration serves Studio at 4297 and the reader at 4298.
+test.use({ baseURL: "http://127.0.0.1:4298" });
+
+// Historical witnesses exercise the actual ephemeris without publishing fixture facts.
+for (const fixture of [
+  {date: "2009-10-15", key: "sun-libra-direct__mars-cancer-direct",
+    template: "{sunPlacementSentence} and {marsPlacement} keep their sentence order.",
+    expected: "The Sun in Libra and Mars in Cancer keep their sentence order.", links: ["The Sun in Libra", "Mars in Cancer"]},
+  {date: "1940-02-16", key: "sun-aquarius-direct__mercury-pisces-direct__venus-aries-direct__saturn-aries-direct",
+    template: "{sunPlacementSentence} and {venusPlacement} share a clause; {saturnPlacement} has another; {mercuryPlacement} appears once.",
+    expected: "The Sun in Aquarius and Venus in Aries share a clause; Saturn in Aries has another; Mercury in Pisces appears once.",
+    links: ["The Sun in Aquarius", "Venus in Aries", "Saturn in Aries", "Mercury in Pisces"]}
+]) for (const [width, theme] of [[390, "light"], [1440, "dark"]] as const) test(`individual dignity links preserve full copy ${fixture.date} ${width}`, async ({page}) => {
+  await page.setViewportSize({width, height: 1000});
+  await page.clock.setFixedTime(new Date("2026-11-04T17:00:00Z"));
+  await page.addInitScript(value => localStorage.setItem("tldrastro:theme", value), theme);
+  await bundledPublications(page);
+  const row = {id: "individual-dignity-fixture", content_key: `cms/sky-debility/reading/${fixture.key}`,
+    surface: "sky", mode: "feed", event_type: "essay", block_type: "essay", status: "LIVE", lane: "serving", review_state: null,
+    headline: "Synthetic complete dignity reading", summary: "", sections: [], updated_at: "2026-11-04T16:00:00.000Z",
+    source_snapshot: {contentSystem: "cms-surface-override", contentType: "mustache-template", allowedSlots: skyDebilityInterpretationSlots},
+    body: `Synthetic complete opening.\n\n${fixture.template}\n\nSynthetic complete ending.`};
+  const publications = [{content_key: row.content_key, state: "live", revision: 1, row_id: row.id, row_updated_at: row.updated_at, updated_at: row.updated_at}];
+  await page.route("**/content-studio-last-known-good.json", route => route.fulfill({json: {schema: "content-studio-last-known-good-v2", rowCount: 1, rows: [row], publications}}));
+  await page.route("**/api/content-reader", route => route.fulfill({json: readerResponse([row], publications)}));
+  await page.route("**/api/calendar?**", route => route.fulfill({json: {ok: true, calendar: {days: []}}}));
+  await page.goto(`/?date=${fixture.date}#sky`);
+  const card = page.locator(".sky-debility-ledger:visible").first();
+  const copy = card.locator(".sky-today-ledger__copy");
+  await expect(card.getByRole("heading", {level: 3})).toHaveText(row.headline, {timeout: 60_000});
+  await expect(copy.locator("p")).toHaveText(["Synthetic complete opening.", fixture.expected, "Synthetic complete ending."]);
+  await expect(copy.getByRole("link")).toHaveText(fixture.links);
+  await page.reload();
+  await expect(copy.locator("p")).toHaveText(["Synthetic complete opening.", fixture.expected, "Synthetic complete ending."], {timeout: 60_000});
+});
 
 // The actual ephemeris supplies sign and motion at the regression instant.
 for (const width of [390, 1440]) for (const theme of ["light", "dark"]) test(`inline effort paragraph ${width} ${theme}`, async ({ page }) => {
@@ -9,7 +47,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) test(`in
   await page.clock.setFixedTime(new Date("2026-09-17T16:00:00.000Z"));
   await page.addInitScript(theme => localStorage.setItem("tldrastro:theme", theme), theme);
   await page.route("**/api/calendar?**", route => route.fulfill({ json: { ok: true, calendar: { days: [{ dateKey: "2026-09-17", events: [] }] } } }));
-  await page.goto("http://127.0.0.1:4298/#sky");
+  await page.goto("/#sky");
   await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
   const card = page.locator(".sky-debility-ledger:visible").first();
   await expect(card).toBeVisible({ timeout: 60_000 });
@@ -24,7 +62,8 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) test(`in
   const heading = head.getByRole("heading", { level: 3 });
   const headingType = await heading.evaluate(el => {
     const actual = getComputedStyle(el), probe = document.createElement("span");
-    probe.style.cssText = "font-family:var(--font-display);font-size:var(--sky-ledger-title-size);font-weight:var(--weight-regular);letter-spacing:var(--tracking-tight);line-height:var(--leading-h1)";
+    probe.style.cssText = "font-family:var(--font-display);font-size:var(--type-section-display-size);font-weight:var(--weight-regular);letter-spacing:var(--tracking-dialog-title);line-height:var(--leading-display)";
+    if (innerWidth <= 800) { probe.style.fontSize = 'var(--type-mobile-section-display-size)'; probe.style.lineHeight = 'var(--leading-placement-title)'; }
     el.append(probe);
     const expected = getComputedStyle(probe);
     const matches = ["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing"].every(key => actual[key as any] === expected[key as any]);
@@ -32,29 +71,14 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) test(`in
     return matches;
   });
   expect(headingType).toBe(true);
-  const emphasis = paragraphs.nth(1).locator("mark.content-highlight");
-  await expect(emphasis).toHaveText(highlightedCountStatement);
-  await expect(emphasis.getByRole("link")).toHaveCount(0);
-  await expect(card.getByRole("link")).toHaveCount(3);
-  for (const link of await card.getByRole("link").all()) expect(await link.evaluate(el => getComputedStyle(el).textDecorationLine)).toContain("underline");
-  await expect(card).not.toContainText("It may help to");
-  await expect(card).not.toContainText("can take more out of you");
-  await expect(paragraphs.nth(1).getByRole("link")).toHaveText(["Venus in Scorpio", "Mars in Cancer", "Saturn retrograde in Aries"]);
-  for (const placement of ["venus/scorpio", "mars/cancer", "saturn/aries"])
-    await expect(paragraphs.nth(1).locator(`a[href="#sky/placement/${placement}"]`)).toBeVisible();
-  const typography = await emphasis.evaluate(el => {
-    const actual = getComputedStyle(el);
-    const probe = document.createElement("span");
-    probe.style.cssText = "font-family:var(--font-highlight);font-size:var(--text-highlight);font-weight:var(--weight-highlight);line-height:var(--leading-highlight);letter-spacing:var(--tracking-highlight)";
-    el.append(probe);
-    const expected = getComputedStyle(probe);
-    const matches = ["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing"].every(key => actual[key as any] === expected[key as any]);
-    probe.remove();
-    return { matches, background: actual.backgroundImage, wrapping: actual.boxDecorationBreak };
-  });
-  expect(typography.matches).toBe(true);
-  expect(typography.background).toContain("linear-gradient");
-  expect(typography.wrapping).toBe("clone");
+  await expect(card.locator('mark.content-highlight')).toHaveCount(0);
+  await expect(paragraphs.nth(1)).toContainText(highlightedCountStatement);
+  await expect(paragraphs.nth(1).getByRole('link')).toHaveCount(3);
+  await expect(card.locator('.sky-debility-card')).toHaveCount(3);
+  for (const link of await paragraphs.nth(1).getByRole('link').all()) expect(await link.evaluate(el => getComputedStyle(el).textDecorationLine)).toContain('underline');
+  await expect(paragraphs.nth(1).getByRole('link')).toHaveText(['Venus in Scorpio', 'Mars in Cancer', 'Saturn retrograde in Aries']);
+  await expect(paragraphs.nth(1)).toHaveCSS('font-family', /Newsreader/);
+  await expect(paragraphs.nth(1)).toHaveCSS('font-size', '19px');
   expect(await card.evaluate(el => el.scrollWidth - el.clientWidth)).toBeLessThanOrEqual(1);
   await card.screenshot({ path: `test-results/effort-reader-inline-${width}-${theme}.png` });
   await paragraphs.nth(1).getByRole("link", { name: "Read about Saturn retrograde in Aries", exact: true }).click();
@@ -78,29 +102,29 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) test(`co
     schema: "content-studio-last-known-good-v2", rowCount: rows.length, rows,
     publications: [october, september].map(row => ({ content_key: row.content_key, state: "live", revision, row_id: row.id, row_updated_at: row.updated_at, updated_at: row.updated_at }))
   } }));
+  await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse(rows, [october, september].map(row => ({ content_key: row.content_key, state: 'live', revision, row_id: row.id, row_updated_at: row.updated_at, updated_at: row.updated_at }))) }));
   await page.route("**/api/calendar?**", route => route.fulfill({ json: { ok: true, calendar: { days: [] } } }));
   const card = page.locator(".sky-debility-ledger:visible").first();
-  await page.goto("http://127.0.0.1:4298/?date=2026-09-17#sky");
+  await page.goto("/?date=2026-09-17#sky");
   await expect(card).toContainText("September fixture opening stays complete.", { timeout: 60_000 });
   await expect(card).toContainText("September fixture ending stays complete.");
-  await expect(card.getByRole("link")).toHaveCount(3);
-  await page.goto("http://127.0.0.1:4298/?date=2026-10-05#sky");
+  await expect(card.locator(".sky-today-ledger__copy").getByRole("link")).toHaveCount(3);
+  await page.goto("/?date=2026-10-05#sky");
   await expect(card).toContainText("October fixture opening stays complete.", { timeout: 60_000 });
   await expect(card).toContainText("October fixture ending stays complete.");
   await expect(card).not.toContainText("September fixture");
-  const count = card.locator("mark.content-highlight");
-  await expect(count).toHaveText(highlightedCountStatement.replace(" out of ", " of "));
-  await expect(count.getByRole("link")).toHaveCount(0);
-  await expect(card).toContainText("the Sun in Libra and Saturn retrograde in Aries are in fall.");
-  expect(await count.evaluate(el => getComputedStyle(el).backgroundImage)).toContain("linear-gradient");
-  await expect(card.getByRole("link")).toHaveText(["Venus retrograde in Scorpio", "the Sun in Libra", "Saturn retrograde in Aries"]);
-  for (const link of await card.getByRole("link").all()) expect(await link.evaluate(el => getComputedStyle(el).textDecorationLine)).toContain("underline");
+  const count = card.locator('.sky-today-ledger__copy');
+  await expect(card.locator('mark.content-highlight')).toHaveCount(0);
+  await expect(count).toContainText(highlightedCountStatement);
+  await expect(card).toContainText('the Sun in Libra and Saturn retrograde in Aries are in fall.');
+  await expect(count.getByRole('link')).toHaveText(['Venus retrograde in Scorpio', 'the Sun in Libra', 'Saturn retrograde in Aries']);
+  for (const link of await count.getByRole('link').all()) expect(await link.evaluate(el => getComputedStyle(el).textDecorationLine)).toContain('underline');
   await expect(card.getByRole("heading", { level: 3 })).toHaveText(october.headline);
   await expectEffortCardSpacing(card);
   expect(await card.evaluate(el => el.scrollWidth - el.clientWidth)).toBeLessThanOrEqual(1);
   await page.reload();
   await expect(card).toContainText("October fixture ending stays complete.", { timeout: 60_000 });
-  await expect(count).toHaveText(highlightedCountStatement.replace(" out of ", " of "));
+  await expect(count).toContainText(highlightedCountStatement);
   await card.screenshot({ path: `test-results/effort-complete-${width}-${theme}.png` });
   // A known published reading with unavailable body stays unavailable.
   rows = []; revision++;

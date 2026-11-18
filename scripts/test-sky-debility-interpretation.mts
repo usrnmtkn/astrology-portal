@@ -80,6 +80,34 @@ for (const [input, expected] of [
   assert.equal(presented.filter(part => part.href).length, Number(expected[1]) + Number(expected[2]), "Every named category placement is linked, including a placement in both categories.");
 }
 for (const bad of [breakdown.replace("{fallPlanetList}", ""), breakdown.replace("{detrimentPlanetList}", ""), breakdown + " {fallPlanetList}"]) assert.ok(skyDebilityInterpretationErrors(key, bad).length);
+// Individually placed fact links preserve the author's grouping and sentence case.
+const individualBody = "Fixture opening retained in full.\n\n{sunPlacementSentence} and {venusPlacement} share a clause; {saturnPlacement} has its own clause; {mercuryPlacement} appears once.\n\nFixture final sentence retained in full.";
+const individualPositions = positions.map(p => ({ ...p,
+  ...(p.planet === "Sun" ? { sign: "Aquarius" } : p.planet === "Mercury" ? { sign: "Pisces" }
+    : p.planet === "Venus" ? { sign: "Aries", motion: "direct" as const }
+    : p.planet === "Saturn" ? { motion: "direct" as const } : {}) }));
+const individualKey = skyDebilityInterpretationKey(individualPositions)!;
+assert.deepEqual(skyDebilityInterpretationErrors(individualKey, individualBody, "Fixture heading"), []);
+const individualRow = { ...row, contentKey: individualKey, body: individualBody };
+const individualCopy = resolveSkyDebilityCopy(new Map([[individualKey, individualRow]]), traditionalSkyDebilities(individualPositions), individualPositions);
+assert.equal(individualCopy.visible, true);
+const expectedIndividual = individualBody.replace("{sunPlacementSentence}", "The Sun in Aquarius")
+  .replace("{venusPlacement}", "Venus in Aries").replace("{saturnPlacement}", "Saturn in Aries").replace("{mercuryPlacement}", "Mercury in Pisces");
+assert.equal(individualCopy.body, expectedIndividual);
+const individualLinks = skyDebilityPlacementLinks(individualCopy.allPlacementKeys, individualPositions, "reading");
+const individualComposition = buildSkyDebilityComposition(traditionalSkyDebilities(individualPositions), () => null, individualRow);
+assert.deepEqual(individualComposition.paragraphs.map(skyDebilityMappedText), individualCopy.paragraphs);
+const individualParts = presentSkyDebilityParts(skyDebilityTemplateParts(individualCopy.paragraphTemplates[1], individualCopy.slots), individualLinks);
+assert.equal(individualParts.map(part => part.text).join(""), individualCopy.paragraphs[1]);
+assert.deepEqual(individualParts.filter(part => part.href).map(part => [part.text, part.href]), [
+  ["The Sun in Aquarius", "#sky/placement/sun/aquarius"], ["Venus in Aries", "#sky/placement/venus/aries"],
+  ["Saturn in Aries", "#sky/placement/saturn/aries"], ["Mercury in Pisces", "#sky/placement/mercury/pisces"]
+]);
+for (const bad of [individualBody.replace("{mercuryPlacement}", "Mercury"), individualBody + " {sunPlacement}", individualBody + " {moonPlacement}", individualBody + " {neptunePlacement}"])
+  assert.ok(skyDebilityInterpretationErrors(individualKey, bad).length);
+const retrogradeIndividual = { ...row, body: "{sunPlacementSentence}; {venusPlacement}; {saturnPlacement}." };
+const retrogradeCopy = resolveSkyDebilityCopy(new Map([[key, retrogradeIndividual]]), snapshot, positions);
+assert.equal(retrogradeCopy.body, "The Sun in Libra; Venus retrograde in Scorpio; Saturn retrograde in Aries.");
 for (const status of ["DRAFT", "REVIEWED", "ARCHIVED"] as const) assert.equal(resolveSkyDebilityCopy(new Map([[key, { ...row, status }]]), snapshot, positions).interpretationKey, "");
 for (const input of [change("Moon", { sign: "Scorpio" }), change("Venus", { motion: "direct" })]) {
   assert.equal(resolveSkyDebilityCopy(content, traditionalSkyDebilities(input), input).interpretationKey, "");

@@ -75,7 +75,7 @@ async function seedYouPerformanceState(page: Page) {
     };
     const readiness: { profile?: number; milestone?: number; click?: number } = {};
     document.addEventListener("click", event => {
-      if ((event.target as Element)?.closest('nav[aria-label="Primary navigation"] button')?.textContent?.trim() === "You") {
+      if ((event.target as Element)?.closest('button[aria-label="Your profile"]')) {
         readiness.click = performance.timeOrigin + performance.now();
       }
     }, true);
@@ -88,7 +88,7 @@ async function seedYouPerformanceState(page: Page) {
         readiness.profile = performance.timeOrigin + performance.now();
       }
       if (!readiness.milestone && region) {
-        const message = region.querySelector('[role="status"][aria-label="Adding today’s transits."]');
+        const message = region.querySelector('[aria-busy="true"][aria-label="Adding today’s transits."]');
         if (visible(message)) readiness.milestone = performance.timeOrigin + performance.now();
       }
       if (!readiness.profile || !readiness.milestone) requestAnimationFrame(observe);
@@ -173,7 +173,7 @@ test.describe("You loading performance matrix", () => {
     await seedYouPerformanceState(page);
     await page.goto("/#sky", { waitUntil: "domcontentloaded" });
     await expect(page.getByRole("navigation", { name: "Primary navigation" })).toBeVisible();
-    const youButton = page.getByRole("navigation", { name: "Primary navigation" }).getByRole("button", { name: "You" });
+    const youButton = page.getByRole("button", { name: "Your profile", exact: true });
     await youButton.focus();
     const startedAt = Date.now();
 

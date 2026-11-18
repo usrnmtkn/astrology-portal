@@ -23,7 +23,7 @@ for (const key of [
   "fallback-vocab/sign-adverb/leo",
   "fallback-template/natal.planet-in-sign/jupiter",
   "fallback-template/natal.planet-in-sign",
-  "fallback-template/natal.modifier.retrograde",
+  "fallback-hook/natal-retrograde-modifier/jupiter/3",
   "fallback-hook/natal-you-placement-house-final/jupiter/3",
   "fallback-hook/placement-house-lived/jupiter/3",
   "fallback-hook/house-lived/3",
@@ -45,7 +45,8 @@ assert.ok(jupiterLeoRx.size < 64, "A selected natal placement must remain below 
 const direct = new Set(natalPlacementResolverDependencyKeys("jupiter", "leo", "3", "direct"));
 assert.ok(direct.has("fallback-hook/natal-you-placement-complete-final/jupiter/leo/3"));
 assert.ok(!direct.has("fallback-hook/natal-you-placement-complete-final/jupiter/leo/3/retrograde"));
-assert.ok(!direct.has("fallback-template/natal.modifier.retrograde"));
+assert.ok(!direct.has("fallback-hook/natal-retrograde-modifier/jupiter/3"));
+assert.ok(!jupiterLeoRx.has("fallback-template/natal.modifier.retrograde"));
 
 const northNodeAries = new Set(natalPlacementResolverDependencyKeys("north-node", "aries", "1", "direct"));
 assert.ok(northNodeAries.has("fallback-hook/node-journey/north-node"));
@@ -53,6 +54,13 @@ assert.ok(northNodeAries.has("fallback-vocab/node-direction/libra"));
 assert.ok(northNodeAries.has("fallback-template/natal.node-in-sign"));
 
 const ascendantAries = natalPlacementResolverDependencyKeys("ascendant", "aries");
+const houseOnly = natalPlacementResolverDependencyKeys("mars", "", "12");
+assert.ok(houseOnly.includes("fallback-hook/placement-house-sentence/mars/12"));
+assert.ok(houseOnly.includes("fallback-hook/natal-you-placement-house-final/mars/12"));
+assert.ok(houseOnly.includes("fallback-template/natal.house-context"));
+assert.ok(houseOnly.every(key => !key.includes("sign") && !key.includes("complete-final") && !key.includes("//")));
+assert.ok(natalPlacementResolverDependencyKeys("saturn", "", "4", "retrograde").includes("fallback-hook/natal-retrograde-modifier/saturn/4"));
+assert.deepEqual(natalPlacementResolverDependencyKeys("ascendant", "", "1"), []);
 assert.deepEqual(ascendantAries, [
   "fallback-hook/angle-intro/ascendant",
   "fallback-hook/angle-sign/ascendant/aries",

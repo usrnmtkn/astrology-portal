@@ -15,6 +15,9 @@ import {LUNATION_ARTICLE_PROTOCOL_VERSION,lunationArticleGuidance,lunationArticl
 import {LUNATION_EDITORIAL_AUTHORITY} from './lunationEditorialConstraints.mjs';
 import {LUNAR_SAVED_WRITING_GUIDANCE} from './lunationSavedWriting.mjs';
 import {GHOSTWRITING_SKILL_INSTRUCTIONS} from './ghostwritingSkill.mjs';
+import {prepareDraftRequest} from './generateDraft.mjs';
+import {getContentSpine} from './spineRegistry.mjs';
+import {writingExport,unapprovedWritingInput} from './writingExport.mjs';
 
 // Storage may reorder any JSON object. Arrays and exact source text retain order.
 export const lunationArticleHash = value => createHash('sha256').update(typeof value === 'string' ? value : JSON.stringify(value, (_key, item) =>
@@ -103,4 +106,12 @@ export async function writeLunationArticle(prepared,{approvedPlanHash,approvalRe
     approvedArgumentOutline:approved,argumentSource,family,surface:family,register:'second_person',target,
     writingProfile:prepared.writingProfile,engineFacts:{...prepared.facts,governedEventMeanings:prepared.eventMeaning},familyContext:{savedLunarWriting:prepared.savedWriting},
     task:`Write the complete ${prepared.facts.event.title} article for owner review. ${prepared.direction}`,writerClient});
+}
+
+export function lunationArticleWritingExport(prepared) {
+  const {request}=prepareDraftRequest({plan:buildMeaningPlan(prepared.meaningInput),context:prepared.context,argumentOutline:prepared.outline,
+    spine:getContentSpine(family),family,surface:family,register:'second_person',target,writingProfile:prepared.writingProfile,
+    engineFacts:{...prepared.facts,governedEventMeanings:prepared.eventMeaning},familyContext:{savedLunarWriting:prepared.savedWriting},
+    task:`Write the complete ${prepared.facts.event.title} article for owner review. ${prepared.direction}`});
+  return writingExport({title:`${prepared.facts.event.title} writing plan`,requests:[{label:'Lunar article',...request,input:unapprovedWritingInput(request.input)}],notes:['Unsigned writing brief for review or use in another writing tool. No generation or publication is authorized by this export.']});
 }

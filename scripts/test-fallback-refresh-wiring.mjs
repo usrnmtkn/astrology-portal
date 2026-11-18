@@ -173,7 +173,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-10-17-studio-owner-daily");
+assert.equal(PACKAGE_VERSION, "v3-2026-11-15-natal-house-only");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -785,9 +785,13 @@ const connectionDetail = appSource.slice(appSource.indexOf("  const openBondTran
 assert.match(connectionDecision, /connectionTransitReading[\s\S]*?normalizePersonalTransitSurface[\s\S]*?section\.slot === "meaning"[\s\S]*?acceptedOwnerApprovedTransitSections/u);
 assert.match(connectionDetail, /selectedBondTransitSections\.get\(card\.id\)[\s\S]*?if \(!transitSections\.length\) return/u);
 assert.match(connectionDetail, /connectionActivationKey[\s\S]*?publishedConnectionCopy\(connectionSources, key, variables\)[\s\S]*?connectionBridgeCopy\(connectionSources, bridgeKey, variables\)[\s\S]*?sourceKeys: \[bridgeKey\][\s\S]*?About these connections[\s\S]*?sourceKeys: \[key\]/u);
-assert.match(connectionDetail, /body: transitSections\.map\(section => section\.body\)[\s\S]*?sections: \[connectionFacts, \.\.\.activatedConnectionSections\]/u);
-assert.doesNotMatch(connectionDetail, /card\.effectBody|card\.effectContentKey|connection\.headline|renderReaderDirectedSynastryContact/u);
-assert.match(friendTransitsTabSource, /disabled=\{!card\.detailAvailable\}[\s\S]*?card\.detailAvailable \? <CardReadMore \/> : null/u);
+assert.match(
+  connectionDetail,
+  /bodyBeforeSections: true,[\s\S]*?body: \[card\.effectBody, card\.activationBody\]\.filter\(Boolean\),[\s\S]*?sections: \[[\s\S]*?heading: "Personal transit", body: transitSections\.map\(section => section\.body\)\.join\("\\n\\n"\)[\s\S]*?connectionFacts, \.\.\.activatedConnectionSections/u,
+  "Connection details must preserve the admitted card opening, then show the complete eligible personal transit under a separate heading."
+);
+assert.doesNotMatch(connectionDetail, /card\.effectContentKey|connection\.headline|renderReaderDirectedSynastryContact/u);
+assert.match(friendTransitsTabSource, /disabled=\{!card\.detailAvailable\}[\s\S]*?card\.detailAvailable \? <CardReadMore(?: appearance="icon")? \/> : null/u);
 assert.ok(
   /function FriendPersonalTransitCard[\s\S]*?onClick=\{\(\) => onOpen\(transit\.id\)\}/u.test(friendTransitsTabSource)
     || /onClick=\{\(\) => onOpenPersonalTransit\(transit\.id\)\}/u.test(friendTransitsTabSource),
@@ -875,7 +879,7 @@ assert.match(
 );
 assert.match(
   generatedContentSource,
-  /fallbackArchitectureV3BundleCacheSchema = "fallback-architecture-v3-dashboard-overlay-cache-v9"/u,
+  /fallbackArchitectureV3BundleCacheSchema = "fallback-architecture-v3-dashboard-overlay-cache-v10"/u,
   "Dashboard cache payloads must carry an invalidatable schema."
 );
 assert.match(

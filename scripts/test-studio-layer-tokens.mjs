@@ -18,18 +18,25 @@ const expected = new Map([
   ['--studio-layer-toast', '90'],
 ]);
 
+// Variable help now uses an in-flow native disclosure. Keep its former layer
+// reserved without requiring an unused overlay declaration in the stylesheet.
+const reservedLayers = new Set(['--studio-layer-help-popover']);
+const activeLayers = new Set([...expected.keys()].filter(token => !reservedLayers.has(token)));
+
 for (const [token, value] of expected) {
   assert.match(
     theme,
     new RegExp(`${token.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&')}\\s*:\\s*${value}\\s*;`),
     `${token} must preserve layer ${value}`,
   );
-  assert.match(studio, new RegExp(`z-index:\\s*var\\(${token}\\)`), `${token} must be consumed by Studio CSS`);
+  if (activeLayers.has(token)) {
+    assert.match(studio, new RegExp(`z-index:\\s*var\\(${token}\\)`), `${token} must be consumed by Studio CSS`);
+  }
 }
 
 assert.doesNotMatch(studio, /z-index\s*:\s*-?\d+(?:\.\d+)?\s*;/, 'Studio CSS must not contain raw numeric z-index values');
 
 const usedTokens = [...studio.matchAll(/z-index\s*:\s*var\((--studio-layer-[^)]+)\)/g)].map(match => match[1]);
-assert.deepEqual(new Set(usedTokens), new Set(expected.keys()), 'Studio z-index declarations must use the approved layer token set');
+assert.deepEqual(new Set(usedTokens), activeLayers, 'Studio z-index declarations must use the active approved layer token set');
 
 console.log(`Studio layer tokens passed: ${expected.size} named layers preserve the approved numeric order in admin-theme.css.`);

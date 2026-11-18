@@ -22,6 +22,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) test(`Cr
     const entry = process.env.STUDIO_PRODUCTION_ENTRY === '1' ? '/admin/content' : '/';
     await page.goto(entry + '#variables');
     const library = page.getByRole('region', { name: 'Variable directory', exact: true });
+    await library.getByLabel('Library', {exact: true}).selectOption('custom');
     await expect(library.getByRole('heading', { name: 'Create your first variable' })).toBeVisible();
     await page.getByRole('button', { name: 'Create', exact: true }).click();
     await page.getByRole('menuitem', { name: /Create variable/ }).click();
@@ -56,6 +57,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) test(`Cr
     await library.getByLabel('Search variables', { exact: true }).fill('opening');
     await expect(card).toBeVisible();
     await page.reload();
+    await library.getByLabel('Library', {exact: true}).selectOption('custom');
     await expect(card).toBeVisible();
     await card.getByRole('button', { name: 'Edit', exact: true }).click();
     const edit = page.getByRole('form', { name: 'Edit My opening', exact: true });
@@ -93,6 +95,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) test(`Cr
       await expect(editor.getByRole('alert')).toHaveCount(0);
       await editor.getByRole('button', { name: 'Close', exact: true }).click();
       await page.goto(entry + '#variables');
+      await library.getByLabel('Library', {exact: true}).selectOption('custom');
       await expect(card).toBeVisible();
     }
     await card.getByRole('button', { name: 'Delete variable', exact: true }).click();
@@ -100,12 +103,15 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) test(`Cr
     await card.getByRole('button', { name: 'Confirm delete', exact: true }).click();
     await expect(card).toHaveCount(0);
     await page.reload();
+    await library.getByLabel('Library', {exact: true}).selectOption('custom');
     await expect(library.getByRole('heading', { name: 'Create your first variable' })).toBeVisible();
     for (const kind of ['readonly', 'editable']) {
       await library.getByLabel('Library', { exact: true }).selectOption(kind);
-      for (const token of ['articleBody', 'articleHeadline', 'allWord', 'aRef']) {
+      for (const [token, providerKind] of [['articleBody', 'editable'], ['articleHeadline', 'editable'], ['allWord', 'readonly'], ['aRef', 'readonly']]) {
         await library.getByLabel('Search variables', { exact: true }).fill(token);
-        await expect(library.getByRole('article')).toHaveCount(0);
+        const result=library.getByRole('article').filter({has:page.getByRole('heading',{name:`{{${token}}}`,exact:true})});
+        if(kind===providerKind) await expect(result).toBeVisible();
+        else await expect(result).toHaveCount(0);
       }
     }
     expect(errors).toEqual([]);

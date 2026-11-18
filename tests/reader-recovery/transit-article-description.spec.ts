@@ -1,3 +1,4 @@
+import {readerSession} from "../helpers/reader-session";
 import {readerResponse} from '../helpers/reader-response';
 import { expect, test, type Page, type Locator } from "@playwright/test";
 import { getAstrodienstSky } from "../../apps/web/src/services/ephemeris";
@@ -5,6 +6,7 @@ import { natalSkySnapshotCacheKey, skySnapshotCacheKey, VERIFIED_SKY_CACHE_SCHEM
 import type { SkySnapshot } from "../../apps/web/src/types";
 import { bundledPublications } from "../helpers/bundled-publications";
 import fs from "node:fs";
+import { articleHeadingComparisonKey } from "../../apps/web/src/utils/articleHeadings";
 
 const location = { label: "New York, NY", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" };
 const birth = new Date("1978-09-01T16:00:00Z");
@@ -33,6 +35,7 @@ async function prepare(page: Page, theme: string, unknownFriendBirthTime = false
   ];
   await page.addInitScript(({ theme, location, records, friendNatal, schema, unknownFriendBirthTime }) => {
     localStorage.setItem("tldrastro:theme", theme);
+    localStorage.setItem("tldrastro:pageAnimations", "off");
     localStorage.setItem("tldrastro:selectedLocation", JSON.stringify(location));
     localStorage.setItem("tldrastro:userProfile", JSON.stringify({
       id: "article-facts-qa", name: "Reader QA", email: "reader@example.test", provider: "email",
@@ -47,6 +50,7 @@ async function prepare(page: Page, theme: string, unknownFriendBirthTime = false
       createdAt: "2026-09-01T12:00:00Z", updatedAt: "2026-09-01T12:00:00Z", syncStatus: "local"
     }]));
   }, { theme, location, records, friendNatal: selectedFriendNatal, schema: VERIFIED_SKY_CACHE_SCHEMA, unknownFriendBirthTime });
+  await readerSession(page,"article-facts-qa","https://reader-qa.supabase.test");
   await page.emulateMedia({ reducedMotion: "reduce" });
 }
 
@@ -57,29 +61,49 @@ function expectedIdentity(title: string, sky: SkySnapshot, natalChart: SkySnapsh
   expect(match, `Unrecognized calculated title: ${title}`).toBeTruthy();
   const transit = sky.positions.find(position => position.planet === match[1])!;
   if (match[2]) expect(match[2]).toBe(transit.sign);
-  const target = natalChart.positions.find(position => position.planet === match[4])!;
+  const angleLongitude = ({ Ascendant: natalChart.ascendantLongitude, Descendant: (natalChart.ascendantLongitude! + 180) % 360,
+    Midheaven: natalChart.midheavenLongitude, "Imum Coeli": (natalChart.midheavenLongitude! + 180) % 360 } as Record<string, number | undefined>)[match[4]];
+  const target = natalChart.positions.find(position => position.planet === match[4]) ?? (Number.isFinite(angleLongitude)
+    ? { planet: match[4], sign: signs[Math.floor(angleLongitude! / 30)], house: undefined } : null);
+  expect(target, `Calculated natal endpoint ${match[4]}`).toBeTruthy();
   const aspect = ({ conjunction: "conjunct", opposition: "opposite" } as Record<string, string>)[match[3]] ?? match[3];
   const house = (signs.indexOf(transit.sign) - signs.indexOf(natalChart.ascendant) + 12) % 12 + 1;
-  return `${transit.planet} in ${transit.sign} in ${owner} ${ordinal(house)} house is ${aspect} ${owner} natal ${target.planet} in ${target.sign} in ${owner} ${ordinal(target.house)} house.`;
+  const targetHouse = target!.house == null ? "" : ` in ${owner} ${ordinal(target!.house)} house`;
+  return `${transit.planet} in ${transit.sign} in ${owner} ${ordinal(house)} house is ${aspect} ${owner} natal ${target!.planet} in ${target!.sign}${targetHouse}.`;
 }
 
 async function verifyFooter(page: Page, footer: Locator, theme: string, surface: string) {
   await expect(footer).toBeVisible();
   await expect(footer.locator("h1, h2, h3")).toHaveCount(0);
-  expect(await footer.evaluate(element => element.nextElementSibling?.classList.contains("sky-detail-end"))).toBe(true);
+  await expect(page.locator(".transit-aspect-article-page .sky-detail-end")).toHaveCount(0);
+  await expect(page.locator(".article-id > :is(.aspect-badge, .personal-transit-icon) :is(.aspect-badge__planet, .personal-transit-icon__planet)")).toHaveCount(1);
+  const timeline = page.locator(".article-key-dates");
+  if (await timeline.count()) {
+    expect(await timeline.evaluate(element => element.parentElement?.classList.contains("article-shell"))).toBe(true);
+    await expect(timeline).toHaveAttribute("open", "");
+    await timeline.locator("summary").click();
+    await expect(timeline).not.toHaveAttribute("open");
+    await timeline.locator("summary").press("Enter");
+    await expect(timeline).toHaveAttribute("open", "");
+    await timeline.locator("summary").evaluate(element => (element as HTMLElement).blur());
+  }
   for (const width of [1440, 390]) {
     await page.setViewportSize({ width, height: 844 });
-    await footer.scrollIntoViewIfNeeded();
+    await page.evaluate(() => window.scrollTo(0, 0));
     await page.evaluate(() => document.fonts.ready.then(() => undefined));
     const styles = await footer.evaluate(element => {
       const paragraph = element.querySelector("p")!;
-      const reference = element.parentElement!.querySelector(".article-section p")!;
+      const reference = document.createElement("span");
+      reference.style.cssText = "font-family:var(--font-ui);font-size:var(--type-meta-size);font-weight:var(--weight-regular);line-height:var(--leading-meta);letter-spacing:var(--tracking-body)";
+      document.body.append(reference);
       const pick = (node: Element) => { const s = getComputedStyle(node); return [s.fontFamily, s.fontSize, s.fontWeight, s.lineHeight, s.letterSpacing]; };
-      return { actual: pick(paragraph), reference: pick(reference) };
+      const styles = { actual: pick(paragraph), reference: pick(reference) };
+      reference.remove();
+      return styles;
     });
     expect(styles.actual).toEqual(styles.reference);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-    await page.screenshot({ path: `test-results/transit-facts/${surface}-${theme}-${width}.png` });
+    await page.screenshot({ path: `test-results/transit-facts/${surface}-${theme}-${width}.png`, fullPage: true });
   }
 }
 
@@ -95,15 +119,19 @@ for (const theme of ["light", "dark"]) {
     });
     for (const [index, date] of dates.entries()) {
       await page.goto(`/?date=${date}#you`);
-      const row = page.locator("button.updates-aspect-row--personal").first();
+      const row = page.locator("a.updates-aspect-row--personal").first();
       await expect(row).toBeVisible({ timeout: 45_000 });
-      const title = await row.locator(".updates-aspect-row__title").innerText();
+      const title = (await row.getAttribute("data-aspect-name"))!;
       expect(title).toMatch(/^.+ in [A-Z][a-z]+ (?:conjunct|opposite|square|trine|sextile) your natal .+$/);
       const expected = expectedIdentity(title, skies[index], natal);
       await expect(row).not.toContainText(expected);
       await expect(page.getByLabel("Transit details", { exact: true })).toHaveCount(0);
       await row.click();
       await expect(page.locator('.you-transit-article h1')).toHaveText(title);
+      await expect(page.locator(".you-transit-article .article-duration")).toBeVisible();
+      await expect(page.locator(".you-transit-article .article-pills")).not.toContainText("Exact");
+      const sectionHeadings = await page.locator(".you-transit-article .sky-detail-body h2").allTextContents();
+      expect(sectionHeadings.map(articleHeadingComparisonKey)).not.toContain(articleHeadingComparisonKey(title));
       const footer = page.getByLabel("Transit details", { exact: true });
       await expect(footer).toHaveText(expected);
       await verifyFooter(page, footer, theme, `you-${date}`);
@@ -162,9 +190,7 @@ for (const theme of ["light", "dark"]) {
     await expect(section.locator("h2")).toHaveText("Your Pluto trine Example Friend's Midheaven");
     await expect(section.locator("p").first()).toHaveText('The complete synthetic connection reading names Example Friend. Its synthetic final sentence stays intact.');
     await expect(section.locator("p").first()).not.toHaveText(await section.locator("h2").innerText());
-    const glyphLabel = await reading.locator(".article-eyebrow").getAttribute("aria-label");
-    expect(glyphLabel).toBe("Aspect: Jupiter sextile Pluto");
-    await expect(reading.locator(".article-eyebrow__glyphs")).toHaveText("♃✶♇");
+    await expect(reading.locator(".aspect-badge").first()).toHaveAttribute("data-aspect","sextile");
     for (const width of [1440, 390, 320]) {
       await page.setViewportSize({ width, height: 1000 });
       await page.evaluate(() => window.scrollTo(0, 0));
@@ -172,16 +198,16 @@ for (const theme of ["light", "dark"]) {
       const column = reading.locator(".article-body-inner").first();
       const token = await page.evaluate(() => {
         const s = getComputedStyle(document.documentElement);
-        return { padding: s.getPropertyValue("--space-9").trim(), width: parseFloat(s.getPropertyValue("--container-prose")) };
+        return { padding: s.getPropertyValue("--layout-reading-block-space").trim(), width: parseFloat(s.getPropertyValue("--container-prose")) };
       });
       if (width > 720) await expect(card).toHaveCSS("padding-top", token.padding);
       expect((await column.boundingBox())!.width).toBeLessThanOrEqual(token.width);
       const title = await reading.locator("h1").boundingBox();
       const nav = await page.locator(".topbar").boundingBox();
       const back = await reading.locator(".sky-detail-back").boundingBox();
-      const eyebrow = await reading.locator(".article-eyebrow").boundingBox();
+      const eyebrow = await reading.locator(".article-id > .aspect-badge").boundingBox();
       expect(eyebrow!.y).toBeGreaterThan(Math.max(nav!.y + nav!.height, back!.y + back!.height));
-      expect(title!.y).toBeGreaterThan(eyebrow!.y + eyebrow!.height);
+      expect(title!.y).toBeGreaterThanOrEqual(eyebrow!.y + eyebrow!.height);
       await expect(reading.locator(".sky-detail-intro-section")).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
       await expect(reading.locator(".sky-detail-intro-section")).toHaveCSS("box-shadow", "none");
       const typography = await section.evaluate(element => {
@@ -212,6 +238,27 @@ for (const theme of ["light", "dark"]) {
   });
 }
 
+
+for (const theme of ["light", "dark"]) {
+  test(`House transit uses the shared reading layout (${theme})`, async ({ page }) => {
+    await prepare(page, theme);
+    await page.goto("/?date=2026-09-08#you");
+    const row = page.locator("button.updates-aspect-row--house").first();
+    await expect(row).toBeVisible({ timeout: 45_000 });
+    const title = await row.locator(".updates-aspect-row__title").innerText();
+    await row.click();
+    const article = page.locator(".transit-aspect-article-page");
+    await expect(article.locator("h1")).toHaveText(title);
+    await expect(article.locator(".article-planet-badge")).toBeVisible();
+    await expect(article.locator(".article-duration")).toBeVisible();
+    await expect(article.locator(".sky-detail-end")).toHaveCount(0);
+    for (const width of [1440, 390]) {
+      await page.setViewportSize({ width, height: 1000 });
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      await page.screenshot({ path: `test-results/transit-design/house-${theme}-${width}.png`, fullPage: true });
+    }
+  });
+}
 
 test("Unknown birth time keeps the article's signs without inventing houses", async ({ page }) => {
   test.setTimeout(90_000);

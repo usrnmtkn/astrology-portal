@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from '../helpers/polish-test';
 import { readerResponse } from '../helpers/reader-response';
 
 const surfaces = [
@@ -11,7 +11,7 @@ const surfaces = [
   { name: 'Reports', path: '/reports/', ready: '.report-library-header' },
   { name: 'Settings', path: '/#settings', ready: '.settings-group' },
   { name: 'Account', path: '/#account', ready: '.account-page' },
-  { name: 'Sign in', path: '/#you', ready: '.signup-layout', guest: true }
+  { name: 'Sign in', path: '/#you', ready: '.auth-flow-v2', guest: true }
 ];
 
 async function prepare(page: Page, theme: string, guest = false) {
@@ -31,7 +31,7 @@ async function prepare(page: Page, theme: string, guest = false) {
       if (document.documentElement.scrollWidth > width + 1) violations.set('document', {
         viewport: width, scrollWidth: document.documentElement.scrollWidth
       });
-      for (const element of document.querySelectorAll('.page-shell, .page-shell--narrow, .chart-layout, .chart-layout__content, .app-loading, .feature-loading-fallback, .learn-page, .report-library, [role="status"], [role="alert"]')) {
+      for (const element of document.querySelectorAll('.page-shell, .page-shell--narrow, .chart-layout, .chart-layout__content, .app-loading, .feature-loading-fallback, .learn-page, .report-library, [role="dialog"], [role="status"], [role="alert"]')) {
         const box = element.getBoundingClientRect();
         if (box.width <= 2 || box.height <= 2 || element.closest('[hidden], [aria-hidden="true"]') || getComputedStyle(element).visibility === 'hidden') continue;
         if (element.matches('.app-loading, [role="status"]')) observedLoaders.add(element.getAttribute('aria-label') ?? element.className);
@@ -62,7 +62,7 @@ for (const width of [360, 390, 768, 1024, 1440, 1768]) for (const theme of ['lig
       await page.setViewportSize({ width, height: 1000 });
       await prepare(page, theme, surface.guest);
       await page.goto(surface.path, { waitUntil: 'domcontentloaded' });
-      await expect(page.locator(surface.ready).first()).toBeVisible();
+      await expect(page.locator(surface.ready).filter({ visible: true }).first()).toBeVisible();
       // Cover delayed data, font hydration, and the first settled layout.
       await page.waitForTimeout(1800);
       const result = await page.evaluate(() => {

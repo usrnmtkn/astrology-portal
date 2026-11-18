@@ -8,7 +8,7 @@ import {
   sendAdminJson,
   sendAdminMethodNotAllowed,
 } from '../_lib/admin-http.js';
-import { generateSkyArticleTemplateSlots } from '../_lib/content-generation.js';
+import { generateSkyArticleTemplateSlots, skyArticleTemplateSlotsExport, type GenerateSkyArticleTemplateSlotsInput } from '../_lib/content-generation.js';
 import { currentSkyFacts } from '../_lib/current-sky.js';
 import { loadLocalWebEnv } from '../_lib/local-env.js';
 import { contentGenerationProvider, type GenerationProvider } from '../_lib/provider-config.js';
@@ -111,6 +111,7 @@ function isRetryableVoiceError(error: unknown) {
 }
 
 type RequestBody = {
+  preview?: boolean;
   planet?: string;
   sign?: string;
   field?: string;
@@ -126,6 +127,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
 
   try {
     const body = await readAdminJsonBody<RequestBody>(req, 96_000);
+    if(body.preview!==undefined&&typeof body.preview!=='boolean')throw new AdminHttpError(400,'preview must be a boolean.');
     const planet = token(body.planet);
     const sign = token(body.sign).replace(/_/gu, '-');
     const field = typeof body.field === 'string' ? body.field : '';
@@ -187,7 +189,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       contentType: 'sky_article',
     });
 
-    const generateDraft = async (provider: GenerationProvider, correction = '') => generateSkyArticleTemplateSlots({
+    const generationInput = (provider: GenerationProvider, correction = ''):GenerateSkyArticleTemplateSlotsInput => ({
       templateKey: `sky/article/${planet}/${sign}/${referenceYear}`,
       templateBody: articleContext,
       templateContextRole: 'existing-draft',
@@ -202,6 +204,9 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       voiceNotes: correction ? `${baseVoiceNotes}\n\nREWRITE REQUIRED:\n${correction}` : baseVoiceNotes,
       seasonMeaning,
     });
+
+    if(body.preview)return sendAdminJson(res,200,{ok:true,writingExport:await skyArticleTemplateSlotsExport(generationInput(initialProvider))});
+    const generateDraft=(provider:GenerationProvider,correction='')=>generateSkyArticleTemplateSlots(generationInput(provider,correction));
 
     let generation;
     let providerUsed = initialProvider;

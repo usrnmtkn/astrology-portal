@@ -1,8 +1,9 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 import { studioApiStore } from '../helpers/studio-api-store';
 import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
 import { bundledPublications } from '../helpers/bundled-publications';
-import { readerResponse } from '../helpers/reader-response';
+import { canonicalPublicationLedger, publicationLedgerTag } from '../../apps/web/src/services/publicationLedgerTransport';
+import { isSkyListPublicationKey } from '../../apps/web/src/content/skyListPublicationScope';
 
 const selectionUrl = '/admin/content#exact-content?category=Calendar+Aspects&first=moon&aspect=square&second=venus';
 const exactUrl = `${selectionUrl}&firstSign=aquarius&secondSign=scorpio`;
@@ -14,6 +15,35 @@ const headingStyle = (element: Element) => {
   const style = getComputedStyle(element);
   return Object.fromEntries(['fontFamily', 'fontSize', 'fontWeight', 'lineHeight', 'letterSpacing', 'marginTop', 'marginBottom', 'textTransform', 'textAlign'].map(key => [key, style[key as keyof CSSStyleDeclaration]]));
 };
+
+async function routeStoredPublications(page: Page, store: Awaited<ReturnType<typeof studioApiStore>>, transport: 'anonymous' | 'api' = 'anonymous') {
+  await page.route('**/rest/v1/content_publications?**', async route => {
+    expect(route.request().method()).toBe('GET');
+    if (transport === 'api') {
+      await route.fulfill({ status: 503, json: { error: 'Synthetic anonymous publication read unavailable.' } });
+      return;
+    }
+    const params = new URL(route.request().url()).searchParams;
+    const rows = (await store.call({ method: 'publications' })).filter((row: { content_key: string }) =>
+      params.getAll('content_key').every(filter => {
+        if (filter.startsWith('gte.')) return row.content_key >= filter.slice(4);
+        if (filter.startsWith('gt.')) return row.content_key > filter.slice(3);
+        if (filter.startsWith('lt.')) return row.content_key < filter.slice(3);
+        throw new Error('Unexpected publication fixture filter');
+      })).sort((a: { content_key: string }, b: { content_key: string }) => a.content_key.localeCompare(b.content_key));
+    await route.fulfill({ json: rows.slice(0, Number(params.get('limit') ?? 1000)) });
+  });
+  await page.route(/\/api\/content-publications(?:\?|$)/, async route => {
+    expect(route.request().method()).toBe('GET');
+    const scope = new URL(route.request().url()).searchParams.get('scope');
+    expect([null, 'sky-list']).toContain(scope);
+    const complete = canonicalPublicationLedger(await store.call({ method: 'publications' }));
+    const publications = scope === 'sky-list' ? complete.filter(row => isSkyListPublicationKey(row.content_key)) : complete;
+    await route.fulfill({ headers: { etag: await publicationLedgerTag(publications) }, json: {
+      schema: scope === 'sky-list' ? 'tldr-sky-list-publications/v1' : 'tldr-publications/v1', publications
+    } });
+  });
+}
 
 for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (const paragraphs of [2, 3]) {
   test(`Calendar exact saved revision optional checks and owner publication ${paragraphs} paragraphs ${theme} ${width}`, async ({ page }) => {
@@ -42,6 +72,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (con
         await route.fulfill({ status: result.status, json: result.payload });
         return true;
       } });
+      await routeStoredPublications(page, store);
       await page.goto('/admin/content#exact-content?category=Calendar+Aspects&first=moon&aspect=trine&second=uranus&firstSign=aquarius&secondSign=gemini');
       await page.getByRole('button', { name: 'Open write-up', exact: true }).click();
       const editor = page.locator('.admin-editor-panel');
@@ -91,8 +122,8 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (con
   });
 }
 
-for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
-  test(`Calendar exact aspect create save reopen ${theme} ${width}`, async ({ page }) => {
+for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (const transport of ['anonymous', 'api'] as const) {
+  test(`Calendar exact aspect create save reopen ${theme} ${width} via ${transport}`, async ({ page }) => {
     test.setTimeout(90000);
     const store = await studioApiStore([generic], { writing: true });
     const errors: string[] = [];
@@ -122,6 +153,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
           return true;
         }
       });
+      await routeStoredPublications(page, store);
       await page.goto(selectionUrl);
       await expect(page.getByRole('heading', { name: 'Calendar Aspect Cards', exact: true })).toHaveJSProperty('tagName', 'H1');
       const filters = page.getByRole('region', { name: 'Content list filters' });
@@ -132,7 +164,6 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       const editor = page.locator('.admin-editor-panel');
       const previousStyle = await editor.getByRole('heading', { level: 2 }).evaluate(headingStyle);
       await editor.getByRole('button', { name: 'Close', exact: true }).click();
-      await filters.getByText('Advanced signs', { exact: true }).click();
       await filters.getByLabel('Calendar aspect first sign', { exact: true }).selectOption('aquarius');
       await expect(page.locator('.admin-content-row')).toHaveCount(0);
       await expect(action.getByRole('button')).toHaveCount(0);
@@ -190,11 +221,29 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       expect(live.source_snapshot.review_status).toBe('approved');
       await page.unroute('**/api/**');
       await bundledPublications(page);
+      // Register the saved ledger after the broad empty fixture so every
+      // reader path observes the publication created by the owner action.
+      await routeStoredPublications(page, store, transport);
       await page.route('**/api/content-reader', async route => {
-        const keys = route.request().postDataJSON().keys ?? [];
-        const genericLive = { ...generic, status: 'LIVE', review_state: null, source_snapshot: { contentStudioExactAspect: true, exactSkyAspectIdentity: { a: 'moon', b: 'venus', aspect: 'square' } } };
-        await route.fulfill({ json: readerResponse([genericLive, live].filter(row => keys.includes(row.content_key))) });
+        const result = await store.call({ method: 'POST', url: '/api/content-reader', body: route.request().postDataJSON() });
+        await route.fulfill({ status: result.status, json: result.payload });
       });
+      const handoff = await page.evaluate(async contentKey => {
+        const [api, anonymous, reader] = await Promise.all([
+          fetch('/api/content-publications'),
+          fetch('/rest/v1/content_publications?order=content_key.asc&limit=1000'),
+          fetch('/api/content-reader', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ keys: [contentKey] }) })
+        ]);
+        return { api: await api.json(), tag: api.headers.get('etag'), anonymousStatus: anonymous.status,
+          anonymous: await anonymous.json(), reader: await reader.json() };
+      }, key);
+      const publication = { content_key: key, state: 'live', row_id: live.id, row_updated_at: live.updated_at };
+      if (transport === 'anonymous') expect(handoff.anonymous).toContainEqual(expect.objectContaining(publication));
+      else expect(handoff.anonymousStatus).toBe(503);
+      expect(handoff.api.publications).toContainEqual(expect.objectContaining(publication));
+      expect(handoff.tag).toBe(await publicationLedgerTag(canonicalPublicationLedger(handoff.api.publications)));
+      expect(handoff.reader.publications).toContainEqual(expect.objectContaining(publication));
+      expect(handoff.reader.rows).toEqual([expect.objectContaining({ id: live.id, body: passage, updated_at: live.updated_at })]);
       await page.clock.setFixedTime(new Date('2026-09-22T13:00:00Z'));
       await page.addInitScript(() => localStorage.setItem('tldrastro:selectedLocation', JSON.stringify({ label: 'New York, NY', latitude: 40.7128, longitude: -74.006, timeZone: 'America/New_York' })));
       await page.goto('/?date=2026-09-22#calendar?view=day&date=2026-09-22');
@@ -203,7 +252,10 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       await expect(card).toContainText('Complete synthetic final sentence.');
       await expect(card).not.toContainText(generic.body);
       await card.click();
-      const detail = page.getByRole('dialog', { name: 'Event detail' });
+      const detail = page.locator('.sky-detail-article');
+      await expect(detail).toContainText('Complete synthetic opening.');
+      await expect(detail).toContainText('Complete synthetic final sentence.');
+      await page.reload();
       await expect(detail).toContainText('Complete synthetic opening.');
       await expect(detail).toContainText('Complete synthetic final sentence.');
       expect(errors).toEqual([]);

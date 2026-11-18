@@ -75,12 +75,14 @@ export type GenerateUserContentErrorPayload = {
   ok?: false;
   error?: string;
   errorType?: string;
+  retryable?: boolean;
   [key: string]: unknown;
 };
 
 export class GenerateUserContentError extends Error {
   readonly status: number;
   readonly errorType: string | null;
+  readonly retryable: boolean;
   readonly payload: GenerateUserContentErrorPayload | null;
 
   constructor(status: number, payload: GenerateUserContentErrorPayload | null) {
@@ -88,6 +90,7 @@ export class GenerateUserContentError extends Error {
     this.name = "GenerateUserContentError";
     this.status = status;
     this.errorType = payload?.errorType ?? null;
+    this.retryable = payload?.retryable === true;
     this.payload = payload;
   }
 }
@@ -143,20 +146,25 @@ export async function loadUserGeneratedInterpretation({
   subjectType,
   subjectId,
   contentKey,
-  targetDate
+  targetDate,
+  signal
 }: {
   subjectType: UserGeneratedSubjectType;
   subjectId: string;
   contentKey: string;
   targetDate?: string;
+  signal?: AbortSignal;
 }) {
+  signal?.throwIfAborted();
   const supabase = await getSupabaseClient();
+  signal?.throwIfAborted();
 
   if (!supabase) {
     return null;
   }
 
   const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+  signal?.throwIfAborted();
   const userId = sessionData.session?.user.id;
 
   if (sessionError || !userId) {
@@ -180,19 +188,25 @@ export async function loadUserGeneratedInterpretation({
   query = query.order("updated_at", { ascending: false }).limit(1);
   query = targetDate ? query.eq("target_date", targetDate) : query.is("target_date", null);
 
+  if (signal) query = query.abortSignal(signal);
   const { data, error } = await query.returns<UserGeneratedContentRow[]>();
+  signal?.throwIfAborted();
 
   if (error) {
-    console.warn("Personalized generated content failed to load.", error);
-    return null;
+    throw new GenerateUserContentError(503, {
+      error: "Saved readings are temporarily unavailable.",
+      errorType: "saved_reading_unavailable", retryable: true
+    });
   }
 
   return data?.[0] ? fromRow(data[0]) : null;
 }
 
-async function friendCheckout(request: GenerateUserContentRequest, accessToken: string) {
+async function friendCheckout(request: GenerateUserContentRequest, accessToken: string, signal?: AbortSignal) {
+  signal?.throwIfAborted();
   const response = await fetch("/api/friend-report-checkout", {
     method: "POST",
+    signal,
     headers: {
       "content-type": "application/json",
       authorization: `Bearer ${accessToken}`
@@ -200,23 +214,27 @@ async function friendCheckout(request: GenerateUserContentRequest, accessToken: 
     body: JSON.stringify(request)
   });
   const payload = await response.json().catch(() => null) as { url?: string; error?: string } | null;
+  signal?.throwIfAborted();
   if (!response.ok || !payload?.url) {
     throw new GenerateUserContentError(response.status, payload as GenerateUserContentErrorPayload | null);
   }
   window.location.assign(payload.url);
 }
 
-export async function generateUserContent(request: GenerateUserContentRequest) {
+export async function generateUserContent(request: GenerateUserContentRequest, { signal }: { signal?: AbortSignal } = {}) {
+  signal?.throwIfAborted();
   const supabase = await getSupabaseClient();
+  signal?.throwIfAborted();
 
   if (!supabase) {
-    throw new Error("Sign in before generating personalized content.");
+    throw new GenerateUserContentError(401, { error: "Sign in before generating personalized content.", errorType: "authentication_required", retryable: false });
   }
 
   const { data, error } = await supabase.auth.getSession();
 
+  signal?.throwIfAborted();
   if (error || !data.session?.access_token) {
-    throw new Error(error?.message ?? "Sign in before generating personalized content.");
+    throw new GenerateUserContentError(401, { error: "Sign in before generating personalized content.", errorType: "authentication_required", retryable: false });
   }
 
   const friendReading = request.subjectType === "friend_transit_reading";
@@ -225,11 +243,18 @@ export async function generateUserContent(request: GenerateUserContentRequest) {
     : "/api/generate-user-content";
   const response = await fetch(endpoint, {
     method: "POST",
+    signal,
     headers: {
       "content-type": "application/json",
       authorization: `Bearer ${data.session.access_token}`
     },
     body: JSON.stringify(request)
+  }).catch(() => {
+    signal?.throwIfAborted();
+    throw new GenerateUserContentError(0, {
+      error: "The generation request could not be confirmed. Check saved readings before trying again.",
+      errorType: "network_error", retryable: false
+    });
   });
   const payload = await response.json().catch(() => null) as {
     status?: "ready" | "queued" | "payment_required" | "unavailable";
@@ -239,10 +264,12 @@ export async function generateUserContent(request: GenerateUserContentRequest) {
     jobId?: string | null;
     error?: string;
     errorType?: string;
+    retryable?: boolean;
   } | null;
 
+  signal?.throwIfAborted();
   if (friendReading && (response.status === 402 || payload?.status === "payment_required")) {
-    await friendCheckout(request, data.session.access_token);
+    await friendCheckout(request, data.session.access_token, signal);
     return null;
   }
 
@@ -255,7 +282,8 @@ export async function generateUserContent(request: GenerateUserContentRequest) {
       subjectType: "friend_transit_reading",
       subjectId: request.subjectId,
       contentKey: request.contentKey,
-      targetDate: request.targetDate
+      targetDate: request.targetDate,
+      signal
     });
   }
 

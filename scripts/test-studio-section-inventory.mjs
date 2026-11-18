@@ -12,6 +12,8 @@ import {
   studioInventoryRequestPath
 } from "../apps/admin/src/studioSectionInventory.ts";
 
+assert.deepEqual(studioInventoryQuery({ page: "wheelTooltips" }).prefixes, ["cms/wheel-tooltip/"]);
+
 const astro101 = studioInventoryQuery({ page: "astro101" });
 assert.deepEqual(astro101.prefixes, [...STUDIO_ASTRO_101_PREFIXES]);
 assert.equal(astro101.catalog, false);
@@ -75,6 +77,7 @@ const sectionRoutes = [
   { page: "content", categoryFilter: "Personal Transits" },
   { page: "content", categoryFilter: "House Transits" },
   { page: "skyWriteups" },
+  { page: "skyWriteups", skyWriteupWorkspaceView: "detriment-fall" },
   { page: "skyWriteups", friendsTransitAudience: true, skyWriteupWorkspaceView: "house-transits" },
   { page: "skyWriteups", friendsTransitAudience: true, skyWriteupWorkspaceView: "transits-to-natal" },
   { page: "calendarWriteups" }, { page: "articles" }, { page: "astro101" },
@@ -103,7 +106,8 @@ assert.deepEqual(reviewQueue.prefixes, []);
 assert.equal(reviewQueue.visibility, "all");
 
 const articles = studioInventoryQuery({ page: "articles" });
-assert.equal(articles.mode, "article");
+assert.equal(articles.scope, "article-library");
+assert.equal(articles.mode, null);
 assert.deepEqual(articles.prefixes, []);
 
 const astro101Path = studioInventoryRequestPath({ ...astro101, prefixes: ["education/astro-101/"] }, 400, null);
@@ -125,6 +129,9 @@ assert.match(api, /if \(!id && mode\) \{\s*params\.set\("mode", `eq\.\$\{mode\}`
 console.log("Content Studio section-first compact inventory contract passed.");
 
 const summaryInventory = studioInventoryQuery({ page: "skyWriteups", skyWriteupWorkspaceView: "daily-summary" });
+const dignityInventory = studioInventoryQuery({ page: "skyWriteups", skyWriteupWorkspaceView: "detriment-fall" });
+assert.deepEqual(dignityInventory.prefixes, ["cms/sky-debility/"]);
+assert.equal(dignityInventory.catalog, false);
 for (const key of ["cms/sky-daily-summary/sun/libra", "cms/sky-daily-summary/sun/libra/ruler-retrograde", "cms/sky-daily-summary/assembly/opening", "cms/sky-debility/test"]) {
   assert.ok(summaryInventory.prefixes.some(prefix => key.startsWith(prefix)), `Direct summary entry must hydrate ${key}`);
 }

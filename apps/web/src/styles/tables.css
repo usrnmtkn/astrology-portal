@@ -36,16 +36,6 @@ button.placement-table-row {
   line-height: var(--leading-label);
 }
 
-.placement-table-row.is-retrograde .placement-table-row__glyph {
-  width: auto;
-  min-width: 0;
-  height: 32px;
-  border-radius: 0;
-  background: transparent;
-  color: var(--wheel-glyph);
-  box-shadow: var(--shadow-flat);
-}
-
 .placement-table-row__body {
   display: grid;
   min-width: 0;
@@ -147,17 +137,6 @@ button.planet-placement-row {
   font-size: var(--text-glyph);
   line-height: var(--leading-label);
   text-align: center;
-}
-
-.planet-placement-row.is-retrograde .planet-placement-row__glyph {
-  width: auto;
-  min-width: 0;
-  height: 22px;
-  margin-top: calc(var(--space-1) / 2);
-  border-radius: 0;
-  background: transparent;
-  color: var(--card-title-color);
-  box-shadow: var(--shadow-flat);
 }
 
 .planet-placement-row__body {

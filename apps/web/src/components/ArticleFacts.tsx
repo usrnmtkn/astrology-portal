@@ -6,10 +6,10 @@ export function TransitFacts({ description }: { description?: string | null }) {
   ) : null;
 }
 
-export function SkyMechanics({ caption }: { caption?: string | null }) {
+export function SkyMechanics({ caption, compact = false }: { caption?: string | null; compact?: boolean }) {
   return caption ? (
-    <aside className="article-section sky-detail-section sky-aspect-mechanics" aria-labelledby="sky-aspect-mechanics-title">
-      <h2 id="sky-aspect-mechanics-title">What this looks like in space</h2>
+    <aside className={`article-section sky-detail-section sky-aspect-mechanics${compact ? " article-transit-description" : ""}`} aria-labelledby={compact ? undefined : "sky-aspect-mechanics-title"} aria-label={compact ? "Aspect details" : undefined}>
+      {!compact ? <h2 id="sky-aspect-mechanics-title">What this looks like in space</h2> : null}
       <p>{caption}</p>
     </aside>
   ) : null;

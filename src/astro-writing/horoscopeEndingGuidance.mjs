@@ -1,0 +1,3 @@
+/** Current owner guidance for fresh horoscope drafts; never reader copy. */
+export const HOROSCOPE_ENDING_GUIDANCE_VERSION = 'horoscope-endings/v1-2026-11-06';
+export const HOROSCOPE_ENDING_GUIDANCE = `HOROSCOPE ENDINGS ${HOROSCOPE_ENDING_GUIDANCE_VERSION}: No separate concluding paragraph is required in a horoscope. End the new reading when the previous paragraph has already made its insight clear. Keep a final paragraph only for a meaningful new implication, a sharper contrast, or something the reader can recognize in their own life. This current owner rule makes older wrap-up paragraph instructions optional. It sets no word or paragraph quota and never authorizes cutting complete owner source passages or saved reader copy.`;

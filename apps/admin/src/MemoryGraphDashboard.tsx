@@ -1,12 +1,16 @@
 import { studioShellAttributes } from "./studioTheme";
 import "./studio-system.css";
 import { StudioButton, StudioInput } from "./StudioControls";
-import { memo, useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { MemoryGraph, type DocumentWithMemories } from '@supermemory/memory-graph';
 import { AdminAccessGate } from './AdminStudioPrimitives';
 import { PageLoading } from '../../../src/shared/components/PageLoading';
-import { adminCredentialHeaders, adminSecretStorageKey, normalizeAdminSecret } from './adminSecret';
+import { adminSecretStorageKey, normalizeAdminSecret } from './adminSecret';
 import { loadOwnerSessionAccessToken, ownerSessionStorageKey } from './ownerSession';
+import { readMemoryGraph } from './ownerSessionRequest';
+import StandardDocument, { type WritingStandard } from './WritingStandardDocument';
+
+const standardView = new URLSearchParams(window.location.search).get('view') === 'writing-standard';
 
 type Kind = 'rule' | 'correction' | 'example' | 'navigation' | 'note';
 type MemoryRecord = { id: string; kind: Kind; status: string; title: string; path: string; line: number; sourceId: string; family: string; register: string; role: string; contentKey: string; bodySha256: string };
@@ -26,10 +30,6 @@ function SearchIcon({ className }: { className?: string }) {
   return <svg className={className} viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z" /></svg>;
 }
 
-const GraphCanvas = memo(function GraphCanvas({ documents }: { documents: DocumentWithMemories[] }) {
-  return <div className="memory-reference-root"><MemoryGraph documents={documents} variant="console" showSpacesSelector={false} autoLoadOnViewport={false} legendId="memory-reference-legend" /></div>;
-});
-
 export default function MemoryGraphDashboard() {
   const [credential, setCredential] = useState('');
   const [secret, setSecret] = useState('');
@@ -41,6 +41,7 @@ export default function MemoryGraphDashboard() {
   const [offset, setOffset] = useState(0);
   const [refresh, setRefresh] = useState(0);
   const [documents, setDocuments] = useState<DocumentWithMemories[] | null>(null);
+  const [standard, setStandard] = useState<WritingStandard | null>(null);
   const [payload, setPayload] = useState<Graph | null>(null);
   const [detail, setDetail] = useState<Detail | null>(null);
   const [selectedId, setSelectedId] = useState('');
@@ -52,11 +53,13 @@ export default function MemoryGraphDashboard() {
   useEffect(() => {
     let cancelled = false;
     async function check() {
+      let next = '';
       try {
         const token = await loadOwnerSessionAccessToken();
         const saved = normalizeAdminSecret(window.localStorage.getItem(adminSecretStorageKey) ?? '');
-        if (!cancelled) { const next = emergencyCredential.current || token || saved; setCredential(next === rejectedCredential.current ? '' : next); setBooting(false); }
-      } catch { if (!cancelled) { setCredential(''); setBooting(false); } }
+        next = emergencyCredential.current || token || saved;
+      } catch { /* A failed access check leaves the owner sign-in gate available. */ }
+      if (!cancelled) { setCredential(next === rejectedCredential.current ? '' : next); setBooting(false); }
     }
     void check();
     const onStorage = (event: StorageEvent) => { if (event.key === ownerSessionStorageKey() || event.key === adminSecretStorageKey || event.key === null) void check(); };
@@ -66,29 +69,30 @@ export default function MemoryGraphDashboard() {
   }, []);
 
 
-  async function readMemory(params: string, signal: AbortSignal) {
-    const response = await fetch(`/api/admin/memory-graph?${params}`, { headers: adminCredentialHeaders(credential), signal, cache: 'no-store' });
-    const body = await response.json();
-    signal.throwIfAborted();
-    if (!response.ok || !body.ok) {
-      if (response.status === 401) { rejectedCredential.current = credential; emergencyCredential.current = ''; setCredential(''); }
-      throw new Error(body.error || 'Memory could not be loaded.');
-    }
-    return body;
+  const graph = useMemo(() => documents?.length ? <div className="memory-reference-root"><MemoryGraph documents={documents} variant="console" showSpacesSelector={false} autoLoadOnViewport={false} legendId="memory-reference-legend" /></div> : null, [documents]);
+
+  function readMemory(params: string, signal: AbortSignal) {
+    return readMemoryGraph(params, credential, signal).catch(error => {
+      if (!signal.aborted) {
+        if ((error as { status?: number }).status === 401) { rejectedCredential.current = credential; emergencyCredential.current = ''; setCredential(''); }
+        setError(error.message);
+      }
+      return null;
+    });
   }
   useEffect(() => {
-    setDocuments(null); setPayload(null); setDetail(null); setSelectedId('');
+    setDocuments(null); setStandard(null); setPayload(null); setDetail(null); setSelectedId('');
     if (!credential) return;
     const controller = new AbortController();
     setError('');
-    void readMemory('mode=visual', controller.signal).then(body => {
-      setDocuments(body.documents);
+    void readMemory(standardView ? 'mode=standard' : 'mode=visual', controller.signal).then(body => {
+      if (!body) return;
+      if (standardView) setStandard(body.standard); else setDocuments(body.documents);
       setCheckedAt(body.freshness?.checkedAt ?? '');
       if (emergencyCredential.current === credential) {
         try { window.localStorage.setItem(adminSecretStorageKey, credential); } catch { /* Keep access usable when storage is unavailable. */ }
       }
-    })
-      .catch(error => { if (!controller.signal.aborted) setError(error.message); });
+    });
     return () => controller.abort();
   }, [credential, refresh]);
   useEffect(() => {
@@ -101,7 +105,7 @@ export default function MemoryGraphDashboard() {
     const controller = new AbortController();
     setLoading(true); setError('');
     void readMemory(new URLSearchParams({ q: search, match: 'phrase', offset: String(offset) }).toString(), controller.signal)
-      .then(body => setPayload(body)).catch(error => { if (!controller.signal.aborted) setError(error.message); })
+      .then(body => { if (body) setPayload(body); })
       .finally(() => { if (!controller.signal.aborted) setLoading(false); });
     return () => controller.abort();
   }, [credential, search, offset, refresh]);
@@ -110,7 +114,7 @@ export default function MemoryGraphDashboard() {
     if (!selectedId || !credential) return;
     const controller = new AbortController();
     void readMemory(`mode=detail&id=${encodeURIComponent(selectedId)}`, controller.signal)
-      .then(body => setDetail(body.record)).catch(error => { if (!controller.signal.aborted) setError(error.message); });
+      .then(body => { if (body) setDetail(body.record); });
     return () => controller.abort();
   }, [credential, selectedId]);
   useEffect(() => {
@@ -137,12 +141,17 @@ export default function MemoryGraphDashboard() {
     if (value) { rejectedCredential.current = ''; emergencyCredential.current = value; setCredential(value); setRefresh(value => value + 1); }
   }
   const back = <a className="memory-site-back" href="/admin/content" aria-label="Back to Content Studio"><svg viewBox="0 -960 960 960" aria-hidden="true"><path fill="currentColor" d="M560-240 320-480l240-240 56 56-184 184 184 184-56 56Z" /></svg>Back</a>;
-  if (!credential) return <main className="admin-dashboard memory-access studio-standalone" {...studioShellAttributes()}><section className="admin-main">{error && <p className="memory-access-error" role="alert">{error}</p>}<header className="admin-dashboard-header"><div>{back}<h1>Memory graph</h1></div></header>{booting ? <PageLoading compact message="Checking owner access…" /> : <AdminAccessGate disabled={!normalizeAdminSecret(secret)} onChange={setSecret} onSubmit={submitSecret} value={secret} />}</section></main>;
+  if (!credential) return <main className="admin-dashboard memory-access studio-standalone" {...studioShellAttributes()}><section className="admin-main">{error && <p className="memory-access-error" role="alert">{error}</p>}<header className="admin-dashboard-header"><div>{back}<h1>{standardView ? 'Writing standard' : 'Memory graph'}</h1></div></header>{booting ? <PageLoading compact message="Checking owner access…" /> : <AdminAccessGate disabled={!normalizeAdminSecret(secret)} onChange={setSecret} onSubmit={submitSecret} value={secret} />}</section></main>;
+  if (standardView) return <main className="admin-dashboard studio-standalone writing-standard-page" {...studioShellAttributes()}><div className="admin-main">
+    <nav className="admin-toolbar-actions" aria-label="Writing standard navigation">{back}<a className="admin-page-link" href="/admin/content/memory">Memory graph</a></nav>
+    {error && <div role="alert"><p>{error}</p><StudioButton onClick={() => setRefresh(value => value + 1)}>Try again</StudioButton></div>}
+    {standard ? <StandardDocument standard={standard} /> : <><h1>Writing standard</h1>{!error && <PageLoading message="Loading writing standard…" />}</>}
+  </div></main>;
   return <main className="admin-dashboard memory-is-open studio-standalone" {...studioShellAttributes()}>
     <h1 className="memory-sr-only">Memory graph</h1>
     <header className="memory-toolbar">
     {error && <div className="memory-error" role="alert"><p>{error}</p><StudioButton type="button" onClick={() => setRefresh(value => value + 1)}>Try again</StudioButton></div>}
-    {back}
+    <nav className="admin-toolbar-actions" aria-label="Memory navigation">{back}<a className="admin-page-link" href="/admin/content/memory?view=writing-standard">Writing standard</a></nav>
     <div className="memory-search-container">
       <SearchIcon className="memory-search-icon" aria-hidden="true" />
       <StudioInput className="memory-search-input" aria-label="Search memories" placeholder="Search memories..." value={query} onChange={event => setQuery(event.target.value)} />
@@ -150,7 +159,7 @@ export default function MemoryGraphDashboard() {
     </div>
     </header>
     <section className="memory-workspace" aria-label="Memory graph workspace">
-    {!!documents?.length && <GraphCanvas documents={documents} />}
+    {graph}
     {!documents && !error && <PageLoading message="Loading knowledge graph…" />}
     {documents?.length === 0 && !error && <div className="memory-loading" role="status">No project memories available.</div>}
     {payload && payload.total > 0 && <aside className="memory-match-panel" ref={matchesRef} aria-label="Matching memories">

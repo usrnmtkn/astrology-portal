@@ -1,3 +1,5 @@
+import {packageFallbackArchitectureV3CoreRows} from "../apps/web/src/services/fallbackArchitectureV3CorePackaging.js";
+import {servingPackageRecords} from "../api/_lib/serving-package-records.js";
 import {publishSavedOwnerContent, ownerPublicationStatusPath} from '../apps/admin/src/ownerPublication.js';
 import assert from 'node:assert/strict';
 import {contentLiveStatuses} from '../api/_lib/content-live-status.js';
@@ -5,6 +7,8 @@ import { createApiStore } from '../tests/helpers/calendar-review-api.mjs';
 import { baseline, source } from '../tests/helpers/sky-review-workflow-api.mjs';
 import { hasExactStudioOwnerApproval } from '../api/_lib/studio-owner-publication.js';
 import { resolveSkyAspectGeneratedContent } from '../apps/web/src/services/skyAspectContent.js';
+import { isReaderServableGeneratedContentRow } from '../apps/web/src/content/generatedContentEligibility.js';
+import { lunarOwnerDraft, lunarOwnerKey, lunarOwnerBody } from '../tests/helpers/lunar-owner-publication.mjs';
 
 const body = 'You always remember the request you left unanswered.\n\nA synthetic complete ending keeps the owner’s exact wording.';
 const ownerId = "a0000000-0000-4000-8000-000000000001";
@@ -41,22 +45,147 @@ try {
   const again=await publish();assert.equal(again.status,200,JSON.stringify(again.payload));row=again.payload.rows[0];assert(hasExactStudioOwnerApproval(row));
   const liveBefore=structuredClone(row);
   const rejectedLive=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,ownerAction:'save-and-publish-owner-content',body:'An orb of 2 degrees belongs outside this card.'});
-  assert.equal(rejectedLive.status,409);assert.deepEqual(store.rows.get(row.id),liveBefore,'A failed live publication keeps the previous live wording unchanged.');
+  assert.equal(rejectedLive.status,200,JSON.stringify(rejectedLive.payload));row=rejectedLive.payload.rows[0];assert.equal(row.body,'An orb of 2 degrees belongs outside this card.','Owner publication preserves wording suggestions verbatim.');
   const nextBody='The author chooses another complete paragraph. The final author sentence is preserved.';
   const combined=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,ownerAction:'save-and-publish-owner-content',body:nextBody,headline:row.headline,summary:row.summary,sections:row.sections});
   assert.equal(combined.status,200,JSON.stringify(combined.payload));row=combined.payload.rows[0];assert.equal(row.status,'LIVE');assert.equal(row.body,nextBody);assert(hasExactStudioOwnerApproval(row));assert.equal(row.source_snapshot.studioWritingCheck,null);
+  for(const unsafe of ['Timing has an orb of 2 degrees.','Read the review queue for provenance.']) {
+    const saved=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,status:'DRAFT',body:unsafe});assert.equal(saved.status,200);row=saved.payload.rows[0];
+    const approved=await publish();assert.equal(approved.status,200,JSON.stringify(approved.payload));row=approved.payload.rows[0];assert.equal(row.body,unsafe);assert.equal(row.status,'LIVE');
+  }
   const publishedVersion=row.source_snapshot.studioOwnerApproval.savedVersion;
   const retired=await store.invoke('POST',{action:'retire',id:row.id,contentKey:row.content_key,expectedUpdatedAt:row.updated_at},'/api/admin/content-publication');
   assert.equal(retired.status,200,JSON.stringify(retired.payload));
   const retiredRead=await store.invoke('GET',undefined,ownerPublicationStatusPath({...row,updated_at:publishedVersion}));
   assert.equal(retiredRead.payload.publicationReceipt.currentPublicationState,'retired');
   await assert.rejects(()=>publishSavedOwnerContent({...row,updated_at:publishedVersion},async()=>{throw new Error('Retired publication');},async()=>retiredRead.payload),/Retired publication/);
-  for(const unsafe of ['Timing has an orb of 2 degrees.','Read the review queue for provenance.']) {
-    const saved=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,status:'DRAFT',body:unsafe});assert.equal(saved.status,200);row=saved.payload.rows[0];
-    assert.equal((await publish()).status,409);assert.equal(store.rows.get(row.id)?.status,'DRAFT');
-  }
   const reference=await store.invoke('PATCH',{id:source.id,expectedUpdatedAt:source.updated_at,ownerAction:'publish-owner-content'});assert.equal(reference.status,409);
   const missingVersion=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:undefined,ownerAction:'publish-owner-content'});assert.equal(missingVersion.status,400);
   const mixed=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,ownerAction:'publish-owner-content',body:'Concurrent replacement.'});assert.equal(mixed.status,409);
   console.log('PASS owner publication: real handler, exact server approval, actual reader selection, unchanged prose, no fabricated judge result, stale/forged/mixed requests, re-publication and reader/source boundaries. No model calls.');
 } finally {await store.close();}
+
+const dignityDrafts = [
+  {key: 'sun-libra-direct__mars-cancer-direct', body: 'Synthetic complete opening.\n\n{sunPlacementSentence} and {marsPlacement} retain their original order.\n\nSynthetic complete ending.'},
+  {key: 'sun-aquarius-direct__mercury-pisces-direct__venus-aries-direct__saturn-aries-direct', body: 'Synthetic complete opening.\n\n{sunPlacementSentence} and {venusPlacement} share one clause; {saturnPlacement} has another; {mercuryPlacement} appears once.\n\nSynthetic complete ending.'}
+].map((fixture, index) => ({...baseline, id: `a0000000-0000-4000-8000-00000000000${index + 2}`,
+  content_key: `cms/sky-debility/reading/${fixture.key}`, body: fixture.body, headline: 'Synthetic complete dignity reading',
+  block_type: 'essay', event_type: 'essay', review_state: 'owner-review-required',
+  source_snapshot: {contentSystem: 'cms-surface-override', contentType: 'mustache-template',
+    allowedSlots: ['sunPlacementSentence', 'marsPlacement', 'venusPlacement', 'saturnPlacement', 'mercuryPlacement']}}));
+const dignity = await createApiStore(dignityDrafts);
+try {
+  for (const draft of dignityDrafts) {
+    const published = await dignity.invoke('PATCH', {id: draft.id, expectedUpdatedAt: draft.updated_at, ownerAction: 'publish-owner-content'});
+    assert.equal(published.status, 200, JSON.stringify(published.payload));
+    const live = published.payload.rows[0];
+    assert.equal(live.body, draft.body); assert.equal(live.headline, draft.headline); assert(hasExactStudioOwnerApproval(live));
+    const read = await dignity.invoke('POST', {keys: [draft.content_key]}, '/api/content-reader');
+    assert.equal(read.status, 200); assert.equal(read.payload.rows[0].body, draft.body);
+    const stale = await dignity.invoke('PATCH', {id: draft.id, expectedUpdatedAt: draft.updated_at, ownerAction: 'publish-owner-content'});
+    assert.equal(stale.status, 409);
+  }
+  console.log('PASS complete dignity publication: individual fact slots preserve both sentence shapes through exact-version owner approval and the public reader.');
+} finally {await dignity.close();}
+
+const lunar = await createApiStore([lunarOwnerDraft()]);
+try {
+  const draft = lunar.rows.get(lunarOwnerDraft().id)!;
+  const read = () => lunar.invoke('POST', {keys: [lunarOwnerKey]}, '/api/content-reader');
+  assert.equal((await read()).payload.rows.length, 0, 'Unpublished lunar drafts stay private.');
+  const published = await lunar.invoke('PATCH', {id: draft.id, expectedUpdatedAt: draft.updated_at,
+    ownerAction: 'publish-owner-content'});
+  assert.equal(published.status, 200, JSON.stringify(published.payload));
+  const live = published.payload.rows[0];
+  assert.equal(live.source_snapshot.lunationPublicationCheck.lint.validationProfile, 'legacy');
+  assert.equal(live.source_snapshot.lunationWorkspace.lint.validationProfile, 'legacy');
+  assert(hasExactStudioOwnerApproval(live));
+  const metadataBefore = JSON.stringify(live.source_snapshot);
+  const served = await read();
+  assert.equal(served.status, 200);
+  assert.equal(served.payload.rows.length, 1, 'Current lunar validation metadata must not hide published owner copy.');
+  assert.equal(served.payload.rows[0].body, lunarOwnerBody);
+  assert.equal(contentLiveStatuses([live])[0].live, true);
+  assert.equal(JSON.stringify(live.source_snapshot), metadataBefore, 'Eligibility cannot mutate saved validation evidence.');
+
+  for (const path of ['lunationPublicationCheck', 'lunationWorkspace']) {
+    for (const marker of ['legacy', 'unsafe', 'directional', 'editorial-only', 'superseded', 'reference-only', 'raw_quarantine']) {
+      const changed = structuredClone(live);
+      changed.source_snapshot[path].lint.note = marker;
+      assert.equal(isReaderServableGeneratedContentRow(changed), false, `Preserve ${path} ${marker} rejection.`);
+    }
+    for (const value of ['legacy-unsafe', 'unsafe', {label: 'legacy'}]) {
+      const changed = structuredClone(live);
+      changed.source_snapshot[path].lint.validationProfile = value;
+      assert.equal(isReaderServableGeneratedContentRow(changed), false, 'Only the exact known profile label is exempt.');
+    }
+  }
+  for (const patch of [
+    {flags: ['REFERENCE_ONLY_NEVER_SERVE_VERBATIM']},
+    {provider: 'local-normalized-dashboard-source'},
+    {source_snapshot: {...live.source_snapshot, content_role: 'source_material'}},
+    {source_snapshot: {...live.source_snapshot, review_status: 'needs_review'}},
+    {source_snapshot: {...live.source_snapshot, origin: 'legacy'}},
+    {facts: {source: 'legacy'}}
+  ]) {
+    lunar.rows.set(live.id, {...live, ...patch});
+    assert.equal((await read()).payload.rows.length, 0, 'Unsafe or unapproved rows remain absent from the actual reader API.');
+  }
+  for (const content_key of ['cms/lunation-article/invalid', 'sky.aspect.sun.sextile.moon.aries.gemini', 'studio-lunation/2026-09-26/full-moon/aries']) {
+    assert.equal(isReaderServableGeneratedContentRow({...live, content_key}), false, 'Other content families gain no profile exception.');
+  }
+  for (const patch of [{status: 'DRAFT'}, {status: 'ARCHIVED'}, {lane: 'reference'}, {review_state: 'needs-review'}]) {
+    assert.equal(isReaderServableGeneratedContentRow({...live, ...patch}), false, 'The label exception only applies to published serving rows.');
+  }
+  lunar.rows.set(live.id, {...live, body: live.body + ' Unsigned edit.'});
+  assert.equal((await read()).payload.rows.length, 0, 'The exact owner approval still protects reader bytes.');
+  lunar.rows.set(live.id, live);
+  const retired = await lunar.invoke('POST', {action: 'retire', id: live.id, contentKey: lunarOwnerKey,
+    expectedUpdatedAt: live.updated_at}, '/api/admin/content-publication');
+  assert.equal(retired.status, 200, JSON.stringify(retired.payload));
+  const afterRetirement = await read();
+  assert.equal(afterRetirement.payload.rows.length, 0, 'Retirement remains authoritative.');
+  assert(afterRetirement.payload.publications.find((item: any) => item.content_key === lunarOwnerKey).revision
+    > served.payload.publications.find((item: any) => item.content_key === lunarOwnerKey).revision,
+  'The SQL retirement must advance the already-observed fixture ledger revision.');
+  console.log('PASS lunar owner publication: actual publish/read/retire handlers, exact copy, technical lint labels, unsafe metadata and approval boundaries.');
+} finally {await lunar.close();}
+
+// Regression for the production generic-row publication that committed but was absent from readers.
+for (const sign of ["libra", "sagittarius"]) {
+const key=`sky-lilith/article/${sign}`;
+const installedBefore=structuredClone(servingPackageRecords.get(key));
+const body='Synthetic owner opening remains complete.\n\nSynthetic owner final paragraph stays intact.';
+const row={id:'10000000-0000-4000-8000-000000000099',content_key:key,surface:'sky',mode:'in_depth',status:'DRAFT',lane:'serving',review_state:'EDITORIAL_REVIEW_REQUIRED',target_date:null,provider:'manual-admin',event_type:'manual-content',block_type:'essay',headline:'Synthetic owner source',body,summary:'',sections:{},facts:{},source_snapshot:{contentType:'essay',content_role:'authored-content',contentSystem:'authored',authoringSource:'admin-dashboard'},updated_at:'2030-01-01T00:00:00.000Z',created_at:'2030-01-01T00:00:00.000Z',flags:[]};
+const store=await createApiStore([row]);
+try{
+ const denied=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,ownerAction:'publish-owner-content'},'/api/admin/generated-content','not-owner');
+ assert.equal(denied.status,401);assert.deepEqual(store.rows.get(row.id),row);
+ const stale=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:'2000-01-01T00:00:00Z',ownerAction:'publish-owner-content'});assert.equal(stale.status,409);
+ const published=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,ownerAction:sign==='sagittarius'?'save-and-publish-owner-content':'publish-owner-content',...(sign==='sagittarius'?{body,headline:row.headline,summary:'',sections:{}}:{})});
+ assert.equal(published.status,200,JSON.stringify(published.payload));
+ const reader=await store.invoke('POST',{keys:[key]},'/api/content-reader');
+ assert.equal(reader.status,200);assert.equal(reader.payload.rows.length,1);
+ const bundle=packageFallbackArchitectureV3CoreRows(reader.payload.rows,{keys:['authored:'+key]},()=>true,{includeSkyPlacement:true});
+ assert(bundle,'Published owner source must reach real package transport');
+ const records=[...(bundle.transitLib?.authoredCards??[]),...(bundle.rowsFile?.hookRows??[])];
+ const record=records.find(r=>r.contentKey===key);
+ assert(record,'Reader transport must retain this known source');
+ assert.equal(record.LilithArticle,body,'Canonical Lilith reader field must receive complete owner passage');
+ assert.equal(record.body_you,body);assert.equal(published.payload.rows[0].body,body);
+ assert(hasExactStudioOwnerApproval(published.payload.rows[0]));
+ assert.deepEqual(servingPackageRecords.get(key),installedBefore,'Installed approved source remains unchanged');
+ const live=published.payload.rows[0];
+ const nextBody=body+'\n\nSynthetic private revision ending.';
+ const savedRevision=await store.invoke('PATCH',{id:live.id,expectedUpdatedAt:live.updated_at,reviewStatus:'needs_review',sections:{...live.sections,packageDraft:{LilithArticle:nextBody}}});
+ assert.equal(savedRevision.status,200,JSON.stringify(savedRevision.payload));
+ const draft=savedRevision.payload.rows[0];assert.equal(draft.status,'DRAFT');assert.notEqual(draft.id,live.id);
+ const stillLive=await store.invoke('POST',{keys:[key]},'/api/content-reader');assert.equal(stillLive.payload.rows[0].body,body);
+ const republished=await store.invoke('PATCH',{id:draft.id,expectedUpdatedAt:draft.updated_at,ownerAction:'approve-package-revision'});
+ assert.equal(republished.status,200,JSON.stringify(republished.payload));
+ const reread=await store.invoke('POST',{keys:[key]},'/api/content-reader');assert.equal(reread.payload.rows[0].sections.packageRecord.LilithArticle,nextBody);assert.equal(reread.payload.rows[0].body,nextBody);
+ assert.deepEqual(servingPackageRecords.get(key),installedBefore,'Publication revisions preserve installed source');
+ console.log('PASS actual owner handler → anonymous reader → real package transport: complete manual Lilith source');
+}finally{await store.close();}
+
+}

@@ -11,11 +11,12 @@ export function exportStatus(article: HTMLElement | null, detail: SkyDetail, asp
 }
 
 /** Export the resolved public article after the reader has rendered it. */
-export function skyReaderCsvRecord(article: HTMLElement, detail: SkyDetail, href: string) {
+export function skyReaderCsvRecord(article: HTMLElement, detail: SkyDetail, href: string, options: { generalArticleOnly?: boolean } = {}) {
   const source = detail.readerExport;
   if (!source || detail.placementFactsPending) throw new Error('Wait for the complete Sky article to load.');
   const body = [...article.querySelectorAll<HTMLElement>('.sky-detail-body h2, .sky-detail-body h3, .sky-detail-body p, .sky-detail-body li, .sky-detail-body dt, .sky-detail-body dd')]
     .filter(node => !node.closest('#sky-personalized-placement, button, details') && !node.parentElement?.closest('li'))
+    .filter(node => !options.generalArticleOnly || !node.closest('.sky-detail-rising-horoscopes-card'))
     .map(node => node.innerText.trim()).filter(Boolean).join('\n\n');
   if (!body) throw new Error('The complete Sky article could not be exported.');
   const url = new URL(href);
@@ -32,7 +33,10 @@ export function skyReaderCsvRecord(article: HTMLElement, detail: SkyDetail, href
       const links = [...passage.querySelectorAll<HTMLAnchorElement>('a[href]')].map(link => new URL(link.getAttribute('href')!, url.href).href);
       return [...text, ...links].join('\n\n');
     });
-    const rows = [...group.querySelectorAll<HTMLElement>('.aspect-row')].map(row => row.innerText.trim());
+    const rows = [...group.querySelectorAll<HTMLElement>('.aspect-row')].map(row => {
+      const anchors = [...(row.matches('a[href]') ? [row as HTMLAnchorElement] : []), ...row.querySelectorAll<HTMLAnchorElement>('a[href]')];
+      return [row.innerText.trim(), ...anchors.map(link => new URL(link.getAttribute('href')!, url.href).href)].join('\n\n');
+    });
     return [heading, ...passages, ...rows].filter(Boolean).join('\n\n');
   }).join('\n\n');
   const edition = source.rows.map(row => (row.sections as { skyArticleEdition?: { validFrom?: string; validTo?: string } } | undefined)?.skyArticleEdition).find(Boolean);

@@ -1,11 +1,31 @@
 import assert from "node:assert/strict";
+import {servingPackageRecords} from "../api/_lib/serving-package-records.ts";
 import {
+  default as handler,
   normalizeNatalPlacementPreviewInput,
   renderNatalPlacementPreview,
   renderNatalPlacementPreviewState
 } from "../api/admin/natal-placement-preview.ts";
 
 const fallbackProvider = "tldrastro-fallback-architecture-v3";
+
+for (const [planet,sign,key] of [
+  ['neptune','aquarius','fallback-hook/natal/planet-intro/neptune'],
+  ['uranus','scorpio','fallback-hook/natal-you-placement-sign-final/uranus/scorpio']
+]) for(const audience of ['you','they']){
+  const input=normalizeNatalPlacementPreviewInput({planet,sign,house:'12',audience,overrides:[]});
+  const baseline=renderNatalPlacementPreviewState(input).rendered;
+  const timestamp='2026-11-12T12:00:00Z';
+  const cached={id:'stale-source',status:'LIVE',lane:'serving',provider:fallbackProvider,updatedAt:timestamp,
+    packageRow:{...servingPackageRecords.get(key),body:'Synthetic cached copy.',body_you:'Synthetic cached You copy.',body_they:'Synthetic cached Friend copy.',review_status:'approved'}};
+  const withCached=normalizeNatalPlacementPreviewInput({planet,sign,house:'12',audience,overrides:[cached]});
+  const reset={content_key:key,state:'live',revision:20,row_id:null,row_updated_at:null,updated_at:timestamp};
+  const restored=renderNatalPlacementPreviewState(withCached,[reset]);
+  assert.equal(JSON.stringify(restored.rendered.parts)===JSON.stringify(baseline.parts),true,'Baseline recovery must restore every original paragraph, excluding cached Studio copy.');
+  assert.deepEqual(restored.appliedOverrideKeys,[]);
+  assert.throws(()=>renderNatalPlacementPreviewState(withCached,[{...reset,state:'retired'}]),/SOURCE_GAP/u);
+  assert.throws(()=>renderNatalPlacementPreviewState(withCached,[{...reset,row_id:cached.id,row_updated_at:'2026-11-13T12:00:00Z'}]),/SOURCE_GAP/u);
+}
 
 const signOnlyInput = normalizeNatalPlacementPreviewInput({
   audience: "you",
@@ -17,6 +37,83 @@ const signOnly = renderNatalPlacementPreview(signOnlyInput);
 assert.equal(signOnly.headline, "Sun in Aries");
 assert.equal(signOnly.parts.length, 1, "The API must return the planet-in-sign paragraph before a house is selected.");
 assert.ok(signOnly.body.trim().length > 0, "The API must load its packaged fallback data and return reader copy.");
+
+for (const audience of ["you", "they"]) {
+  const houseOnly = renderNatalPlacementPreview(normalizeNatalPlacementPreviewInput({ planet: "mars", house: "12", audience, overrides: [] }));
+  const combined = renderNatalPlacementPreview(normalizeNatalPlacementPreviewInput({ planet: "mars", sign: "aries", house: "12", audience, overrides: [] }));
+  assert.equal(houseOnly.headline, "Mars in the 12th house");
+  assert.deepEqual(houseOnly.parts, combined.parts.slice(1));
+  assert.deepEqual(houseOnly.partKeys, combined.partKeys.slice(1));
+}
+for (const selection of [{ planet: "mars" }, { planet: "mars", sign: "invalid", house: "12" }, { planet: "mars", sign: 4, house: "12" }, { planet: "ascendant", house: "1" }]) {
+  assert.throws(() => normalizeNatalPlacementPreviewInput({ ...selection, overrides: [] }), /valid planet or point/u);
+}
+
+const previousFetch = globalThis.fetch;
+const previousEnvironment = Object.fromEntries(["CONTENT_GENERATION_SECRET", "SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"].map(key => [key, process.env[key]]));
+const houseKey = "fallback-hook/placement-house-lived/mars/12";
+const timestamp = "2026-11-15T12:00:00Z";
+const liveHouse = {
+  id: "00000000-0000-4000-8000-000000000012", content_key: houseKey, status: "LIVE", lane: "serving", provider: fallbackProvider, updated_at: timestamp,
+  sections: { packageRecord: { ...servingPackageRecords.get(houseKey), body: "Synthetic complete Mars house opening. Complete Mars house ending.", body_they_review_status: "approved", body_they_approval: { approvalLevel: "exact_owner_approved", recordPath: "synthetic-fixture" }, body_you: "Synthetic complete Mars house opening. Complete Mars house ending.", body_they: "Synthetic complete Friend house opening. Complete Friend house ending.", review_status: "approved" } }
+};
+let publicationState = "live";
+let storageAvailable = true;
+let storageCalls = 0;
+try {
+  process.env.CONTENT_GENERATION_SECRET = "natal-house-fixture";
+  process.env.SUPABASE_URL = "https://natal-house.invalid";
+  process.env.SUPABASE_SERVICE_ROLE_KEY = "natal-house-fixture";
+  globalThis.fetch = async input => {
+    storageCalls++;
+    const url = new URL(String(input));
+    assert.equal(url.origin, "https://natal-house.invalid");
+    if (!storageAvailable) return new Response("{}", { status: 503 });
+    if (url.pathname === "/rest/v1/content_publications") {
+      assert.ok(url.searchParams.get("content_key").includes(houseKey));
+      assert.doesNotMatch(url.searchParams.get("content_key"), /placement-sign|complete-final|planet-in-sign|\/\//u);
+      return Response.json([{ content_key: houseKey, state: publicationState, revision: 1, row_id: liveHouse.id, row_updated_at: timestamp, updated_at: timestamp }]);
+    }
+    assert.equal(url.pathname, "/rest/v1/generated_interpretations");
+    return Response.json([liveHouse]);
+  };
+  const request = async (body, authorized = true) => {
+    let payload;
+    const res = { statusCode: 200, setHeader() {}, end(value) { payload = JSON.parse(value); } };
+    await handler({ method: "POST", headers: authorized ? { "x-content-generation-secret": "natal-house-fixture" } : {}, body }, res);
+    return { status: res.statusCode, payload };
+  };
+  const selection = { planet: "mars", house: "12", overrides: [] };
+  for (const audience of ["you", "they"]) {
+    const response = await request({ ...selection, audience });
+    assert.equal(response.status, 200, JSON.stringify(response.payload));
+    assert.equal(response.payload.rendered.headline, "Mars in the 12th house");
+    assert.ok(response.payload.rendered.body.endsWith(audience === "you" ? liveHouse.sections.packageRecord.body_you : liveHouse.sections.packageRecord.body_they));
+    assert.deepEqual(response.payload.appliedOverrideKeys, [houseKey]);
+  }
+  const beforeDenied = storageCalls;
+  assert.equal((await request(selection, false)).status, 401);
+  assert.equal((await request({ planet: "mars", overrides: [] })).status, 400);
+  assert.equal(storageCalls, beforeDenied, "Invalid or unauthorized requests never reach storage.");
+  publicationState = "retired";
+  assert.equal((await request(selection)).status, 400, "Retired house sources remain blocked.");
+  storageAvailable = false;
+  assert.equal((await request(selection)).status, 503, "Unavailable publication state cannot serve an unverified house preview.");
+} finally {
+  globalThis.fetch = previousFetch;
+  for (const [key, value] of Object.entries(previousEnvironment)) value === undefined ? delete process.env[key] : process.env[key] = value;
+}
+
+for (const ownerName of ["Robin", "Avery"]) {
+  const input = normalizeNatalPlacementPreviewInput({ audience: "they", ownerName: ` ${ownerName} `, house: "", overrides: [], planet: "saturn", sign: "aries" });
+  assert.equal(input.ownerName, ownerName);
+  const rendered = renderNatalPlacementPreview(input);
+  assert.equal(rendered.parts.length, 1, "All-houses scope never fabricates a house paragraph");
+  assert.match(rendered.body, new RegExp(ownerName, "u"));
+  assert.doesNotMatch(rendered.body, /Maya|\{\{/u);
+}
+for (const ownerName of [123, "x".repeat(101)]) assert.throws(() => normalizeNatalPlacementPreviewInput({ audience: "they", ownerName, overrides: [], planet: "saturn", sign: "aries" }), /preview name/u);
+assert.equal(normalizeNatalPlacementPreviewInput({ audience: "they", overrides: [], planet: "saturn", sign: "aries" }).ownerName, "Maya");
 
 const fullInput = normalizeNatalPlacementPreviewInput({
   audience: "you",
@@ -39,12 +136,12 @@ const retrogradeInput = normalizeNatalPlacementPreviewInput({
 });
 assert.equal(retrogradeInput.motion, "retrograde");
 const retrogradePlacement = renderNatalPlacementPreview(retrogradeInput);
-assert.match(
+assert.doesNotMatch(
   retrogradePlacement.body,
   /retrograde in the birth chart/u,
-  "A retrograde preview must render the motion-specific passage."
+  "A missing planet-and-house modifier must not render the shared sentence."
 );
-assert.equal(retrogradePlacement.parts.length, 2, "The retrograde modifier is appended to the relevant sign or house paragraph.");
+assert.equal(retrogradePlacement.parts.length, 2, "The base sign and house paragraphs remain available without a published modifier.");
 
 const jupiterLeoRetrograde = renderNatalPlacementPreview(normalizeNatalPlacementPreviewInput({
   audience: "you",
@@ -57,7 +154,7 @@ const jupiterLeoRetrograde = renderNatalPlacementPreview(normalizeNatalPlacement
 assert.match(jupiterLeoRetrograde.body, /Jupiter is where you grow/u);
 assert.match(jupiterLeoRetrograde.body, /Warmth spills out of you/u);
 assert.match(jupiterLeoRetrograde.body, /Your Jupiter is in your 3rd house/u);
-assert.match(jupiterLeoRetrograde.body, /Jupiter is retrograde in the birth chart/u);
+assert.doesNotMatch(jupiterLeoRetrograde.body, /Jupiter is retrograde in the birth chart/u);
 assert.doesNotMatch(
   jupiterLeoRetrograde.body,
   /Leo wants people to see how much care went into the effort/u,

@@ -111,6 +111,7 @@ Load the surface-specific workflow before drafting:
 
 - [Personal Transit](../tldr-astro-personal-transit/SKILL.md)
 - [Sky Placement](../tldr-astro-sky-placement/SKILL.md)
+- [Sky and Calendar planetary aspects](../../docs/writing/SKY_CALENDAR_ASPECT_STANDARD.md): collective sky-to-sky interpretations only; preserve the shared factual, source and approval boundaries.
 - Calendar
 - Weekly
 - Seasonal

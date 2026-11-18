@@ -1,0 +1,38 @@
+import assert from 'node:assert/strict';
+import {natalSectArticleParts,natalSectRoles} from '../apps/web/src/content/natalSectArticle';
+import {natalSectRoute,natalSectHref} from '../apps/web/src/services/natalSectRoute';
+import {friendsRouteStateFromHref,friendsTabHref,isFriendsHref} from '../apps/web/src/features/friends/friendsRouting';
+import {youTabFromHref} from '../apps/web/src/features/you/youRouting';
+import {natalReadingRoute} from '../apps/web/src/services/natalReadingPath';
+import {natalReadingHref} from '../apps/web/src/services/natalReadingRoute';
+const normalize=(s:string)=>s.replace(/\s+/gu,' ').trim();
+for(const sect of ['day','night'] as const){
+ const roles=natalSectRoles(sect),[light,benefic,malefic,contrary]=roles;
+ const body=`The ${light.planet} establishes this ${sect} chart. ${benefic.planet} is favored here. This complete ${benefic.planet} paragraph stays in the reader.\n\n${malefic.planet} paragraph remains exactly as saved.\n\n${contrary.planet} paragraph remains too.\n\nThis paragraph repeats.\n\nThis paragraph repeats.\n\nThe final saved ending remains.`;
+ const parts=natalSectArticleParts(body,sect);
+ assert.equal(normalize([parts.lead,...parts.sections.map(x=>x.body)].join('\n\n')),normalize(body));
+ assert.deepEqual(parts.sections.slice(0,3).map(x=>x.fact?.planet),roles.slice(1).map(x=>x.planet));
+ assert.equal(parts.sections.filter(x=>x.body==='This paragraph repeats.').length,2);
+ assert.equal(natalSectArticleParts('Jupiter and Saturn both appear here.\n\nSaturn and Mars both appear here.',sect).sections[0].fact,undefined);
+}
+assert.equal(natalSectRoute('/you/natal/sect')?.audience,'you');
+assert.equal(natalSectRoute('/friends/social%3Asynthetic/natal/sect')?.chartId,'social:synthetic');
+assert.equal(natalSectRoute('/friends/%ZZ/natal/sect'),null);
+assert.equal(natalSectRoute('/you/natal/sects'),null);
+assert.equal(natalSectHref('social:synthetic'),'/friends/social%3Asynthetic/natal/sect');
+assert.equal(youTabFromHref('https://reader.test/you/natal/sect'),'chart');
+assert.deepEqual(friendsRouteStateFromHref('https://reader.test/friends/test-chart/natal/sect'),{tab:'charts',chartId:'test-chart',view:'natal',detail:null});
+assert.equal(isFriendsHref('https://reader.test/friends/test-chart/natal/sect'),true);
+assert.equal(new URL(friendsTabHref('https://reader.test/friends/test-chart/natal/sect','feed')).pathname,'/friends');
+assert.equal(natalSectRoute('/you/natal/twelfth-ruler'),null);
+assert.equal(natalReadingRoute('/you/natal/twelfth-ruler')?.kind,'twelfth-ruler');
+assert.equal(natalReadingRoute('/friends/%ZZ/natal/twelfth-ruler'),null);
+assert.equal(natalReadingHref('twelfth-ruler','social:synthetic'),'/friends/social%3Asynthetic/natal/twelfth-ruler');
+assert.equal(youTabFromHref('https://reader.test/you/natal/twelfth-ruler'),'chart');
+assert.deepEqual(friendsRouteStateFromHref('https://reader.test/friends/test-chart/natal/twelfth-ruler'),{tab:'charts',chartId:'test-chart',view:'natal',detail:null});
+assert.equal(isFriendsHref('https://reader.test/friends/test-chart/natal/twelfth-ruler'),true);
+assert.equal(new URL(friendsTabHref('https://reader.test/friends/test-chart/natal/twelfth-ruler','feed')).pathname,'/friends');
+console.log('Sect pages preserve complete source order and repetitions, classify unambiguous planet paragraphs, and route both audiences without changing natal facts.');
+const tagged=natalSectArticleParts('The exact CMS lead.','day',[{planet:'Saturn',body:'Saved Saturn body.'},{planet:'Jupiter',body:'Saved Jupiter body.'}]);
+assert.equal(tagged.lead,'The exact CMS lead.');assert.deepEqual(tagged.sections.map(x=>x.fact?.planet),['Saturn','Jupiter']);
+assert.deepEqual(tagged.sections.map(x=>x.body),['Saved Saturn body.','Saved Jupiter body.']);

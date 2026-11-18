@@ -4,7 +4,7 @@ type ArticleSectionWithHeading = {
 
 const aspectPoint = "sun|moon|mercury|venus|mars|jupiter|saturn|uranus|neptune|pluto|chiron|lilith|north node|south node|ascendant|descendant|midheaven|imum coeli";
 const personalAspectHeading = new RegExp(
-  `^(?:your )?(${aspectPoint}) (conjunct(?:ion)?|sextile|square|trine|opposit(?:e|ion)|quincunx|inconjunct) (?:your )?(${aspectPoint})$`,
+  `^(?:your )?(${aspectPoint})(?: in [a-z]+)? (conjunct(?:ion)?|sextile|square|trine|opposit(?:e|ion)|quincunx|inconjunct) (?:(?:your |natal )+)?(${aspectPoint})(?: in [a-z]+)?$`,
   "u"
 );
 const placementHeadingPrefix = new RegExp(`^(?:the )?(${aspectPoint})(?: (?:rx|retrograde))?(?= (?:in|through) )`, "u");

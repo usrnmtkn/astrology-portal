@@ -60,6 +60,15 @@ try{
   assert.equal(await capture(),'already_saved');assert.deepEqual(await read(),row,'Lost-ACK retry is idempotent');
   assert.equal(await capture({result:{id:operation.responseId,status:'failed'}}),'already_saved');assert.deepEqual(await read(),row,'A later failure cannot replace the completed result');
   await assert.rejects(capture({result:{id:'wrong'}}));assert.deepEqual(await read(),row);
+  // Shared Weekly stages use the same actual CAS RPC, independently of a sign.
+  const shared={version:'weekly-batch-editorial/v1',pending:{phase:'planning',requestHash:'shared-request',responseId:'resp_shared'},plan:null,review:null};
+  await save(row,horoscopeStorageChanges(row,{source_snapshot:{...row.source_snapshot,horoscopeGeneration:{...row.source_snapshot.horoscopeGeneration,weeklyEditorial:shared,weeklyEditorialHistory:[]}}}));row=await read();
+  assert.deepEqual(row.source_snapshot.horoscopeGeneration.weeklyEditorial,shared);
+  const beforeShared=row,sharedResult={phase:'planning',status:'passed',requestHash:'shared-request'};
+  await save(row,horoscopeStorageChanges(row,{source_snapshot:{...row.source_snapshot,horoscopeGeneration:{...row.source_snapshot.horoscopeGeneration,weeklyEditorial:{...shared,pending:null,plan:sharedResult},weeklyEditorialHistory:[{operation:shared.pending,result:sharedResult}]}}}));row=await read();
+  assert.equal(row.source_snapshot.horoscopeGeneration.weeklyEditorial.pending,null);
+  assert.deepEqual(row.source_snapshot.horoscopeGeneration.weeklyEditorialHistory,[{operation:shared.pending,result:sharedResult}]);
+  assert.deepEqual(await save(beforeShared,[{path:['source_snapshot','horoscopeGeneration','weeklyEditorial','review'],op:'set',value:{status:'passed'}}]),[],'A stale shared result cannot replace a newer checkpoint');
   const beforeCompletion=row;
   const nextSnapshot={...row.source_snapshot,horoscopeGeneration:{active:null,failures:[{reason:'synthetic retained failure'}]}};
   delete nextSnapshot.horoscopeStorageWriteId;

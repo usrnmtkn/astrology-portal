@@ -190,12 +190,12 @@ try {
   assert.match(
     appSource,
     /skyPlacementInSignAspectSections\(\s*timelineAspectEvents,\s*matchingAspectFacts\.timeZone,\s*generatedContent,\s*contentRegistryFor\("sky"\)\?\.approvedExactSkyAspectCopy\s*\)/u,
-    "Placement Gifts/Lessons must use the same windowed in-sign exact list as Key dates."
+    "Historical aspect sections retain their approved exact-copy lookup."
   );
-  assert.match(
+  assert.doesNotMatch(
     appSource,
     /placementResidencyContext:[\s\S]*?normalizeContentIdPart\(position\.planet\) === "sun"[\s\S]*?inSignAspectSections\.length === 0/u,
-    "Swiss residency rescan remains a Sun-only fallback when the in-sign exact list is empty."
+    "Current placement articles must not start a residency rescan when selected-day aspects are empty."
   );
 
   const ephemerisSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/services/ephemeris.ts"), "utf8");

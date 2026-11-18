@@ -83,7 +83,9 @@ export const ASTROLOGY_CALCULATION_CONTRACT: AstrologyCalculationProvenance = {
   // apogee (SE 13) per owner decision 2026-08-09. Cached v2 placements must not
   // be reused for Lilith-bearing facts.
   lilithType: "true",
-  calculationVersion: "tldrastro-calculation-v3"
+  // v4 invalidated earlier applying/separating flags and unverified aspect endpoints.
+  // v5 replaces cached node-distance eclipse labels with native shadow calculations.
+  calculationVersion: "tldrastro-calculation-v5"
 };
 
 export function astrologyCalculationProvenance(returnedEphemerisFlags: Iterable<number>): AstrologyCalculationProvenance {

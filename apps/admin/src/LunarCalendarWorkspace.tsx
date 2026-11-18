@@ -8,12 +8,13 @@ import { containedDisclosure, metricGrid } from "./studio-ds/recipes";
 import { Suspense, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import type { CompositionMapRow } from './compositionMap';
 import { dropSupersededPackageStarters } from './contentStudioState';
+import { isPendingPackageRevision } from './generatedContentClient';
 import { lunarContentIdentity, lunarSigns, lunarWorkspaceFamilyOrder, lunarWorkspaceJobs, lunarWorkspaceSelectionFromQuery } from './lunarCalendarContent';
 import { PageLoading } from '../../../src/shared/components/PageLoading';
 const MoonTransitionPhraseWorkspace = lazy(() => import("./MoonTransitionPhraseWorkspace"));
 import SeasonTransitionWorkspace from './SeasonTransitionWorkspace';
 const CompositionMapWorkspace = lazy(() => import('./CompositionMapWorkspace'));
-export type Row = CompositionMapRow & { inventory_only?: boolean; facts?: Record<string, unknown> | null };
+export type Row = CompositionMapRow & { event_type?: string | null; facts?: Record<string, unknown> | null };
 const savedBody = (row: Row) => {
   const draft = (row.sections as { packageDraft?: { body?: unknown } } | null)?.packageDraft;
   return typeof draft?.body === 'string' ? draft.body : row.body ?? '';
@@ -73,8 +74,13 @@ function LunarPassageWorkspace({ scope, rows, editor, query, createRequest = 0, 
     ...lunarWorkspaceFamilyOrder.filter(value => discoveredFamilies.includes(value) && (job === 'all' || entries.some(entry => entry.identity.family === value && entry.identity.job === job))),
     ...discoveredFamilies.filter(value => !lunarWorkspaceFamilyOrder.includes(value) && (job === 'all' || entries.some(entry => entry.identity.family === value && entry.identity.job === job)))
   ];
+  const pendingKeys = new Set(entries.filter(({ row }) => isPendingPackageRevision(row)).map(({ row }) => row.content_key));
   const filtered = entries.filter(({ row, identity }) => {
     const archived = isArchived(row);
+    if (status === 'active' || status === 'all') {
+      if (row.status === 'LIVE' && pendingKeys.has(row.content_key)) return false;
+      if (row.event_type === 'studio-package-source-draft' && row.review_state === 'published-revision') return false;
+    }
     const haystack = `${identity.title} ${identity.family} ${identity.job} ${row.content_key} ${savedBody(row)}`.toLowerCase();
     return (job === 'all' || identity.job === job)
       && (family === 'all' || identity.family === family) && (sign === 'all' || identity.sign === sign)
@@ -83,8 +89,7 @@ function LunarPassageWorkspace({ scope, rows, editor, query, createRequest = 0, 
   }).sort((a, b) => a.identity.job.localeCompare(b.identity.job) || a.identity.family.localeCompare(b.identity.family) || lunarSigns.indexOf(a.identity.sign) - lunarSigns.indexOf(b.identity.sign) || a.identity.variant - b.identity.variant);
   const selected = filtered.find(entry => entry.row.content_key === selectedKey) ?? filtered[0];
   const selectedRow = selected?.row;
-  const existingForSign = entries.filter(({ row, identity }) => row.content_key.startsWith('authored/calendar-weekly-moon/') && identity.sign === newSign);
-  const usedVariants = new Set(existingForSign.map(({ identity }) => identity.variant));
+  const usedVariants = new Set(entries.filter(({ row, identity }) => row.content_key.startsWith('authored/calendar-weekly-moon/') && identity.sign === newSign).map(({ identity }) => identity.variant));
   const availableVariant = [1, 2, 3, 4].find(value => !usedVariants.has(value) && !(newSign === 'cancer' && value === 1));
   useEffect(() => {
     setError('');
@@ -106,13 +111,13 @@ function LunarPassageWorkspace({ scope, rows, editor, query, createRequest = 0, 
     {adding && <section className="admin-panel" aria-label="Add leftover write-up">
       <header className="admin-composition-detail-header"><Stack gap="sm"><h2>Add leftover write-up</h2><Text size="body" tone="secondary">Create a leftover Moon-sign passage for Calendar Day and Week. Lunation articles and event readings are separate families.</Text></Stack><StudioButton onClick={() => setAdding(false)}>Cancel</StudioButton></header>
       <div className="admin-review-filter-grid"><label><span>Moon sign for the new write-up</span><AdminSelect autoFocus aria-label="Moon sign for the new write-up" value={newSign} onChange={event => setNewSign(event.target.value)}><option value="">Choose a Moon sign</option>{lunarSigns.map(value => <option key={value} value={value}>{value[0].toUpperCase() + value.slice(1)}</option>)}</AdminSelect></label></div>
-      {isLoading ? <PageLoading compact message="Loading saved write-ups…" /> : <p role="status">{!newSign ? 'Choose the sign before starting a draft.' : !availableVariant ? 'All available alternatives already exist for this sign. Edit or restore a saved write-up.' : existingForSign.length ? `${existingForSign.length} saved write-ups. This creates a separate alternative; your existing writing stays in place.` : 'No saved write-ups for this sign. Start its first draft.'}</p>}
+      {isLoading ? <PageLoading compact message="Loading saved write-ups…" /> : <p role="status">{!newSign ? 'Choose the sign before starting a draft.' : !availableVariant ? 'All available alternatives already exist for this sign. Edit or restore a saved write-up.' : usedVariants.size ? `${usedVariants.size} saved write-ups. This creates a separate alternative; your existing writing stays in place.` : 'No saved write-ups for this sign. Start its first draft.'}</p>}
       <div className="admin-new-actions"><StudioButton className="admin-primary-button" disabled={!newSign || !availableVariant || isLoading} onClick={() => {
         setSign(newSign); setJob('Day and Week Moon story'); setFamily('Moon-sign leftover'); setStatus('active'); onQuery('');
         setSelectedKey(`authored/calendar-weekly-moon/${newSign}${availableVariant === 1 ? '' : `/variant-${availableVariant}`}`);
         onCreate(newSign); setAdding(false);
       }}>Start draft</StudioButton>
-      {newSign && existingForSign.length > 0 && <StudioButton onClick={() => { setSign(newSign); setJob('Day and Week Moon story'); setFamily('Moon-sign leftover'); setStatus('all'); onQuery(''); setAdding(false); }}>View saved write-ups</StudioButton>}</div>
+      {newSign && usedVariants.size > 0 && <StudioButton onClick={() => { setSign(newSign); setJob('Day and Week Moon story'); setFamily('Moon-sign leftover'); setStatus('all'); onQuery(''); setAdding(false); }}>View saved write-ups</StudioButton>}</div>
       <p className="admin-field-hint">Opening a draft does not save or publish it. Save draft keeps unfinished work for later; Save &amp; publish makes it available for Calendar selection.</p>
     </section>}
     <div className="admin-review-filter-grid studio-surface">

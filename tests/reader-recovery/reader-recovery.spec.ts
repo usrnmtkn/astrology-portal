@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import { readerResponse } from '../helpers/reader-response';
-import { getAstrodienstSky, natalDailyTransitPeaksFor } from "../../apps/web/src/services/ephemeris";
+import { getAstrodienstSky, getLunarCalendarDayEvents, natalDailyTransitPeaksFor } from "../../apps/web/src/services/ephemeris";
 import { natalSkySnapshotCacheKey, skySnapshotCacheKey, VERIFIED_SKY_CACHE_SCHEMA } from "../../apps/web/src/services/verifiedSkyCache";
 
 const location = { label: "New York, NY", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" };
@@ -77,50 +77,29 @@ for (const session of ["missing", "rejected"] as const) for (const theme of ["li
     await prepare(page, { session });
     await page.addInitScript(theme => localStorage.setItem("tldrastro:theme", theme), theme);
     await page.goto("/?date=2026-11-27#friends?tab=circle");
-    const notice = page.getByRole("alert");
+    const notice = page.locator(".friends-signin-card");
     await expect(notice.getByRole("heading", { name: "Sign in to see your friends" })).toBeVisible();
     await expect(notice.getByRole("button", { name: "Try again" })).toHaveCount(0);
-    await expect(page.locator("h1, h2")).toHaveText(["friends.", "Sign in to see your friends"]);
-    // Compare the new notice with the established connection-error treatment.
-    const referenceContext = session === "missing"
-      ? await page.context().browser()!.newContext({ baseURL: new URL(page.url()).origin })
-      : null;
-    const reference = await referenceContext?.newPage();
-    if (reference) {
-      await prepare(reference, { circleFailure: true });
-      await reference.addInitScript(theme => localStorage.setItem("tldrastro:theme", theme), theme);
-      await reference.goto("/?date=2026-11-27#friends?tab=circle");
-      await expect(reference.getByRole("alert").getByRole("heading", { name: "Friends could not load." })).toBeVisible();
-    }
+    await expect(page.locator("h1, h2")).toHaveText(["Friends", "Sign in to see your friends"]);
     for (const width of [1440, 390]) {
       await page.setViewportSize({ width, height: 900 });
-      await expect(notice.getByRole("button", { name: "Sign in", exact: true })).toBeVisible();
+      await expect(notice.getByRole("button", { name: "Log in", exact: true })).toBeVisible();
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-      if (reference) {
-        await reference.setViewportSize({ width, height: 900 });
-        const headingStyle = async (target: Page) => {
-          await target.evaluate(() => document.fonts.ready.then(() => undefined));
-          return target.getByRole("alert").getByRole("heading").evaluate(element => {
-            const style = getComputedStyle(element);
-            return [style.fontFamily, style.fontSize, style.fontWeight, style.lineHeight, style.letterSpacing, style.margin, style.textTransform, style.textAlign];
-          });
-        };
-        expect(await headingStyle(page)).toEqual(await headingStyle(reference));
-      }
+      const heading = notice.getByRole("heading");
+      await expect(heading).toHaveCSS("font-family", /Newsreader/);
+      await expect(heading).toHaveCSS("font-size", "26px");
+      await expect(heading).toHaveCSS("font-weight", "400");
       await page.screenshot({ path: `test-results/reader-recovery/friends-sign-in-${session}-${theme}-${width}.png` });
     }
-    await referenceContext?.close();
-    await page.getByRole("tab", { name: /Charts/ }).click();
-    await expect(page.getByRole("button", { name: "Add a chart", exact: true }).first()).toBeVisible();
-    await page.getByRole("tab", { name: /Circle/ }).click();
-    await notice.getByRole("button", { name: "Sign in", exact: true }).click();
+    await expect(page.getByRole("tablist", {name:"Friends views",exact:true})).toHaveCount(0);
+    await notice.getByRole("button", {name:"Log in",exact:true}).click();
     await expect(page.getByRole("region", { name: "Log in", exact: true })).toBeVisible();
     await expect(page.getByLabel("Email", { exact: true })).toBeVisible();
     // Opening sign-in must not destroy the saved natal chart or local profile.
     expect(await page.evaluate(() => JSON.parse(localStorage.getItem("tldrastro:userProfile")!).charts[0].id)).toBe("reader-chart");
     await page.getByLabel("Email", { exact: true }).fill(user.email);
     await page.getByLabel("Password", { exact: true }).fill("qa-only-password");
-    await page.getByRole("button", { name: "Log in →", exact: true }).click();
+    await page.getByRole("dialog").getByRole("button", { name: "Log in", exact: true }).click();
     await expect(page.getByText("QA Friend", { exact: true })).toBeVisible();
     expect(new URL(page.url()).hash).toContain("friends");
     expect(await page.evaluate(() => JSON.parse(localStorage.getItem("tldrastro:userProfile")!).charts[0].id)).toBe("reader-chart");
@@ -130,7 +109,7 @@ for (const session of ["missing", "rejected"] as const) for (const theme of ["li
 test("an Auth outage remains retryable and is not presented as a missing session", async ({ page }) => {
   await prepare(page, { session: "unavailable" });
   await page.goto("/?date=2026-11-27#friends?tab=circle");
-  await expect(page.getByRole("alert").getByRole("button", { name: "Try again" })).toBeVisible({ timeout: 25_000 });
+  await expect(page.locator(".load-error").getByRole("button", { name: "Try again" })).toBeVisible({ timeout: 25_000 });
   await expect(page.getByRole("heading", { name: "Sign in to see your friends" })).toHaveCount(0);
 });
 
@@ -138,7 +117,7 @@ for (const recoveryEvent of ["focus", "online"]) {
   test(`Friends recovers on ${recoveryEvent} after the database returns`, async ({ page }) => {
     const state = await prepare(page, { circleFailure: true });
     await page.goto("/?date=2026-11-27#friends?tab=circle");
-    await expect(page.getByText("Friends could not load.", { exact: true })).toBeVisible();
+    await expect(page.getByRole("alert").filter({hasText:"Your friends could not load."})).toBeVisible();
     state.circleFailure = false;
     await page.evaluate(event => window.dispatchEvent(new Event(event)), recoveryEvent);
     await expect(page.getByText("QA Friend", { exact: true })).toBeVisible();
@@ -153,6 +132,7 @@ test("You keeps calculated planet and house transits visible while saved content
   const houses = page.getByLabel("House transits", { exact: true });
   await expect(houses).toBeVisible({ timeout: 45_000 });
   await expect(houses.getByText(/Saturn through your/)).toBeVisible();
+  await page.getByRole("region",{name:"Planets moving through your houses",exact:true}).getByRole("button",{name:"See all 14",exact:true}).click();
   await expect(houses.getByText(/Jupiter through your/)).toBeVisible();
   await expect(houses.locator(".updates-aspect-row")).toHaveCount(14);
   await expect(page.getByText(/No major updates are active/)).toHaveCount(0);
@@ -162,7 +142,7 @@ test("You keeps calculated planet and house transits visible while saved content
   for (const row of await staticRows.all()) {
     await expect(row).not.toHaveAttribute("role", "button");
   }
-  await expect(page.locator("button.updates-aspect-row .updates-aspect-row__description").first()).toBeVisible();
+  await expect(page.locator(".updates-aspect-row:is(a,button) .updates-aspect-row__description").first()).toBeVisible();
   await page.screenshot({ path: "test-results/reader-recovery/you-transits-desktop.png", fullPage: true });
   await page.setViewportSize({ width: 390, height: 844 });
   await houses.scrollIntoViewIfNeeded();
@@ -172,17 +152,21 @@ test("You keeps calculated planet and house transits visible while saved content
 
 test("Calendar honors the shared date and finishes skeletons on a stalled content request", async ({ page }) => {
   const state = await prepare(page, { slowContent: true });
-  const date = "2026-11-27";
-  // Synthetic station facts test loading without publishing any interpretation.
-  const event = { id: "qa-station", type: "station", glyph: "⚸", planet: "Lilith", sign: "Capricorn", direction: "retrograde", primary: true, title: "Lilith stations retrograde in Capricorn", startsAt: `${date}T12:00:00Z`, dateKey: date };
+  const date = "2026-01-26";
+  // A dated reader reconstructs its native event. Use a genuine station while
+  // keeping every remote interpretation request withheld until teardown.
+  const events = await getLunarCalendarDayEvents(location, new Date(`${date}T12:00:00Z`));
+  const station = events.find(event => event.type === "station" && event.planet === "Lilith" && event.direction === "retrograde");
+  expect(station).toBeTruthy();
+  const event = { ...station!, id: "qa-station", primary: true };
   const ingress = { ...event, id: "qa-ingress", type: "ingress", planet: "Venus", sign: "Scorpio", toSign: "Scorpio", direction: undefined, title: "Venus enters Scorpio", startsAt: `${date}T13:00:00Z` };
-  const moon = { id: "qa-lunation", type: "lunation", title: "New Moon", sign: "Sagittarius", startsAt: "2026-11-29T12:00:00Z", dateKey: "2026-11-29" };
+  const moon = { id: "qa-lunation", type: "lunation", title: "New Moon", sign: "Sagittarius", startsAt: "2026-01-28T12:00:00Z", dateKey: "2026-01-28" };
   await page.route("**/api/calendar?**", route => route.fulfill({ json: { ok: true, calendar: {
-    month: "2026-11", timeZone: location.timeZone, location,
-    days: Array.from({ length: 7 }, (_, i) => { const key = `2026-11-${23+i}`; return { date: `${key}T12:00:00Z`, dateKey: key, inMonth: true, moonSign: "Leo", moonSignGlyph: "♌", moonPhase: "Waning Gibbous", illumination: 70, phaseAngle: 240, activeAspects: [], events: key === date ? [event, ingress] : key === "2026-11-28" ? [{ ...event, id: "qa-station-boundary-repeat" }] : [] }; }), events: [event, ingress, moon]
+    month: "2026-01", timeZone: location.timeZone, location,
+    days: Array.from({ length: 7 }, (_, i) => { const key = new Date(Date.UTC(2026, 0, 26 + i)).toISOString().slice(0, 10); return { date: `${key}T12:00:00Z`, dateKey: key, inMonth: true, moonSign: "Leo", moonSignGlyph: "♌", moonPhase: "Waning Gibbous", illumination: 70, phaseAngle: 240, activeAspects: [], events: key === date ? [event, ingress] : key === "2026-01-27" ? [{ ...event, id: "qa-station-boundary-repeat" }] : [] }; }), events: [event, ingress, moon]
   } } }));
   await page.goto(`/?date=${date}#calendar?view=day`);
-  await expect(page.getByLabel("Selected lunar day")).toContainText(/Fri.*November 27/, { timeout: 30_000 });
+  await expect(page.getByLabel("Selected lunar day")).toContainText(/Mon.*January 26/, { timeout: 30_000 });
   await expect.poll(() => state.contentRequests).toBeGreaterThan(0);
   // Installing the offline publication snapshot may revalidate the targeted
   // content after its first eight-second deadline. The complete reading must
@@ -193,31 +177,38 @@ test("Calendar honors the shared date and finishes skeletons on a stalled conten
   const card = page.locator(".calendar-stoic-card").filter({ hasText: event.title });
   await expect(card).toBeVisible();
   await card.click();
-  const reading = page.getByRole("dialog").filter({ hasText: event.title });
+  await expect(page).toHaveURL(url => url.hash === `#sky/event/station/lilith/station-retrograde/at/${encodeURIComponent(event.startsAt)}`);
+  const reading = page.locator(".sky-detail-article");
   await expect(reading).toBeVisible();
+  await expect(page.getByRole("dialog", { name: "Event detail", exact: true })).toHaveCount(0);
   await expect(reading.getByLabel("Loading interpretation")).toHaveCount(0);
   await expect(reading).toContainText("Black Moon Lilith stations, and a preference, refusal, or old point of anger");
   await expect(reading).toContainText("It is to stop pretending the preference does not exist.");
+  const paragraphs = reading.locator(".article-body-inner").first().locator("p");
+  const body = await paragraphs.allTextContents();
+  await page.reload();
+  await expect(paragraphs).toHaveText(body, { timeout: 25_000 });
+  expect(state.contentResponses).toBe(0);
   await expect(page.locator(".lunar-milestones")).toHaveCount(0);
   await page.screenshot({ path: "test-results/reader-recovery/calendar-finished.png", fullPage: true });
-  await reading.getByRole("button", { name: "Close", exact: true }).click();
-  await page.locator(".lunar-week-day[data-calendar-date='2026-11-28']").click();
-  expect(`${page.url()}`).toMatch(/2026-11-28/);
+  await page.getByRole("button", { name: "Close detail", exact: true }).click();
+  await page.locator(".lunar-week-day[data-calendar-date='2026-01-27']").click();
+  expect(`${page.url()}`).toMatch(/2026-01-27/);
   await expect(page.locator(".lunar-milestones")).toHaveCount(0);
   await page.getByRole("tab", { name: "Month", exact: true }).click();
-  await expect(page.locator(".lunar-calendar-day[data-calendar-date='2026-11-27']")).toBeVisible();
-  await page.getByRole("navigation", { name: "Primary navigation" }).getByRole("button", { name: "You", exact: true }).click();
-  await expect(page.getByRole("button", { name: /Nov 28/ })).toBeVisible();
+  await expect(page.locator(".lunar-calendar-day[data-calendar-date='2026-01-26']")).toBeVisible();
+  await page.getByRole("button", { name: "Your profile", exact: true }).click();
+  await expect(page.getByRole("button", { name: /Jan 27/ })).toBeVisible();
 });
 
 
-for (const mode of ["create", "login", "incomplete-birth-time"] as const) test(`Google authentication starts without birth details (${mode})`, async ({ page }) => {
+for (const mode of ["create", "login", "birth-details-later"] as const) test(`Google authentication starts without birth details (${mode})`, async ({ page }) => {
   await prepare(page, { session: "missing" });
   await page.addInitScript(() => localStorage.removeItem("tldrastro:userProfile"));
   await page.route("**/auth/v1/authorize?**", route => route.fulfill({ contentType: "text/html", body: "<p>OAuth provider reached</p>" }));
   await page.goto(mode === "login" ? "/?auth=login#you" : "/#you");
-  await expect(page.getByRole("region", { name: mode === "login" ? "Log in" : "Create account", exact: true })).toBeVisible();
-  if (mode === "incomplete-birth-time") await page.getByRole("textbox", { name: "Birth hour", exact: true }).fill("25");
+  await expect(page.getByRole("region", { name: mode === "login" ? "Log in" : "Create an account", exact: true })).toBeVisible();
+  if (mode === "birth-details-later") await expect(page.getByRole("textbox", { name: "Birth hour", exact: true })).toHaveCount(0);
   await page.getByRole("button", { name: "Continue with Google" }).click();
   await expect(page.getByText("OAuth provider reached")).toBeVisible({ timeout: 10_000 });
   expect(new URL(page.url()).searchParams.get("provider")).toBe("google");
@@ -262,5 +253,6 @@ test("Google from Create profile restores an existing account and its Friends", 
   await expect(page.getByRole("heading", { name: "Reader QA", exact: true })).toBeVisible({ timeout: 20_000 });
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem("tldrastro:userProfile")!).charts[0].id)).toBe("reader-chart");
   await page.getByRole("button", { name: "Friends", exact: true }).click();
+  await page.getByRole("tab", {name:/^Circle(?:\s|$)/}).click();
   await expect(page.getByText("QA Friend", { exact: true })).toBeVisible();
 });

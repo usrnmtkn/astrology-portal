@@ -1,10 +1,14 @@
 import {transitWritingBodies} from "../transitWritingIdentity.js";
+import { isLunationHoroscopeKey } from "../../../../../src/shared/lunationHoroscopeIdentity.js";
+import { isLunationEclipseSectionKey, isStudioLunationRevision } from '../lunationStudioRevision.js';
 import { isDynamicBondEffectExactRecord } from '../bondEffectIdentity.js';
 export { isDynamicBondEffectExactRecord } from '../bondEffectIdentity.js';
 import { isZodiacSeasonSourceKey } from "./resolver/zodiacSeasonVariables.mjs";
+import { isNatalRetrogradeModifierKey, natalRetrogradeBodies } from '../natalRetrogradeModifier.js';
 import skyReaderRelease from "./authored-inputs/sky-v4-reader-copy-280-serving-release-v1.json" with { type: "json" };
 import skyReaderApproval from "./authored-inputs/sky-v4-reader-copy-280-owner-approval-v1.json" with { type: "json" };
 import { isDynamicTransitNatalExactKey, isDynamicTransitNatalLibraryKey } from "../transitNatalIdentity.js";
+import { SKY_PLACEMENT_ASPECT_BRIDGE_POLICY, skyPlacementAspectBridgeIdentity } from '../skyPlacementAspectBridge.js';
 export { isDynamicTransitNatalExactKey } from "../transitNatalIdentity.js";
 
 const canonicalKeys = new Set<string>(skyReaderRelease.serving_enabled ? skyReaderApproval.approved_keys : []);
@@ -14,20 +18,7 @@ export function isCanonicalSkyReaderRecord(record: { contentKey: string; source_
     && record.serving_enabled === true && record.owner_approved === true;
 }
 
-const retrogradeCapableNatalBodies = new Set([
-  "mercury",
-  "venus",
-  "mars",
-  "jupiter",
-  "saturn",
-  "uranus",
-  "neptune",
-  "pluto",
-  "chiron",
-  "lilith",
-  "north-node",
-  "south-node"
-]);
+const retrogradeCapableNatalBodies = new Set(natalRetrogradeBodies);
 
 const natalBodies = new Set<string>(transitWritingBodies);
 
@@ -67,7 +58,7 @@ export function isDynamicNatalPlacementExactKey(contentKey: string) {
 }
 
 export function isDynamicNatalPlacementExactRecord(record: FallbackDashboardExtensionRecord) {
-  return isDynamicNatalPlacementExactKey(record.contentKey)
+  return (isDynamicNatalPlacementExactKey(record.contentKey) || isNatalRetrogradeModifierKey(record.contentKey))
     && record.content_role === "full_copy"
     && record.reader_only === true
     && record.render_policy === "reader-only-exact-lived-v1";
@@ -133,6 +124,10 @@ export function isFallbackDashboardRecordAllowed(
   currentPackageKeys: ReadonlySet<string>
 ) {
   return (isZodiacSeasonSourceKey(record.contentKey) && record.content_role === "fallback_hook")
+    || (isLunationHoroscopeKey(record.contentKey) && record.content_role === 'full_copy')
+    || (isLunationEclipseSectionKey(record.contentKey) && isStudioLunationRevision(record))
+    || (Boolean(skyPlacementAspectBridgeIdentity(record.contentKey)) && record.content_role === 'fallback_hook'
+      && record.render_policy === SKY_PLACEMENT_ASPECT_BRIDGE_POLICY)
     || currentPackageKeys.has(record.contentKey)
     || isDynamicNatalPlacementExactRecord(record)
     || isDynamicNatalAspectExactRecord(record)

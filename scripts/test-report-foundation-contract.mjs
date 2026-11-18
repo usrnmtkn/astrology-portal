@@ -13,7 +13,10 @@ const [
   generatedContent,
   styles,
   reportRoute,
-  reportFixtureEntry
+  reportFixtureEntry,
+  reportArticle,
+  keyDatesPanel,
+  articlePanelStyles
 ] = await Promise.all([
   read("apps/web/supabase/migrations/20260808120000_report_mode_year_ahead_surface.sql"),
   read("apps/web/supabase/migrations/20260808121000_user_reports.sql"),
@@ -24,7 +27,10 @@ const [
   read("apps/web/src/services/generatedContent.ts"),
   read("apps/web/src/styles.css"),
   read("apps/web/src/routes/ReportRoute.tsx"),
-  read("apps/web/src/components/reports/ReportArticleFixtureEntry.tsx")
+  read("apps/web/src/components/reports/ReportArticleFixtureEntry.tsx"),
+  read("apps/web/src/components/reports/ReportArticle.tsx"),
+  read("apps/web/src/components/KeyDatesPanel.tsx"),
+  read("apps/web/src/styles/article-panels.css")
 ]);
 
 for (const table of ["generated_interpretations", "user_generated_interpretations"]) {
@@ -74,7 +80,19 @@ assert.match(contentGeneration, /type ContentMode = "feed" \| "in_depth" \| "art
 assert.match(contentGeneration, /type Surface = .*\| "year_ahead";/u);
 assert.match(generatedContent, /GeneratedContentMode = "feed" \| "in_depth" \| "article" \| "report";/u);
 assert.doesNotMatch(styles, /\.\/styles\/report-article\.css/u);
-assert.match(reportRoute, /\.\.\/styles\/report-article\.css/u);
-assert.match(reportFixtureEntry, /\.\.\/\.\.\/styles\/report-article\.css/u);
+assert.doesNotMatch(styles, /article-panels\.css/u);
+for (const entry of ["ReportDeliveryView", "ReportVanityDeliveryView"]) {
+  assert.match(reportRoute, new RegExp(`const ${entry} = lazy\\(\\(\\) =>\\s*import\\("\\.\\./components/reports/${entry}"\\)`, "u"),
+    `${entry} must remain deferred behind the report route.`);
+}
+assert.match(reportFixtureEntry, /import \{ ReportArticleFixtureHarness \} from "\.\/ReportArticleFixtureHarness";/u);
+for (const entry of ["ReportDeliveryView", "ReportVanityDeliveryView", "ReportArticleFixtureHarness"]) {
+  const consumer = await read(`apps/web/src/components/reports/${entry}.tsx`);
+  assert.match(consumer, /import \{ ReportArticle\b[^}]*\} from "\.\/ReportArticle";/u,
+    `${entry} must retain the shared renderer and its deferred stylesheet dependency.`);
+}
+assert.match(reportArticle, /import \{ KeyDatesPanel \} from "\.\.\/KeyDatesPanel";/u);
+assert.match(keyDatesPanel, /import "\.\.\/styles\/article-panels\.css";/u);
+assert.match(articlePanelStyles, /@import url\("\.\/report-article\.css"\);/u);
 
 console.log("report foundation migration, subject-type, provider, runtime-type, and style contracts passed");

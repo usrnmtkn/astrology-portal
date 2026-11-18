@@ -59,6 +59,18 @@ before git operations. Never run `git stash`, `git clean`,
 `git checkout -- .`, or `git reset --hard`. Do not discard unrelated changes
 or commit without the owner's request.
 
+## Validation scope and reuse
+
+- Default to targeted checks for the changed behavior and its affected consumers.
+- Reuse valid passing results when the relevant source, dependencies,
+  configuration and test environment are unchanged and the required revision
+  and merge gates permit reuse. Record the tested revision and scope. After a
+  failure, rerun the affected check and dependent gates, retaining other valid
+  passing evidence.
+- Run full CI only when explicitly requested or required by the affected test
+  plan or a mandatory release gate. Identify that requirement before starting
+  a full run.
+
 ## Feature acceptance before completion claims
 
 Before calling a feature done or ready for review, derive concrete acceptance
@@ -423,12 +435,13 @@ See [date consistency QA](docs/qa/app-event-date-consistency.md) and
 
 ### Content Studio API verification on every repository update
 
-Before merging any repository update, run `npm run test:content-studio-api`
-from the current isolated checkout with its own `npm ci` dependencies. Its npm
-prerequisite builds the local knowledge package. The unfiltered
-`Content Studio API contract` workflow must pass on the exact PR head; do not
-skip it because a change appears unrelated to the API. Reader, package and
-dependency changes can also break CRUD.
+Before merging, run the affected API contracts and browser flows from the current
+isolated checkout with its own `npm ci` dependencies. Follow the
+[affected CI runbook](docs/qa/affected-ci.md) for selection, prerequisites and
+revision-bound evidence. Require `content-studio-api`, `browser-release-gate`
+and `project-privacy` on the current candidate. The owner changed routine
+validation to affected tests on 2026-11-12; the complete API command remains a
+manual audit, and shared changes may legitimately affect its complete selection.
 
 For changes to API/editor/publication behavior, add a regression against the
 actual handler and run the affected browser flow from a fresh build. Preserve

@@ -301,3 +301,16 @@ output contracts. The private body check covers the same primary selection and
 revalidation. These tests establish request behavior, not improved prose. No paid
 call, automatic rewrite, Studio save or publication is part of this code repair.
 Release and raw-output literary acceptance remain separate verification steps.
+# Deployment readiness verification, 2026-11-18
+
+`GET /api/admin/synastry-writer-status` uses existing Content Studio owner
+authorization. It verifies the four designated natal benchmarks, all 28 complete
+protected supporting readings, the 20 repaired directional meaning records,
+current feedback availability and provider configuration. It returns the deployed
+Git revision, editorial version and counts, without source paragraphs, private
+receipts or credentials. Missing prerequisites return a held status. Anonymous
+requests are denied, including in development.
+
+The check makes no model call, content save or publication. A successful result
+proves deployed input readiness, not owner acceptance of future writing. Compare
+its revision with the ready `main` Git deployment before resuming approved work.

@@ -1,6 +1,5 @@
-import { X } from "lucide-react";
-import type { FormEvent, ReactNode } from "react";
-import { ModalPortal } from "../../components/ModalPortal";
+import { useId, type FormEvent, type ReactNode } from "react";
+import { ModalDialog } from "../../components/ModalDialog";
 import "../../styles/friends-chart-modal.css";
 import type { LocationInput } from "../../types";
 import type { ManualChartType } from "../../services/manualCharts";
@@ -82,29 +81,28 @@ export function FriendChartModal({
   onSubmit
 }: FriendChartModalProps) {
   const saveStatus = chartSaveStatus(message);
+  const formId = useId();
 
   return (
-    <ModalPortal
-      className="friend-chart-modal-root"
-      panelClassName="chart-modal friend-chart-modal add-chart-modal"
+    <ModalDialog
+      title={isEditing ? formCopy.editTitle : formCopy.title}
       titleId="friend-chart-modal-title"
       restoreFocusId={restoreFocusId}
-      width="440px"
+      rootClassName="friend-chart-modal-root"
+      className="friend-chart-dialog"
+      variant="settings"
+      closeOnBackdrop={false}
       onClose={onClose}
+      actions={<button className="manual-chart-save add-chart-submit" type="submit" form={formId} disabled={isSubmitting}>
+        {isSubmitting ? "Saving..." : isEditing ? formCopy.saveSubmit : formCopy.submit}
+      </button>}
     >
       <form
+        id={formId}
         className="manual-chart-form friend-chart-modal-form add-chart-form"
         onSubmit={onSubmit}
       >
-        <button className="chart-modal-close modal-close add-chart-modal__close" type="button" aria-label="Close" onClick={onClose}>
-          <X size={16} aria-hidden="true" />
-        </button>
-        <div className="manual-chart-form-heading friend-chart-modal-heading add-chart-modal__heading">
-          <div>
-            <h3 className="add-chart-modal__title" id="friend-chart-modal-title">{isEditing ? formCopy.editTitle : formCopy.title}</h3>
-            <p className="add-chart-modal__subtitle">{isEditing ? formCopy.editSubtitle : formCopy.subtitle}</p>
-          </div>
-        </div>
+        <p className="add-chart-modal__subtitle">{isEditing ? formCopy.editSubtitle : formCopy.subtitle}</p>
 
         <label className="signup-field add-chart-field">
           <span>Chart type</span>
@@ -209,10 +207,7 @@ export function FriendChartModal({
           </p>
         )}
 
-        <button className="manual-chart-save add-chart-submit" type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Saving..." : isEditing ? formCopy.saveSubmit : formCopy.submit}
-        </button>
       </form>
-    </ModalPortal>
+    </ModalDialog>
   );
 }

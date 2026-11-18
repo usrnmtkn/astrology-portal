@@ -16,6 +16,9 @@
   border: var(--border-width-thin) solid var(--control-border);
   border-radius: var(--radius-pill);
   background: var(--control-bg);
+  font-family: var(--font-ui);
+  font-size: var(--type-ui-copy-size);
+  line-height: var(--leading-meta);
   font-weight: var(--weight-regular);
   overflow: hidden;
 }

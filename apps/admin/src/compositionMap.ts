@@ -1,4 +1,5 @@
 import { zodiacSeasonVariableNames } from "../../web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
+import { mergeStudioPackagePatch, studioPackageObject, studioPackageRecord as objectRecord } from "../../../src/shared/studioPackagePatch.js";
 import { lunarContentIdentity } from "./lunarCalendarContent";
 import { templateVariableReferences, type TemplateVariableReference } from "./templateVariableReference";
 import {
@@ -70,6 +71,7 @@ export type CompositionPreview = {
   fields: CompositionPreviewField[];
   lineage: "runtime-traceable" | "not-traceable" | "saved-passage";
   lineageNote: string;
+  pendingSources: CompositionMapSource[];
   sources: CompositionMapSource[];
 };
 
@@ -77,8 +79,23 @@ export type CompositionPreviewOptions = {
   initialAudience?: "you" | "they";
   destination?: string;
   exampleValues?: Record<string, string>;
+  natalPlacement?: { planetTitle: string; signTitle: string; houseOrdinal?: string };
   includeOptionalSources?: boolean;
 };
+
+export function compositionPreviewExampleValues(options: CompositionPreviewOptions = {}): Record<string, string> {
+  const natal = options.natalPlacement;
+  if (!natal) return options.exampleValues ?? {};
+  const prefix = ["Sun", "Moon", "North Node", "South Node"].includes(natal.planetTitle);
+  return {
+    ...natal,
+    planetRef: `${prefix ? "the " : ""}${natal.planetTitle}`,
+    planetRefCap: `${prefix ? "The " : ""}${natal.planetTitle}`,
+    angleTitle: natal.planetTitle,
+    possessive: "Your", possessiveLow: "your",
+    ...options.exampleValues
+  };
+}
 
 export type CompositionMapTemplate = {
   destination: string;
@@ -89,12 +106,6 @@ export type CompositionMapTemplate = {
   row: CompositionMapRow;
   slots: CompositionMapSlot[];
 };
-
-function objectRecord(value: unknown): Record<string, unknown> | null {
-  return value && typeof value === "object" && !Array.isArray(value)
-    ? value as Record<string, unknown>
-    : null;
-}
 
 function text(value: unknown) {
   return typeof value === "string" ? value.trim() : "";
@@ -109,8 +120,8 @@ function humanize(value: string) {
 }
 
 function packageRecordForRow(row: CompositionMapRow) {
-  const sections = objectRecord(row.sections);
-  return { ...objectRecord(sections?.packageRecord), ...objectRecord(sections?.packageDraft) };
+  const sections = studioPackageObject(row.sections);
+  return mergeStudioPackagePatch(studioPackageObject(sections.packageRecord), studioPackageObject(sections.packageDraft));
 }
 
 function variableFieldsForRow(row: CompositionMapRow) {
@@ -303,7 +314,7 @@ function representativeSource(
 ) {
   if (["zodiacSeason", "zodiacSeasonPolarAxis"].includes(slot.name)) {
     const sign = (values.get("signTitle") || values.get("signATitle") || "").toLowerCase().trim();
-    return slot.sources.find(source => source.row.content_key.split("/").at(-1) === sign && previewSourceText(source, "you", slot.name).trim()) ?? null;
+    return slot.sources.find(source => source.row.content_key.split("/").at(-1) === sign) ?? null;
   }
   if ((!includeOptionalSources && slot.requirement === "Optional") || !slot.sources.length) return null;
   if (slot.sources.length === 1) return slot.sources[0];
@@ -324,6 +335,9 @@ function representativeSource(
     planetBest: ["planetTitle"],
     planetExcess: ["planetTitle"],
     planetFunction: ["planetTitle"],
+    planetTopic: ["planetTitle"],
+    planetCore: ["planetTitle"],
+    planetProductive: ["planetTitle"],
     planetVerb: ["planetTitle"],
     signAdverb: ["signTitle"],
     signNeed: ["signTitle"],
@@ -549,8 +563,9 @@ function buildCompositionPreview(
       ? ""
       : representativeExampleForRow(row, slot.name, slot.example));
   });
-  Object.entries(options.exampleValues ?? {}).forEach(([name, value]) => values.set(name, value));
+  Object.entries(compositionPreviewExampleValues(options)).forEach(([name, value]) => values.set(name, value));
   const sources: CompositionMapSource[] = [];
+  const pendingSources: CompositionMapSource[] = [];
   const selectedSavedSlots = new Set<string>();
   const fields = compositionPreviewFields(row).map((field) => {
       const fieldValues = new Map(values);
@@ -559,9 +574,16 @@ function buildCompositionPreview(
       slots.forEach((slot) => {
         const source = representativeSource(slot, slots, values, options.includeOptionalSources);
         if (!source) return;
-        fieldValues.set(slot.name, previewSourceText(source, audience, slot.name));
+        if (source.row.inventory_only) {
+          if (!pendingSources.some(candidate => candidate.row.id === source.row.id)) pendingSources.push(source);
+          return;
+        }
         sourceByName.set(slot.name, source);
-        selectedSavedSlots.add(slot.name);
+        const wording = previewSourceText(source, audience, slot.name);
+        if (wording.trim()) {
+          fieldValues.set(slot.name, wording);
+          selectedSavedSlots.add(slot.name);
+        }
       });
       if (!fieldValues.has("transitTopic")) fieldValues.set("transitTopic", `${values.get("transitTitle") ?? "Transit"}'s focus`);
       if (!fieldValues.has("natalCore")) fieldValues.set("natalCore", `${values.get("natalTitle") ?? "natal"} themes`);
@@ -606,6 +628,7 @@ function buildCompositionPreview(
       : lineage === "runtime-traceable"
       ? "Every required saved-copy slot follows a declared resolver contract and resolves to one editable source for these sample facts."
       : `The runtime source cannot be proven for ${untraceableSlots.map((slot) => `{{${slot.name}}}`).join(", ")}. The preview is incomplete until that lineage is declared.`,
+    pendingSources,
     sources
   };
 }

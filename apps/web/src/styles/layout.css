@@ -97,7 +97,7 @@
 
 .floating-back-button {
   position: fixed;
-  top: var(--top-control-top);
+  top: var(--article-back-top);
   left: 36px;
   z-index: var(--z-floating);
   display: inline-flex;
@@ -189,6 +189,7 @@ body.modal-open {
 }
 
 .modal-panel {
+  position: relative;
   width: min(var(--modal-width), 100%);
   max-height: min(780px, calc(100svh - 80px));
   overflow-x: hidden;
@@ -202,37 +203,6 @@ body.modal-open {
 
 .modal-panel:focus {
   outline: none;
-}
-
-.chart-modal {
-  position: relative;
-  width: min(var(--container-dialog-wide), 100%);
-  max-height: min(780px, calc(100svh - 80px));
-  overflow: auto;
-  border-radius: var(--radius);
-  background: var(--app-card);
-  color: var(--app-text);
-  box-shadow: var(--modal-shadow);
-  padding: var(--modal-panel-padding);
-}
-
-.chart-modal-heading {
-  display: grid;
-  gap: var(--space-2);
-  margin-bottom: var(--space-6);
-}
-
-.chart-modal-heading h3 {
-  font-size: var(--type-display-size);
-  line-height: var(--leading-display);
-  font-weight: var(--weight-semibold);
-}
-
-.chart-modal-heading p {
-  color: var(--ink-2);
-  font-family: var(--font-body);
-  font-size: var(--text-body);
-  line-height: var(--leading-body);
 }
 
 :is(.theme-dark, [data-theme="dark"]) .modal-overlay {

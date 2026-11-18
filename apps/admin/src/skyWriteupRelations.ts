@@ -1,5 +1,7 @@
 import { memoByObject } from "./derivedCache";
 import { seasonArticleIdentity } from "../../../src/shared/seasonArticle";
+import { isLunationHoroscopeKey } from "../../../src/shared/lunationHoroscopeIdentity";
+import { lunationHoroscopeIdentities } from "../../../src/shared/lunationHoroscopeIdentities";
 export type SkyWriteupRelationRow = {
   id: string;
   content_key: string;
@@ -9,6 +11,8 @@ export type SkyWriteupRelationRow = {
   mode?: string | null;
   facts?: Record<string, unknown> | null;
   source_snapshot?: Record<string, unknown> | null;
+  updated_at?: string | null;
+  sections?: unknown;
 };
 
 export type SkyWriteupContext = {
@@ -24,6 +28,22 @@ export type SkyLunationContext = {
 
 export type SkyWriteupSubjectType = "planet" | "angle" | "point";
 
+type SkySourceIdentity = Pick<SkyWriteupRelationRow, "id" | "content_key" | "updated_at">;
+
+export function compareSkySourceRows(left: SkySourceIdentity, right: SkySourceIdentity) {
+  return Number(left.id.startsWith("package:")) - Number(right.id.startsWith("package:"))
+    || (right.updated_at ?? "").localeCompare(left.updated_at ?? "");
+}
+
+export function preferredSkySourceRows<Row extends SkySourceIdentity>(rows: Row[]) {
+  const selected = new Map<string, Row>();
+  for (const row of rows) {
+    const current = selected.get(row.content_key);
+    if (!current || compareSkySourceRows(row, current) < 0) selected.set(row.content_key, row);
+  }
+  return [...selected.values()];
+}
+
 export type RelatedHousePassage<Row extends SkyWriteupRelationRow = SkyWriteupRelationRow> = {
   house: number;
   kind: "Sky house horoscope" | "House and sign passage" | "House passage" | "House introduction";
@@ -37,7 +57,7 @@ export type RelatedLunationHoroscope<Row extends SkyWriteupRelationRow = SkyWrit
   preview: string;
   sourceReady: boolean;
   sources: Array<{
-    role: "Horoscope frame" | "House opening" | "House jurisdiction" | "Sign focus";
+    role: "RATM horoscope" | "Horoscope frame" | "House opening" | "House jurisdiction" | "Sign focus";
     row: Row;
   }>;
 };
@@ -304,6 +324,11 @@ function ordinal(value: number) {
 }
 
 function relationBody(row: SkyWriteupRelationRow | undefined) {
+  if (row && isLunationHoroscopeKey(row.content_key)) {
+    const sections = row.sections as { packageDraft?: { body?: unknown }; packageRecord?: { body?: unknown } } | null;
+    const body = sections?.packageDraft?.body ?? sections?.packageRecord?.body ?? row.body;
+    return typeof body === "string" ? body.trim() : "";
+  }
   return typeof row?.body === "string" ? row.body.trim() : "";
 }
 
@@ -318,7 +343,15 @@ export function relatedLunationHoroscopes<Row extends SkyWriteupRelationRow>(
   rows: Row[],
   context: SkyLunationContext
 ): RelatedLunationHoroscope<Row>[] {
-  const rowsByKey = new Map(rows.map((row) => [row.content_key.toLowerCase(), row]));
+  const rowsByKey = new Map(preferredSkySourceRows(rows).map((row) => [row.content_key.toLowerCase(), row]));
+  if (context.eclipse === "none") {
+    return lunationHoroscopeIdentities(context.kind, context.sign).map(identity => {
+      const row = rowsByKey.get(identity.contentKey);
+      const preview = relationBody(row);
+      return { risingSign: identity.risingSign, house: identity.house, preview,
+        sourceReady: Boolean(preview), sources: row ? [{ role: "RATM horoscope", row }] : [] };
+    });
+  }
   const frameKey = `fallback-hook/lunation-horoscope/${context.kind === "new-moon" ? "new" : "full"}`;
   const frameRow = rowsByKey.get(frameKey);
   const signFocusKey = `fallback-hook/lunation-sign-compact/${context.kind}/${context.sign}`;
@@ -386,7 +419,7 @@ const houseKindPriority: Record<RelatedHousePassage["kind"], number> = {
 };
 
 export function relatedHousePassages<Row extends SkyWriteupRelationRow>(rows: Row[], context: SkyWriteupContext): RelatedHousePassage<Row>[] {
-  return rows.flatMap((row) => {
+  return preferredSkySourceRows(rows).flatMap((row) => {
     const match = housePassageMatch(row, context);
     return match && match.house >= 1 && match.house <= 12 ? [{ ...match, row }] : [];
   }).sort((left, right) => (
@@ -412,7 +445,10 @@ export function skyWriteupRelatedSourcePrefixes(row: SkyWriteupRelationRow) {
   const context = skyWriteupContextForRow(row);
   if (!context) return [];
   const aspect = `authored/transit-aspect/${context.planet}/`;
-  if (skyLunationContextForRow(row)) return [aspect,
+  const lunation = skyLunationContextForRow(row);
+  if (lunation?.eclipse === "none") return [aspect,
+    `authored/book-ritual-and-the-moon/lunation-horoscope/${lunation.kind}/${lunation.sign}/`];
+  if (lunation) return [aspect,
     "fallback-hook/lunation-horoscope/", "fallback-hook/lunation-sign-compact/",
     "fallback-hook/lunation-opening-situation/", "fallback-vocab/house-jurisdiction/"];
   return [aspect, `house-horoscope-core/${context.planet}/`,

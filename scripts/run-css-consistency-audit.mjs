@@ -37,13 +37,14 @@ const canonicalBodySelectors = [
   ".updates-aspect-row__detail",
   ".article-section p",
   ".sky-detail-section p",
+  ".retrograde-cycles p",
+  ".settings-row-description",
   ".aspect-row-copy p",
   ".placement-table-row__description",
   ".planet-placement-row__description",
   ".sky-pl-copy",
   ".tx-body",
-  ".natal-pattern-card__header p",
-  ".natal-pattern-card__section p"
+  ".natal-insight-card__preview"
 ];
 
 const validBodyFontSizes = new Set([
@@ -54,21 +55,47 @@ const validBodyFontSizes = new Set([
 ]);
 
 const requiredTypographyTokenValues = new Map([
-  ["--font-highlight", "var(--font-mono)"],
+  ["--type-display-size", "36px"],
+  ["--type-compact-title-size", "var(--type-page-title-mobile-size)"],
+  ["--text-date-display", "44px"],
+  ["--text-context-title", "32px"],
+  ["--leading-heading", "1.1"],
+  ["--leading-meta", "1.4"],
+  ["--leading-compact-title", "1.08"],
+  ["--type-body-size", "19px"],
+  ["--type-reading-size", "var(--type-body-size)"],
+  ["--type-reading-compact-size", "var(--type-reading-size)"],
+  ["--font-highlight", "var(--font-body)"],
   ["--text-highlight", "var(--text-body)"],
   ["--weight-highlight", "var(--weight-regular)"],
   ["--leading-highlight", "var(--leading-body)"],
-  ["--tracking-highlight", "var(--tracking-pill)"],
+  ["--tracking-highlight", "var(--tracking-body)"],
   ["--type-description-size", "var(--type-body-size)"],
   ["--text-body", "var(--type-body-size)"],
   ["--text-body-sm", "var(--text-body)"],
   ["--text-description", "var(--text-body)"],
   ["--text-row-body-size", "var(--text-body)"],
-  // Table cells stay at the previous 15px body size. Reading paragraphs use --text-body at 1rem.
-  // Table cells stay at the previous 15px body size. Reading paragraphs use --text-body at 1rem.
+  // Tabular data is a UI role; narrative copy uses the shared reading scale.
   ["--text-table-body-size", "15px"],
-  ["--article-body-size", "var(--text-body)"],
+  ["--text-reading-longform", "var(--type-title-size)"],
+  ["--text-reading-preview", "var(--type-small-display-size)"],
+  ["--leading-longform", "1.45"],
+  ["--leading-lead", "1.35"],
+  ["--tracking-longform", "-0.005em"],
+  ["--article-body-size", "var(--text-reading-longform)"],
   ["--label-eyebrow-font-family", "var(--font-label)"]
+]);
+
+// The owner-supplied Friend profile handoff (11) defines two distinct reading
+// roles. Enforce their exact scope and token pairs without changing the default
+// 19px reading contract on other pages or other profile descriptions.
+const scopedReadingRoles = new Map([
+  ["apps/web/src/styles/friend-profile-refined.css|.friend-chart-page.friend-profile-view .natal-big-three .placement-table-row__description", {
+    fontSize: "var(--type-small-display-size)", lineHeight: "var(--leading-longform)"
+  }],
+  ["apps/web/src/styles/friend-profile-refined.css|.friend-chart-page.friend-profile-view .natal-placement-sections .placement-table-row__description", {
+    fontSize: "var(--type-placement-excerpt-size)", lineHeight: "var(--leading-placement-ui)"
+  }]
 ]);
 
 const canonicalEyebrowSelectors = [
@@ -428,6 +455,7 @@ for (const filePath of files) {
         letterSpacing: declarationValue(block.body, "letter-spacing")
       };
 
+      const scopedRole = scopedReadingRoles.get(`${relative}|${rule.selector}`);
       if (rule.fontSize) activeBodySelectors.add(target);
 
       if (rule.fontFamily && rule.fontFamily !== canonicalBodyContract.fontFamily) {
@@ -438,11 +466,11 @@ for (const filePath of files) {
         });
       }
 
-      if (rule.fontSize && !validBodyFontSizes.has(rule.fontSize)) {
+      if (rule.fontSize && !(scopedRole ? rule.fontSize === scopedRole.fontSize : validBodyFontSizes.has(rule.fontSize))) {
         semanticBodyFindings.push({
           ...rule,
           type: "body-font-size",
-          detail: `Expected a canonical body-size token, found ${rule.fontSize}.`
+          detail: `Expected ${scopedRole?.fontSize ?? "a canonical body-size token"}, found ${rule.fontSize}.`
         });
       }
 
@@ -454,11 +482,11 @@ for (const filePath of files) {
         });
       }
 
-      if (rule.lineHeight && rule.lineHeight !== canonicalBodyContract.lineHeight) {
+      if (rule.lineHeight && rule.lineHeight !== (scopedRole?.lineHeight ?? canonicalBodyContract.lineHeight)) {
         semanticBodyFindings.push({
           ...rule,
           type: "body-line-height",
-          detail: `Expected ${canonicalBodyContract.lineHeight}, found ${rule.lineHeight}.`
+          detail: `Expected ${scopedRole?.lineHeight ?? canonicalBodyContract.lineHeight}, found ${rule.lineHeight}.`
         });
       }
 

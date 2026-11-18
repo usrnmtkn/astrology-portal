@@ -14,6 +14,7 @@ const { renderEffectiveRulesForPrompt } = require("./effectiveRules.cjs");
 const { assertProductionPreCallGate } = require("./productionPreCallGate.cjs");
 const { withGhostwritingSkill } = require("./ghostwritingSkill.cjs");
 const { synastryInstructionsForRole } = require("./synastryEditorialAuthority.cjs");
+const { skyAspectInstructionsForRole } = require("./skyAspectEditorialAuthority.cjs");
 
 const CARD_REVIEWER_V3_CANDIDATE_INSTRUCTIONS = `ROLE: TLDR ASTRO CARD JUDGE V3 CANDIDATE
 
@@ -32,6 +33,11 @@ function instructionsForRole(role, taskInstructions = "", {surface = "", family 
     return taskInstructions.trim()?`${authority}\n\n${taskInstructions.trim()}`:authority;
   }
   if (!ROLES.has(role)) throw new Error(`Unknown astrology prose role: ${role}`);
+  if (surface === 'sky' && family === 'sky-aspect'
+    && ['MEANING_PLANNER', 'WRITER', 'REVIEWER', 'REVISER'].includes(role)) {
+    const authority = skyAspectInstructionsForRole(role);
+    return taskInstructions.trim() ? `${authority}\n\n${taskInstructions.trim()}` : authority;
+  }
   if (surface === "synastry" && family === "synastry-aspect"
     && ["MEANING_PLANNER", "WRITER", "REVIEWER", "REVISER"].includes(role)) {
     const authority = synastryInstructionsForRole(role);

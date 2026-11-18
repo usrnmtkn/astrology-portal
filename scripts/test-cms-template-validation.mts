@@ -50,3 +50,5 @@ assert.equal(personalizedAspect.previewSlots.aspectVerb, "trining");
 assert.match(mismatched.errors.join(" "), /does not match its opening tag/u);
 
 console.log("CMS template validation passed: valid slots preview, while empty, unknown, and broken templates fail closed.");
+
+assert.equal(renderCmsTemplatePreview("my", {}, "body"), "my", "Literal variable wording preserves its capitalization.");

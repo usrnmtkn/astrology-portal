@@ -1,9 +1,9 @@
 import { useRef, useState } from "react";
 import { calendarReminders as reminders, calendarSubscriptionUrls, loadCalendarSubscription, saveCalendarSubscription, type CalendarFeedCategory } from "./calendarSubscription";
-import { Check, X } from "lucide-react";
+import { CalendarDays, Check } from "lucide-react";
 import { AstroGlyph } from "./AstroGlyph";
 import { CalendarKindTag } from "./CalendarKindTag";
-import { CalendarSlideout } from "./CalendarSlideout";
+import { ModalDialog } from "../../components/ModalDialog";
 import type { CalendarEventKind } from "./calendarKinds";
 
 const feedItems = [
@@ -70,13 +70,13 @@ export function CalendarSubscribeSheet({ timeZone, onClose, onLinkReady }: {
     catch { setError("Copy was unavailable. Select and copy the calendar link below."); }
   }
 
-  return <CalendarSlideout label="Add to your calendar" onClose={onClose} variant="sheet">
+  return <ModalDialog title={step === "ready" ? "Your calendar link is ready" : "Add to your calendar"} onClose={onClose}
+    variant="settings" closeLabel="Close calendar subscription" className="calendar-subscribe-dialog"
+    glyph={step === "ready" ? <Check size={26} /> : <CalendarDays size={26} />}
+    actions={step === "include" ? <button className="modal-action modal-action--primary" disabled={busy || !include.length} onClick={() => void prepareLink()} type="button">
+      {busy ? "Saving calendar link…" : subscription ? "Save calendar preferences" : "Create my calendar link"}
+    </button> : <button className="modal-action modal-action--primary" onClick={onClose} type="button">Done</button>}>
     <div className="calendar-subscribe">
-      <header className="calendar-subscribe__header">
-        {step === "ready" ? <button className="calendar-subscribe__back" onClick={() => setStep("include")} type="button">Back</button> : <span />}
-        <h2 className="calendar-subscribe__title">Add to your calendar</h2>
-        <button aria-label="Close calendar subscription" className="calendar-subscribe__close" onClick={onClose} type="button"><X size={18} aria-hidden="true" /></button>
-      </header>
       {error && <p className="calendar-subscribe__intro" role="alert">{error}</p>}
       {step === "include" ? <>
         <p className="calendar-subscribe__intro">Choose what appears in your calendar. Your personal link stays up to date as events are added or changed.</p>
@@ -98,13 +98,8 @@ export function CalendarSubscribeSheet({ timeZone, onClose, onLinkReady }: {
             aria-pressed={reminder === item} className={reminder === item ? "is-on" : undefined} key={item} disabled={busy}
             onClick={() => setReminder(item)} type="button">{item}</button>)}</div>
         </section>
-        <button className="calendar-subscribe__cta" disabled={busy || !include.length} onClick={() => void prepareLink()} type="button">
-          {busy ? "Saving calendar link…" : subscription ? "Save calendar preferences" : "Create my calendar link"}
-        </button>
         <p className="calendar-subscribe__note">{include.length ? "Free to subscribe · No payment required" : "Choose at least one event category"}</p>
       </> : urls ? <div className="calendar-subscribe__done">
-        <span className="calendar-subscribe__mark" aria-hidden="true"><Check size={26} /></span>
-        <span className="calendar-subscribe__title">Your calendar link is ready</span>
         <p className="calendar-subscribe__intro is-done">Open your calendar app below, then confirm the subscription there. Add this link once; future changes arrive when your calendar app refreshes.</p>
         <div className="calendar-subscribe__open">
           <a className="is-primary" href={urls.webcal} aria-label="Open Apple Calendar">Apple Calendar</a>
@@ -117,5 +112,5 @@ export function CalendarSubscribeSheet({ timeZone, onClose, onLinkReady }: {
         <button className="calendar-subscribe__back" onClick={() => { setStep("include"); setCopied(false); }} type="button">Edit what's included</button>
       </div> : null}
     </div>
-  </CalendarSlideout>;
+  </ModalDialog>;
 }

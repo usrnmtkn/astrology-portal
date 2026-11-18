@@ -191,8 +191,8 @@ const youPageSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features
 const lunarCalendarSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/calendar/LunarCalendar.tsx"), "utf8");
 assert.match(
   youPageSource,
-  /useState<YouTab>\("transits"\)/u,
-  "You must open on the personalized Transits tab instead of Natal Chart."
+  /useState<YouTab>\(youTabFromUrl\)/u,
+  "You must restore the selected profile section; the routing regression covers the Transits default."
 );
 assert.match(
   youPageSource,
@@ -207,7 +207,7 @@ assert.match(
 assert.doesNotMatch(youPageSource, /aria-label="Personal timing summary"/u);
 assert.doesNotMatch(youPageSource, /Daily calendar/u, "Sky-wide phase and void copy must stay off You > Transits.");
 assert.match(appSource, /dailyOuterTransitPlanets[\s\S]*?gate = dailyOuterTransitPlanets\.has\(planet\) \? 3 : 5/u);
-assert.match(appSource, /dailyIsHeadliner \? 3 : 4/u);
+assert.match(appSource, /sort\(comparePersonalDailyTransits\)\)\.slice\(0, 4\)/u, "The daily event selection retains its four grouped contacts independently of the three-card preview.");
 assert.match(appSource, /renderDoDont\(\{/u);
 assert.match(appSource, /const moonCandidate = dailyMoonDriver/u);
 assert.match(appSource, /transiting: "moon"/u);
@@ -252,12 +252,12 @@ assert.doesNotMatch(
   "Exact-day lunation routing must compare localized calendar dates instead of fractional days."
 );
 assert.match(appSource, /qualifyingTransits: qualifyingDailyTransits\.map/u);
-assert.match(youPageSource, />Areas of Your Life</u);
+assert.match(youPageSource, /title="Short-term transits"/u);
 assert.match(youPageSource, />Behind this Forecast</u);
 assert.match(youPageSource, /dailyHoroscopeAssembly\?\.doItems\?\.length === 3/u);
 assert.match(lunarCalendarSource, /renderCalendarPhase\(\{/u);
 assert.match(lunarCalendarSource, /renderVoidOfCourse\(\{/u);
 assert.match(lunarCalendarSource, /selectedPackagePhase\?\.headline/u);
-assert.match(lunarCalendarSource, /moonPassages: selectedMoonWriting\.map/u);
+assert.match(lunarCalendarSource, /moonPassages: selectedAssembledPassage \? \[\] : selectedMoonWriting\.map/u);
 
 console.log("daily horoscope assembly selection checks passed");

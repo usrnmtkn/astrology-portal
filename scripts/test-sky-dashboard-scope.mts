@@ -365,6 +365,18 @@ try {
     releases.forEach(release => release());
     await Promise.all([relaxed, fresh]);
     releases.length = 0;
+    const calendarKeys = [skyKey, personalKey, ...Array.from({ length: 105 }, (_, i) => `calendar/test/${i}`)];
+    const firstBatch = readerRequests.length;
+    const fullWeek = qa.loadLiveGeneratedContentForKeys(calendarKeys, { parallelBatches: true, requireFresh: true });
+    await untilHeld(2);
+    releases[1]();
+    releases[0]();
+    await untilHeld(3);
+    releases[2]();
+    const weekRows = await fullWeek;
+    assert(weekRows.has(skyKey) && weekRows.has(personalKey));
+    assert.deepEqual(readerRequests.slice(firstBatch).flatMap(query => query.keys), [...calendarKeys].sort());
+    releases.length = 0;
     const older = qa.loadFallbackArchitectureV3DashboardBundle('sky');
     await untilHeld(1);
     qa.clearCachedFallbackArchitectureV3Bundle('sky');
@@ -376,6 +388,41 @@ try {
     assert(qa.readCachedFallbackArchitectureV3Bundle('sky'), 'An old completion cannot remove the replacement request');
     qa.clearCachedFallbackArchitectureV3Bundle();
   } finally { Query.prototype.returns = normalReturns; }
+  for (const scope of ['sky', 'all']) {
+    await qa.loadFallbackArchitectureV3DashboardBundle(scope);
+    const suffix = scope === 'all' ? '' : `:${scope}`;
+    const cacheKey = `tldrastro:fallbackArchitectureV3:dashboardBundle${suffix}`;
+    const versionKey = `tldrastro:fallbackArchitectureV3:dashboardBundleVersion${suffix}`;
+    const valid = JSON.parse(storage.get(cacheKey)!);
+    for (const invalid of [
+      JSON.stringify({ ...valid, schema: 'fallback-architecture-v3-dashboard-overlay-cache-v9' }),
+      JSON.stringify({ ...valid, bundledPackageVersion: 'synthetic-obsolete-package' }),
+      '{invalid-json'
+    ]) {
+      qa.clearCachedFallbackArchitectureV3Bundle();
+      storage.set(versionKey, String(valid.dashboardVersion));
+      storage.set(cacheKey, invalid);
+      if (scope === 'sky') {
+        storage.set('tldrastro:fallbackArchitectureV3:dashboardBundleVersion', String(valid.dashboardVersion));
+        storage.set('tldrastro:fallbackArchitectureV3:dashboardBundle', invalid);
+      }
+      const before = queries.length;
+      const [fresh, shared] = await Promise.all([
+        qa.loadFallbackArchitectureV3DashboardBundle(scope),
+        qa.loadFallbackArchitectureV3DashboardBundle(scope)
+      ]);
+      assert.equal(fresh, shared, 'Stale cache recovery must retain shared in-flight work');
+      assert.equal(queries.length, before + 1, 'Stale cache recovery needs one complete row read');
+      const restored = qa.readCachedFallbackArchitectureV3Bundle(scope);
+      assert(restored, `Rejecting an obsolete ${scope} cache must not invalidate its fresh pending replacement`);
+      assert.equal(JSON.stringify(restored.bundle) === JSON.stringify(fresh), true, 'The cache must preserve the complete fresh bundle');
+      assert.equal(JSON.parse(storage.get(cacheKey)!).schema, 'fallback-architecture-v3-dashboard-overlay-cache-v10');
+      if (scope === 'sky') assert.equal(storage.has('tldrastro:fallbackArchitectureV3:dashboardBundle'), false);
+      await qa.loadFallbackArchitectureV3DashboardBundle(scope);
+      assert.equal(queries.length, before + 1, 'A recovered cache must survive the next revision-validated read');
+    }
+    qa.clearCachedFallbackArchitectureV3Bundle();
+  }
   const originalTimeout = AbortSignal.timeout;
   let deadlines = 0;
   AbortSignal.timeout = (ms: number) => { deadlines++; return originalTimeout(ms); };

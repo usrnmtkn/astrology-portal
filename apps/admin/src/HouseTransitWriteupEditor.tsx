@@ -1,3 +1,5 @@
+import type { AdminDraft, AdminGeneratedContentRow } from "./GeneratedContentAdminDashboard";
+import { isPendingPackageRevision } from "./generatedContentClient";
 import { studioLazy as lazy } from "./studioLazy";
 import { Save, X } from "lucide-react";
 import { Suspense, useCallback, useEffect, useId, useRef, useState } from "react";
@@ -15,6 +17,14 @@ export type HouseTransitEditorSource = {
   body_they: string;
   published: boolean;
 };
+
+export function matchesHouseTransitSave(saved: AdminGeneratedContentRow | null, key: string, baseline: AdminDraft): saved is AdminGeneratedContentRow {
+  if (!saved || saved.content_key !== key || saved.inventory_only || !saved.updated_at || saved.updated_at === baseline.updatedAt) return false;
+  if (!baseline.id || saved.id === baseline.id) return true;
+  const target = saved.source_snapshot;
+  return isPendingPackageRevision(saved) && target?.targetRowId === baseline.id
+    && target.targetRowUpdatedAt === baseline.updatedAt && target.targetContentKey === key;
+}
 
 type SourceEdits = Pick<HouseTransitEditorSource, "body_you" | "body_they">;
 type EditorSource = HouseTransitEditorSource & { baseline: SourceEdits; edits: SourceEdits };

@@ -60,12 +60,22 @@ jobs:
 
   report-library-browser:
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.61.0-noble@sha256:57b65fdc9ceabe0ef613124c7bbe2babcf9362c4d85e382fe3b03604e84b428a
+      volumes:
+        - /usr/share/fonts:/usr/share/fonts/runner:ro
+    defaults:
+      run:
+        shell: bash
     timeout-minutes: 15
     env:
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
       VITE_SUPABASE_URL: https://report-library.supabase.test
       VITE_SUPABASE_ANON_KEY: report-library-placeholder
     steps:
       - uses: actions/checkout@v6
+      - name: Verify exact container checkout
+        run: bash scripts/ci-prepare-playwright-workspace.sh
       - uses: actions/setup-node@v6
         with:
           node-version: 22
@@ -73,7 +83,7 @@ jobs:
       - run: npm ci
       - name: Build knowledge dependency
         run: npm run build:knowledge
-      - run: bash scripts/ci-install-playwright.sh
+      - run: node scripts/ci-validate-playwright-image.mjs
       - name: Verify standalone Reports UI
         run: npx playwright test -c playwright.config.ts tests/visual/report-library-ui.spec.ts tests/visual/report-library-delete.spec.ts tests/visual/report-generation-beam.spec.ts tests/visual/you-report-auth.spec.ts tests/visual/you-report-page.spec.ts tests/visual/friend-report-state.spec.ts
 

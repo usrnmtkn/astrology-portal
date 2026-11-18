@@ -2,7 +2,7 @@
   "schema": "lunation-book-cards/v1",
   "version": "book-ritual-and-the-moon-lunation-horoscopes-v1",
   "source_artifact": "packages/astro-knowledge/review/lunation-card-assembly-v1/source/ritual-and-the-moon-lunation-horoscopes-v1.json",
-  "source_sha256": "12f722a7e6de1a18d250f4ee52aa4545fecaeca62182bca92e7daf9dcae1dd21",
+  "source_sha256": "817613ab7b9faa0a059c7a0b1440841bc3799af600c2018bce71385233cb819e",
   "count": 288,
   "authoredCards": [
     {

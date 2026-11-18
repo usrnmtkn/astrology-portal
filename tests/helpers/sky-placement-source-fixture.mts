@@ -1,14 +1,14 @@
 import { compileSkyArticleEdition, reviseSkyArticleEdition, skyArticleEditableFields } from '../../apps/web/src/content/skyArticleTemplateCompiler';
 import { skyPlacementSourceRecords } from '../../api/_lib/sky-placement-sources';
 
-export async function skyPlacementSourceFixture(planet = 'saturn', sign = 'aries') {
+export async function skyPlacementSourceFixture(planet = 'saturn', sign = 'aries', headline?: string) {
   const name = planet[0].toUpperCase() + planet.slice(1);
   const edition = await compileSkyArticleEdition({
     format: 'ingress-essay-v2', templateBody: '', templateKey: `sky/article-template/${planet}/ingress`,
     planet, sign, entryYear: 2026, validFrom: '2026-09-22', validTo: '2026-10-23',
     transitStartInstant: '2026-09-22T00:00:00Z', transitEndInstant: '2026-10-23T00:00:00Z',
     tldr: 'Synthetic published summary.', housePassages: [], aspectPassages: [],
-    slotValues: { articleTitle: `Synthetic ${name} article`, when: 'Synthetic calculated window.', what: 'Synthetic event.',
+    slotValues: { articleTitle: headline ?? `Synthetic ${name} article`, when: 'Synthetic calculated window.', what: 'Synthetic event.',
       takeaway: 'Synthetic takeaway.', overviewHeading: 'Synthetic overview', overviewBody: 'Synthetic published opening.\n\nSynthetic published final sentence.',
       majorTransitSections: 'Synthetic supported contact.', closingHeading: 'Synthetic closing', closingBody: 'Synthetic complete close.' }
   });

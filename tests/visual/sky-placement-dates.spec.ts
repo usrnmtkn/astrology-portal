@@ -39,7 +39,7 @@ for (const scenario of [
   page.on("pageerror", error => errors.push(error.message));
   await page.goto(`/?date=${scenario.date}#sky`);
   const card = page.getByRole("button", { name: `Read more about ${scenario.planet} in ${scenario.sign}`, exact: true });
-  await expect(card.locator(".planet-placement-row__meta--timing")).toHaveText(scenario.card, { timeout: 60_000 });
+  await expect(card.locator(".planet-placement-row__timing > span:first-child")).toHaveText(scenario.card, { timeout: 60_000 });
   await card.click();
   await expect(page.locator("#sky-detail-title")).toHaveText(`${scenario.planet} in ${scenario.sign}`);
   const primaryExit = scenario.visitExit ?? scenario.exit;
@@ -52,6 +52,6 @@ for (const scenario of [
   await page.reload();
   await expect(page.locator(".sky-detail-id .article-duration").first()).toHaveText(`${entry} to ${primaryExit}`, { timeout: 60_000 });
   await page.getByRole("button", { name: "Close detail", exact: true }).click();
-  await expect(card.locator(".planet-placement-row__meta--timing")).toHaveText(scenario.card, { timeout: 60_000 });
+  await expect(card.locator(".planet-placement-row__timing > span:first-child")).toHaveText(scenario.card, { timeout: 60_000 });
   expect(errors).toEqual([]);
 });

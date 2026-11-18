@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { generateSkyArticleTemplateSlots } from '../api/_lib/content-generation.ts';
 import { GHOSTWRITING_SKILL_INSTRUCTIONS } from '../src/astro-writing/ghostwritingSkill.mjs';
+import { skyArticleTemplateKey } from '../apps/admin/src/skyArticleTemplateKeys.ts';
 Object.assign(process.env,{STUDIO_MEMORY_FEEDBACK_ENABLED:'true',SUPABASE_URL:'https://studio-memory.invalid',SUPABASE_SERVICE_ROLE_KEY:'synthetic',OPENAI_API_KEY:'synthetic',ANTHROPIC_API_KEY:'synthetic'});
 const memory={id:'11111111-1111-4111-8111-111111111111',source_row_id:'22222222-2222-4222-8222-222222222222',
  content_key:'sky-article/saturn/aries/2026',family:'sky-article',before_text:JSON.stringify({body:'Synthetic rejected article.'}),after_text:JSON.stringify({body:'Synthetic approved article replacement. Complete last sentence.'}),
@@ -49,7 +50,15 @@ try{
  assert.match(ui,/currentText\.trim\(\) \? 'Rewrite the reusable article' : 'Write the reusable article'/u,'The primary action must name what it produces in both the empty and populated states.');
  assert.doesNotMatch(ui,/evergreen/iu,'The reusable-article panel must not show the internal word evergreen to the owner.');
  assert.match(ui,/Open dated authored article generator/u,'Placement editor must expose the dated authored-article path.');
- assert.match(ui,/sky\/article-template\/\$\{planet\}\/\$\{sign\}/u,'Dated-article action must target the matching authored article template.');
+ // Template selection belongs to the parent workspace. The browser handoff
+ // cases also preserve the selected date, focus and unsaved parent writing.
+ assert.equal(skyArticleTemplateKey('sun','libra',[
+   'sky/article-template/sun/virgo','sky/article-template/sun/ingress','sky/article-template/sun/libra'
+ ]),'sky/article-template/sun/libra','Dated-article navigation must prefer its matching sign over inventory order or a generic template.');
+ assert.equal(skyArticleTemplateKey('sun','libra',['sky/article-template/sun/virgo','sky/article-template/sun/ingress']),
+   'sky/article-template/sun/ingress','An available generic ingress template remains a valid dated destination.');
+ assert.equal(skyArticleTemplateKey('sun','libra',['sky/article-template/sun/virgo']),undefined,
+   'Do not offer unrelated saved writing as a dated-article destination.');
  assert.match(endpoint,/occurrence-specific facts into the evergreen prose/u,'Evergreen generation must reject year-specific occurrence facts.');
  assert.match(endpoint,/currentSkyFacts\(referenceInstant\)/u,'Evergreen generation must validate the selected planet/sign from the current Sky calculation.');
  assert.doesNotMatch(endpoint,/skyArticleEditionFactsFromSnapshot/u,'Evergreen generation must not require the dated-edition sign-residency window.');

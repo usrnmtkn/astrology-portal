@@ -1,5 +1,10 @@
 import { test, expect } from '@playwright/test';
 import { createApiStore } from '../helpers/calendar-review-api.mjs';
+import { studioApiStore } from '../helpers/studio-api-store';
+import { canonicalPublicationLedger, publicationLedgerTag } from '../../apps/web/src/services/publicationLedgerTransport';
+import { syntheticPublicationPage } from '../helpers/synthetic-publication-page';
+import { isSkyListPublicationKey } from '../../apps/web/src/content/skyListPublicationScope';
+import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
 
 for (const theme of ['light', 'dark']) for (const width of [1440, 390]) {
   test(`Composite Review loads complete saved writing ${theme} ${width}`, async ({ page }) => {
@@ -107,3 +112,120 @@ test('loading composite documents preserves inventory order and the selected pag
     await expect(pagination).toContainText('Showing 11–12 of 12');
   } finally { store.close(); }
 });
+
+for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (const scope of ['personalized', 'shared', 'sample'] as const) {
+  test(`Composite publication respects ${scope} scope ${width} ${theme}`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 1000 });
+    const row = { id: '11111111-1111-4111-8111-111111111111',
+      content_key: scope === 'personalized' ? 'composite-mars-trine-pluto' : 'composite.aspect.mars.trine.pluto',
+      surface: 'composite', mode: 'feed', status: 'DRAFT', lane: 'serving', review_state: null,
+      headline: 'Synthetic Composite scope', summary: '', body: 'Synthetic complete opening.\n\nSynthetic complete final sentence.',
+      sections: { byRelationshipType: { friendship: { body: 'Complete synthetic friendship passage.' } } },
+      facts: scope === 'sample' ? { sampleOnly: true } : {}, source_snapshot: {},
+      updated_at: '2026-10-15T12:00:00.000Z', provider: 'manual-admin' };
+    const store = await studioApiStore([row]);
+    let drainRoutes: (() => Promise<void>) | undefined;
+    try {
+      await page.addInitScript(theme => {
+        localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture');
+        localStorage.setItem('tldrastro:studio-theme', theme);
+      }, theme);
+      await page.route('**/rest/v1/content_publications?**', async route => {
+        const rows = await store.call({ method: 'publications' });
+        await route.fulfill({ json: syntheticPublicationPage(rows, new URL(route.request().url()).searchParams) });
+      });
+      drainRoutes = await routeStudioInventoryApi(page, {
+        call: store.call,
+        actualDocumentRoute: true,
+        answer: async (route, url) => {
+          if (url.pathname === '/api/content-publications') {
+            const rows = canonicalPublicationLedger(await store.call({ method: 'publications' }));
+            const scoped = url.searchParams.get('scope') === 'sky-list';
+            const publications = scoped ? rows.filter(row => isSkyListPublicationKey(row.content_key)) : rows;
+            await route.fulfill({ headers: { etag: await publicationLedgerTag(publications) },
+              json: { schema: scoped ? 'tldr-sky-list-publications/v1' : 'tldr-publications/v1', publications } });
+            return true;
+          }
+          if (url.pathname !== '/api/admin/content-live-status' && url.pathname !== '/api/admin/content-publication') return false;
+          const request = route.request();
+          const result = await store.call({ method: request.method(), body: request.postData() ? request.postDataJSON() : undefined, url: url.pathname + url.search });
+          await route.fulfill({ status: result.status, json: result.payload });
+          return true;
+        }
+      });
+      await page.goto('/admin/content#composite-review');
+      const card = page.locator('.admin-template-card').filter({ has: page.getByRole('heading', { name: row.headline, exact: true }) });
+      await card.getByRole('button', { name: 'Edit', exact: true }).click();
+      const editor = page.getByRole('dialog', { name: 'Generated content editor', exact: true });
+      const body = editor.getByRole('textbox', { name: 'Full passage / body', exact: true });
+      let complete = row.body + '\n\nA complete manually saved addition.';
+      await body.fill(complete);
+      await editor.getByRole('button', { name: 'Save', exact: true }).click();
+      await expect.poll(async () => (await store.call({ method: 'rows' }))[0].body).toBe(complete);
+      await editor.getByRole('button', { name: 'Close', exact: true }).click();
+      await page.reload();
+      await card.getByRole('button', { name: 'Edit', exact: true }).click();
+      await expect(body).toHaveValue(complete);
+      await editor.getByRole('button', { name: 'Mark reviewed', exact: true }).click();
+      await expect.poll(async () => (await store.call({ method: 'rows' }))[0].status).toBe('REVIEWED');
+      const publish = editor.getByRole('button', { name: 'Publish to app', exact: true });
+      if (scope === 'shared') {
+        await expect(publish).toBeEnabled();
+        await publish.click();
+        await expect.poll(async () => (await store.call({ method: 'rows' }))[0].status).toBe('LIVE');
+        const reader = await store.call({ method: 'POST', url: '/api/content-reader', body: { ids: [row.id] } });
+        expect(reader.status).toBe(200);
+        expect(reader.payload.rows[0].body).toBe(complete);
+        expect(reader.payload.rows[0].sections.byRelationshipType).toEqual(row.sections.byRelationshipType);
+        const previous = complete;
+        complete += '\n\nA private revision with its full ending.';
+        await body.fill(complete);
+        await editor.getByRole('button', { name: 'Save draft', exact: true }).click();
+        const readPublicBody = async () => {
+          const result = await store.call({method:'POST', url:'/api/content-reader', body:{ids:[row.id]}});
+          expect(result.status).toBe(200);
+          return result.payload.rows[0]?.body;
+        };
+        await expect.poll(async () => (await store.call({ method:'rows' })).some((item:any) =>
+          item.id !== row.id && item.status === 'DRAFT' && item.body === complete)).toBe(true);
+        await expect(editor.getByText('All changes saved', { exact: true })).toBeVisible();
+        await expect(editor.getByRole('alert')).toHaveCount(0);
+        await expect(editor.getByRole('button', { name: 'Save draft', exact: true })).toBeDisabled();
+        expect(await readPublicBody()).toBe(previous);
+        await page.reload();
+        await expect(card).toHaveCount(1);
+        await card.getByRole('button', { name: 'Edit', exact: true }).click();
+        await expect(body).toHaveValue(complete);
+        await editor.getByRole('button', { name: 'Mark reviewed', exact: true }).click();
+        await expect.poll(async () => (await store.call({method:'rows'})).some((item:any) =>
+          item.id !== row.id && item.status === 'REVIEWED' && item.body === complete)).toBe(true);
+        expect(await readPublicBody()).toBe(previous);
+        await publish.click();
+        await expect.poll(readPublicBody).toBe(complete);
+      } else {
+        await expect(publish).toHaveCount(0);
+        await expect(editor.getByText('This personalized reading cannot be published for everyone.', { exact: false })).toBeVisible();
+        await expect(editor.getByLabel('Status', { exact: true }).locator('option[value="LIVE"]')).toHaveAttribute('disabled', '');
+        const saved = (await store.call({ method: 'rows' }))[0];
+        const refused = await store.call({ method: 'PATCH', body: { id: row.id, expectedUpdatedAt: saved.updated_at, status: 'LIVE' } });
+        expect(refused.status).toBe(400);
+        expect(refused.payload.error).toMatch(/Personalized content test rows cannot be published globally/);
+        expect((await store.call({ method: 'rows' }))[0]).toEqual(saved);
+      }
+      await editor.locator('summary').filter({ hasText: 'More actions' }).click();
+      await editor.getByRole('button', { name: 'Archive source', exact: true }).click();
+      await expect.poll(async () => (await store.call({ method: 'rows' }))[0].status).toBe('ARCHIVED');
+      const archived = (await store.call({ method: 'rows' }))[0];
+      expect(archived.body).toBe(complete);
+      expect(archived.sections.byRelationshipType).toEqual(row.sections.byRelationshipType);
+      const reader = await store.call({ method: 'POST', url: '/api/content-reader', body: { ids: [row.id] } });
+      expect(reader.status).toBe(200);
+      expect(reader.payload.rows).toEqual([]);
+      if (scope !== 'shared') await expect(editor.getByRole('button', { name: 'Publish again', exact: true })).toHaveCount(0);
+    } finally {
+      await page.close({ runBeforeUnload: false });
+      await drainRoutes?.();
+      store.close();
+    }
+  });
+}

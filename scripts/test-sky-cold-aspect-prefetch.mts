@@ -6,10 +6,13 @@ import { pathToFileURL } from 'node:url';
 import vm from 'node:vm';
 import ts from 'typescript';
 import { build } from 'esbuild';
+import { syntheticLibrarySkyArticle } from '../tests/helpers/article-library-fixture';
 
 const file = join(mkdtempSync(join(tmpdir(), 'sky-cold-aspects-')), 'reader.mjs');
 await build({ stdin: { resolveDir: process.cwd(), contents: `
   export * from './apps/web/src/services/skyDetailContent.ts';
+  export { skyIngressEssayReaderSection } from './apps/web/src/content/skyIngressEssayReader.ts';
+  export { skyPlacementInSignAspectContentKeys } from './apps/web/src/services/skyPlacementInSignAspectSections.ts';
   export { installContentPublications, contentPublication, publicationRestoresBaseline } from './apps/web/src/content/contentPublicationState.ts';
   export { contentStudioExactSkyAspectKeys } from './apps/web/src/services/skyAspectContent.ts';
   export { SKY_BODY_ORDER, SKY_PLACEMENT_ASPECT_TARGETS, transitAspectDefinitions } from './apps/web/src/astrologyConfig.ts';
@@ -54,8 +57,17 @@ assert(prepare);
 const transpile = (source: string) => ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext } }).outputText;
 const admit = ast.statements.find(node => ts.isFunctionDeclaration(node) && node.name?.text === 'admitInitialSkyArticlePublication');
 assert(admit);
+let preparationInvalidation: string | undefined;
+function findPreparationInvalidation(node: ts.Node) {
+  if (ts.isIfStatement(node) && node.expression.getText(ast).includes('canLoadPlacementArticle && (skyArticlePreparationRef.current?.key !== preparationKey')) {
+    assert.equal(preparationInvalidation, undefined);
+    preparationInvalidation = transpile(`Boolean(${node.expression.getText(ast)})`);
+  }
+  ts.forEachChild(node, findPreparationInvalidation);
+}
+findPreparationInvalidation(ast); assert(preparationInvalidation);
 for (const scenario of ['initial', 'partial-first', 'later-revision', 'generation-gap', 'cached-ledger', 'explicit-refresh-batched'] as const) {
-  const preparation = { initialPublication: scenario !== 'cached-ledger', generation: 0, refreshVersion: 0,
+  const preparation = { key: 'same-placement', initialPublication: scenario !== 'cached-ledger', generation: 0, refreshVersion: 0,
     snapshot: Promise.resolve('same-facts'), request: Promise.resolve('same-writing'), early: {} };
   const originals = { ...preparation };
   const context = vm.createContext({ preparation, contentPublicationGeneration: scenario === 'generation-gap' ? 2 : 1 });
@@ -69,6 +81,17 @@ for (const scenario of ['initial', 'partial-first', 'later-revision', 'generatio
   assert.equal(preparation.snapshot, originals.snapshot);
   assert.equal(preparation.request, originals.request);
   assert.equal(preparation.early, originals.early);
+  const invalidates = (refreshVersion: number, generation = context.contentPublicationGeneration, key = preparation.key) =>
+    vm.runInNewContext(preparationInvalidation!, {
+      canLoadPlacementArticle: true, skyArticlePreparationRef: { current: preparation },
+      preparationKey: key, contentRefreshVersion: refreshVersion, contentPublicationGeneration: generation
+    });
+  assert.equal(invalidates(0), !admitted, `${scenario}: an already-scheduled render must retain the admitted request`);
+  assert.equal(invalidates(1), !admitted, `${scenario}: the publication render must retain the same request`);
+  assert.equal(invalidates(2), true, `${scenario}: an explicit refresh still invalidates preparation`);
+  assert.equal(invalidates(1, context.contentPublicationGeneration + 1), true, `${scenario}: a later publication invalidates preparation`);
+  assert.equal(invalidates(1, context.contentPublicationGeneration, 'different-placement'), true,
+    `${scenario}: route, date or location identity changes invalidate preparation`);
   if (scenario === 'later-revision') {
     context.contentPublicationGeneration = 2;
     vm.runInContext('admitInitialSkyArticlePublication(preparation, "complete-live")', context);
@@ -186,11 +209,12 @@ for (const scenario of ['overlap', 'late-auth', 'retirement', 'revision', 'trans
   let missingCurrent = scenario === 'required-current-failure' || scenario === 'required-node-missing';
   const context = vm.createContext({ Map, Set, Promise,
     loadContentRegistry: async () => {}, refreshContentPublications: () => publications.promise,
-    eligibleSkyDetailContent: qa.eligibleSkyDetailContent, loadSkyDetailContent: qa.loadSkyDetailContent,
+    eligibleSkyDetailContent: qa.eligibleSkyDetailContent, loadSkyDetailContent: qa.loadSkyDetailContent, skyIngressEssayReaderSection: qa.skyIngressEssayReaderSection,
     contentPublication: qa.contentPublication, publicationRestoresBaseline: qa.publicationRestoresBaseline,
     skyRoutePartMatches: (a: string, b: string) => a.toLowerCase() === b.toLowerCase(),
     skyIngressEssayPublicationKeys: () => [dated], contentPublicationRecords: () => [], normalizeContentIdPart: (x: string) => x,
     filterPlacementTimelineEvents: (events: any[]) => events, skyPlacementArticleTimelineWindow: () => null,
+    skySnapshotAspectContentKeys: qa.skySnapshotAspectContentKeys,
     skyPlacementInSignAspectContentKeys: () => scenario === 'all-unused' ? [] : scenario === 'required-node-missing' ? nodeKeys : [selected, 'synthetic/noncandidate-aspect'],
     loadLiveGeneratedContentForKeys: async (keys: string[]) => {
       requests.push({ kind: 'normal', keys });
@@ -198,7 +222,7 @@ for (const scenario of ['overlap', 'late-auth', 'retirement', 'revision', 'trans
     }
   });
   vm.runInContext(transpile(prepare.getText(ast)), context);
-  const snapshot = { positions: [{ planet: 'Sun' }], generatedAt: stamp, placementAspectFacts: { inSign: [] } };
+  const snapshot = { positions: [{ planet: 'Sun' }], aspects: [], generatedAt: stamp, placementAspectFacts: { inSign: [] } };
   let early: any, cancelled = false, detached = false;
   const pending = context.prepareSkyPlacementArticleContent(facts.promise, 'sun', 'libra', new Map(), () => early);
   let settled = false;
@@ -276,11 +300,12 @@ for (const scenario of ['completed-before-facts', 'complete-after-facts', 'parti
   const currentRows = () => qa.eligibleSkyDetailContent(new Map([selected, unused].map(key => [key, { ...row(key), updatedAt: qa.contentPublication(key)?.row_updated_at ?? stamp }])));
   const context = vm.createContext({ Map, Set, Promise,
     loadContentRegistry: async () => {}, refreshContentPublications: () => publications.promise,
-    eligibleSkyDetailContent: qa.eligibleSkyDetailContent, loadSkyDetailContent: qa.loadSkyDetailContent,
+    eligibleSkyDetailContent: qa.eligibleSkyDetailContent, loadSkyDetailContent: qa.loadSkyDetailContent, skyIngressEssayReaderSection: qa.skyIngressEssayReaderSection,
     contentPublication: qa.contentPublication, publicationRestoresBaseline: qa.publicationRestoresBaseline,
     skyRoutePartMatches: (a: string, b: string) => a.toLowerCase() === b.toLowerCase(),
     skyIngressEssayPublicationKeys: () => [], contentPublicationRecords: () => [], normalizeContentIdPart: (value: string) => value,
     filterPlacementTimelineEvents: (events: any[]) => events, skyPlacementArticleTimelineWindow: () => null,
+    skySnapshotAspectContentKeys: qa.skySnapshotAspectContentKeys,
     skyPlacementInSignAspectContentKeys: () => [selected, unused],
     loadLiveGeneratedContentForKeys: async () => {
       normalRequests++;
@@ -289,7 +314,7 @@ for (const scenario of ['completed-before-facts', 'complete-after-facts', 'parti
     }
   });
   vm.runInContext(transpile(prepare.getText(ast)), context);
-  const snapshot = { positions: [{ planet: 'Sun' }], generatedAt: stamp, placementAspectFacts: { inSign: [] } };
+  const snapshot = { positions: [{ planet: 'Sun' }], aspects: [], generatedAt: stamp, placementAspectFacts: { inSign: [] } };
   const pending = context.prepareSkyPlacementArticleContent(facts.promise, 'sun', 'libra', new Map(), () => early);
   void pending.then(() => { settled = true; });
   early = qa.prefetchSkyPlacementAspectContent('sun', new Map(), publications.promise, facts.promise,
@@ -339,7 +364,101 @@ for (const scenario of ['completed-before-facts', 'complete-after-facts', 'parti
   assert.equal(cancelled, false, 'Neither winner aborts the independently owned normal transport.');
   assert.equal(detached, true, 'Every completion closes optional admission.');
 }
+// The actual validated dated article can cover more than the initial motion
+// chapter. Exact source admission must follow that saved window as well.
+for (const approved of [true, false]) for (const prewarmed of [false, true])
+for (const changed of approved && prewarmed ? ['none', 'newer', 'retired'] : ['none']) {
+  (globalThis as any).fixtureOnline = true;
+  const raw = await syntheticLibrarySkyArticle();
+  const article = { ...raw, contentKey: raw.content_key, updatedAt: stamp, reviewState: raw.review_state,
+    sourceSnapshot: approved ? raw.source_snapshot : {} };
+  revision++;
+  const [outsideKey] = qa.contentStudioExactSkyAspectKeys('Sun', 'sextile', 'Saturn');
+  qa.installContentPublications([article.contentKey, selected, unused, outsideKey].map(key => ({ content_key: key, state: 'live', revision,
+    row_id: key === article.contentKey ? article.id : key, row_updated_at: stamp, updated_at: stamp })));
+  const events = [
+    { id: 'earlier-in-saved-period', planet: 'Sun', aspect: 'square', otherPlanet: 'Pluto', occursAt: '2026-09-26T12:00:00Z' },
+    { id: 'initial-chapter', planet: 'Sun', aspect: 'trine', otherPlanet: 'Mars', occursAt: '2026-10-12T12:00:00Z' },
+    { id: 'outside-saved-period', planet: 'Sun', aspect: 'sextile', otherPlanet: 'Saturn', occursAt: '2026-11-01T12:00:00Z' }
+  ];
+  const snapshot = { positions: [{ planet: 'Sun', sign: 'Libra' }], aspects: [], generatedAt: stamp, placementAspectFacts: { inSign: events } };
+  const requests: string[][] = [];
+  const available = new Map([[article.contentKey, article], [selected, row(selected)], [unused, row(unused)], [outsideKey, row(outsideKey)]]);
+  const newerStamp = '2026-10-16T07:00:00.000002Z';
+  const context = vm.createContext({ Map, Set, Promise,
+    loadContentRegistry: async () => {}, refreshContentPublications: async () => {},
+    eligibleSkyDetailContent: qa.eligibleSkyDetailContent, loadSkyDetailContent: qa.loadSkyDetailContent,
+    skyIngressEssayReaderSection: (...args: any[]) => {
+      const section = qa.skyIngressEssayReaderSection(...args);
+      if (changed !== 'none') {
+        revision++;
+        qa.installContentPublications([article.contentKey, selected, unused, outsideKey].map(key => ({ content_key: key,
+          state: key === unused && changed === 'retired' ? 'retired' : 'live', revision,
+          row_id: key === article.contentKey ? article.id : key,
+          row_updated_at: key === unused && changed === 'newer' ? newerStamp : stamp, updated_at: stamp })));
+        if (changed === 'newer') available.set(unused, { ...row(unused), updatedAt: newerStamp, body: 'Synthetic revised exact opening. Synthetic revised exact ending.' });
+      }
+      return section;
+    }, contentPublication: qa.contentPublication,
+    publicationRestoresBaseline: qa.publicationRestoresBaseline, skyRoutePartMatches: (a: string, b: string) => a.toLowerCase() === b.toLowerCase(),
+    skyIngressEssayPublicationKeys: () => [article.contentKey], contentPublicationRecords: () => [], normalizeContentIdPart: (value: string) => value.toLowerCase(),
+    filterPlacementTimelineEvents: (items: any[]) => items.filter(event => event.id === 'initial-chapter'), skyPlacementArticleTimelineWindow: () => null,
+    skySnapshotAspectContentKeys: qa.skySnapshotAspectContentKeys,
+    skyPlacementInSignAspectContentKeys: qa.skyPlacementInSignAspectContentKeys,
+    loadLiveGeneratedContentForKeys: async (keys: string[]) => {
+      requests.push(keys);
+      return qa.eligibleSkyDetailContent(new Map(keys.filter(key => available.has(key)).map(key => [key, available.get(key)])));
+    }
+  });
+  vm.runInContext(transpile(prepare.getText(ast)), context);
+  let finished = false;
+  const early = prewarmed ? { ingress: Promise.resolve(new Map([[article.contentKey, article]])), handoff: () => ({
+    completed: available, rows: Promise.resolve(available), finish: () => { finished = true; }
+  }) } : undefined;
+  const result = await context.prepareSkyPlacementArticleContent(Promise.resolve(snapshot), 'sun', 'libra', new Map(), () => early);
+  assert.equal(result.content.has(unused), approved && changed !== 'retired', 'Only an approved, exact-version selected article extends source loading to its complete saved period.');
+  assert.equal(requests.filter(keys => keys.includes(selected)).length, prewarmed ? 0 : 1, 'Extending the period does not refetch an already admitted exact source.');
+  assert.equal(result.content.has(outsideKey), false, 'An unrelated prewarmed source never enters the article map.');
+  if (prewarmed) {
+    assert(finished, 'Optional transport admission closes after preparation.');
+    assert.equal(requests.length, changed === 'none' ? 0 : 1, 'Current candidates avoid refetch; a changed publication cannot reuse older candidates.');
+  }
+  if (approved && changed !== 'retired') assert.equal(result.content.get(unused)?.body, available.get(unused)?.body, 'Earlier exact writing retains its complete current passage.');
+  if (changed === 'newer') assert.equal(result.content.get(unused)?.updatedAt, newerStamp, 'A microsecond revision invalidates the completed candidate.');
+}
+// Active copy may be needed even when its exact pass is outside Key dates.
+{
+  const [activeKey] = qa.contentStudioExactSkyAspectKeys('Sun', 'sextile', 'Mercury');
+  const [unrelatedKey] = qa.contentStudioExactSkyAspectKeys('Venus', 'square', 'Mars');
+  publish([activeKey, unrelatedKey]);
+  const requests: string[][] = [];
+  const snapshot = { generatedAt: stamp, positions: [{ planet: 'Sun', sign: 'Libra' }, { planet: 'Mercury', sign: 'Leo' }],
+    aspects: [
+      { from: 'Sun', to: 'Mercury', type: 'sextile', fromSign: 'Libra', toSign: 'Leo' },
+      { from: 'Venus', to: 'Mars', type: 'square', fromSign: 'Aries', toSign: 'Cancer' }
+    ], placementAspectFacts: { inSign: [] } };
+  const context = vm.createContext({ Map, Set, Promise,
+    loadContentRegistry: async () => {}, refreshContentPublications: async () => {},
+    eligibleSkyDetailContent: qa.eligibleSkyDetailContent, loadSkyDetailContent: qa.loadSkyDetailContent,
+    skyIngressEssayReaderSection: () => undefined, skyIngressEssayPublicationKeys: () => [], contentPublicationRecords: () => [],
+    contentPublication: qa.contentPublication, publicationRestoresBaseline: qa.publicationRestoresBaseline,
+    normalizeContentIdPart: (value: string) => value.toLowerCase(),
+    skyRoutePartMatches: (first: string, second: string) => first.toLowerCase() === second.toLowerCase(),
+    skyPlacementArticleTimelineWindow: () => null, filterPlacementTimelineEvents: () => [],
+    skySnapshotAspectContentKeys: qa.skySnapshotAspectContentKeys,
+    skyPlacementInSignAspectContentKeys: qa.skyPlacementInSignAspectContentKeys,
+    loadLiveGeneratedContentForKeys: async (keys: string[]) => {
+      requests.push(keys);
+      return new Map(keys.includes(activeKey) ? [[activeKey, row(activeKey)]] : []);
+    }
+  });
+  vm.runInContext(transpile(prepare.getText(ast)), context);
+  const result = await context.prepareSkyPlacementArticleContent(Promise.resolve(snapshot), 'sun', 'libra', new Map(), () => undefined);
+  assert.equal(result.content.get(activeKey)?.body, row(activeKey).body, 'The complete published active contact loads without an in-window exact event.');
+  assert(requests.some(keys => keys.includes(activeKey)));
+  assert(!requests.some(keys => keys.includes(unrelatedKey)), 'Other placements do not widen this current-contact request.');
+}
 if (oldNavigator) Object.defineProperty(globalThis, 'navigator', oldNavigator);
 else Reflect.deleteProperty(globalThis, 'navigator');
 Reflect.deleteProperty(globalThis, 'fixtureOnline');
-console.log('PASS: bounded canonical candidates, exact guest predicate, pre-ledger private transport, late auth, cancellation, ingress/actual-aspect concurrency, nonblocking pending/completed handoff, post-handoff cancellation ownership, extra-node completeness, microsecond revisions, retirement, failures, and warm/offline bypass.');
+console.log('PASS: bounded canonical candidates, exact guest predicate, pre-ledger private transport, late auth, cancellation, ingress/actual-aspect concurrency, nonblocking pending/completed handoff, post-handoff cancellation ownership, extra-node completeness, microsecond revisions, retirement, failures, warm/offline bypass, and approved saved-period source extension.');

@@ -3,9 +3,7 @@
 
 .placement-table-row,
 .planet-placement-row,
-.sky-pl,
 .synastry-placement-row,
-.ro-screen .sky-pl,
 .placement-section .planet-placement-row,
 .friend-placement-row .placement-table-row,
 .friend-placement-row .planet-placement-row,
@@ -25,8 +23,7 @@
 .friend-chart-page .aspect-row,
 .friend-chart-page .aspect-row-button,
 .friend-chart-page .aspect-row-static,
-.updates-aspect-row,
-.natal-pattern-card {
+.updates-aspect-row {
   border: var(--border-width-thin) solid var(--card-border);
   border-radius: var(--card-radius);
   background: var(--card-bg);
@@ -35,9 +32,7 @@
 
 .placement-table-row,
 .planet-placement-row,
-.sky-pl,
 .synastry-placement-row,
-.ro-screen .sky-pl,
 .placement-section .planet-placement-row,
 .friend-placement-row .placement-table-row,
 .friend-placement-row .planet-placement-row,
@@ -65,8 +60,6 @@
 
 .placement-table-row__title,
 .planet-placement-row__title,
-.sky-pl-title,
-.ro-screen .sky-pl-title,
 .placement-section .planet-placement-row__title,
 .aspect-row-copy strong,
 .aspect-row-copy :is(h3, h4),
@@ -75,26 +68,23 @@
 .aspect-section .aspect-row-copy :is(h3, h4),
 .friend-chart-page .aspect-row-copy strong,
 .friend-chart-page .aspect-row-copy :is(h3, h4),
-.updates-aspect-row__title,
-.natal-pattern-card__header h3 {
+.updates-aspect-row__title {
   color: var(--card-title-color);
   font-family: var(--font-display);
   font-size: var(--text-card-title);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-regular);
   letter-spacing: var(--tracking-title);
   line-height: var(--leading-title);
 }
 
+.sky-pl-copy,
 .placement-table-row__description,
 .planet-placement-row__description,
-.sky-pl-copy,
 .aspect-row-copy p,
 .tx-body,
 .aspect-section .aspect-row-copy p,
 .friend-chart-page .aspect-row-copy p,
-.updates-aspect-row__description,
-.natal-pattern-card__header p,
-.natal-pattern-card__section p {
+.updates-aspect-row__description {
   color: var(--card-body-color);
   font-family: var(--font-body);
   font-size: var(--text-body);
@@ -106,13 +96,9 @@
 .placement-table-row__meta,
 .planet-placement-row__meta,
 .planet-placement-row__degree,
-.sky-pl-degree,
-.sky-pl-range,
 .synastry-placement-meta,
 .synastry-placement-degree,
 .synastry-placement-house,
-.ro-screen .sky-pl-degree,
-.ro-screen .sky-pl-range,
 .placement-section .planet-placement-row__degree,
 .placement-section .planet-placement-row__meta,
 .synastry-placement-column-inner .synastry-placement-meta,
@@ -126,7 +112,7 @@
 .friend-chart-page .aspect-row-timing,
 .friend-chart-page .aspect-row-meta {
   color: var(--card-meta-color);
-  font-family: var(--font-body);
+  font-family: var(--font-ui);
   font-size: var(--type-meta-size);
   font-weight: var(--weight-regular);
   letter-spacing: var(--tracking-number);
@@ -178,6 +164,8 @@
   text-decoration: underline;
   text-underline-offset: var(--space-1);
 }
+
+.card-read-more--icon { display: grid; place-items: center; flex: none; width: var(--placement-control-size); height: var(--placement-control-size); border-radius: var(--radius-circle); background: var(--surface-2); color: var(--ink); text-decoration: none; }
 
 .card-read-more + :is(
   .updates-aspect-row__life-areas,

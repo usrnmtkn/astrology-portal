@@ -34,6 +34,7 @@ if (!fs.existsSync(manifestPath)) {
 }
 
 const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+await import("./test-wheel-tooltip-preview-boundary.mjs");
 const budgets = JSON.parse(fs.readFileSync(budgetsPath, "utf8"));
 const entry = Object.values(manifest).find((item) => item?.isEntry);
 if (!entry?.file) {
@@ -101,6 +102,7 @@ if (javaScriptFiles.some(item => /fallbackArchitectureV3DeferredBundle-/.test(it
 }
 
 const forbiddenEntryMarkers = [
+  "Fallback composition check",
   "bundled-deferred-core-rows-v3",
   "bundled-sky-core-rows-v3",
   "fallbackArchitectureV3Runtime",
@@ -121,10 +123,30 @@ function visitInitial(key) {
   for (const dependency of manifest[key].imports ?? []) visitInitial(dependency);
 }
 visitInitial(Object.entries(manifest).find(([, item]) => item === entry)?.[0]);
+// Splitting startup code into shared files must not hide it from the entry ceilings.
+const initialFiles = new Set([...initialChunks].map(key => manifest[key].file));
+const initialJavaScript = javaScriptFiles.filter(item => initialFiles.has(item.file));
+const initialRawBytes = initialJavaScript.reduce((sum, item) => sum + item.rawBytes, 0);
+const initialGzipBytes = initialJavaScript.reduce((sum, item) => sum + item.gzipBytes, 0);
+if (initialRawBytes > budgets.entryJavaScriptRawBytes) failures.push(`Complete Studio startup exceeds the existing raw entry ceiling: ${initialRawBytes} bytes`);
+if (initialGzipBytes > budgets.entryJavaScriptGzipBytes) failures.push(`Complete Studio startup exceeds the existing gzip entry ceiling: ${initialGzipBytes} bytes`);
+if (initialChunks.has('src/contentLibraryNavigation.ts')) failures.push('Content Library navigation and status actions must remain deferred from Studio startup.');
+if (initialChunks.has("src/NatalSectPlacementComparison.tsx")) failures.push("Natal reading comparison must remain deferred from Studio startup.");
+if (!manifest["src/NatalSectPlacementComparison.tsx"]?.isDynamicEntry) failures.push("Natal reading comparison must remain an independently lazy entry.");
+if (initialChunks.has('src/studioRevisionPublication.ts')) failures.push('Revision publication validation must remain deferred from Studio startup.');
 if (initialChunks.has("src/SkyPlacementWorkspace.tsx")) failures.push("The dated Sky workspace must remain deferred from Studio startup.");
+if (initialChunks.has("src/FallbackHoroscopeStudio.tsx")) failures.push("The fallback horoscope library must remain deferred from Studio startup.");
+if(initialChunks.has('src/MoonHoroscopesStudio.tsx')||!manifest['src/MoonHoroscopesStudio.tsx']?.isDynamicEntry)failures.push('The dated Moon horoscope editor must remain an independently deferred entry.');
+if (initialChunks.has("src/SkyDebilityDatePreview.tsx")) failures.push("The dignity date preview must remain deferred from Studio startup.");
 if (memoryGraphFiles.length !== 1) failures.push('Expected one deferred memory graph route with its renderer.');
 for (const key of initialChunks) {
   const file = manifest[key].file;
+  if (['skyArticleHoroscopes', 'skyPlacementAspectBridge', 'studioMemoryIdentity', 'calendarPreviewCalculation', 'SkyPlacementAspectBridgeStudio'].includes(manifest[key].name)) {
+    failures.push(`Deferred Studio source/editor code entered startup: ${file}`);
+  }
+  if (file?.endsWith('.js') && fs.readFileSync(path.join(distRoot, file), 'utf8').includes('The saved copy also changed in')) {
+    failures.push(`Copy conflict recovery must remain deferred from Studio startup: ${file}`);
+  }
   if (key === "src/StudioFormattingEditor.tsx" || (file?.endsWith(".js") && fs.readFileSync(path.join(distRoot, file), "utf8").includes("ProseMirror"))) {
     failures.push(`The visual writing editor must remain deferred from Studio startup: ${file}`);
   }
@@ -154,6 +176,9 @@ for (const key of initialChunks) {
 }
 
 const expectedDynamicEntries = [
+  "src/SkyPlacementAspectBridgeStudio.tsx",
+  "src/studioRevisionPublication.ts",
+  "src/contentLibraryNavigation.ts",
   "src/LunationWritingStudio.tsx",
   "src/ReusableLunationWritingStudio.tsx",
   "src/DatedLunationWritingStudio.tsx",
@@ -163,6 +188,7 @@ const expectedDynamicEntries = [
   "src/CompositionMapWorkspace.tsx",
   "src/SkyPlacementComposition.tsx",
   "src/SkyPlacementWorkspace.tsx",
+  "src/SkyDebilityDatePreview.tsx",
   "src/SkyFallbackFieldsEditor.tsx",
   "src/MemoryGraphDashboard.tsx",
   "src/StudioMemoryFeedback.tsx",
@@ -183,10 +209,21 @@ if (groupedCalendar) {
 for (const key of expectedDynamicEntries) {
   if (!manifest[key]?.isDynamicEntry && !(groupedCalendar && calendarLazyEntries.includes(key))) failures.push(`Expected lazy Admin entry is missing: ${key}`);
 }
+// Optional writing/recovery downloads must not block opening a saved edition.
+const editionImports = new Set();
+function visitEdition(key) {
+  if (editionImports.has(key) || !manifest[key]) return;
+  editionImports.add(key);
+  for (const dependency of manifest[key].imports ?? []) visitEdition(dependency);
+}
+visitEdition('src/HoroscopeEditionsStudio.tsx');
+if ([...editionImports].some(key => /\/Horoscope(?:WritingStudio|SaveRecovery)-/.test(manifest[key].file))) {
+  failures.push('Optional horoscope writing/recovery panels entered the saved-edition import graph.');
+}
 // Editor, fallback, and publication panels share the review workspace chunk.
 // Both it and source factories must still be absent from startup imports.
 const expectedDeferredGroups = [
-  "admin-deferred-review-tools",
+  "review",
   "admin-source-drafts"
 ];
 const entryImports = new Set(entry.imports ?? []);
@@ -205,6 +242,7 @@ for (const name of expectedDeferredGroups) {
 
 console.log("# Admin bundle budget");
 console.log(`Entry JavaScript: ${formatBytes(measurements.entryJavaScriptGzipBytes)} gzip (${formatBytes(measurements.entryJavaScriptRawBytes)} raw)`);
+console.log(`Complete startup graph: ${initialRawBytes} bytes raw / ${initialGzipBytes} bytes gzip across ${initialJavaScript.length} files`);
 console.log(`Largest JavaScript: ${largestItem?.file ?? "none"} (${formatBytes(measurements.largestJavaScriptRawBytes)} raw)`);
 console.log(`All JavaScript: ${formatBytes(measurements.totalJavaScriptGzipBytes)} gzip (${measurements.totalJavaScriptGzipBytes} bytes) across ${javaScriptFiles.length} files; limit ${budgets.totalJavaScriptGzipBytes} bytes`);
 console.log(`Aggregate headroom: ${budgets.totalJavaScriptGzipBytes - measurements.totalJavaScriptGzipBytes} bytes`);

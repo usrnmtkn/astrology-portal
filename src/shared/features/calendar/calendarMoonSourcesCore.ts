@@ -12,7 +12,7 @@ import { calendarSeasonTransitionKeyForSurface } from './calendarSeasonTransitio
 export function createCalendarMoonSources(readers: {
   hookBody: (key: string) => string;
   weeklyMoon: (sign: string, variant: number) => { contentKey: string; body: string } | null;
-  lunation: (event: NonNullable<LunarCalendarDay['events'][number]>, content?: Map<string, LiveGeneratedContent> | null) => { contentKey: string; body: string } | null;
+  lunation: (event: NonNullable<LunarCalendarDay['events'][number]>, content?: Map<string, LiveGeneratedContent> | null, timeZone?: string) => { contentKey: string; body: string } | null;
 }) {
 function primaryLunationForDay(day: LunarCalendarDay) {
   return day.events.find((event) => (
@@ -68,7 +68,7 @@ function calendarMoonFallbackOptions(
   authoredUsedThisVisit = false
 ) {
   const lunation = primaryLunationForDay(day);
-  const lunarSource = lunation ? readers.lunation(lunation, generatedContent) : null;
+  const lunarSource = lunation ? readers.lunation(lunation, generatedContent, facts.timeZone) : null;
   const lunationKey = lunarSource?.contentKey ?? '';
   const lunationBody = lunarSource?.body ?? '';
   const seasonKey = facts.seasonName ? `fallback-hook/zodiac-season/${slugContentPart(facts.seasonName)}` : "";
@@ -155,10 +155,11 @@ function packagedWeeklyMoon(
 function moonWritingForDay(
   day: LunarCalendarDay,
   generatedContent: Map<string, LiveGeneratedContent> | null | undefined,
-  leftoverFallback?: { contentKey: string; body: string } | null
+  leftoverFallback?: { contentKey: string; body: string } | null,
+  timeZone?: string
 ) {
   const lunation = primaryLunationForDay(day);
-  const lunarSource = lunation ? readers.lunation(lunation, generatedContent) : null;
+  const lunarSource = lunation ? readers.lunation(lunation, generatedContent, timeZone) : null;
   return calendarDayMoonWriting({
     moonSign: day.moonSign,
     lunation,

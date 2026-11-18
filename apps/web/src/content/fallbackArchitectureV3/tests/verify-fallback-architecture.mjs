@@ -422,7 +422,7 @@ const withMods = renderNatalPlacement(
   { allowUnreviewed: true }
 );
 if (!withMods.body.includes("home sign")) fail("dignity modifier missing");
-if (!withMods.body.includes("retrograde in the birth chart")) fail("retrograde modifier missing");
+if (withMods.body.includes("retrograde in the birth chart")) fail("shared retrograde modifier must not serve");
 if (!withMods.body.includes("night chart")) fail("sect modifier missing");
 
 console.log(`Rendered ${rendered} fallback paragraphs across ${planets.length} planets x ${signs.length} signs x voices x houses.`);

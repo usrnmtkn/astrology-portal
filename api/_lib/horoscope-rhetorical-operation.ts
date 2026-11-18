@@ -1,24 +1,26 @@
 import {randomUUID} from 'node:crypto';
 import responses from '../../src/astro-writing/openAIResponses.cjs';
 import provider from '../../src/astro-writing/offlineProviderConfig.cjs';
-import {supportedHoroscopeReview,horoscopeReviewPolicy,HOROSCOPE_REVIEW_SCHEMA,HOROSCOPE_REVIEW_INSTRUCTIONS,horoscopeReviewInput,horoscopeReviewHash,readHoroscopeReview,horoscopeReviewValidationCode} from '../../src/astro-writing/horoscopeRhetoricalReview.mjs';
+import {supportedHoroscopeReview,horoscopeReviewPolicy,horoscopeReviewSchema,horoscopeReviewInstructions,horoscopeReviewInput,horoscopeReviewHash,readHoroscopeReview,horoscopeReviewValidationCode} from '../../src/astro-writing/horoscopeRhetoricalReview.mjs';
 import {HOROSCOPE_STARTUP_DEADLINE_MS} from '../../src/astro-writing/horoscopeRecovery.mjs';
 import {horoscopeEditionBody} from '../../apps/web/src/content/horoscopeEditions.mjs';
 import {AdminHttpError} from './admin-http.js';
 import {assertHoroscopeRow} from './horoscope-editions.js';
 import {horoscopeProviderDiagnostic} from './horoscope-provider-result.js';
+import {weeklyPreviousReadingsCurrent} from '../../src/astro-writing/weeklyPreviousReadings.mjs';
 
 export const isHoroscopeReview=(operation:any)=>supportedHoroscopeReview(operation?.workflow);
 
 /** Persist the completed writer response before any review dispatch. Old requests
  * without this version never acquire a new paid stage during retrieval. */
 export async function queueHoroscopeReview({row,persist,operation,candidate,receipt}:any){
-  const instructions=`${horoscopeReviewPolicy(operation.reviewVersion)}\n\n${HOROSCOPE_REVIEW_INSTRUCTIONS}`;
+  const instructions=`${horoscopeReviewPolicy(operation.reviewVersion)}\n\n${horoscopeReviewInstructions(operation.reviewEvidence)}`;
   const input=horoscopeReviewInput(candidate,operation.reviewEvidence);
   const review={id:randomUUID(),workflow:operation.reviewVersion,phase:'review',state:'ready',sign:operation.sign,
     startedAt:new Date().toISOString(),actor:operation.actor,planHash:operation.planHash,candidate,receipt,candidateHash:horoscopeReviewHash(candidate),
     evidenceHash:horoscopeReviewHash(operation.reviewEvidence),config:provider.normalizeProviderConfig({maxOutputTokens:6000},'judge'),
-    reviewRequest:{input,instructions,schema:HOROSCOPE_REVIEW_SCHEMA},responseId:null,writerOperation:operation};
+    reviewRequest:{input,instructions,schema:horoscopeReviewSchema(operation.reviewEvidence)},responseId:null,writerOperation:operation};
+  if(!weeklyPreviousReadingsCurrent(row,receipt.previousReadings))return horoscopeRhetoricalOperation({action:'context-changed',row:{...row,source_snapshot:{...row.source_snapshot,horoscopeGeneration:{...row.source_snapshot.horoscopeGeneration,active:review}}},persist});
   const saved=await persist({source_snapshot:{...row.source_snapshot,horoscopeGeneration:{...row.source_snapshot.horoscopeGeneration,active:review,lastError:null}}});
   return {status:202,payload:{ok:true,rows:[saved],pending:true}};
 }
@@ -45,7 +47,7 @@ export async function horoscopeRhetoricalOperation({action,row:initialRow,persis
   };
   const complete=async(payload:any)=>{
     let verdict;
-    try{verdict=readHoroscopeReview(payload,operation.candidate);}catch(error){
+    try{verdict=readHoroscopeReview(payload,operation.candidate,operation.writerOperation?.reviewEvidence);}catch(error){
       const message=payload?.status==='completed'
         ?'The prose check could not be read. Your draft is saved. Check the saved prose review, or open the draft to edit it.'
         :'The prose check did not finish. Your draft is saved. Open it to edit or reject this reading.';
@@ -54,6 +56,7 @@ export async function horoscopeRhetoricalOperation({action,row:initialRow,persis
     const review={version:operation.workflow,...verdict,candidateHash:operation.candidateHash,evidenceHash:operation.evidenceHash,
       requestHash:operation.requestHash,responseId:operation.responseId,config:operation.config,usage:payload.usage??null,completedAt:new Date().toISOString(),ownerApproved:false};
     if(verdict.rhetoricalBlocked)return hold('rhetorical_pattern','The prose check found manufactured rhetorical polish. Review the quoted findings, then edit or reject this reading. The other readings can continue.',review);
+    if(verdict.directionBlocked)return hold('weekly_direction_drift','The draft does not follow the saved concern, stakes or observation throughout its development and ending. Review the quoted findings, then edit or reject this reading.',review);
     const edition={...row.sections.horoscopeEdition,passages:row.sections.horoscopeEdition.passages.map((p:any)=>p.sign===operation.sign?{...p,...operation.candidate}:p)};
     const generation=row.source_snapshot.horoscopeGeneration;
     const candidateHolds={...generation.candidateHolds};delete candidateHolds[operation.sign];
@@ -62,6 +65,8 @@ export async function horoscopeRhetoricalOperation({action,row:initialRow,persis
     assertHoroscopeRow({...row,...patch});row=await persist(patch);
     return {status:200,payload:{ok:true,rows:[row],pending:false}};
   };
+  if(!weeklyPreviousReadingsCurrent(row,operation.receipt?.previousReadings))
+    return hold('weekly_comparison_context_changed','Earlier Weekly readings or this sign changed while the request was running. The returned draft is saved for editing or rejection; newer wording was kept. No replacement request was sent.');
   if(recoverSign){
     const response=await responses.storedWritingResponse({apiKey,responseId:operation.responseId});
     if(!response.ok)throw new AdminHttpError(503,'The saved prose review could not be retrieved. Your draft is kept; no new request was made.');

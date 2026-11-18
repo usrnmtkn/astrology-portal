@@ -76,7 +76,7 @@ for(const period of ['daily','weekly','seasonal'] as const){
  const protectedSave=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,sourceSnapshot:{...row.source_snapshot,horoscopeGeneration:null}});
  assert.equal(protectedSave.status,200);row=protectedSave.payload.rows[0];assert.deepEqual(row.source_snapshot.horoscopeGeneration.rejections,history,'Generic saves cannot erase rejection history');
  globalThis.fetch=checkpointTransport;
- const plan=await invokeHoroscopeWriting({action:'prepare',id:row.id,expectedUpdatedAt:row.updated_at});assert.equal(plan.status,200);
+ const plan=await invokeHoroscopeWriting({action:'prepare',id:row.id,expectedUpdatedAt:row.updated_at});assert.equal(plan.status,200);row=plan.payload.rows[0];
  const generation=await invokeHoroscopeWriting({action:'generate',id:row.id,expectedUpdatedAt:row.updated_at,sign:'aries',approvedPlanHash:plan.payload.plan.planHash});assert.equal(generation.status,202,JSON.stringify(generation.payload));row=generation.payload.rows[0];
  assert.equal((await action('all')).status,409,'An active replacement cannot be discarded');
  const advance=async(action:string,expectedStatus:number)=>{const result=await invokeHoroscopeWriting({action,id:row.id,expectedUpdatedAt:row.updated_at});assert.equal(result.status,expectedStatus,JSON.stringify(result.payload));row=result.payload.rows[0];};
@@ -105,7 +105,7 @@ for(const period of ['daily','weekly','seasonal'] as const){
  assert.equal(history[1].generation.rejections,undefined,'History does not recursively duplicate itself');
  assert.equal((await action('all',{expectedUpdatedAt:beforeVersion})).status,409,'Replaying a rejection cannot clear replacement drafts');
  assert.equal((await action('all')).status,409);
- const freshPlan=await invokeHoroscopeWriting({action:'prepare',id:row.id,expectedUpdatedAt:row.updated_at});assert.equal(freshPlan.status,200);
+ const freshPlan=await invokeHoroscopeWriting({action:'prepare',id:row.id,expectedUpdatedAt:row.updated_at});assert.equal(freshPlan.status,200);row=freshPlan.payload.rows[0];
  assert.notEqual(freshPlan.payload.plan.planHash,plan.payload.plan.planHash,'Reset requires a fresh plan approval');
  if(period!=='daily')assert(row.facts.horoscopeBrief.brief.events.some((e:any)=>e.type==='ingress'),'All-draft reset refreshes old event coverage');
  if(period==='weekly'){

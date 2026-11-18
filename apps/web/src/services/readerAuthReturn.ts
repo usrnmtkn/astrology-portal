@@ -7,6 +7,8 @@ export function validReaderReturnPath(value: string | null) {
     const url = new URL(value, "https://reader.invalid");
     if (url.origin !== "https://reader.invalid" || url.search) return null;
     if (url.pathname === "/" && /^#(?:you|friends|calendar|account)(?:[/?]|$)/u.test(url.hash)) {
+      const [route, query] = url.hash.slice(1).split("?");
+      if (route === "friends" && new URLSearchParams(query).get("tab") === "requests") return "/#you";
       return `/${url.hash}`;
     }
     if (/^\/reports(?:\/[a-zA-Z0-9_-]+)*\/?$/u.test(url.pathname) && !url.hash) return url.pathname;
@@ -23,7 +25,7 @@ export function rememberReaderReturnPath(captureCurrent = false) {
   const explicit = url.searchParams.get("readerReturn");
   const current = captureCurrent ? validReaderReturnPath(`${url.pathname}${url.hash}`) : null;
   const requested = explicit !== null ? validReaderReturnPath(explicit) : current;
-  if (explicit !== null || current) {
+  if (explicit !== null || captureCurrent) {
     clearReaderReturnPath();
     if (requested) {
       try { window.sessionStorage.setItem(storageKey, JSON.stringify({ path: requested, at: Date.now() })); } catch { /* The callback URL also carries it. */ }
@@ -36,12 +38,4 @@ export function rememberReaderReturnPath(captureCurrent = false) {
   } catch { /* Missing, blocked, or malformed storage. */ }
   clearReaderReturnPath();
   return null;
-}
-
-export function returnToReaderAfterSignIn() {
-  const path = rememberReaderReturnPath();
-  clearReaderReturnPath();
-  if (!path) return false;
-  window.location.replace(path);
-  return true;
 }

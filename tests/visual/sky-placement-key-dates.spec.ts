@@ -1,5 +1,6 @@
 import { readerResponse } from '../helpers/reader-response';
-import { expect, test } from "@playwright/test";
+import { expectKeyDatesHeaderCentered } from '../helpers/key-dates-panel';
+import { expect, test } from "../helpers/polish-test";
 import { skyPlacementSourceRecords } from "../../api/_lib/sky-placement-sources";
 import { getLunarCalendarWeek } from "../../apps/web/src/services/ephemeris";
 import { emptyLastKnownGoodSnapshot } from "../helpers/bundled-publications";
@@ -8,21 +9,30 @@ const timeline = [
   ["August 22, 2026", "Sun enters Virgo"],
   ["August 27, 2026", "Sun conjunction Mercury"],
   ["August 28, 2026", "Sun square Uranus"],
+  ["September 2, 2026", "Sun trine True Black Moon Lilith"],
+  ["September 10, 2026", "Sun trine True Black Moon Lilith"],
+  ["September 14, 2026", "Sun sextile Mars"],
+  ["September 20, 2026", "Sun square True Black Moon Lilith"],
+  ["September 22, 2026", "Sun completes its passage through Virgo"]
+];
+// Timeline display names and inline fact labels have separate contracts.
+const inlineAspects = [
+  ["August 27, 2026", "Sun conjunction Mercury"],
+  ["August 28, 2026", "Sun square Uranus"],
   ["September 2, 2026", "Sun trine Lilith"],
   ["September 10, 2026", "Sun trine Lilith"],
   ["September 14, 2026", "Sun sextile Mars"],
-  ["September 20, 2026", "Sun square Lilith"],
-  ["September 22, 2026", "Sun completes its passage through Virgo"]
+  ["September 20, 2026", "Sun square Lilith"]
 ];
-for (const width of [390, 1440]) for (const withVariable of [false, true]) {
-  test(`placement Key dates ${width} ${withVariable ? "inline aspects" : "without aspect token"}`, async ({ page }) => {
+for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (const withVariable of [false, true]) {
+  test(`placement Key dates ${width} ${theme} ${withVariable ? "inline aspects" : "without aspect token"}`, async ({ page }) => {
     test.setTimeout(120_000);
     await page.setViewportSize({ width, height: 1000 });
     await page.clock.setFixedTime(new Date("2026-09-12T12:00:00Z"));
     await page.addInitScript(theme => {
       localStorage.setItem("tldrastro:theme", theme);
       localStorage.setItem("tldrastro:selectedLocation", JSON.stringify({ label: "New York", latitude: 40.7, longitude: -74, timeZone: "America/New_York" }));
-    }, withVariable ? "dark" : "light");
+    }, theme);
     const key = "sky-placement/article/sun/virgo";
     const base = skyPlacementSourceRecords.get(key)!;
     const updatedAt = "2026-09-11T12:00:00.000Z";
@@ -45,15 +55,22 @@ for (const width of [390, 1440]) for (const withVariable of [false, true]) {
     await page.goto("/?date=2026-09-12#sky/placement/sun/virgo");
     const dates = page.locator(".sky-placement-key-dates");
     const verifyDates = async () => {
-      await expect(dates.locator("dl > div")).toHaveCount(timeline.length, { timeout: 60_000 });
-      expect(await dates.locator("dl > div").evaluateAll(rows => rows.map(row => [row.querySelector("dt")?.textContent, row.querySelector("dd")?.textContent]))).toEqual(timeline);
+      await expect(dates).toBeVisible({ timeout: 60_000 });
+      await expect(dates).not.toHaveAttribute('open');
+      await expectKeyDatesHeaderCentered(dates);
+      await dates.locator(':scope > summary').focus();await page.keyboard.press('Enter');
+      await expect(dates).toHaveAttribute('open');
+      await expectKeyDatesHeaderCentered(dates);
+      await expect(dates.locator('.key-dates-panel__count')).toHaveText(String(timeline.length));
+      await expect(dates.locator("ol > li")).toHaveCount(timeline.length, { timeout: 60_000 });
+      expect(await dates.locator("ol > li").evaluateAll(rows => rows.map(row => [row.querySelector("time")?.getAttribute("aria-label"), row.querySelector(".sky-placement-key-dates__title strong")?.textContent]))).toEqual(timeline);
     };
     await verifyDates();
     const body = page.locator(".article-body-inner").first();
-    await expect(body).toContainText(withVariable ? `Fixture exact dates: ${timeline.slice(1, -1).map(([date, label]) => `${date}: ${label}`).join(", ")}.` : template);
+    await expect(body).toContainText(withVariable ? `Fixture exact dates: ${inlineAspects.map(([date, label]) => `${date}: ${label}`).join(", ")}.` : template);
     await expect(body).not.toContainText("{{");
     await dates.scrollIntoViewIfNeeded();
-    await dates.screenshot({ path: `test-results/sky-key-dates-${width}-${withVariable}.png` });
+    await dates.screenshot({ path: `test-results/sky-key-dates-${width}-${theme}-${withVariable}.png` });
     await page.getByRole("link", { name: "Read more about Sun Sextile Mars", exact: true }).click();
     await expect(page.locator("#sky-detail-title")).toHaveText("Sun Sextile Mars");
     await page.getByRole("button", { name: "Close detail", exact: true }).click();
@@ -80,9 +97,37 @@ test("Calendar ingress opens the complete placement Key dates", async ({ page })
   await page.goto("/?date=2026-08-22#calendar");
   await page.getByRole("button", { name: /^Saturday, August 22\./ }).click();
   await page.getByRole("button", { name: "Sun enters Virgo", exact: true }).first().click();
-  await page.getByRole("dialog", { name: "Event detail", exact: true }).getByRole("button", { name: "Read article", exact: true }).click();
+  await expect(page).toHaveURL(/#sky\/event\/ingress\/sun\/virgo\/at\//);
+  await expect(page.getByRole("dialog", { name: "Event detail", exact: true })).toHaveCount(0);
   await expect(page.locator("#sky-detail-title")).toHaveText("Sun in Virgo", { timeout: 60_000 });
-  const rows = page.locator(".sky-placement-key-dates dl > div");
+  const panel = page.locator('.sky-placement-key-dates');
+  await expect(panel).not.toHaveAttribute('open');
+  await panel.locator(':scope > summary').click();
+  const rows = panel.locator('ol > li');
   await expect(rows).toHaveCount(timeline.length, { timeout: 60_000 });
-  expect(await rows.evaluateAll(rows => rows.map(row => [row.querySelector("dt")?.textContent, row.querySelector("dd")?.textContent]))).toEqual(timeline);
+  expect(await rows.evaluateAll(rows => rows.map(row => [row.querySelector("time")?.getAttribute("aria-label"), row.querySelector(".sky-placement-key-dates__title strong")?.textContent]))).toEqual(timeline);
+});
+
+test("placement date links use the selected zone across midnight", async ({ page }) => {
+  test.setTimeout(90_000);
+  await page.setViewportSize({ width: 390, height: 1000 });
+  await page.clock.setFixedTime(new Date("2026-09-12T12:00:00Z"));
+  await page.addInitScript(() => localStorage.setItem("tldrastro:selectedLocation", JSON.stringify({ label: "Auckland", latitude: -36.85, longitude: 174.76, timeZone: "Pacific/Auckland" })));
+  await emptyLastKnownGoodSnapshot(page);
+  await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse([]) }));
+  await page.route('**/rest/v1/**', route => route.fulfill({ json: [] }));
+  await page.route('**/api/calendar?**', route => route.fulfill({ json: { ok: true, calendar: { days: [] } } }));
+  await page.goto('/?date=2026-09-12#sky/placement/sun/virgo');
+  const dates = page.locator('.sky-placement-key-dates');
+  await expect(dates).toBeVisible({ timeout: 60_000 });
+  await expect(dates).not.toHaveAttribute('open');
+  await dates.locator(':scope > summary').click();
+  const ingress = dates.getByRole('link').filter({ hasText: 'Sun enters Virgo' });
+  await expect(ingress.locator('time')).toHaveAttribute('aria-label', 'August 23, 2026', { timeout: 60_000 });
+  await expect(ingress).toHaveAttribute('href', '/?date=2026-08-23#calendar?view=day&date=2026-08-23');
+  await expect(ingress).toContainText('Sun, Aug 23');
+  await expect(dates.locator('.sky-placement-key-dates__next')).toHaveCount(1);
+  await ingress.click();
+  await expect(page).toHaveURL(/date=2026-08-23/);
+  await expect(page.locator('.calendar-day-events')).toBeVisible({ timeout: 60_000 });
 });

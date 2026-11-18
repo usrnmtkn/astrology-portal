@@ -2,12 +2,14 @@ import { StudioButton } from "./StudioControls";
 import { Stack, Text } from "./studio-ds/primitives";
 import { PageLoading } from "../../../src/shared/components/PageLoading";
 import { subscribeToContentPublications } from "../../web/src/content/contentPublicationState";
+import { isNatalRetrogradeModifierKey } from '../../web/src/content/natalRetrogradeModifier.js';
 import { useEffect, useMemo, useRef, useState } from "react";
-import { adminCredentialHeaders } from "./adminSecret";
+import { requestStudioJson } from "./generatedContentClient";
 import {
   isNatalPlacementAngle,
   natalPlacementExactKey,
   natalPlacementLabel,
+  natalPlacementHouseLabel,
   natalPlacementResolverDependencyKeys,
   natalPlacementSignLabel,
   type NatalPlacementHouse,
@@ -60,7 +62,7 @@ type Props = {
   planet: NatalPlacementPlanet;
   rows: PreviewRow[];
   secret: string;
-  sign: NatalPlacementSign;
+  sign: NatalPlacementSign | "";
 };
 
 function record(value: unknown): Record<string, unknown> {
@@ -102,7 +104,7 @@ function sourceLabel(contentKey: string) {
   if (contentKey.includes("planet-in-sign") || contentKey.includes("placement-sign-final")) return "Planet-in-sign section";
   if (contentKey.includes("angle-in-sign") || contentKey.includes("angle-sign")) return "Angle-in-sign section";
   if (contentKey.includes("house-context")) return "House section";
-  if (contentKey.includes("natal.modifier.retrograde")) return "Retrograde modifier";
+  if (isNatalRetrogradeModifierKey(contentKey)) return "Retrograde modifier";
   if (contentKey.includes("complete-final")) return "Exact full write-up";
   return "Reader section";
 }
@@ -115,48 +117,13 @@ function ignoredReasonLabel(reason: IgnoredPreviewOverride["reason"]) {
   return "not reader-approved";
 }
 
-export function natalPlacementOverrideDraft(contentKey: string, label: string, body: string) {
-  return {
-    id: null,
-    contentKey,
-    surface: "you" as const,
-    mode: "in_depth" as const,
-    status: "DRAFT" as const,
-    headline: label,
-    summary: "Optional exact write-up for this planet, sign, house, and motion.",
-    body,
-    lane: "serving",
-    reviewState: "EDITORIAL_REVIEW_REQUIRED",
-    blockType: "natal_placement",
-    promptVersion: "manual-admin",
-    sections: {
-      packageRecord: {
-        body,
-        contentKey,
-        content_role: "full_copy",
-        grammar_frame: "complete_sentence",
-        headline: label,
-        reader_only: true,
-        render_policy: "reader-only-exact-lived-v1",
-        review_status: "needs_review"
-      }
-    },
-    facts: { fallbackArchitectureV3: true },
-    reviewerNotes: "Created from the effective natal reader preview. Review the complete write-up before publishing.",
-    sourceSnapshot: {
-      contentType: "natal-placement-exact-override",
-      contentSystem: "fallback",
-      content_role: "full_copy",
-      review_status: "needs_review",
-      sourcePackage: "tldrastro-fallback-architecture-v3"
-    }
-  };
-}
+export { natalPlacementOverrideDraft } from "./natalPlacementDraft";
 
 export default function NatalPlacementReaderPreview({ house, initialAudience = "you", motion, onCreateOverride, onOpenSource, planet, rows, secret, sign }: Props) {
   const [publicationVersion, setPublicationVersion] = useState(0);
   useEffect(() => subscribeToContentPublications(() => setPublicationVersion((version) => version + 1)), []);
   const [audience, setAudience] = useState<"you" | "they">(initialAudience);
+  const [retry, setRetry] = useState(0);
   const [preview, setPreview] = useState<PreviewState>({
     appliedOverrideKeys: [],
     error: null,
@@ -198,19 +165,23 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
         }
       : { ...current, error: null, loading: false });
 
-    void fetch("/api/admin/natal-placement-preview", {
+    void requestStudioJson("/api/admin/natal-placement-preview", secret, {
       method: "POST",
-      headers: { "content-type": "application/json", ...adminCredentialHeaders(secret) },
       body: JSON.stringify({ audience, ...(house ? { house } : {}), motion, overrides, planet, sign }),
-      signal: controller.signal
-    }).then(async (response) => {
-      const payload = await response.json().catch(() => null) as {
+      signal: controller.signal,
+      readOnly: true
+    }).then((response) => {
+      if (controller.signal.aborted) return;
+      const payload = response as {
         appliedOverrideKeys?: string[];
         error?: string;
         ignoredOverrides?: IgnoredPreviewOverride[];
         rendered?: NatalRender;
-      } | null;
-      if (!response.ok || !payload?.rendered) throw new Error(payload?.error ?? `Preview request failed with ${response.status}.`);
+      };
+      if (!payload.rendered || typeof payload.rendered.body !== "string" || typeof payload.rendered.headline !== "string"
+        || !Array.isArray(payload.rendered.parts) || payload.rendered.parts.some(part => typeof part !== "string")) {
+        throw new Error(payload.error ?? "The reader preview could not be assembled.");
+      }
       setPreview({
         appliedOverrideKeys: payload.appliedOverrideKeys ?? [],
         error: null,
@@ -231,9 +202,9 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
           });
     });
     return () => controller.abort();
-  }, [audience, house, motion, overrideFingerprint, planet, previewContextKey, publicationVersion, secret, sign]);
+  }, [audience, house, motion, overrideFingerprint, planet, previewContextKey, publicationVersion, retry, secret, sign]);
 
-  const exactKey = house ? natalPlacementExactKey(planet, sign, house, motion) : "";
+  const exactKey = house && sign ? natalPlacementExactKey(planet, sign, house, motion) : "";
   const exactSaved = Boolean(exactKey && rows.some((row) => row.content_key === exactKey));
   const exactServing = Boolean(
     house
@@ -242,7 +213,8 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
   );
   const exactServingFromStudio = Boolean(exactServing && preview.appliedOverrideKeys.includes(exactKey));
   const usingLiveStudioSources = preview.appliedOverrideKeys.length > 0;
-  const label = house ? natalPlacementLabel(planet, sign, house) : natalPlacementSignLabel(planet, sign);
+  const label = house && !sign ? natalPlacementHouseLabel(planet, house, motion)
+    : house && sign ? natalPlacementLabel(planet, sign, house, motion) : natalPlacementSignLabel(planet, sign as NatalPlacementSign);
 
   const provenanceLabel = audience === "they"
     ? exactServingFromStudio
@@ -306,7 +278,7 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
             <span className={`ui-pill admin-status ${motion === "retrograde" ? "status-reviewed" : "status-live"}`}>
               {motion === "retrograde" ? "Retrograde chart context" : "Direct chart context"}
             </span>
-            {house && audience === "you" && !isNatalPlacementAngle(planet) && !exactServing && (
+            {exactKey && audience === "you" && !isNatalPlacementAngle(planet) && !exactServing && (
               exactSaved
                 ? <StudioButton type="button" onClick={() => onOpenSource(exactKey, `Exact ${label} override`)}>Open saved override</StudioButton>
                 : <StudioButton type="button" onClick={() => onCreateOverride(exactKey, label, preview.rendered?.body ?? "")}>Create exact override</StudioButton>
@@ -322,7 +294,7 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
             </p>
           )}
           {motion === "retrograde" && exactServing && audience === "you" && (
-            <p className="admin-field-hint">This exact retrograde override is served verbatim. It does not append the shared retrograde fallback; include the retrograde treatment in the exact write-up itself.</p>
+            <p className="admin-field-hint">Full write-ups include their own retrograde treatment.</p>
           )}
         </div>
       ) : (
@@ -331,6 +303,7 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
           <p>{preview.error}</p>
         </div>
       )}
+      {preview.error && <StudioButton type="button" onClick={() => setRetry(value => value + 1)}>Retry reader preview</StudioButton>}
     </section>
   );
 }

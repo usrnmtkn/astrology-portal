@@ -2,6 +2,14 @@
   "schema": "tldr-studio-api-qa/v1",
   "routes": [
     {
+      "path": "/api/admin/content-baseline-recovery",
+      "file": "api/admin/content-baseline-recovery.ts",
+      "methods": [
+        "POST"
+      ],
+      "access": "owner"
+    },
+    {
       "path": "/api/admin/aspect-pattern-fixtures",
       "file": "api/admin/aspect-pattern-fixtures.ts",
       "methods": [

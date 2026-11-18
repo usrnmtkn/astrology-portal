@@ -1,56 +1,27 @@
-import { ChevronLeft, Eye, EyeOff, X } from "lucide-react";
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { Eye, EyeOff, X } from "lucide-react";
+import { useEffect, useState, type FormEvent } from "react";
 import { CitySearchField } from "../../components/CitySearchField";
-import {
-  isAuthConfigured,
-  isPhoneAuthEnabled,
-  resendEmailSignupConfirmation,
-  sendPhoneSignInCode,
-  signInWithEmail,
-  signInWithProvider,
-  signUpWithEmail,
-  verifyPhoneSignInCode,
-  type AuthAccount
-} from "../../services/auth";
-import { birthTimeInputMessage, normalizeBirthTime } from "../../services/chartTime";
-import {
-  formatUsPhoneInput,
-  isValidUsPhoneNumber,
-  maskPhoneNumber,
-  supportedPhoneCountry
-} from "../../services/phoneAuth";
-import {
-  formatSignupBirthDate,
-  formatSignupBirthTime,
-  signupProviderLabel,
-  splitSignupBirthDate,
-  splitSignupBirthTime,
-  type AuthMode,
-  type SignupDateParts,
-  type SignupForm,
-  type SignupProvider,
-  type SignupTimeParts
-} from "./signupModel";
-
+import { isAuthConfigured, isPhoneAuthEnabled, sendPhoneSignInCode, verifyPhoneSignInCode, resendEmailSignupConfirmation, signInWithEmail, signInWithProvider, signUpWithEmail, requestPasswordReset, updateRecoveredPassword, type AuthAccount } from "../../services/auth";
+import { formatUsPhoneInput, maskPhoneNumber } from "../../services/phoneAuth";
+import { normalizePronounChoice, pronounChoices, pronounChoiceLabels } from "../../services/personReferences";
+import { normalizeBirthTime } from "../../services/chartTime";
+import { splitSignupBirthTime, formatSignupBirthTime, type AuthMode, type SignupForm, type SignupProvider } from "./signupModel";
 export type { AuthMode, SignupForm, SignupProvider } from "./signupModel";
 
 type SignupViewProps = {
   hasPendingInvitation: boolean;
   initialForm: SignupForm;
   initialMode?: AuthMode;
+  initialAccount?: AuthAccount | null;
+  recovery?: boolean;
+  presentation?: "dialog";
   loginHeadline?: string;
-  onAuthenticated: (result: {
-    account: AuthAccount;
-    form: SignupForm;
-    isNewAccount: boolean;
-    provider: SignupProvider;
-  }) => void;
+  onAuthenticated: (result: { account: AuthAccount; form: SignupForm; isNewAccount: boolean; provider: SignupProvider }) => void;
   onClearPendingForm: () => void;
   onClose: () => void;
   onEmailConfirmationRequired: () => void;
   onSavePendingForm: (form: SignupForm) => void;
 };
-
 function GoogleIcon() {
   return (
     <svg className="google-mark" aria-hidden="true" viewBox="0 0 20 20" focusable="false">
@@ -62,731 +33,135 @@ function GoogleIcon() {
   );
 }
 
-export function SignupView({
-  hasPendingInvitation,
-  initialForm,
-  initialMode = "create",
-  loginHeadline,
-  onAuthenticated,
-  onClearPendingForm,
-  onClose,
-  onEmailConfirmationRequired,
-  onSavePendingForm
-}: SignupViewProps) {
-  const [authMode, setAuthMode] = useState<AuthMode>(initialMode);
-  const [form, setForm] = useState<SignupForm>(initialForm);
-  const [passwordVisible, setPasswordVisible] = useState(false);
-  const [authStatus, setAuthStatus] = useState<"idle" | "loading">("idle");
-  const [authMessage, setAuthMessage] = useState("");
-  const [emailConfirmationPending, setEmailConfirmationPending] = useState("");
-  const [emailConfirmationResendStatus, setEmailConfirmationResendStatus] = useState<"idle" | "loading" | "sent">("idle");
-  const [emailConfirmationResendMessage, setEmailConfirmationResendMessage] = useState("");
-  const [phoneAuthOpen, setPhoneAuthOpen] = useState(false);
+export function SignupView({ hasPendingInvitation, initialForm, initialMode = "create", initialAccount, recovery, presentation, loginHeadline, onAuthenticated, onClearPendingForm, onClose, onEmailConfirmationRequired, onSavePendingForm }: SignupViewProps) {
+  const [form, setForm] = useState({ ...initialForm, pronouns: normalizePronounChoice(initialForm.pronouns) });
+  const [mode, setMode] = useState(initialMode);
+  const [phase, setPhase] = useState<"credentials" | "check-email" | "chart" | "forgot" | "reset" | "phone">(recovery ? "reset" : initialAccount ? "chart" : "credentials");
+  const [account, setAccount] = useState(initialAccount ?? null);
+  const [visible, setVisible] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState("");
+  const [confirmationEmail, setConfirmationEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [phoneCode, setPhoneCode] = useState("");
-  const [phoneCodeSent, setPhoneCodeSent] = useState(false);
   const [phoneOtpDestination, setPhoneOtpDestination] = useState("");
   const [phoneResendSeconds, setPhoneResendSeconds] = useState(0);
-  const phoneVerificationCodeRef = useRef("");
-  const [birthDateParts, setBirthDateParts] = useState<SignupDateParts>(() => splitSignupBirthDate(initialForm.birthDate));
-  const birthTimeParts = splitSignupBirthTime(form.birthTime);
-  const isLogin = authMode === "login";
-
   useEffect(() => {
-    setAuthMode(initialMode);
-  }, [initialMode]);
-
-  useEffect(() => {
-    if (phoneResendSeconds <= 0) {
-      return;
-    }
-
-    const timeoutId = window.setTimeout(() => {
-      setPhoneResendSeconds((seconds) => Math.max(0, seconds - 1));
-    }, 1000);
-
-    return () => window.clearTimeout(timeoutId);
+    if (phoneResendSeconds <= 0) return;
+    const timer = window.setTimeout(() => setPhoneResendSeconds(seconds => Math.max(0, seconds - 1)), 1000);
+    return () => window.clearTimeout(timer);
   }, [phoneResendSeconds]);
-
-  function resetPhoneChallenge() {
-    setPhoneCodeSent(false);
-    setPhoneCode("");
-    setPhoneOtpDestination("");
-    setPhoneResendSeconds(0);
-    setAuthMessage("");
-  }
-
-  function updateField<Key extends keyof SignupForm>(key: Key, value: SignupForm[Key]) {
-    setForm({ ...form, [key]: value });
-  }
-
-  function updateBirthTime(part: keyof SignupTimeParts, value: string) {
-    const nextParts = {
-      ...birthTimeParts,
-      [part]: part === "meridiem" ? value as SignupTimeParts["meridiem"] : value.replace(/\D/g, "").slice(0, 2)
-    };
-
-    updateField("birthTime", formatSignupBirthTime(nextParts));
-  }
-
-  function updateBirthDate(part: keyof SignupDateParts, value: string) {
-    const maxLength = part === "year" ? 4 : 2;
-    const nextParts = {
-      ...birthDateParts,
-      [part]: value.replace(/\D/g, "").slice(0, maxLength)
-    };
-
-    setBirthDateParts(nextParts);
-    updateField("birthDate", formatSignupBirthDate(nextParts));
-  }
-
-  function normalizedFormForAccountCreation() {
-    if (isLogin || form.unknownBirthTime) return form;
-    try {
-      return { ...form, birthTime: normalizeBirthTime(form.birthTime) };
-    } catch {
-      setAuthMessage(birthTimeInputMessage);
-      return null;
-    }
-  }
-
-  async function submitSignup(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-
-    if (!isAuthConfigured) {
-      setAuthMessage(`Add Supabase environment variables to enable real email ${isLogin ? "login" : "signup"}.`);
-      return;
-    }
-
-    if (!form.email.trim() || !form.password.trim()) {
-      setAuthMessage(`Add an email and password to ${isLogin ? "log in" : "create your account"}.`);
-      return;
-    }
-
-    const submittedForm = normalizedFormForAccountCreation();
-    if (!submittedForm) return;
-
-    setAuthStatus("loading");
-    setAuthMessage("");
-    if (!isLogin) {
-      onSavePendingForm(submittedForm);
-    }
-
-    try {
-      if (isLogin) {
-        const account = await signInWithEmail({
-          email: form.email.trim(),
-          password: form.password
-        });
-
-        if (account) {
-          onAuthenticated({
-            account,
-            form: submittedForm,
-            isNewAccount: false,
-            provider: "email"
-          });
-          onClearPendingForm();
-        }
-        return;
+  useEffect(() => { if (initialAccount && !recovery) { setAccount(initialAccount); setForm(current => ({ ...current, fullName: current.fullName || initialAccount.name || "" })); setPhase("chart"); } }, [initialAccount, recovery]);
+  const update = <K extends keyof SignupForm>(key: K, value: SignupForm[K]) => setForm(current => ({ ...current, [key]: value }));
+  const title = phase === "chart" ? "Your chart" : phase === "check-email" ? "Check your email" : phase === "forgot" ? "Reset your password" : phase === "reset" ? "Choose a new password" : mode === "login" ? "Log in" : "Create an account";
+  const finish = (nextAccount: AuthAccount, nextForm: SignupForm, isNewAccount: boolean, provider: SignupProvider) => {
+    onAuthenticated({ account: nextAccount, form: nextForm, isNewAccount, provider });
+    onClearPendingForm();
+  };
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault(); setMessage("");
+    if (busy) return;
+    if (!isAuthConfigured) { setMessage("Sign-in is not available right now. Please try again later."); return; }
+    if (phase === "chart") {
+      if (!account) return;
+      if (!initialAccount || initialAccount.id !== account.id) { setMessage("Your account is still loading. Try saving your chart in a moment."); return; }
+      if (!form.fullName.trim() || !/^\d{4}-\d{2}-\d{2}$/.test(form.birthDate) || !form.birthLocation || !form.currentLocationData) {
+        setMessage("Add your name, birth date, birth place and current city. Choose each city from the search results."); return;
       }
-
-      const signupResult = await signUpWithEmail({
-        email: form.email.trim(),
-        password: form.password,
-        fullName: form.fullName.trim()
-      });
-
-      if (signupResult.account && signupResult.sessionEstablished) {
-        onAuthenticated({
-          account: signupResult.account,
-          form: submittedForm,
-          isNewAccount: true,
-          provider: "email"
-        });
-        onClearPendingForm();
-        return;
-      }
-
-      onEmailConfirmationRequired();
-      setEmailConfirmationPending(form.email.trim());
-    } catch (error) {
-      const errorCode = error && typeof error === "object" && "code" in error
-        ? String(error.code)
-        : "";
-      const errorMessage = error instanceof Error ? error.message : "";
-
-      if (
-        isLogin
-        && (errorCode === "email_not_confirmed" || /email not confirmed/i.test(errorMessage))
-      ) {
-        onEmailConfirmationRequired();
-        setEmailConfirmationPending(form.email.trim());
-        return;
-      }
-
-      setAuthMessage(error instanceof Error ? error.message : "Email signup failed.");
-    } finally {
-      setAuthStatus("idle");
-    }
-  }
-
-  async function resendEmailConfirmation() {
-    if (!emailConfirmationPending || emailConfirmationResendStatus === "loading") {
-      return;
-    }
-
-    setEmailConfirmationResendStatus("loading");
-    setEmailConfirmationResendMessage("");
-
-    try {
-      await resendEmailSignupConfirmation(emailConfirmationPending);
-      setEmailConfirmationResendStatus("sent");
-      setEmailConfirmationResendMessage("A new confirmation email was sent.");
-    } catch (error) {
-      setEmailConfirmationResendStatus("idle");
-      setEmailConfirmationResendMessage(
-        error instanceof Error ? error.message : "The confirmation email could not be resent."
-      );
-    }
-  }
-
-  if (emailConfirmationPending) {
-    return (
-      <section className="auth-page signup-split" aria-label="Confirm your email">
-        <button className="auth-close-button" type="button" aria-label="Close" onClick={onClose}>
-          <X size={20} aria-hidden="true" />
-        </button>
-        <div className="auth-shell">
-          <div className="signup-form auth-card auth-card--confirmation" role="status">
-            <div className="signup-heading">
-              <p className="auth-card__title">Confirm your email</p>
-              <h3>One more step before your profile is live.</h3>
-            </div>
-            <p className="auth-confirmation-copy">
-              We sent a confirmation link to <strong>{emailConfirmationPending}</strong>.
-              Open it to finish signing in. Your chart details
-              {hasPendingInvitation ? " and friend invitation" : ""} will be waiting.
-            </p>
-            <p className="auth-confirmation-note">
-              You will not have a public handle or appear in Friends until your email is confirmed.
-            </p>
-            <button
-              className="auth-primary-button auth-confirmation-resend-button"
-              type="button"
-              disabled={emailConfirmationResendStatus !== "idle"}
-              onClick={() => void resendEmailConfirmation()}
-            >
-              {emailConfirmationResendStatus === "loading"
-                ? "Sending..."
-                : emailConfirmationResendStatus === "sent"
-                  ? "Confirmation email sent"
-                  : "Resend confirmation email"}
-            </button>
-            {emailConfirmationResendMessage && (
-              <p className="auth-message" aria-live="polite">
-                {emailConfirmationResendMessage}
-              </p>
-            )}
-            <button
-              className="phone-auth-text-button"
-              type="button"
-              onClick={() => {
-                setEmailConfirmationPending("");
-                setEmailConfirmationResendStatus("idle");
-                setEmailConfirmationResendMessage("");
-                setAuthMessage("");
-              }}
-            >
-              Use a different email
-            </button>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  async function socialSignup(provider: "google") {
-    if (!isAuthConfigured) {
-      setAuthMessage("Add Supabase environment variables to enable real social sign-on.");
-      return;
-    }
-
-    setAuthStatus("loading");
-    setAuthMessage("");
-    if (authMode === "create") {
-      // OAuth also signs in existing accounts from Create profile. Birth data
-      // is optional here; an incomplete chart must never prevent authentication.
-      // Only carry a parseable draft into profile bootstrap, and never persist
-      // the unrelated email-password field across a provider redirect.
       try {
-        onSavePendingForm({
-          ...form,
-          password: "",
-          birthTime: form.unknownBirthTime || !form.birthTime.trim()
-            ? ""
-            : normalizeBirthTime(form.birthTime)
-        });
-      } catch {
-        onClearPendingForm();
-      }
-    } else {
-      onClearPendingForm();
-    }
-
-    try {
-      await signInWithProvider(provider);
-    } catch (error) {
-      setAuthStatus("idle");
-      setAuthMessage(error instanceof Error ? error.message : `${signupProviderLabel(provider)} sign-on failed.`);
-    }
-  }
-
-  async function sendPhoneCode(isResend = false) {
-    if (!phoneNumber.trim()) {
-      setAuthMessage("Enter your phone number.");
+        const next = { ...form, birthTime: form.unknownBirthTime ? "12:00 PM" : normalizeBirthTime(form.birthTime), onboarding: false };
+        finish(account, next, true, account.provider === "google" ? "google" : account.provider === "phone" ? "phone" : "email");
+      } catch { setMessage("Add a complete birth time, or choose “I don’t know my birth time”."); }
       return;
     }
-
-    setAuthStatus("loading");
-    setAuthMessage("");
-
+    setBusy(true);
     try {
-      const destination = await sendPhoneSignInCode(phoneNumber, {
-        shouldCreateUser: !isLogin
-      });
-
-      setPhoneOtpDestination(destination);
-      setPhoneCodeSent(true);
-      setPhoneResendSeconds(30);
-      setAuthMessage(isResend ? "A new code is on its way." : "");
-    } catch (error) {
-      setAuthMessage(error instanceof Error ? error.message : "Could not send the phone code.");
-    } finally {
-      setAuthStatus("idle");
-    }
-  }
-
-  async function verifyPhoneCode(code = phoneCode) {
-    const verificationCode = code.trim();
-
-    if (verificationCode.length !== 6) {
-      setAuthMessage("Enter the six-digit code.");
-      return;
-    }
-
-    if (phoneVerificationCodeRef.current === verificationCode) {
-      return;
-    }
-
-    const submittedForm = normalizedFormForAccountCreation();
-    if (!submittedForm) return;
-
-    phoneVerificationCodeRef.current = verificationCode;
-    setAuthStatus("loading");
-    setAuthMessage("");
-
-    if (!isLogin) {
-      onSavePendingForm(submittedForm);
-    }
-
-    try {
-      const account = await verifyPhoneSignInCode({
-        phone: phoneOtpDestination || phoneNumber,
-        code: verificationCode
-      });
-
-      if (account) {
-        onAuthenticated({
-          account,
-          form: submittedForm,
-          isNewAccount: !isLogin,
-          provider: "phone"
-        });
-        onClearPendingForm();
+      if (phase === "forgot") { await requestPasswordReset(form.email.trim()); setMessage("Check your email for a link to reset your password."); return; }
+      if (phase === "reset") { const next = await updateRecoveredPassword(form.password); finish(next, form, false, "email"); return; }
+      if (mode === "login") {
+        const next = await signInWithEmail({ email: form.email.trim(), password: form.password });
+        if (next) finish(next, form, false, "email");
+      } else {
+        onSavePendingForm({ ...form, password: "", onboarding: true });
+        const result = await signUpWithEmail({ email: form.email.trim(), password: form.password, fullName: "" });
+        if (result.account && result.sessionEstablished) { setAccount(result.account); setPhase("chart"); }
+        else { onEmailConfirmationRequired(); setConfirmationEmail(form.email.trim()); setPhase("check-email"); }
       }
     } catch (error) {
-      setAuthMessage(error instanceof Error ? error.message : "The phone code could not be verified.");
-    } finally {
-      phoneVerificationCodeRef.current = "";
-      setAuthStatus("idle");
-    }
+      if (mode === "login" && error && typeof error === "object" && "code" in error && error.code === "email_not_confirmed") {
+        onEmailConfirmationRequired(); setConfirmationEmail(form.email.trim()); setPhase("check-email");
+      } else setMessage(error instanceof Error ? error.message : "Sign-in could not finish. Please try again.");
+    } finally { setBusy(false); }
   }
-
-  return (
-    <section className="auth-page signup-split" aria-label={isLogin ? "Log in" : "Create account"}>
-      <button className="auth-close-button" type="button" aria-label="Close" onClick={onClose}>
-        <X size={20} aria-hidden="true" />
-      </button>
-      <div className="auth-shell">
-        <form
-          className={`signup-form auth-card${phoneAuthOpen ? " auth-card--phone" : ""}`}
-          onSubmit={(event) => {
-            if (!phoneAuthOpen) {
-              submitSignup(event);
-              return;
-            }
-
-            event.preventDefault();
-            if (phoneCodeSent) {
-              void verifyPhoneCode();
-            } else {
-              void sendPhoneCode();
-            }
-          }}
-        >
-          {!phoneAuthOpen && (
-            <div className="signup-heading">
-              <p className="auth-card__title">{isLogin ? "Log in" : "Create profile"}</p>
-              {isLogin && <h3>{loginHeadline ?? "Return to your sky."}</h3>}
-            </div>
-          )}
-
-        {!isAuthConfigured && (
-          <p className="auth-message">
-            Add VITE_SUPABASE_URL and a Supabase publishable key to enable live sign-on.
-          </p>
-        )}
-
-        {!phoneAuthOpen && (
-          <div className="social-signons" aria-label="Social sign on">
-            <button className="google-auth-button" type="button" disabled={authStatus === "loading"} onClick={() => socialSignup("google")}>
-              <GoogleIcon />
-              Continue with Google
-            </button>
-            {isPhoneAuthEnabled && (
-              <button
-                className="google-auth-button"
-                type="button"
-                disabled={authStatus === "loading"}
-                onClick={() => {
-                  setPhoneAuthOpen(true);
-                  setAuthMessage("");
-                }}
-              >
-                Continue with phone
-              </button>
-            )}
-          </div>
-        )}
-
-        {isPhoneAuthEnabled && phoneAuthOpen && (
-          <div className="phone-auth-fields" aria-label="Phone sign in">
-            <div className="phone-auth-heading">
-              <span className="phone-auth-eyebrow">{phoneCodeSent ? "Check your phone" : "Sign in"}</span>
-              <h2 className="phone-auth-title">{phoneCodeSent ? "Enter the code" : "Sign in with your phone"}</h2>
-              {phoneCodeSent ? (
-                <div className="phone-auth-destination-row">
-                  <p>
-                    We sent a code to <strong>{maskPhoneNumber(phoneOtpDestination)}</strong>.
-                  </p>
-                  <button
-                    className="phone-auth-inline-action"
-                    type="button"
-                    disabled={authStatus === "loading"}
-                    onClick={resetPhoneChallenge}
-                  >
-                    Edit number
-                  </button>
-                </div>
-              ) : (
-                <p>We’ll text you a six-digit code to confirm your number.</p>
-              )}
-            </div>
-
-            {!phoneCodeSent && (
-              <label className="signup-field auth-field">
-                <span className="auth-label">Mobile number</span>
-                <div className="phone-auth-number-control">
-                  <select
-                    className="phone-auth-country-select"
-                    aria-label="Country code"
-                    value={supportedPhoneCountry.code}
-                    onChange={() => undefined}
-                  >
-                    <option value={supportedPhoneCountry.code}>
-                      US {supportedPhoneCountry.callingCode}
-                    </option>
-                  </select>
-                  <input
-                    className="auth-input"
-                    type="tel"
-                    inputMode="tel"
-                    enterKeyHint="send"
-                    autoComplete="tel-national"
-                    autoFocus
-                    aria-describedby="phone-auth-number-help"
-                    placeholder="(212) 555-0100"
-                    value={phoneNumber}
-                    onChange={(event) => {
-                      setPhoneNumber(formatUsPhoneInput(event.target.value));
-                      setAuthMessage("");
-                    }}
-                  />
-                </div>
-                <small className="phone-auth-help" id="phone-auth-number-help">
-                  Message and data rates may apply.
-                </small>
-              </label>
-            )}
-            {phoneCodeSent && (
-              <label className="signup-field auth-field">
-                <span className="auth-label">Six-digit code</span>
-                <div className="phone-auth-code-control">
-                  <input
-                    className="phone-auth-code-input"
-                    inputMode="numeric"
-                    enterKeyHint="done"
-                    pattern="[0-9]*"
-                    autoComplete="one-time-code"
-                    autoFocus
-                    aria-describedby="phone-auth-code-help"
-                    aria-label="Six-digit verification code"
-                    maxLength={6}
-                    value={phoneCode}
-                    onChange={(event) => {
-                      const nextCode = event.target.value.replace(/\D/g, "").slice(0, 6);
-
-                      setPhoneCode(nextCode);
-                      setAuthMessage("");
-                      if (nextCode.length === 6) {
-                        window.setTimeout(() => void verifyPhoneCode(nextCode), 0);
-                      }
-                    }}
-                  />
-                  <span className="phone-auth-code-slots" aria-hidden="true">
-                    {Array.from({ length: 6 }, (_, index) => (
-                      <span className={phoneCode[index] ? "filled" : ""} key={index}>
-                        {phoneCode[index] ?? ""}
-                      </span>
-                    ))}
-                  </span>
-                </div>
-                <small className="phone-auth-help" id="phone-auth-code-help">
-                  The code may fill automatically from your messages.
-                </small>
-              </label>
-            )}
-
-            {authMessage && <p className="auth-message">{authMessage}</p>}
-
-            <div className="phone-auth-actions">
-              {phoneCodeSent ? (
-                <>
-                  <button
-                    className="signup-submit phone-auth-primary"
-                    type="submit"
-                    disabled={authStatus === "loading" || phoneCode.length !== 6}
-                  >
-                    {authStatus === "loading" ? "Confirming…" : "Confirm code"}
-                  </button>
-                  <button
-                    className="phone-auth-resend-button"
-                    type="button"
-                    disabled={authStatus === "loading" || phoneResendSeconds > 0}
-                    onClick={() => void sendPhoneCode(true)}
-                  >
-                    {phoneResendSeconds > 0
-                      ? `Send a new code in 0:${String(phoneResendSeconds).padStart(2, "0")}`
-                      : "Send a new code"}
-                  </button>
-                  <button
-                    className="phone-auth-text-button"
-                    type="button"
-                    disabled={authStatus === "loading"}
-                    onClick={resetPhoneChallenge}
-                  >
-                    Use a different number
-                  </button>
-                </>
-              ) : (
-                <button
-                  className="signup-submit phone-auth-primary"
-                  type="submit"
-                  disabled={authStatus === "loading" || !isValidUsPhoneNumber(phoneNumber)}
-                >
-                  {authStatus === "loading" ? "Sending…" : "Send code"}
-                </button>
-              )}
-            </div>
-            <button
-              className="phone-auth-back"
-              type="button"
-              disabled={authStatus === "loading"}
-              onClick={() => {
-                resetPhoneChallenge();
-                setPhoneAuthOpen(false);
-              }}
-            >
-              <ChevronLeft size={18} aria-hidden="true" />
-              Other sign-in options
-            </button>
-          </div>
-        )}
-
-        {!phoneAuthOpen && authMessage && <p className="auth-message">{authMessage}</p>}
-
-        {!phoneAuthOpen && (
-          <>
-            <div className="email-divider auth-divider"><span>or with email</span></div>
-
-            <div className="signup-fields">
-          {!isLogin && (
-            <label className="signup-field auth-field">
-              <span className="auth-label">Full name</span>
-              <div>
-                <input className="auth-input" value={form.fullName} onChange={(event) => updateField("fullName", event.target.value)} placeholder="Jules Okafor" />
-              </div>
-            </label>
-          )}
-
-          <label className="signup-field auth-field">
-            <span className="auth-label">Email</span>
-            <div>
-              <input className="auth-input" type="email" value={form.email} onChange={(event) => updateField("email", event.target.value)} placeholder="you@somewhere.com" />
-            </div>
-          </label>
-
-          <label className="signup-field auth-field">
-            <span className="auth-label">Password</span>
-            <div className="password-control">
-              <input
-                className="auth-input"
-                type={passwordVisible ? "text" : "password"}
-                value={form.password}
-                onChange={(event) => updateField("password", event.target.value)}
-                placeholder="at least 8 characters"
-              />
-              <button
-                type="button"
-                aria-label={passwordVisible ? "Hide password" : "Show password"}
-                title={passwordVisible ? "Hide password" : "Show password"}
-                onClick={() => setPasswordVisible((isVisible) => !isVisible)}
-              >
-                {passwordVisible ? <EyeOff size={20} aria-hidden="true" /> : <Eye size={20} aria-hidden="true" />}
-              </button>
-            </div>
-          </label>
-
-          {!isLogin && (
-            <>
-              <CitySearchField
-                label="Birth city"
-                value={form.birthCity}
-                onChange={(value) => setForm({ ...form, birthCity: value, birthLocation: null })}
-                onSelect={(suggestion) => setForm({ ...form, birthCity: suggestion.label, birthLocation: suggestion })}
-                placeholder="Birth city"
-                className="signup-city-search"
-              />
-
-              <div className="signup-grid auth-birth-grid">
-                <label className="signup-field auth-field">
-                  <span className="auth-label">Birth date</span>
-                  <div className="signup-date-control auth-date-inputs">
-                    <input
-                      className="auth-input"
-                      aria-label="Birth month"
-                      inputMode="numeric"
-                      placeholder="MM"
-                      value={birthDateParts.month}
-                      onChange={(event) => updateBirthDate("month", event.target.value)}
-                    />
-                    <span aria-hidden="true">/</span>
-                    <input
-                      className="auth-input"
-                      aria-label="Birth day"
-                      inputMode="numeric"
-                      placeholder="DD"
-                      value={birthDateParts.day}
-                      onChange={(event) => updateBirthDate("day", event.target.value)}
-                    />
-                    <span aria-hidden="true">/</span>
-                    <input
-                      className="auth-input"
-                      aria-label="Birth year"
-                      inputMode="numeric"
-                      placeholder="YYYY"
-                      value={birthDateParts.year}
-                      onChange={(event) => updateBirthDate("year", event.target.value)}
-                    />
-                  </div>
-                </label>
-
-                <label className="signup-field auth-field">
-                  <span className="auth-label">Birth time</span>
-                  <div className="signup-time-control auth-time-inputs">
-                    <input
-                      className="auth-input"
-                      aria-label="Birth hour"
-                      inputMode="numeric"
-                      placeholder="HH"
-                      value={birthTimeParts.hour}
-                      disabled={form.unknownBirthTime}
-                      onChange={(event) => updateBirthTime("hour", event.target.value)}
-                    />
-                    <span className="time-separator" aria-hidden="true">:</span>
-                    <input
-                      className="auth-input"
-                      aria-label="Birth minute"
-                      inputMode="numeric"
-                      placeholder="MM"
-                      value={birthTimeParts.minute}
-                      disabled={form.unknownBirthTime}
-                      onChange={(event) => updateBirthTime("minute", event.target.value)}
-                    />
-                    <div className="signup-meridiem auth-ampm-toggle" aria-label="AM or PM">
-                      {(["AM", "PM"] as const).map((period) => (
-                        <button
-                          key={period}
-                          type="button"
-                          className={birthTimeParts.meridiem === period ? "active is-active" : ""}
-                          disabled={form.unknownBirthTime}
-                          aria-pressed={birthTimeParts.meridiem === period}
-                          onClick={() => updateBirthTime("meridiem", period)}
-                        >
-                          {period}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </label>
-              </div>
-
-              <label className="unknown-time auth-checkbox-row">
-                <input
-                  type="checkbox"
-                  checked={form.unknownBirthTime}
-                  onChange={(event) => {
-                    setForm({ ...form, unknownBirthTime: event.target.checked, birthTime: event.target.checked ? "12:00 PM" : form.birthTime });
-                  }}
-                />
-                <span>I don't know my birth time.</span>
-              </label>
-            </>
-          )}
-            </div>
-
-            <button className="signup-submit auth-primary-button" type="submit" disabled={authStatus === "loading"}>
-              {authStatus === "loading" ? "Working..." : isLogin ? "Log in →" : "Create Account →"}
-            </button>
-            <p className="signin-note">
-              {isLogin ? "New here?" : "Already have an account?"}{" "}
-              <button
-                type="button"
-                onClick={() => {
-                  resetPhoneChallenge();
-                  setPhoneAuthOpen(false);
-                  setAuthMessage("");
-                  setAuthMode(isLogin ? "create" : "login");
-                }}
-              >
-                {isLogin ? "Create an account" : "Login"}
-              </button>
-            </p>
-          </>
-        )}
-        </form>
-      </div>
-    </section>
-  );
+  async function google() {
+    setBusy(true); setMessage("");
+    try { if (mode === "create") onSavePendingForm({ ...form, password: "", onboarding: true }); await signInWithProvider("google"); }
+    catch (error) { setMessage(error instanceof Error ? error.message : "Google sign-in could not start."); setBusy(false); }
+  }
+  async function resend() {
+    if (busy) return; setBusy(true); setMessage("");
+    try { await resendEmailSignupConfirmation(confirmationEmail); setMessage("A new confirmation email was sent."); }
+    catch (error) { setMessage(error instanceof Error ? error.message : "The email could not be resent."); }
+    finally { setBusy(false); }
+  }
+  async function submitPhone(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (busy || !isPhoneAuthEnabled || !isAuthConfigured) return;
+    setMessage("");
+    const verificationCode = phoneCode.trim();
+    if (phoneOtpDestination && !/^\d{6}$/.test(verificationCode)) { setMessage("Enter the six-digit code."); return; }
+    setBusy(true);
+    try {
+      if (!phoneOtpDestination) {
+        const destination = await sendPhoneSignInCode(phoneNumber, { shouldCreateUser: mode !== "login" });
+        setPhoneOtpDestination(destination); setPhoneResendSeconds(30);
+      } else {
+        const submittedForm = { ...form, password: "", onboarding: true };
+        if (mode === "create") onSavePendingForm(submittedForm);
+        const next = await verifyPhoneSignInCode({ phone: phoneOtpDestination, code: verificationCode });
+        if (next) {
+          if (mode === "login") finish(next, form, false, "phone");
+          else { setAccount(next); setPhase("chart"); }
+        }
+      }
+    } catch (error) { setMessage(error instanceof Error ? error.message : "Phone sign-in could not finish. Please try again."); }
+    finally { setBusy(false); }
+  }
+  async function resendPhoneCode() {
+    if (busy || phoneResendSeconds > 0 || !isPhoneAuthEnabled) return;
+    setBusy(true); setMessage("");
+    try {
+      const destination = await sendPhoneSignInCode(phoneOtpDestination, { shouldCreateUser: mode !== "login" });
+      setPhoneOtpDestination(destination); setPhoneCode(""); setPhoneResendSeconds(30); setMessage("A new code is on its way.");
+    } catch (error) { setMessage(error instanceof Error ? error.message : "Could not send the phone code."); }
+    finally { setBusy(false); }
+  }
+  function switchMode() { setMode(mode === "login" ? "create" : "login"); setMessage(""); }
+  const parts = splitSignupBirthTime(form.birthTime);
+  const password = <label className="auth-field"><span>Password</span><span className="password-control"><input className="auth-input" aria-label="Password" type={visible ? "text" : "password"} autoComplete={mode === "login" && phase !== "reset" ? "current-password" : "new-password"} value={form.password} required minLength={mode === "login" && phase !== "reset" ? 1 : 8} onChange={event => update("password", event.target.value)} /><button type="button" aria-label={visible ? "Hide password" : "Show password"} onClick={() => setVisible(value => !value)}>{visible ? <EyeOff size={20} /> : <Eye size={20} />}</button></span>{(mode === "create" || phase === "reset") && <small>At least 8 characters</small>}</label>;
+  return <section className={`auth-page auth-flow-v2${phase === "chart" ? " auth-flow-v2--chart" : ""}${presentation ? " auth-flow-v2--dialog" : ""}`} aria-label={title}>
+    <button type="button" className="auth-flow-close" aria-label="Close" onClick={onClose}><X size={20} aria-hidden="true" /></button>
+    <div className="auth-flow-content">
+      <header className="auth-flow-heading"><h1 id="auth-flow-title">{title}</h1>{phase === "chart" ? <p>Step 3 of 3 · Your own chart</p> : phase === "credentials" && <p>{mode === "login" ? loginHeadline ?? "Welcome back to your sky." : "Save your chart and connect with your circle."}</p>}</header>
+      {phase === "check-email" ? <div className="auth-flow-confirmation" aria-label="Confirm your email"><p>Tap the link we sent to <strong>{confirmationEmail}</strong> to finish your account{hasPendingInvitation ? " and friend invitation" : ""}.</p><p className="auth-flow-note">You will not have a public handle or appear in Friends until your email is confirmed.</p><button type="button" className="auth-primary-button" disabled={busy} onClick={() => void resend()}>{busy ? "Sending…" : "Resend email"}</button><button type="button" className="auth-flow-text-button" onClick={() => { setPhase("credentials"); setMessage(""); }}>Use a different email</button></div> : phase === "phone" && isPhoneAuthEnabled ? <form className="auth-flow-form" onSubmit={submitPhone} aria-label="Phone sign in">
+        {phoneOtpDestination ? <><p>We sent a code to <strong>{maskPhoneNumber(phoneOtpDestination)}</strong>.</p><label className="auth-field"><span>Six-digit code</span><input className="auth-input" aria-label="Six-digit verification code" inputMode="numeric" autoComplete="one-time-code" maxLength={6} value={phoneCode} onChange={event => setPhoneCode(event.target.value.replace(/\D/g, ""))} /></label><button type="button" className="auth-flow-text-button" disabled={busy || phoneResendSeconds > 0} onClick={() => void resendPhoneCode()}>{phoneResendSeconds > 0 ? `Send a new code in 0:${String(phoneResendSeconds).padStart(2, "0")}` : "Send a new code"}</button><button type="button" className="auth-flow-text-button" disabled={busy} onClick={() => { setPhoneOtpDestination(""); setPhoneCode(""); setMessage(""); }}>Edit number</button></> : <label className="auth-field"><span>US mobile number</span><input className="auth-input" type="tel" autoComplete="tel-national" required value={phoneNumber} onChange={event => setPhoneNumber(formatUsPhoneInput(event.target.value))} /></label>}
+        <button type="submit" className="auth-primary-button" disabled={busy}>{busy ? "Please wait…" : phoneOtpDestination ? "Verify code" : "Send code"}</button><button type="button" className="auth-flow-text-button" disabled={busy} onClick={() => { setPhase("credentials"); setMessage(""); }}>Use Google or email</button>
+      </form> : <form onSubmit={submit} className="auth-flow-form">
+        {phase === "credentials" && <><button className="google-auth-button" type="button" disabled={busy} onClick={() => void google()}><GoogleIcon />Continue with Google</button>{isPhoneAuthEnabled && <button className="google-auth-button" type="button" disabled={busy} onClick={() => { setPhase("phone"); setMessage(""); }}>Continue with phone</button>}<div className="email-divider auth-divider"><span>or with email</span></div></>}
+        {phase === "chart" ? <>
+          <label className="auth-field"><span>Name</span><input className="auth-input" autoComplete="name" value={form.fullName} required onChange={event => update("fullName", event.target.value)} /></label>
+          <fieldset className="auth-flow-pronouns"><legend>Pronouns</legend><div className="segmented-control">{pronounChoices.map(value => <button type="button" key={value} className={`segmented-control__item${form.pronouns === value ? " segmented-control__item--active" : ""}`} aria-pressed={form.pronouns === value} onClick={() => update("pronouns", value)}>{pronounChoiceLabels[value]}</button>)}</div></fieldset>
+          <label className="auth-field"><span>Birth date</span><input className="auth-input" type="date" value={form.birthDate} required max={new Date().toLocaleDateString("en-CA")} onChange={event => update("birthDate", event.target.value)} /></label>
+          <fieldset className="auth-flow-time"><legend>Birth time</legend><div className="auth-flow-time-inputs"><input aria-label="Birth hour" className="auth-input" inputMode="numeric" placeholder="--" disabled={form.unknownBirthTime} value={form.unknownBirthTime ? "" : parts.hour} onChange={event => update("birthTime", formatSignupBirthTime({ ...parts, hour: event.target.value.replace(/\D/g, "").slice(0, 2) }))} /><span>:</span><input aria-label="Birth minute" className="auth-input" inputMode="numeric" placeholder="--" disabled={form.unknownBirthTime} value={form.unknownBirthTime ? "" : parts.minute} onChange={event => update("birthTime", formatSignupBirthTime({ ...parts, minute: event.target.value.replace(/\D/g, "").slice(0, 2) }))} /><div className="segmented-control">{(["AM", "PM"] as const).map(value => <button type="button" key={value} className={`segmented-control__item${parts.meridiem === value ? " segmented-control__item--active" : ""}`} disabled={form.unknownBirthTime} aria-pressed={parts.meridiem === value} onClick={() => update("birthTime", formatSignupBirthTime({ ...parts, meridiem: value }))}>{value}</button>)}</div></div></fieldset>
+          <label className="unknown-time"><input type="checkbox" checked={form.unknownBirthTime} onChange={event => update("unknownBirthTime", event.target.checked)} /><span>I don’t know my birth time</span></label>
+          {form.unknownBirthTime && <p className="auth-flow-note">Your chart uses noon. Houses and your Rising sign stay hidden until you add a time.</p>}
+          <CitySearchField label="Birth place" placeholder="Search for your birth place" value={form.birthCity} onChange={value => setForm(current => ({ ...current, birthCity: value, birthLocation: null }))} onSelect={value => setForm(current => ({ ...current, birthCity: value.label, birthLocation: value }))} className="auth-flow-city" />
+          <CitySearchField label="Current city" placeholder="Search for your current city" value={form.currentLocation ?? ""} onChange={value => setForm(current => ({ ...current, currentLocation: value, currentLocationData: null }))} onSelect={value => setForm(current => ({ ...current, currentLocation: value.label, currentLocationData: value }))} className="auth-flow-city" /><p className="auth-flow-note">Used for your daily sky and transits.</p>
+        </> : <>{phase !== "reset" && <label className="auth-field"><span>Email</span><input className="auth-input" type="email" autoComplete="email" value={form.email} required onChange={event => update("email", event.target.value)} /></label>}{phase !== "forgot" && password}{phase === "credentials" && mode === "login" && <button type="button" className="auth-flow-text-button auth-flow-forgot" onClick={() => { setPhase("forgot"); setMessage(""); }}>Forgot password?</button>}</>}
+        <button type="submit" className="auth-primary-button" disabled={busy || phase === "chart" && !initialAccount}>{busy ? "Please wait…" : phase === "chart" ? "Save chart" : phase === "forgot" ? "Send reset link" : phase === "reset" ? "Save password" : mode === "login" ? "Log in" : "Create an account"}</button>
+        {phase === "credentials" ? <p className="auth-flow-switch">{mode === "login" ? "New here?" : "Already have an account?"} <button type="button" className="auth-flow-text-button" onClick={switchMode}>{mode === "login" ? "Create an account" : "Log in"}</button></p> : phase === "forgot" && <button type="button" className="auth-flow-text-button" onClick={() => { setPhase("credentials"); setMessage(""); }}>Back to log in</button>}
+      </form>}
+      {message && <p role="status" className="auth-message">{message}</p>}
+    </div>
+  </section>;
 }

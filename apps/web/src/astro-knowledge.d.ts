@@ -48,6 +48,8 @@ declare module "@tldr/astro-knowledge/sky-aspect-engine" {
   }>>;
   export const SKY_ASPECT_POINT_ORDER: readonly string[];
   export const NATAL_ASPECT_POINT_ORDER: readonly string[];
+  export function normalizeDegrees(degrees: number): number;
+  export function angularSeparation(first: number, second: number): number;
   export function canonicalizeNodeAxisAspects<T extends {
     from: string;
     to: string;

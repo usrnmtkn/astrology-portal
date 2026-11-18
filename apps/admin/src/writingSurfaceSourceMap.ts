@@ -423,6 +423,21 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     ]
   },
   {
+    id: "interactive-wheel-tooltips",
+    surface: "Sky / You / Friends: Interactive Wheel Tooltips",
+    area: "System",
+    status: "normalized",
+    requiredSlots: ["calculated chart facts", "owner name and pronouns"],
+    visibleLayerOrder: ["source-grounded", "madlib-fallback"],
+    currentRenderPath: "InteractiveZodiacWheel fills registered cms/wheel-tooltip sources with calculated chart facts, editable variable wording and React guide links. Only the exact published revision serves; existing app wording remains until first publication.",
+    risk: "Retired, unavailable or invalid published wording hides the affected tooltip. Variables cannot change the astrology calculations.",
+    nextAction: "Open Zodiac Wheel → Tooltips, choose the wording source, edit its body, then save a draft or explicitly save and publish.",
+    sources: [
+      { label: "Wheel tooltip sources", path: "apps/web/src/content/wheelTooltipCatalog.ts", role: "stored-source" },
+      { label: "InteractiveZodiacWheel.tsx", path: "src/shared/components/charts/InteractiveZodiacWheel.tsx", role: "renderer" }
+    ]
+  },
+  {
     id: "chart-placement-row-microcopy",
     surface: "Chart Placement Row Microcopy",
     area: "Natal",
@@ -672,6 +687,11 @@ export const writingSurfaceAdminAccess: Record<string, WritingSurfaceAdminAccess
       { label: "Start heavy-transit template", contentKey: "cms/weekly-horoscope/heavy", surface: "you", headline: "{{driver}}", allowedSlots: ["risingSign", "date", "day", "driver", "timing", "house", "houseOrdinal"] },
       { label: "Start weekly overview template", contentKey: "cms/weekly-horoscope/macro", surface: "you", headline: "Your week", allowedSlots: ["risingSign", "weekStart", "weekEnd"] }
     ]
+  },
+  "interactive-wheel-tooltips": {
+    readerLocation: "Sky, You and Friends > interactive wheel hover details and house-ruler popup",
+    editability: "editable",
+    routes: [{ label: "Edit Zodiac Wheel tooltips", hash: "#wheel-tooltips", purpose: "reader-copy", note: "Choose a registered tooltip source. Opening does not create a row; publication requires an owner action." }]
   },
   "chart-placement-row-microcopy": {
     readerLocation: "You or Friends > chart placement rows and tooltips",

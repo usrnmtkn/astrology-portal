@@ -31,6 +31,7 @@ import { prepareLunationWriting, lunationWritingTarget } from "../src/astro-writ
 import { lunationDigest } from "../src/astro-writing/lunationWritingFacts.mjs";
 import { prepareHoroscopeWriting } from "../src/astro-writing/horoscopeWriting.mjs";
 import { emptyHoroscopeEdition } from "../apps/web/src/content/horoscopeEditions.mjs";
+import { NATAL_PLACEMENT_SECT_FAMILY, runNatalPlacementSectWriting } from "../src/astro-writing/natalPlacementSectWriting.mjs";
 
 const { callGeminiInteractions } = geminiInteractions;
 const { readLocalProviderKeys } = localProviderKeys;
@@ -80,6 +81,7 @@ async function providerResponse({ request, config, apiKeys }) {
   const { response, payload } = await callOpenAIResponses({
     apiKey: apiKeys.OPENAI_API_KEY,
     role,
+    ...(request.family === NATAL_PLACEMENT_SECT_FAMILY ? { family: request.family, surface: request.surface, governedInstructions: instructions } : {}),
     request: {
       model: config.model,
       input,
@@ -125,6 +127,23 @@ if (preparationOnly && process.argv.includes("--authorize-live")) throw new Erro
 if (!requestPath || !outputPath) throw new Error("Usage: node scripts/run-astro-writing-harness.mjs --request request.json --out result.json [--writing-profile saved-profile.json] [--prepare-only | --authorize-live]");
 
 const request = JSON.parse(fs.readFileSync(path.resolve(requestPath), "utf8"));
+if (request.family === NATAL_PLACEMENT_SECT_FAMILY) {
+  const authorized = process.argv.includes("--authorize-live");
+  if (!preparationOnly && !authorized) throw new Error("No billed call was made. Prepare first; dispatch requires explicit owner authorization.");
+  const writerConfig = normalizeProviderConfig(request.models?.writer, "writer");
+  const writerClient = preparationOnly ? null : modelClient(writerConfig, readLocalProviderKeys(repoRoot));
+  const result = await runNatalPlacementSectWriting(request, { writerClient, authorized, prepareOnly: preparationOnly });
+  result.writerConfig = writerConfig;
+  if (writerClient) {
+    result.report.modelUsage = writerClient.lastUsage;
+    result.responseId = writerClient.lastResponseId;
+    if (transmittedPacketPath) writePrivateJson(transmittedPacketPath, { transmittedAt: new Date().toISOString(), writerConfig, responseId: result.responseId,
+      requestSha256: result.requestSha256, outputSha256: result.outputSha256, request: writerClient.lastRequest, report: result.report });
+  }
+  writePrivateJson(outputPath, result);
+  console.log(JSON.stringify({ status: result.status, contentKey: result.contentKey, requestSha256: result.requestSha256, ...result.report }));
+  process.exit(0);
+}
 const lunationPreparation = request.family === 'lunations' ? prepareLunationWriting(request) : null;
 if (lunationPreparation) Object.assign(request, { meaningInput: lunationPreparation.meaningInput,
   target: lunationWritingTarget, family: 'lunations', surface: 'calendar-lunation', register: 'second_person' });

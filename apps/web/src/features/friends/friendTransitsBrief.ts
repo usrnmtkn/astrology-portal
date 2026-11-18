@@ -10,6 +10,7 @@ export type FriendBondTransitView = {
   effectBody: string;
   activationBody: string;
   transitPlanet?: string;
+  aspect?: string;
 };
 
 export type FriendHouseTransitView = {
@@ -182,7 +183,7 @@ export function buildFriendTransitsBrief({
   const houseContext = hasReliableNatalHouse
     ? houseTransits.filter((transit) => (
         transit.detailAvailable && reliableHouseNumber(transit.house) !== undefined
-      ))
+      )).slice(0, 4)
     : [];
   const reliableDailyForecast = dailyForecastWithReliableHouse(dailyForecast, hasReliableNatalHouse);
   const activePatterns = patternItems.filter((item) => Boolean(item.activationCopy));

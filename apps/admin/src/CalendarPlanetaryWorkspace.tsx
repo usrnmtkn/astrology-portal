@@ -1,3 +1,5 @@
+import ReaderPassageEntry from './ReaderPassageEntry';
+import { calendarPlanetaryReaderEntry } from './calendarPlanetaryReaderEntry';
 import { calendarPlanetaryDraft } from "./calendarPlanetaryDraft";
 import type { ReactNode } from "react";
 import { AdminSelect } from "./AdminNativeControls";
@@ -7,11 +9,12 @@ import type { AdminGeneratedContentRow } from "./GeneratedContentAdminDashboard"
 import { calendarPlanets, calendarPlanetarySigns, calendarPlanetaryListIdentity, calendarPlanetaryTitle,
   planetaryName, type CalendarPlanetaryKind, type CalendarPlanetarySelection } from "./calendarPlanetarySources";
 
-export default function CalendarPlanetaryWorkspace({ kind, rows, selection, onSelection, busy, onOpen, onEdit, editor }: {
-  kind: CalendarPlanetaryKind; rows: AdminGeneratedContentRow[]; selection: CalendarPlanetarySelection;
+export default function CalendarPlanetaryWorkspace({ kind, rows, selection, onSelection, busy, onOpen, onEdit, editor, secret }: {
+  secret: string; kind: CalendarPlanetaryKind; rows: AdminGeneratedContentRow[]; selection: CalendarPlanetarySelection;
   onSelection: (value: CalendarPlanetarySelection) => void; busy: boolean;
-  onOpen: () => void; onEdit: (row: AdminGeneratedContentRow) => void; editor: ReactNode;
+  onOpen: () => void; onEdit: (row: AdminGeneratedContentRow) => Promise<boolean>; editor: ReactNode;
 }) {
+  const readerEntry = calendarPlanetaryReaderEntry(window.location.hash);
   const label = kind === "ingress" ? "Planetary ingresses" : "Planetary stations";
   const entries = rows.flatMap(row => {
     const identity = calendarPlanetaryListIdentity(row.content_key);
@@ -35,6 +38,9 @@ export default function CalendarPlanetaryWorkspace({ kind, rows, selection, onSe
       <StudioButton disabled={busy || !calendarPlanetaryDraft(kind, selection)} onClick={onOpen}>Open write-up</StudioButton>
     </div>
     <p>Choose a planet and sign to open its saved write-up or start an empty draft.{kind === "ingress" && " A dated ingress write-up takes priority over the reusable sign reading; open dated entries from the list below."}</p>
+    {readerEntry && <ReaderPassageEntry context={readerEntry} secret={secret} onOpen={row => onEdit(row as AdminGeneratedContentRow)} />}
+    {new URLSearchParams(window.location.hash.split('?')[1]).has('editEvent') && !readerEntry
+      && <p role="alert">This event link has an invalid date, time zone, or source. Return to the reader and reopen it.</p>}
     {editor}
     <section className="admin-template-page" aria-label={`Saved ${label.toLowerCase()}`}>
       <p role="status">{busy ? "Loading saved write-ups…" : `${entries.length} saved ${entries.length === 1 ? "write-up" : "write-ups"}`}</p>

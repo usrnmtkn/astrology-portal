@@ -4,6 +4,9 @@ import {rows,invoke,providerFixture,feedbackFixture} from '../tests/helpers/luna
 import {calculateLunationArticleFacts,lunationArticleEvents,verifiedLunationEclipse} from '../api/_lib/lunation-article-facts';
 import {prepareLunationArticle,writeLunationArticle,lunationArticleHash} from '../src/astro-writing/lunationArticleWriting.mjs';
 
+await import('./test-lunation-manual-draft.mts');
+await import('./test-lunation-workspace-lifecycle.mts');
+
 assert.equal(lunationArticleHash({z:[{b:2,a:1}],a:null}),lunationArticleHash({a:null,z:[{a:1,b:2}]}));
 assert.notEqual(lunationArticleHash([1,2]),lunationArticleHash([2,1]));
 assert.notEqual(lunationArticleHash({a:1}),lunationArticleHash({a:2}));
@@ -36,6 +39,12 @@ for(const month of ['2026-08','2026-09']){
     const created=await invoke('POST',{action:'prepare',month,timeZone:'America/New_York',eventId:event.id,direction:'Develop the human consequence without inventing private motives.'});
     assert.equal(created.status,200,JSON.stringify(created.payload));let row=created.payload.rows[0];
     const action=(action:string,extra:any={})=>invoke('POST',{action,id:row.id,expectedUpdatedAt:row.updated_at,...extra});
+    const exportBefore=JSON.stringify([...rows]),exportCalls=providerFixture.calls;
+    const exported=await action('export');assert.equal(exported.status,200,JSON.stringify(exported.payload));
+    assert.equal(JSON.stringify([...rows]),exportBefore);assert.equal(providerFixture.calls,exportCalls);
+    assert(exported.payload.writingExport.text.includes('Synthetic shared guidance marker.'));
+    assert(exported.payload.writingExport.text.includes('DATED ARTICLE OPENING'));
+    for(const source of row.source_snapshot.lunationWriting.preview.voiceSources)assert(exported.payload.writingExport.text.includes(source.text)||exported.payload.writingExport.text.includes(JSON.stringify(source.text).slice(1,-1)),'Every complete dated lunar voice source survives export');
     assert.equal((await action('generate',{approvedPlanHash:'wrong'})).status,409);
     const priorCalls=providerFixture.calls;
     const generated=await action('generate',{approvedPlanHash:row.source_snapshot.lunationWriting.planHash});
@@ -188,11 +197,16 @@ try{
     assert.equal(published.status,200,JSON.stringify(published));
     assert.equal(published.payload.rows[0][field],copy[field]);
     const lint=published.payload.rows[0].source_snapshot.lunationPublicationCheck.lint;
-    assert.equal(lint.publicationProfile,'owner-final-facts');
+    assert.equal(lint.publicationProfile,'owner-final-technical');
     assert.equal(lint.passed,true);
     assert(lint.advisories.some((finding:any)=>finding.category==='lunation_required_vocabulary'));
   }
-  for(const copy of [wrongCopy,{headline:'',body:correctedBody}]){
+  const currentOwner=generalStore.rows.get(invalidReader.id);
+  const ownerClaim=await generalStore.invoke('PATCH',{id:currentOwner.id,expectedUpdatedAt:currentOwner.updated_at,ownerAction:'save-and-publish-owner-content',...wrongCopy,summary:'',sections:currentOwner.sections});
+  assert.equal(ownerClaim.status,200);
+  assert.equal(ownerClaim.payload.rows[0].body,wrongCopy.body);
+  assert(ownerClaim.payload.rows[0].source_snapshot.lunationPublicationCheck.lint.advisories.some((finding:any)=>finding.category==='lunation_fact_boundary'));
+  for(const copy of [{headline:'',body:correctedBody}]){
     const current=generalStore.rows.get(invalidReader.id);
     const refused=await generalStore.invoke('PATCH',{id:current.id,expectedUpdatedAt:current.updated_at,ownerAction:'save-and-publish-owner-content',...copy,summary:'',sections:current.sections});
     assert.equal(refused.status,422,JSON.stringify(refused));

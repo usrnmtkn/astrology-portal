@@ -6,8 +6,275 @@ import { bundledPublications } from '../helpers/bundled-publications';
 import { syntheticLibrarySkyArticle } from '../helpers/article-library-fixture';
 import { publicationStorageEmitter } from '../helpers/publication-storage-emitter';
 import { readerResponse } from '../helpers/reader-response';
+import { routeStudioPublicReader } from '../helpers/studio-public-reader-route';
 
 const body = 'Synthetic complete opening.\n\n## Saved section\n\nSynthetic complete final paragraph.';
+
+for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
+  test(`Guide publish dates save, schedule and backdate ${width} ${theme}`, async ({ browser, baseURL }) => {
+    test.setTimeout(90_000);
+    const timeZone = width === 390 ? 'Asia/Tokyo' : 'America/New_York';
+    const context = await browser.newContext({ baseURL, viewport: { width, height: 1000 }, timezoneId: timeZone, locale: 'en-US' });
+    const page = await context.newPage();
+    const store = await studioApiStore([{
+      id: 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee', content_key: 'article/guide/later-guide', surface: 'sky', mode: 'article',
+      event_type: 'sky_article', status: 'LIVE', lane: 'serving', review_state: null, headline: 'Synthetic later guide', body,
+      sections: { articlePublication: { publishAt: '2025-01-01T15:00:00.000Z' } }, updated_at: '2025-01-01T15:00:00.000Z'
+    }], { uuidIds: true });
+    const errors: string[] = [];
+    page.on('pageerror', error => errors.push(error.message));
+    try {
+      await page.addInitScript(theme => {
+        localStorage.setItem('tldrastro:theme', theme);
+        localStorage.setItem('tldrastro:studio-theme', theme);
+        localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture');
+      }, theme);
+      await bundledPublications(page);
+      await routeStudioInventoryApi(page, { call: store.call, actualDocumentRoute: true, answer: async (route, url) => {
+        if (url.pathname === '/api/content-reader') {
+          const result = await store.call({ method: 'POST', body: route.request().postDataJSON(), url: url.pathname });
+          await route.fulfill({ status: result.status, json: result.payload }); return true;
+        }
+        if (url.pathname === '/api/admin/content-live-status') {
+          await route.fulfill({ json: { ok: true, statuses: await store.call({ method: 'statuses', body: route.request().postDataJSON() }) } });
+          return true;
+        }
+        return false;
+      } });
+      await page.goto('/admin/content#articles-guides');
+      await page.getByRole('button', { name: 'Create', exact: true }).click();
+      await page.getByRole('menuitem', { name: /New guide/u }).click();
+      const editor = page.getByRole('dialog', { name: 'Generated content editor', exact: true });
+      await editor.getByLabel('Article title', { exact: true }).fill('Synthetic scheduled guide');
+      await editor.getByLabel('Article body', { exact: true }).fill(body);
+      await editor.getByLabel('Publish date', { exact: true }).fill('2099-01-02T09:30');
+      await expect(editor).toContainText(timeZone);
+      await editor.getByRole('button', { name: 'Save draft', exact: true }).click();
+      await expect.poll(async () => (await store.call({ method: 'rows' })).find((row: any) => row.headline === 'Synthetic scheduled guide')?.status).toBe('DRAFT');
+      let saved = (await store.call({ method: 'rows' })).find((row: any) => row.headline === 'Synthetic scheduled guide');
+      expect(saved.sections.articlePublication.publishAt).toBe(timeZone === 'Asia/Tokyo' ? '2099-01-02T00:30:00.000Z' : '2099-01-02T14:30:00.000Z');
+      await page.reload();
+      await page.getByRole('row').filter({ hasText: saved.content_key }).getByRole('button', { name: 'Edit', exact: true }).click();
+      await expect(editor.getByLabel('Publish date', { exact: true })).toHaveValue('2099-01-02T09:30');
+      await editor.getByRole('button', { name: 'Save & schedule', exact: true }).click();
+      await expect(editor.getByLabel('Reader status', { exact: true })).toHaveText('Scheduled');
+      await page.screenshot({ path: `test-results/guide-publish-date-${width}-${theme}.png`, fullPage: true });
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      await editor.getByRole('button', { name: 'Close', exact: true }).click();
+      const filters = page.getByRole('button', { name: 'Filters', exact: true });
+      if (await filters.isVisible()) await filters.click();
+      await page.getByLabel('Article status', { exact: true }).selectOption('scheduled');
+      await expect(page.getByRole('row').filter({ hasText: saved.content_key })).toBeVisible();
+      await expect(page.getByRole('row').filter({ hasText: 'article/guide/later-guide' })).toHaveCount(0);
+      await page.goto(`/#articles/${encodeURIComponent(saved.content_key)}`);
+      await expect(page.getByRole('heading', { name: 'Article unavailable', exact: true })).toBeVisible();
+      await page.goto('/admin/content#articles-guides');
+      await page.getByRole('row').filter({ hasText: saved.content_key }).getByRole('button', { name: 'Edit', exact: true }).click();
+      await editor.getByLabel('Publish date', { exact: true }).fill('2020-01-02T09:30');
+      await editor.getByRole('button', { name: 'Save & publish', exact: true }).click();
+      await expect(editor.getByLabel('Reader status', { exact: true })).toHaveText('Live');
+      await page.goto('/#articles');
+      const library = page.getByRole('region', { name: 'Articles & Guides', exact: true });
+      await expect(library.locator('.article-cover__caption h2')).toHaveText(['Synthetic later guide', 'Synthetic scheduled guide']);
+      await library.getByRole('link', { name: 'Synthetic scheduled guide', exact: true }).click();
+      await expect(library.locator('time')).toHaveText('Published January 2, 2020');
+      await expect(library.locator('.learn-article-body')).toContainText('Synthetic complete opening.');
+      await expect(library.locator('.learn-article-body')).toContainText('Synthetic complete final paragraph.');
+      await page.reload();
+      await expect(library.locator('time')).toHaveText('Published January 2, 2020');
+      if (width === 390 && theme === 'light') {
+        const other = await browser.newContext({ baseURL, timezoneId: 'America/Los_Angeles', locale: 'en-US' });
+        try {
+          const reader = await other.newPage();
+          await bundledPublications(reader);
+          await reader.route('**/api/content-reader', async route => {
+            const result = await store.call({ method: 'POST', body: route.request().postDataJSON(), url: '/api/content-reader' });
+            await route.fulfill({ status: result.status, json: result.payload });
+          });
+          await reader.goto(page.url());
+          await expect(reader.locator('time')).toHaveText('Published January 2, 2020');
+        } finally { await other.close(); }
+      }
+      await page.screenshot({ path: `test-results/guide-publish-date-reader-${width}-${theme}.png`, fullPage: true });
+      expect(errors).toEqual([]);
+    } finally { await context.close(); store.close(); }
+  });
+}
+
+test('A failed publish-date panel preserves complete draft copy and its schedule', async ({ page }) => {
+  const publication = { publishAt: '2099-01-02T14:30:00.000Z', timeZone: 'America/New_York' };
+  const key = 'article/guide/date-panel-recovery';
+  const store = await studioApiStore([{
+    id: 'dddddddd-dddd-4ddd-8ddd-dddddddddddd', content_key: key, surface: 'sky', mode: 'article',
+    event_type: 'sky_article', status: 'DRAFT', lane: 'serving', review_state: null,
+    headline: 'Synthetic retained guide', body, sections: { articlePublication: publication }, updated_at: '2025-01-01T15:00:00.000Z'
+  }], { uuidIds: true });
+  try {
+    await page.addInitScript(() => localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture'));
+    await bundledPublications(page);
+    await routeStudioInventoryApi(page, { call: store.call, actualDocumentRoute: true });
+    await page.route(/\/assets\/(?:ArticlePublicationField|review)-[^/]+\.js(?:\?.*)?$/u, route => route.abort());
+    await page.goto('/admin/content#articles-guides');
+    await page.getByRole('row').filter({ hasText: key }).getByRole('button', { name: 'Edit', exact: true }).click();
+    const editor = page.getByRole('dialog', { name: 'Generated content editor', exact: true });
+    await expect(editor.getByText('This section could not load. Save your changes, then reload the page to try again.', { exact: true }).first()).toBeVisible();
+    await expect(editor.getByLabel('Publish date', { exact: true })).toHaveCount(0);
+    const revised = body + '\n\nSynthetic complete retained addition.';
+    await editor.getByLabel('Article body', { exact: true }).fill(revised);
+    await editor.getByRole('button', { name: 'Save draft', exact: true }).click();
+    await expect.poll(async () => (await store.call({ method: 'rows' })).find((row: any) => row.content_key === key)?.body).toBe(revised);
+    const saved = (await store.call({ method: 'rows' })).find((row: any) => row.content_key === key);
+    expect(saved.status).toBe('DRAFT');
+    expect(saved.sections.articlePublication).toEqual(publication);
+  } finally { await page.unrouteAll({ behavior: 'wait' }); store.close(); }
+});
+
+for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
+  test(`Article actions reopen template results and start an unfiltered draft ${width} ${theme}`, async ({ page }) => {
+    const templateKey = 'sky/article-template/sun/libra';
+    const store = await studioApiStore([
+      { id: 'aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa', content_key: templateKey,
+        surface: 'sky', mode: 'article', event_type: 'sky-article-template', block_type: 'sky_article', status: 'REVIEWED', lane: 'reference',
+        review_state: null, headline: 'Synthetic Sun in Libra template', body: '{{articleTitle}}\n\n{{articleBody}}', summary: '', sections: {},
+        updated_at: '2026-10-09T00:00:00Z', source_snapshot: { contentType: 'sky-article-template', review_status: 'approved' } },
+      { id: 'bbbbbbbb-bbbb-4bbb-abbb-bbbbbbbbbbbb', content_key: 'article/manual/synthetic-actions',
+        surface: 'sky', mode: 'article', status: 'DRAFT', lane: 'serving', review_state: 'EDITORIAL_REVIEW_REQUIRED',
+        headline: 'Synthetic standalone article', body, summary: '', sections: {}, updated_at: '2026-10-09T00:00:00Z',
+        source_snapshot: { contentType: 'authored-article' } }
+    ], { uuidIds: true });
+    const writes: unknown[] = [], providerRequests: string[] = [], errors: string[] = [];
+    try {
+      const before = await store.call({ method: 'rows' });
+      await page.setViewportSize({ width, height: 1000 });
+      page.on('pageerror', error => errors.push(error.message));
+      await page.addInitScript(theme => {
+        localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture');
+        localStorage.setItem('tldrastro:studio-theme', theme);
+      }, theme);
+      await bundledPublications(page);
+      await routeStudioInventoryApi(page, { call: store.call, actualDocumentRoute: true, onWrite: write => writes.push(write),
+        answer: async (route, url) => {
+          if (route.request().method() !== 'POST' || !url.pathname.startsWith('/api/admin/sky-article-')) return false;
+          providerRequests.push(url.pathname);
+          await route.fulfill({ status: 500, json: { error: 'This navigation test must not generate writing.' } });
+          return true;
+        } });
+      await page.goto('/admin/content#articles-guides');
+      const results = page.getByRole('complementary', { name: 'Article rows', exact: true });
+      const browse = page.getByRole('link', { name: 'Browse Sky article templates', exact: true });
+      await expect(results.getByRole('row').filter({ hasText: 'article/manual/synthetic-actions' })).toBeVisible();
+      // Clear filters leaves the same hash. Repeating the browse action must still apply it.
+      for (let repeat = 0; repeat < 2; repeat++) {
+        await browse.click();
+        await expect(page.getByLabel('Search articles', { exact: true })).toHaveValue('sky/article-template/');
+        await expect(results).toBeFocused();
+        await expect(results.getByRole('row').filter({ hasText: templateKey })).toBeVisible();
+        await expect(results.getByRole('row').filter({ hasText: 'article/manual/synthetic-actions' })).toHaveCount(0);
+        if (repeat === 0) {
+          await page.getByRole('button', { name: 'Clear filters', exact: true }).click();
+          await expect(page.getByLabel('Search articles', { exact: true })).toHaveValue('');
+          await expect(page).toHaveURL(/#articles-guides\?q=sky%2Farticle-template%2F$/u);
+        }
+      }
+      await expect(page.getByRole('button', { name: 'New article', exact: true })).toHaveCount(0);
+      await expect(page.getByRole('button', { name: 'New guide', exact: true })).toHaveCount(0);
+      await page.getByRole('button', { name: 'Create', exact: true }).click();
+      await expect(page.getByRole('menuitem')).toHaveCount(2);
+      await page.getByRole('menuitem', { name: /New article/u }).click();
+      const editor = page.getByRole('dialog', { name: 'Generated content editor', exact: true });
+      await expect(page.getByLabel('Search articles', { exact: true })).toHaveValue('');
+      await expect(editor.getByRole('button', { name: 'Save draft', exact: true })).toBeEnabled();
+      await expect(editor.getByRole('button', { name: 'Save & publish', exact: true })).toHaveCount(0);
+      await editor.getByLabel('Article title', { exact: true }).fill('Synthetic unsaved article');
+      await editor.getByLabel('Article body', { exact: true }).fill('Synthetic unsaved complete body.');
+      page.once('dialog', dialog => dialog.dismiss());
+      await editor.getByRole('button', { name: 'Close', exact: true }).click();
+      await expect(editor.getByLabel('Article body', { exact: true })).toHaveValue('Synthetic unsaved complete body.');
+      await page.screenshot({ path: `test-results/article-actions-${width}-${theme}.png`, fullPage: true });
+      page.once('dialog', dialog => dialog.accept());
+      await editor.getByRole('button', { name: 'Close', exact: true }).click();
+      await expect(editor).toHaveCount(0);
+      await page.getByRole('button', { name: 'Create', exact: true }).click();
+      await page.getByRole('menuitem', { name: /New guide/u }).click();
+      await expect(editor.getByRole('button', { name: 'Save draft', exact: true })).toBeEnabled();
+      await expect(editor.getByRole('button', { name: 'Save & publish', exact: true })).toHaveCount(0);
+      await editor.locator('details.admin-editor-details > summary').click();
+      await editor.locator('details.admin-editor-key-details summary').click();
+      await expect(editor.getByLabel('Content key', { exact: true })).toHaveValue(/^article\/guide\//u);
+      expect(await store.call({ method: 'rows' })).toEqual(before);
+      expect(writes).toEqual([]); expect(providerRequests).toEqual([]); expect(errors).toEqual([]);
+    } finally { try { await page.unrouteAll({ behavior: 'wait' }); } finally { store.close(); } }
+  });
+}
+
+for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
+  test(`Dated Sky article editor archives and restores complete saved readings ${width} ${theme}`, async ({ page }) => {
+    test.setTimeout(120_000);
+    const row = await syntheticLibrarySkyArticle();
+    const store = await studioApiStore([row], { uuidIds: true });
+    const writes: any[] = [];
+    try {
+      await page.setViewportSize({ width, height: 1000 });
+      await page.clock.setFixedTime(new Date('2026-10-12T16:00:00Z'));
+      await page.addInitScript(theme => { localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture'); localStorage.setItem('tldrastro:studio-theme', theme); }, theme);
+      await bundledPublications(page);
+      await page.route('**/rest/v1/content_publications*', async route => {
+        const publications = await store.call({ method: 'publications' });
+        const filters = new URL(route.request().url()).searchParams.getAll('content_key');
+        await route.fulfill({ json: publications.filter((record: any) => filters.every(filter => {
+          const [operator, ...parts] = filter.split('.'), key = parts.join('.');
+          if (operator === 'eq') return record.content_key === key;
+          if (operator === 'gte') return record.content_key >= key;
+          if (operator === 'lt') return record.content_key < key;
+          if (operator === 'gt') return record.content_key > key;
+          throw new Error(`Unsupported publication fixture filter: ${operator}`);
+        })) });
+      });
+      await routeStudioInventoryApi(page, { call: store.call, actualDocumentRoute: true, onWrite: write => writes.push(write), answer: async (route, url) => {
+        if (await routeStudioPublicReader(route, url, message => store.call(message.method === 'reader'
+          ? { method: 'POST', url: '/api/content-reader', body: message.body } : message))) return true;
+        if (url.pathname !== '/api/admin/content-live-status') return false;
+        const result = await store.call({ method: 'POST', url: url.pathname, body: route.request().postDataJSON() });
+        await route.fulfill({ status: result.status, json: result.payload }); return true;
+      } });
+      await page.goto('/admin/content#exact-content');
+      const result = page.locator('tr.admin-content-row').filter({ hasText: row.content_key });
+      await result.getByRole('button', { name: 'Edit published article', exact: true }).click();
+      const editor = page.getByRole('dialog', { name: 'Generated content editor', exact: true });
+      await expect(editor.getByRole('textbox', { name: 'Sky article general copy', exact: true })).toHaveValue(row.body);
+      await editor.getByLabel('Sky reader date', { exact: true }).fill('2026-10-12');
+      const preview = editor.getByRole('region', { name: 'Sky reader preview', exact: true });
+      const reading = preview.frameLocator('iframe').locator('.sky-detail-body').first();
+      await expect(reading).toContainText('Synthetic complete dated opening.', { timeout: 60_000 });
+      await expect(reading).toContainText('Synthetic complete dated ending.');
+      await expect(preview.getByRole('alert')).toHaveCount(0);
+      const archive = editor.getByRole('button', { name: 'Archive article', exact: true });
+      await expect(archive).toBeVisible();
+      const concurrent = await store.call({ method: 'PATCH', body: { id: row.id, expectedUpdatedAt: row.updated_at, reviewerNotes: 'Synthetic second editor.' } });
+      expect(concurrent.status).toBe(200);
+      const conflict = editor.getByRole('alert').filter({ hasText: 'This content changed after the editor was opened.' });
+      await archive.click(); await expect(conflict).toBeVisible();
+      await expect(archive).toBeDisabled();
+      expect((await store.call({ method: 'rows' })).find((r: any) => r.id === row.id)).toEqual(concurrent.payload.rows[0]);
+      await editor.getByRole('button', { name: 'Reload saved article', exact: true }).click();
+      await expect(conflict).toHaveCount(0);
+      await expect(archive).toBeEnabled();
+      await archive.click();
+      await expect(editor.getByRole('button', { name: 'Restore as draft', exact: true })).toBeVisible();
+      await expect(editor.getByRole('link', { name: 'Read published article', exact: true })).toHaveCount(0);
+      const archived = (await store.call({ method: 'rows' })).find((r: any) => r.id === row.id);
+      expect(archived.status).toBe('ARCHIVED'); expect(archived.sections).toEqual(row.sections); expect(archived.body).toBe(row.body);
+      for (const body of [{ ids: [row.id] }, { keys: [row.content_key] }]) expect((await store.call({ method: 'POST', url: '/api/content-reader', body })).payload.rows).toEqual([]);
+      await page.screenshot({ path: `test-results/dated-sky-archive-${width}-${theme}.png`, fullPage: true });
+      await editor.getByRole('button', { name: 'Restore as draft', exact: true }).click();
+      const restored = (await store.call({ method: 'rows' })).find((r: any) => r.id === row.id);
+      await expect(editor.getByRole('button', { name: 'Approve & publish complete edition', exact: true })).toBeVisible();
+      expect(restored.status).toBe('DRAFT'); expect(restored.sections).toEqual(row.sections); expect(restored.body).toBe(row.body);
+      expect((await store.call({ method: 'POST', url: '/api/content-reader', body: { ids: [row.id] } })).payload.rows).toEqual([]);
+      expect(writes.filter(write => write.result.status === 200)).toHaveLength(2);
+    } finally { try { await page.unrouteAll({ behavior: 'wait' }); } finally { store.close(); } }
+  });
+}
 
 for (const width of [390, 1440]) test(`open guide follows storage-only publication and retirement ${width}`, async ({ page, context }) => {
   test.setTimeout(90_000);
@@ -94,15 +361,17 @@ for (const width of [390, 1440]) test(`scoped reader marker discovers omitted re
   expect(errors).toEqual([]);
   await emitter.close();
 });
-async function headingStyle(heading: Locator) {
-  const values = await heading.evaluate(element => {
+async function headingStyle(heading: Locator, role: 'section' | 'caption' = 'section') {
+  const values = await heading.evaluate((element, role) => {
     const probe = document.createElement('h2');
-    probe.style.cssText = 'margin:0;font-family:var(--font-display);font-size:var(--type-h2-size);font-weight:var(--weight-regular);line-height:var(--leading-title);letter-spacing:var(--tracking-body)';
+    probe.style.cssText = role === 'caption'
+      ? 'margin:0;font-family:var(--font-ui);font-size:var(--type-ui-copy-size);font-weight:var(--weight-medium);line-height:var(--leading-placement-ui);letter-spacing:var(--tracking-normal)'
+      : 'margin:0;font-family:var(--font-display);font-size:var(--type-h2-size);font-weight:var(--weight-regular);line-height:var(--leading-title);letter-spacing:var(--tracking-body)';
     element.append(probe);
     const actual = getComputedStyle(element), expected = getComputedStyle(probe);
     const values = ['fontFamily', 'fontSize', 'fontWeight', 'lineHeight', 'letterSpacing'].map(key => [key, actual[key as any], expected[key as any]]);
     probe.remove(); return values;
-  });
+  }, role);
   for (const [property, actual, expected] of values) expect(actual, property).toBe(expected);
 }
 
@@ -117,8 +386,8 @@ test('dated Sky articles remain discoverable with their complete saved history',
     });
     await page.goto('/#articles');
     const library = page.getByRole('region', { name: 'Articles & Guides', exact: true });
-    await library.getByRole('combobox', { name: 'Type', exact: true }).selectOption('sky');
-    await expect(library).toContainText(row.summary);
+    await library.getByRole('tab', { name: 'Articles', exact: true }).click();
+    await expect(library.getByRole('link', { name: /Synthetic dated Sky article/u })).toBeVisible();
     await library.getByRole('link', { name: /Synthetic dated Sky article/u }).click();
     await expect(page).toHaveURL(new RegExp(encodeURIComponent(row.content_key)));
     await expect(library).toContainText('Synthetic complete dated opening.');
@@ -129,13 +398,17 @@ test('dated Sky articles remain discoverable with their complete saved history',
 });
 
 for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
-  test(`Articles & Guides save, publish, read and retire ${width} ${theme}`, async ({ page }) => {
+  test(`Articles & Guides save, publish, read and retire ${width} ${theme}`, async ({ page }, testInfo) => {
     test.setTimeout(120_000);
     const store = await studioApiStore([{ id: 'aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa', content_key: 'sky/article-template/venus/scorpio',
       surface: 'sky', mode: 'article', event_type: 'sky-article-template', block_type: 'sky_article', status: 'REVIEWED', lane: 'reference',
       review_state: null, headline: 'Synthetic Sky template', body: '# Synthetic template\n\n{{entryDate}}', summary: '', sections: {},
       updated_at: '2026-10-09T00:00:00Z', source_snapshot: { contentType: 'sky-article-template', review_status: 'approved' } }], { uuidIds: true });
     let readerFailure = false;
+    let raceVariable = false;
+    let variableForRace: any;
+    let delayNextPublicationConfirmation = true;
+    const publicationEvidence: { action: string; injectedConflict: boolean; status?: number }[] = [];
     const errors: string[] = [];
     page.on('pageerror', error => errors.push(error.message));
     try {
@@ -146,7 +419,27 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
         localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture');
       }, theme);
       await bundledPublications(page);
-      await routeStudioInventoryApi(page, { call: store.call, actualDocumentRoute: true, answer: async (route, url) => {
+      await routeStudioInventoryApi(page, { call: async request => {
+        const action = (request.body as any)?.ownerAction;
+        const evidence = typeof action === 'string' ? { action, injectedConflict: raceVariable } : null;
+        if (evidence) publicationEvidence.push(evidence);
+        if (raceVariable && request.method === 'PATCH' && (request.body as any)?.ownerAction === 'publish-standalone-article-revision') {
+          raceVariable = false;
+          const changed = await store.call({ method: 'PATCH', url: '/api/admin/generated-content?variables=true', body: {
+            id: variableForRace.id, expectedUpdatedAt: variableForRace.updatedAt,
+            variable: { ...definition, value: 'Latest complete author opening.' }
+          } });
+          expect(changed.status).toBe(200); variableForRace = changed.payload.variable;
+        }
+        const result = await store.call(request);
+        if (evidence) Object.assign(evidence, { status: result.status });
+        if (action === 'publish-standalone-article-revision' && delayNextPublicationConfirmation) {
+          delayNextPublicationConfirmation = false;
+          // Storage commits before the HTTP acknowledgment reaches the editor.
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+        return result;
+      }, actualDocumentRoute: true, actualInventoryList: true, answer: async (route, url) => {
         if (url.pathname === '/api/content-reader') {
           if (readerFailure) { await route.fulfill({ status: 503, json: { error: 'Synthetic read failure' } }); return true; }
           const result = await store.call({ method: 'POST', body: route.request().postDataJSON(), url: '/api/content-reader' });
@@ -174,14 +467,30 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       await expect(page.getByRole('row').filter({ hasText: 'sky/article-template/venus/scorpio' })).toBeVisible();
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
       await page.screenshot({ path: `test-results/articles-studio-${width}-${theme}.png`, fullPage: true, animations: 'disabled' });
-      await page.getByRole('link', { name: 'Dated Sky article templates', exact: true }).click();
+      await page.getByRole('link', { name: 'Browse Sky article templates', exact: true }).click();
       await expect(page).toHaveURL(/#articles-guides\?q=/u);
       await expect(page.getByLabel('Search articles')).toHaveValue('sky/article-template/');
-      const variable = await store.call({method:'POST',url:'/api/admin/generated-content?variables=true',body:{variable:{name:'articleOpening',label:'Private fixture label',description:'Private fixture description',tags:[],value:'Synthetic complete opening.',overrides:[]}}});
+      const definition = {name:'articleOpening',label:'Private fixture label',description:'Private fixture description',tags:[],value:'Synthetic complete opening.',overrides:[]};
+      const variable = await store.call({method:'POST',url:'/api/admin/generated-content?variables=true',body:{variable:definition}});
       expect(variable.status).toBe(200);
       const guideTemplate = body.replace('Synthetic complete opening.','{{articleOpening}}');
-      await page.getByRole('button', { name: 'New guide', exact: true }).click();
+      await page.getByRole('button', { name: 'Create', exact: true }).click();
+      await page.getByRole('menuitem', { name: /New guide/u }).click();
       const editor = page.getByRole('dialog');
+      async function confirmPublication(label: string, status = 200) {
+        const completed = page.waitForResponse(response => {
+          const request = response.request();
+          return new URL(response.url()).pathname === '/api/admin/generated-content'
+            && request.method() === 'PATCH'
+            && ['publish-owner-content', 'publish-standalone-article-revision'].includes(request.postDataJSON()?.ownerAction);
+        });
+        await editor.getByRole('button', { name: label, exact: true }).click();
+        const response = await completed;
+        expect(response.status()).toBe(status);
+        expect(await response.finished()).toBeNull();
+        expect(response.request().failure()).toBeNull();
+        await expect.poll(() => page.evaluate(() => sessionStorage.getItem('tldr-studio-pending-publication-v1') === null)).toBe(true);
+      }
       await editor.getByLabel('Article title', { exact: true }).fill('Synthetic saved guide');
       await editor.getByLabel('Article body', { exact: true }).fill(guideTemplate);
       await editor.getByRole('button', { name: 'Save draft', exact: true }).click();
@@ -191,17 +500,17 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       await page.reload();
       await page.getByRole('row').filter({ hasText: saved.content_key }).getByRole('button', { name: 'Edit', exact: true }).click();
       await expect(editor.getByLabel('Article body', { exact: true })).toHaveValue(guideTemplate);
-      await editor.getByRole('button', { name: 'Save & publish', exact: true }).click();
+      await confirmPublication('Save & publish');
       await expect.poll(async () => (await store.call({ method: 'rows' })).find((row: any) => row.id === saved.id)?.status).toBe('LIVE');
       await expect(editor.getByLabel('Reader status', { exact: true })).toHaveText('Live');
       await page.goto('/#articles');
       const library = page.getByRole('region', { name: 'Articles & Guides', exact: true });
       await expect(library.getByRole('heading', { name: 'Articles & Guides', level: 1 })).toBeVisible();
-      await headingStyle(library.locator('.articles-library-card h2'));
+      await headingStyle(library.locator('.article-cover__caption h2'), 'caption');
       await expect(library.locator('h1,h2')).toHaveText(['Articles & Guides', 'Synthetic saved guide']);
-      await library.getByRole('combobox', { name: 'Type', exact: true }).selectOption('guide');
+      await library.getByRole('tab', { name: 'Guides', exact: true }).click();
       await library.getByLabel('Search articles and guides').fill('no-match');
-      await expect(library.getByRole('status')).toHaveText('No articles match these filters.');
+      await expect(library.getByRole('status')).toHaveText('No articles or guides match “no-match”.');
       await library.getByLabel('Search articles and guides').fill('');
       await page.screenshot({ path: `test-results/articles-library-${width}-${theme}.png`, fullPage: true, animations: 'disabled' });
       await library.getByRole('link', { name: /Synthetic saved guide/u }).click();
@@ -211,6 +520,93 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       await headingStyle(library.locator('.learn-article-body h2'));
       await page.reload();
       await expect(library.locator('.learn-article-body p')).toHaveText(['Synthetic complete opening.', 'Synthetic complete final paragraph.']);
+      const changedVariable = await store.call({ method: 'PATCH', url: '/api/admin/generated-content?variables=true', body: {
+        id: variable.payload.variable.id, expectedUpdatedAt: variable.payload.variable.updatedAt,
+        variable: { ...definition, value: 'Updated complete author opening.' }
+      } });
+      expect(changedVariable.status).toBe(200);
+      variableForRace = changedVariable.payload.variable;
+      await page.reload();
+      await expect(library.locator('.learn-article-body p')).toHaveText(['Synthetic complete opening.', 'Synthetic complete final paragraph.']);
+      await page.goto('/admin/content#articles-guides');
+      await page.getByRole('row').filter({ hasText: saved.content_key }).getByRole('button', { name: 'Edit', exact: true }).click();
+      await expect(editor.getByLabel('Article body', { exact: true })).toHaveValue(guideTemplate);
+      if (width === 390 && theme === 'light') {
+        // A failed lazy publication control must retain the saved revision and
+        // leave the complete live edition intact until a fresh-page retry.
+        const publishedBefore = (await store.call({ method: 'rows' })).find((row: any) => row.id === saved.id);
+        const publicationModule = (url: URL) => /\/studioRevisionPublication-[^/]+\.js$/u.test(url.pathname);
+        let blockedImports = 0;
+        await page.route(publicationModule, route => {
+          blockedImports++;
+          return route.abort('failed');
+        });
+        await editor.getByRole('button', { name: 'Publish to app', exact: true }).click();
+        await expect(editor.getByRole('alert')).toBeVisible();
+        expect(blockedImports).toBeGreaterThan(0);
+        await expect(editor.getByLabel('Article body', { exact: true })).toHaveValue(guideTemplate);
+        expect((await store.call({ method: 'rows' })).find((row: any) => row.id === saved.id)).toEqual(publishedBefore);
+        expect((await store.call({ method: 'POST', url: '/api/content-reader', body: { keys: [saved.content_key] } }))
+          .payload.rows[0]?.body).toBe(body);
+        await page.unroute(publicationModule);
+        await page.reload();
+        await page.getByRole('row').filter({ hasText: saved.content_key }).filter({ hasText: 'Draft' })
+          .getByRole('button', { name: 'Edit', exact: true }).click();
+        await expect(editor.getByLabel('Article body', { exact: true })).toHaveValue(guideTemplate);
+      }
+      await confirmPublication('Publish to app');
+      await expect.poll(async () => (await store.call({ method: 'POST', url: '/api/content-reader', body: { keys: [saved.content_key] } }))
+        .payload.rows[0]?.body).toBe(body.replace('Synthetic complete opening.', 'Updated complete author opening.'));
+      await page.goto(directURL); await page.reload();
+      await expect(library.locator('.learn-article-body p')).toHaveText(['Updated complete author opening.', 'Synthetic complete final paragraph.']);
+      // Saving/reopening an edit must not withdraw the reader's approved edition.
+      await page.goto('/admin/content#articles-guides');
+      await page.getByRole('row').filter({ hasText: saved.content_key }).filter({ hasText: 'Live' }).getByRole('button', { name: 'Edit', exact: true }).click();
+      const revisedTemplate = `${guideTemplate}\n\nSynthetic complete revised ending.`;
+      await editor.getByLabel('Article body', { exact: true }).fill(revisedTemplate);
+      await editor.getByRole('button', { name: 'Save draft', exact: true }).click();
+      await expect(editor.getByText('All changes saved', { exact: true })).toBeVisible();
+      await page.reload();
+      await page.getByLabel('Search articles', { exact: true }).fill('Synthetic saved guide');
+      const searched = page.getByRole('row').filter({ hasText: saved.content_key });
+      await expect(searched).toHaveCount(1);
+      await expect(searched).toContainText('Draft');
+      const filters = page.getByRole('button', { name: 'Filters', exact: true });
+      if (await filters.isVisible()) await filters.click();
+      await page.getByLabel('Article status', { exact: true }).selectOption('LIVE');
+      await expect(searched).toHaveCount(1);
+      await expect(searched).not.toContainText('Draft');
+      await page.getByLabel('Article status', { exact: true }).selectOption('all');
+      await searched.getByRole('button', { name: 'Edit', exact: true }).click();
+      await expect(editor.getByLabel('Article body', { exact: true })).toHaveValue(revisedTemplate);
+      const resavedTemplate = `${revisedTemplate}\n\nSynthetic complete second saved ending.`;
+      await editor.getByLabel('Article body', { exact: true }).fill(resavedTemplate);
+      await editor.getByRole('button', { name: 'Save draft', exact: true }).click();
+      await expect(editor.getByText('All changes saved', { exact: true })).toBeVisible();
+      await page.reload();
+      await page.getByRole('row').filter({ hasText: saved.content_key }).filter({ hasText: 'Draft' })
+        .getByRole('button', { name: 'Edit', exact: true }).click();
+      await expect(editor.getByLabel('Article body', { exact: true })).toHaveValue(resavedTemplate);
+      await page.goto(directURL);
+      await expect(library.locator('.learn-article-body p')).toHaveText(['Updated complete author opening.', 'Synthetic complete final paragraph.']);
+      await page.goto('/admin/content#articles-guides');
+      await page.getByRole('row').filter({ hasText: saved.content_key }).filter({ hasText: 'Draft' })
+        .getByRole('button', { name: 'Edit', exact: true }).click();
+      if (width === 1440) {
+        raceVariable = true;
+        await confirmPublication('Save & publish', 409);
+        await expect(editor.getByRole('alert')).toContainText('changed or was deleted');
+        await expect(editor.getByLabel('Article body', { exact: true })).toHaveValue(resavedTemplate);
+        const retained = (await store.call({ method: 'rows' })).find((row: any) => row.event_type === 'standalone-article-revision');
+        expect(retained.status).toBe('DRAFT'); expect(retained.body).toBe(resavedTemplate);
+        expect((await store.call({ method: 'POST', url: '/api/content-reader', body: { keys: [saved.content_key] } }))
+          .payload.rows[0]?.body).toBe(body.replace('Synthetic complete opening.', 'Updated complete author opening.'));
+      }
+      await confirmPublication(width === 390 ? 'Save & publish' : 'Publish to app');
+      await expect(editor.getByLabel('Reader status', { exact: true })).toHaveText('Live');
+      await page.goto(directURL);
+      await page.reload();
+      await expect(library.locator('.learn-article-body p')).toHaveText([width === 1440 ? 'Latest complete author opening.' : 'Updated complete author opening.', 'Synthetic complete final paragraph.', 'Synthetic complete revised ending.', 'Synthetic complete second saved ending.']);
       await page.screenshot({ path: `test-results/articles-reading-${width}-${theme}.png`, fullPage: true, animations: 'disabled' });
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
       readerFailure = true;
@@ -225,7 +621,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       await page.goto(directURL);
       await page.reload();
       await expect(library.getByRole('heading', { name: 'Article unavailable' })).toBeVisible();
-      await library.getByRole('link', { name: 'Back to Articles & Guides' }).click();
+      await library.getByRole('link', { name: 'Go to the Guide', exact: true }).click();
       await expect(library.getByRole('status')).toHaveText('No articles or guides are published yet.');
       await expect.poll(() => library.evaluate(element => {
         for (let node: Element | null = element; node; node = node.parentElement) {
@@ -236,6 +632,60 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       })).toBe(true);
       await page.screenshot({ path: `test-results/articles-empty-${width}-${theme}.png`, fullPage: true, animations: 'disabled' });
       expect(errors).toEqual([]);
-    } finally { await page.unrouteAll({ behavior: 'ignoreErrors' }); store.close(); }
+    } finally { await testInfo.attach('publication-requests', { body: JSON.stringify({ raceVariable, publicationEvidence }), contentType: 'application/json' }); await page.unrouteAll({ behavior: 'ignoreErrors' }); store.close(); }
+  });
+}
+
+for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
+  test(`Archived Guide and Article discovery preserves complete writing ${width} ${theme}`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 1000 });
+    const makeRow = (kind: string, status: string) => ({
+      id: `${kind === 'guide' ? '11111111' : '22222222'}-1111-4111-8111-${status === 'ARCHIVED' ? '111111111111' : '222222222222'}`,
+      content_key: `article/${kind}/synthetic-${status.toLowerCase()}`,
+      headline: `Synthetic ${status.toLowerCase()} ${kind}`, surface: 'sky', mode: 'article',
+      event_type: 'sky_article', status, lane: 'serving', review_state: null,
+      body: `Synthetic ${kind} complete opening.\n\nA saved paragraph remains intact.\n\nSynthetic ${kind} complete final sentence.`,
+      summary: '', sections: {}, source_snapshot: {}, facts: {}, updated_at: '2026-10-15T12:00:00.000Z'
+    });
+    const archived = [makeRow('guide', 'ARCHIVED'), makeRow('manual', 'ARCHIVED')];
+    const active = [makeRow('guide', 'DRAFT'), makeRow('manual', 'DRAFT')];
+    const store = await studioApiStore([...archived, ...active]);
+    try {
+      await page.addInitScript(theme => {
+        localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture');
+        localStorage.setItem('tldrastro:studio-theme', theme);
+      }, theme);
+      await routeStudioInventoryApi(page, { call: store.call, actualDocumentRoute: true });
+      await page.goto('/admin/content#articles-guides');
+      const rows = page.locator('tr.admin-content-row');
+      for (const row of active) await expect(rows.filter({ hasText: row.content_key })).toBeVisible();
+      for (const row of archived) await expect(rows.filter({ hasText: row.content_key })).toHaveCount(0);
+      const filters = page.getByRole('button', { name: 'Filters', exact: true });
+      if (await filters.isVisible()) await filters.click();
+      await page.getByLabel('Article status', { exact: true }).selectOption('ARCHIVED');
+      for (const row of archived) {
+        await page.getByLabel('Article or guide type', { exact: true }).selectOption(row.content_key.startsWith('article/guide/') ? 'guide' : 'article');
+        await page.getByLabel('Search articles', { exact: true }).fill(row.content_key);
+        const result = rows.filter({ hasText: row.content_key });
+        await expect(result).toBeVisible();
+        await result.getByRole('button', { name: 'Edit', exact: true }).click();
+        const editor = page.getByRole('dialog', { name: 'Generated content editor', exact: true });
+        await expect(editor.getByLabel('Article body', { exact: true })).toHaveValue(row.body);
+        await editor.locator('summary').filter({ hasText: 'More actions' }).click();
+        await expect(editor.getByRole('button', { name: 'Restore as draft', exact: true })).toBeEnabled();
+        await editor.getByRole('button', { name: 'Restore as draft', exact: true }).click();
+        await expect.poll(async () => (await store.call({ method: 'rows' })).find((saved: any) => saved.id === row.id)?.status).toBe('DRAFT');
+        const saved = (await store.call({ method: 'rows' })).find((saved: any) => saved.id === row.id);
+        expect(saved.body).toBe(row.body);
+        expect(saved.headline).toBe(row.headline);
+        const reader = await store.call({ method: 'POST', url: '/api/content-reader', body: { ids: [row.id] } });
+        expect(reader.status).toBe(200);
+        expect(reader.payload.rows).toEqual([]);
+        await editor.getByRole('button', { name: 'Close', exact: true }).click();
+      }
+    } finally {
+      await page.unrouteAll({ behavior: 'wait' });
+      store.close();
+    }
   });
 }

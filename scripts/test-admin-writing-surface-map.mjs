@@ -127,7 +127,7 @@ assert.match(dashboardSource, /cms-surface-template-v1/u, "The Surface Map must 
 assert.match(dashboardSource, /contentSystem === "cms-surface-override" \|\| draft\.contentKey\.startsWith\("cms\/"\)/u, "Saving a CMS row must preserve its CMS provenance and fail-closed template type.");
 assert.match(dashboardSource, /contentType: "mustache-template"[\s\S]*contentSystem: "cms-surface-override"[\s\S]*contentLevel: "owner-authored"/u, "CMS rows must remain owner-authored Mustache templates after save.");
 assert.match(dashboardSource, /validateCmsTemplate/u, "The Admin editor must validate CMS placeholders before Sign Off.");
-assert.match(dashboardSource, /disabled=\{isLoading \|\| !cmsCanSignOff \|\| !publishReady\}/u, "The Admin editor must block publication for incomplete CMS templates or missing required copy.");
+assert.match(dashboardSource, /disabled=\{isLoading \|\| !cmsCanSignOff \|\| !publishReady \|\| \(isAstro101Draft && currentDraft\.status === "LIVE" && !draftHasUnsavedChanges\)\}/u, "The Admin editor must block publication for incomplete CMS templates, missing required copy, or unchanged published Learn articles.");
 assert.match(dashboardSource, /access\.editability === "partial" \? "partial" : "missing"/u, "The surface directory must keep known code-composed gaps in the missing-editor filter.");
 assert.match(dashboardSource, /applyAdminRouteState\(page, params \?\? new URLSearchParams\(\)\)/u, "In-app navigation must apply route filters immediately because pushState does not dispatch hashchange or popstate.");
 assert.match(dashboardSource, /new URLSearchParams\(\{ section: "friends", q: "pair-daily" \}\)/u, "Daily between you two must preserve its Friends and pair-daily route filters.");

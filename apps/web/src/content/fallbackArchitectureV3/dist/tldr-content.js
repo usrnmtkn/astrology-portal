@@ -85,9 +85,9 @@ var planetDignities = {
     Aries: "fall"
   }
 };
-for (const signs of Object.values(planetDignities)) {
-  for (const value of Object.values(signs)) if (Array.isArray(value)) Object.freeze(value);
-  Object.freeze(signs);
+for (const signs2 of Object.values(planetDignities)) {
+  for (const value of Object.values(signs2)) if (Array.isArray(value)) Object.freeze(value);
+  Object.freeze(signs2);
 }
 Object.freeze(planetDignities);
 var outsideFramework = /* @__PURE__ */ new Set([
@@ -326,6 +326,16 @@ function isRetiredCompositionKey(key) {
   return typeof key === "string" && (key === "fallback-template/transit.house-event" || retiredCompositionFamilies.some((prefix) => key.startsWith(prefix)));
 }
 
+// apps/web/src/content/studioOwnerWording.mjs
+function hasStudioOwnerWording(row) {
+  const snapshot = row?.source_snapshot ?? row?.sourceSnapshot;
+  const approval = snapshot?.studioOwnerApproval;
+  if (approval?.action === "publish-owner-content" && approval.contentKey === (row?.content_key ?? row?.contentKey) && /^[a-f0-9]{64}$/iu.test(approval.copyHash ?? "") && /^[a-f0-9]{64}$/iu.test(approval.bodyHash ?? "")) return true;
+  const record2 = row?.sections?.packageRecord ?? row;
+  const receipt = record2?.content_boundary?.ownerPublication;
+  return record2?.content_boundary?.ownerPublishedWording === true && receipt?.action === "content-studio-publish" && /^[a-f0-9]{64}$/iu.test(receipt.payloadSha256 ?? "") && typeof receipt.recordPath === "string" && Boolean(receipt.recordPath.trim()) && typeof receipt.approvedAt === "string" && Boolean(receipt.approvedAt.trim());
+}
+
 // apps/web/src/content/fallbackArchitectureV3/resolver/readerContentBoundary.mjs
 var READER_CONTENT_TYPES = Object.freeze({
   ASTROLOGY: "astrology",
@@ -387,6 +397,8 @@ function mixedContentHasOwnerApproval(row) {
   return boundary?.mixedOwnerApproved === true && approval?.approvalLevel === "exact_owner_approved" && typeof approval.recordPath === "string" && approval.recordPath.trim().length > 0 && typeof approval.payloadSha256 === "string" && /^[a-f0-9]{64}$/iu.test(approval.payloadSha256) && typeof approval.approvedAt === "string" && approval.approvedAt.trim().length > 0;
 }
 function readerContentBoundaryReason(row) {
+  if (/^(?:house-horoscope-core\/|authored\/(?:book-ritual-and-the-moon\/lunation-horoscope\/|lunation-eclipse-))/u.test(String(row?.contentKey ?? ""))) return null;
+  if (hasStudioOwnerWording(row)) return null;
   const contentType = readerContentType(row);
   if (!contentType) return null;
   if (contentType === READER_CONTENT_TYPES.TAROT) return null;
@@ -978,6 +990,31 @@ function skyIngressPublicationIssues(owner, records = []) {
   return [...new Set(issues)];
 }
 
+// apps/web/src/content/fallbackArchitectureV3/resolver/natalPlacementVariables.mjs
+function natalPlacementOwnerCopy(body, voice) {
+  return voice === "you" ? body : body.split("{{ownerName}}").join(voice);
+}
+
+// apps/web/src/content/natalRetrogradeModifier.js
+var natalRetrogradeBodies = [
+  "mercury",
+  "venus",
+  "mars",
+  "jupiter",
+  "saturn",
+  "uranus",
+  "neptune",
+  "pluto",
+  "chiron",
+  "lilith",
+  "north-node",
+  "south-node"
+];
+var NATAL_RETROGRADE_MODIFIER_PREFIX = "fallback-hook/natal-retrograde-modifier/";
+function natalRetrogradeModifierKey(planet, house) {
+  return natalRetrogradeBodies.includes(planet) && /^(?:[1-9]|1[0-2])$/u.test(String(house)) ? `${NATAL_RETROGRADE_MODIFIER_PREFIX}${planet}/${house}` : null;
+}
+
 // apps/web/src/content/fallbackArchitectureV3/resolver/publicationGuard.mjs
 function assertPublicationKey(key, blockedKeys, SourceGapError2) {
   if (!isRetiredCompositionKey(key) && !blockedKeys.has(key)) return;
@@ -1035,7 +1072,7 @@ function withoutLegacyHouseBridge(body, house, voice) {
   return paragraphBreak >= 0 ? body.slice(paragraphBreak + 2).trim() : "";
 }
 function natalPlacementMotionExactKey(facts2) {
-  if (!facts2.house) return null;
+  if (!facts2.house || !facts2.sign) return null;
   const directKey = `fallback-hook/natal-you-placement-complete-final/${facts2.planet}/${facts2.sign}/${facts2.house}`;
   return facts2.isRetrograde ? `${directKey}/retrograde` : directKey;
 }
@@ -1118,12 +1155,13 @@ function createFallbackRenderer(templatesFile, rowsFile, publication = {}) {
     return body;
   };
   function renderNatalPlacement(facts2, opts2 = {}) {
-    const { planet, sign, house } = facts2;
+    const { planet, sign = "", house } = facts2;
+    if (!sign && !house) throw new SourceGapError("SOURCE_GAP: natal placement requires a sign or house");
     const voice = facts2.voice === "you" ? "you" : "they";
     const exactCompleteKey = natalPlacementMotionExactKey(facts2);
     const exactCompleteLived = exactCompleteKey ? getReaderLivedRow(exactCompleteKey, voice, opts2) : null;
     if (exactCompleteLived) {
-      const body = exactCompleteLived.body ?? "";
+      const body = natalPlacementOwnerCopy(exactCompleteLived.body ?? "", facts2.voice);
       return {
         headline: `${title6(planet)} in ${title6(sign)} in the ${ordinal(house)} house`,
         parts: [body],
@@ -1135,28 +1173,31 @@ function createFallbackRenderer(templatesFile, rowsFile, publication = {}) {
     }
     const exactHouseLived = house ? getReaderLivedRow(`fallback-hook/natal-you-placement-house-final/${planet}/${house}`, voice, opts2) ?? getReaderLivedRow(`fallback-hook/placement-house-lived/${planet}/${house}`, voice, opts2) : null;
     const genericHouseLived = house ? getReaderLivedRow(`fallback-hook/house-lived/${house}`, voice, opts2) : null;
-    const exactSignLived = getReaderLivedRow(`fallback-hook/natal-you-placement-sign-final/${planet}/${sign}`, voice, opts2) ?? getReaderLivedRow(`fallback-hook/placement-sign-lived/${planet}/${sign}`, voice, opts2);
-    const genericSignLived = getReaderLivedRow(`fallback-hook/sign-lived/${sign}`, voice, opts2);
+    const exactSignLived = sign ? getReaderLivedRow(`fallback-hook/natal-you-placement-sign-final/${planet}/${sign}`, voice, opts2) ?? getReaderLivedRow(`fallback-hook/placement-sign-lived/${planet}/${sign}`, voice, opts2) : null;
+    const genericSignLived = sign ? getReaderLivedRow(`fallback-hook/sign-lived/${sign}`, voice, opts2) : null;
     const needsArticle = planet === "sun" || planet === "moon" || planet.endsWith("-node");
     const possessive = facts2.voice === "you" ? "Your" : `${facts2.voice}'s`;
     const ctx = {
       possessive,
+      ...house ? { houseOrdinal: ordinal(house) } : {},
       planetTitle: title6(planet),
       planetRef: needsArticle ? `the ${title6(planet)}` : title6(planet),
       planetRefCap: needsArticle ? `The ${title6(planet)}` : title6(planet),
-      signTitle: title6(sign),
-      planetTopic: getVocab(`fallback-vocab/planet-topic/${planet}`, voice, opts2),
-      planetExcess: getVocab(`fallback-vocab/planet-excess/${planet}`, voice, opts2),
-      planetProductive: getVocab(`fallback-vocab/planet-productive/${planet}`, voice, opts2),
-      planetCore: getVocab(`fallback-vocab/planet-core/${planet}`, voice, opts2),
-      signStyle: getVocab(`fallback-vocab/sign-style/${sign}`, voice, opts2),
-      signNeed: getVocab(`fallback-vocab/sign-need/${sign}`, voice, opts2),
-      planetVerb: getVocab(`fallback-vocab/planet-verb/${planet}`, voice, opts2),
-      signAdverb: getVocab(`fallback-vocab/sign-adverb/${sign}`, voice, opts2),
-      planetIntro: getHook(`fallback-hook/natal/planet-intro/${planet}`, voice, opts2),
-      planetBest: getHook(`fallback-hook/planet-best/${planet}`, voice, opts2),
-      placementSentences: getHook(`fallback-hook/placement-sentence/${planet}/${sign}`, voice, opts2),
-      placementGerundText: getVocabList(`fallback-vocab/placement-gerund/${planet}/${sign}`, voice, opts2).join(", or ") || null
+      ...sign ? {
+        signTitle: title6(sign),
+        planetTopic: getVocab(`fallback-vocab/planet-topic/${planet}`, voice, opts2),
+        planetExcess: getVocab(`fallback-vocab/planet-excess/${planet}`, voice, opts2),
+        planetProductive: getVocab(`fallback-vocab/planet-productive/${planet}`, voice, opts2),
+        planetCore: getVocab(`fallback-vocab/planet-core/${planet}`, voice, opts2),
+        signStyle: getVocab(`fallback-vocab/sign-style/${sign}`, voice, opts2),
+        signNeed: getVocab(`fallback-vocab/sign-need/${sign}`, voice, opts2),
+        planetVerb: getVocab(`fallback-vocab/planet-verb/${planet}`, voice, opts2),
+        signAdverb: getVocab(`fallback-vocab/sign-adverb/${sign}`, voice, opts2),
+        planetIntro: getHook(`fallback-hook/natal/planet-intro/${planet}`, voice, opts2),
+        planetBest: getHook(`fallback-hook/planet-best/${planet}`, voice, opts2),
+        placementSentences: getHook(`fallback-hook/placement-sentence/${planet}/${sign}`, voice, opts2),
+        placementGerundText: getVocabList(`fallback-vocab/placement-gerund/${planet}/${sign}`, voice, opts2).join(", or ") || null
+      } : {}
     };
     const mods = [];
     const mod = (key, extra = {}) => {
@@ -1171,7 +1212,6 @@ function createFallbackRenderer(templatesFile, rowsFile, publication = {}) {
       if (specific) mods.push(specific);
       else mod(`fallback-template/natal.modifier.dignity-${facts2.dignity}`);
     }
-    if (facts2.isRetrograde) mod("fallback-template/natal.modifier.retrograde");
     if (facts2.sect?.hasReliableSect && facts2.sect.effect) {
       mod(`fallback-template/natal.modifier.sect-${facts2.sect.isDayChart ? "day" : "night"}`, { sectEffect: facts2.sect.effect });
     }
@@ -1180,17 +1220,17 @@ function createFallbackRenderer(templatesFile, rowsFile, publication = {}) {
     const partKeys = [];
     const withModifiers = (body, include) => [body, ...include ? mods : []].filter(Boolean).join("\n\n");
     const isNode = planet === "north-node" || planet === "south-node";
-    if (isNode) {
+    if (isNode && sign) {
       const j = getHook(`fallback-hook/node-journey/${planet}`, voice, opts2);
       const oppSign = OPPOSITE_SIGN[sign];
       const oppDir = getVocab(`fallback-vocab/node-direction/${oppSign}`, voice, opts2);
       ctx.nodeJourney = j ? j.replace(/\{\{oppositeSignTitle\}\}/g, title6(oppSign)).replace(/\{\{oppositeDirection\}\}/g, oppDir ?? "") : null;
     }
-    const signTemplate = findTemplate(`fallback-template/natal.planet-in-sign/${planet}`, opts2) ?? getTemplate(isNode ? "fallback-template/natal.node-in-sign" : "fallback-template/natal.planet-in-sign");
-    if (exactSignLived) {
+    const signTemplate = sign ? findTemplate(`fallback-template/natal.planet-in-sign/${planet}`, opts2) ?? getTemplate(isNode ? "fallback-template/natal.node-in-sign" : "fallback-template/natal.planet-in-sign") : null;
+    if (signTemplate && exactSignLived) {
       parts.push(withModifiers(exactSignLived.body ?? "", !house));
       partKeys.push(exactSignLived.contentKey);
-    } else {
+    } else if (signTemplate) {
       try {
         parts.push(renderTemplate(signTemplate, { ...ctx, modifierSentences: house ? [] : mods }, gapLabel, voice));
         partKeys.push(signTemplate.contentKey);
@@ -1234,8 +1274,14 @@ function createFallbackRenderer(templatesFile, rowsFile, publication = {}) {
         ctx.houseOrdinal = houseCtx.houseOrdinal;
       }
     }
+    const retrogradeKey = facts2.isRetrograde ? natalRetrogradeModifierKey(planet, house) : null;
+    const retrograde = retrogradeKey ? getReaderLivedRow(retrogradeKey, voice, opts2) : null;
+    if (retrograde) {
+      parts.push(natalPlacementOwnerCopy(retrograde.body ?? "", facts2.voice));
+      partKeys.push(retrogradeKey);
+    }
     return {
-      headline: exactHouseLived ? `${title6(planet)} in the ${ordinal(house)} house` : fixArticles(mustache(headlineTemplate.headline ?? "", ctx)),
+      headline: !sign || exactHouseLived ? `${title6(planet)} in the ${ordinal(house)} house` : fixArticles(mustache(headlineTemplate.headline ?? "", ctx)),
       parts,
       partKeys,
       body: parts.join("\n\n"),
@@ -1724,6 +1770,8 @@ function mixedContentHasOwnerApproval2(row) {
   return boundary?.mixedOwnerApproved === true && approval?.approvalLevel === "exact_owner_approved" && typeof approval.recordPath === "string" && approval.recordPath.trim().length > 0 && typeof approval.payloadSha256 === "string" && /^[a-f0-9]{64}$/iu.test(approval.payloadSha256) && typeof approval.approvedAt === "string" && approval.approvedAt.trim().length > 0;
 }
 function readerContentBoundaryReason2(row) {
+  if (/^(?:house-horoscope-core\/|authored\/(?:book-ritual-and-the-moon\/lunation-horoscope\/|lunation-eclipse-))/u.test(String(row.contentKey ?? ""))) return null;
+  if (hasStudioOwnerWording(row)) return null;
   const contentType = readerContentType2(row);
   if (!contentType) return null;
   if (contentType === READER_CONTENT_TYPES2.TAROT) return null;
@@ -1832,6 +1880,26 @@ function sharedLunationEclipseSectionKey(kind, sectionId, house = null) {
   const endingsVariant = phase === "lunar" && [4, 8, 12].includes(Number(house)) && (sectionId === "recommendation" || sectionId === "close");
   const resolvedSectionId = endingsVariant ? `${sectionId}-endings` : sectionId;
   return phase ? `authored/lunation-eclipse-section/shared/${phase}/${resolvedSectionId}` : null;
+}
+
+// apps/web/src/content/fallbackArchitectureV3/resolver/lunationStudioRevision.mjs
+var LUNATION_STUDIO_REVISION_SCHEMA = "content-studio-lunation-revision/v1";
+var signs = ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"];
+var sha256 = (value) => typeof value === "string" && /^[a-f0-9]{64}$/u.test(value);
+function isLunationEclipseSectionKey(key) {
+  if (/^authored\/lunation-eclipse-house-layer\/solar\/house-(?:[1-9]|1[0-2])$/u.test(key)) return true;
+  if (/^authored\/lunation-eclipse-section\/shared\/lunar\/(?:nature|mechanics|recommendation|close|recommendation-endings|close-endings)$/u.test(key)) return true;
+  const match = key.match(/^authored\/lunation-eclipse-section\/pisces\/rising-([a-z]+)\/house-([1-9]|1[0-2])\/(?:opening|evergreen-body)$/u);
+  const rising = match ? signs.indexOf(match[1]) : -1;
+  return rising >= 0 && Number(match[2]) === (11 - rising + 12) % 12 + 1;
+}
+function isStudioLunationRevision(record2) {
+  const receipt = record2?.studio_lunation_revision;
+  const approval = record2?.approval;
+  return record2?.content_role === "full_copy" && record2.studio_version_status === "approved-serving-revision" && record2.review_status === "approved" && record2.promotion_authorized === true && receipt?.schema === LUNATION_STUDIO_REVISION_SCHEMA && receipt.contentKey === record2.contentKey && typeof receipt.approvedAt === "string" && Number.isFinite(Date.parse(receipt.approvedAt)) && sha256(receipt.baselineBodySha256) && sha256(receipt.previousBodySha256) && sha256(receipt.bodySha256) && receipt.bodySha256 === record2.protected_content?.body_sha256 && approval?.approvalLevel === "exact_owner_approved" && approval.action === "content-studio-publish" && approval.payloadSha256 === receipt.bodySha256 && approval.approvedAt === receipt.approvedAt && approval.recordPath === `studio:lunation/${encodeURIComponent(record2.contentKey)}#${receipt.bodySha256}`;
+}
+function isPinnedLunationBookRevision(section, book, bookHash, sectionHash) {
+  return isStudioLunationRevision(book) && bookHash === book.studio_lunation_revision.bodySha256 && section.protected_content?.source_body_sha256 === book.studio_lunation_revision.baselineBodySha256 && section.protected_content?.preservedBookRemainderSha256 === sectionHash;
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/personalTransitCopyVersions.mjs
@@ -3809,8 +3877,10 @@ ${passHook}`;
       return matchingNewMoonSlotCache;
     };
     const renderStoredBody = (stored) => {
+      if (isStudioLunationRevision(stored) && sha256Text(stored.body ?? "") !== stored.protected_content?.body_sha256)
+        throw new SourceGapError(`LUNATION_REVISION_MODIFIED: ${stored.contentKey}`);
       const needsMatchingNewMoon = /\{\{matchingNewMoon(?:Sign|Date)\}\}/u.test(stored.body ?? "");
-      const renderedBookBody = needsMatchingNewMoon ? fill2(stored.body, matchingNewMoonSlots()) : stored.body;
+      const renderedBookBody = needsMatchingNewMoon ? stored.body.replace(/\{\{(matchingNewMoonSign|matchingNewMoonDate)\}\}/gu, (_match, key) => matchingNewMoonSlots()[key]) : stored.body;
       if (/\{\{/u.test(renderedBookBody)) {
         throw new SourceGapError(`SOURCE_GAP: unresolved lunation book slot in ${stored.contentKey}`);
       }
@@ -3826,6 +3896,8 @@ ${passHook}`;
     };
     const assertProtectedEclipseBookBody = (stored, source) => {
       assertStoredEclipseSectionIntegrity(stored);
+      if (isStudioLunationRevision(stored)) return;
+      if (isPinnedLunationBookRevision(stored, source, sha256Text(source.body ?? ""), sha256Text(stored.body ?? ""))) return;
       const sourceBody = source.body ?? "";
       const sourceHash = sha256Text(sourceBody);
       const protectedSourceHash = source.protected_content?.body_sha256;
@@ -5310,7 +5382,7 @@ function title8(value) {
 function record(value) {
   return value && typeof value === "object" && !Array.isArray(value) ? value : {};
 }
-function sha256(value) {
+function sha2562(value) {
   return sha256Text(value);
 }
 function valueAt(source, path) {
@@ -5527,7 +5599,7 @@ function assertSkyV4ReaderCopyOwnerApproval(corpus, records = []) {
 }
 function assertSkyV4ReaderCopyServingRelease(corpus) {
   assertSkyV4ReaderCopyOwnerApproval(corpus);
-  const releasedKeysSha256 = sha256(JSON.stringify(sky_v4_reader_copy_280_owner_approval_v1_default.approved_keys));
+  const releasedKeysSha256 = sha2562(JSON.stringify(sky_v4_reader_copy_280_owner_approval_v1_default.approved_keys));
   const expectedCounts = sky_v4_reader_copy_280_owner_approval_v1_default.expected_counts_by_content_type;
   if (sky_v4_reader_copy_280_serving_release_v1_default.schema !== "tldrastro-sky-v4-serving-release/v1" || sky_v4_reader_copy_280_serving_release_v1_default.canonical_package_version !== SKY_V4_CANONICAL_PACKAGE_VERSION || sky_v4_reader_copy_280_serving_release_v1_default.canonical_json_sha256 !== SKY_V4_CANONICAL_JSON_SHA256 || sky_v4_reader_copy_280_serving_release_v1_default.approval_id !== sky_v4_reader_copy_280_owner_approval_v1_default.approval_id || sky_v4_reader_copy_280_serving_release_v1_default.expected_serving_records !== 280 || sky_v4_reader_copy_280_serving_release_v1_default.serving_enabled !== true || sky_v4_reader_copy_280_serving_release_v1_default.resolver_conditional !== true || sky_v4_reader_copy_280_serving_release_v1_default.configuration_records_excluded !== 25 || sky_v4_reader_copy_280_serving_release_v1_default.released_keys_sha256 !== releasedKeysSha256 || JSON.stringify(sky_v4_reader_copy_280_serving_release_v1_default.expected_counts_by_content_type) !== JSON.stringify(expectedCounts) || READER_COPY_SERVING_KEYS.size !== 280) {
     throw new Error("SKY_V4_GOVERNANCE: reader-copy serving release is invalid or stale.");
@@ -5564,7 +5636,7 @@ function studioRecord({
     surface: "sky",
     render_policy: "sky-v4-canonical-stage-preview",
     source_package: SKY_V4_CANONICAL_PACKAGE_VERSION,
-    source_baseline_sha256: sha256(baselineJson),
+    source_baseline_sha256: sha2562(baselineJson),
     studio_content_type: contentType,
     studio_editable_fields: editableFields,
     studio_read_only_fields: readOnlyFields,
@@ -5736,7 +5808,7 @@ function nodeStudioRecords(corpus) {
       ...source,
       Article,
       reader_source_correction: "authored-inputs/reader-source-reference-removals-v1.json",
-      original_source_baseline_sha256: sha256(JSON.stringify(source))
+      original_source_baseline_sha256: sha2562(JSON.stringify(source))
     };
   }).map((row) => studioRecord({
     source: row,
@@ -6260,7 +6332,7 @@ function skyV4GovernedAspectStudioRecord(sourceRow) {
     ],
     studio_source_baseline: baseline,
     studio_governed_source_record: structuredClone(sourceRow),
-    source_baseline_sha256: sha256(JSON.stringify(baseline)),
+    source_baseline_sha256: sha2562(JSON.stringify(baseline)),
     studio_provenance: {
       reviewStatus: sourceRow.review_status,
       approvedVia: sourceRow.approved_via,
@@ -6614,7 +6686,7 @@ function skyV4FieldValue(source, path) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-10-17-studio-owner-daily";
+var PACKAGE_VERSION = "v3-2026-11-15-natal-house-only";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);
@@ -6677,6 +6749,7 @@ function createPackageManifest(bundle, packageVersion = PACKAGE_VERSION) {
   };
 }
 export {
+  LUNATION_STUDIO_REVISION_SCHEMA,
   PACKAGE_VERSION,
   RoleViolationError,
   SKY_V4_CANONICAL_JSON_SHA256,
@@ -6697,6 +6770,9 @@ export {
   createSkyV4ReaderRoute,
   createTransitSynastryRenderer,
   friendVoiceFromReaderCopy,
+  isLunationEclipseSectionKey,
+  isPinnedLunationBookRevision,
+  isStudioLunationRevision,
   makeSkyIngressComposition,
   natalPlacementMotionExactKey,
   normalizeAspect,

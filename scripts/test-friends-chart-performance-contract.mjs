@@ -178,7 +178,7 @@ assert.ok(
 
 assert.match(
   socialFriendsPanelSource,
-  /if \(available === null && activeView !== "charts"\)/,
+  /activeView !== "charts" && \(available === null/,
   "The Charts landing view must render cached chart rows without waiting for social-profile availability."
 );
 
@@ -307,7 +307,7 @@ assert.doesNotMatch(
 );
 assert.match(
   socialFriendsPanelSource,
-  /Friends could not load\.[\s\S]*Your connections are still saved\.[\s\S]*Try again/,
+  /PageLoadState scope="page" what="Your friends"[\s\S]*onRetry=/,
   "Transient Friends failures must preserve the selected view and offer a retry."
 );
 assert.match(
@@ -370,8 +370,8 @@ assert.doesNotMatch(
 );
 assert.match(
   manualChartsPanelSource,
-  /function openFriendProfile\(chart: ManualChart\) \{[\s\S]*requestFriendProfileTab\(chart\.chartType === "event" \? "natal" : "compatibility"\);[\s\S]*setSelectedChartId\(chart\.id\);/,
-  "Selecting a chart must start its Compatibility content prefetch before publishing the selection."
+  /function openFriendProfile\(chart: ManualChart, view: FriendProfileTab = "compatibility", detail\?: string\) \{[\s\S]*requestFriendProfileTab\(chart\.chartType === "event" \? "natal" : view\);[\s\S]*setSelectedChartId\(chart\.id\);/,
+  "Selecting a chart must prefetch its requested tab before publishing the selection, defaulting to Compatibility."
 );
 assert.doesNotMatch(
   manualChartsPanelSource,

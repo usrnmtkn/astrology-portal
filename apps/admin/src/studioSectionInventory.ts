@@ -51,7 +51,7 @@ export const STUDIO_CALENDAR_ASPECT_PREFIXES = [
 export const STUDIO_PLANETARY_INGRESS_PREFIXES = ["sky.ingress.", "sky-ingress-", "sky-mercury-", "sky-venus-", "sky-mars-", "sky-jupiter-", "sky-saturn-", "sky-uranus-", "sky-neptune-", "sky-pluto-", "sky-chiron-", "sky-lilith-", "ms/ingress/", "fallback-hook/sky.ingress"] as const;
 export const STUDIO_PLANETARY_STATION_PREFIXES = ["authored/station/", "sky.station.", "sky.retrograde.", "sky-retrograde-", "ms/retrograde/", "fallback-hook/sky.retrograde/", "fallback-hook/sky.station/"] as const;
 
-export const STUDIO_NATAL_ASPECT_PREFIXES = ["fallback-hook/natal-aspect-lived/"] as const;
+export const STUDIO_NATAL_ASPECT_PREFIXES = ["fallback-hook/natal-aspect-lived/", "natal.aspect."] as const;
 
 export const STUDIO_NATAL_CHART_PREFIXES = [
   "fallback-hook/natal/planet-intro/",
@@ -101,7 +101,7 @@ export const STUDIO_FRIENDS_SECTION_PREFIXES = [
 ] as const;
 
 export type StudioInventoryVisibility = "editorial" | "all";
-export type StudioInventoryScope = "all" | "compatibility" | "composite" | "sky-types" | "template-types" | "fallback-types" | "slot-types" | "vocabulary-types";
+export type StudioInventoryScope = "all" | "article-library" | "compatibility" | "composite" | "sky-types" | "template-types" | "fallback-types" | "slot-types" | "vocabulary-types";
 
 export type StudioInventoryQuery = {
   visibility: StudioInventoryVisibility;
@@ -147,6 +147,7 @@ function catalogQuery(visibility: StudioInventoryVisibility = "all"): StudioInve
 }
 
 export function studioInventoryQuery(route: StudioInventoryRoute): StudioInventoryQuery {
+  if (route.page === "wheelTooltips") return prefixesQuery(["cms/wheel-tooltip/"]);
   if (route.page === "connectionTransits") return prefixesQuery(["authored/connection-activation/", "fallback-template/connection-transit.bridge/"]);
   // Visibility widens the rows inside a section, never the section itself.
   const catalogVisibility = route.showReferenceRows || route.showRetiredRows ? "all" : "editorial";
@@ -162,7 +163,7 @@ export function studioInventoryQuery(route: StudioInventoryRoute): StudioInvento
   }
   if (route.page === "astro101") return prefixesQuery(STUDIO_ASTRO_101_PREFIXES);
   if (route.page === "articles") {
-    return { visibility: "all", scope: "all", prefixes: [], mode: "article", catalog: false };
+    return { visibility: "all", scope: "article-library", prefixes: [], mode: null, catalog: false };
   }
   if (route.page === "content" && route.categoryFilter === "Natal Chart") {
     return prefixesQuery(STUDIO_NATAL_CHART_PREFIXES);
@@ -193,6 +194,9 @@ export function studioInventoryQuery(route: StudioInventoryRoute): StudioInvento
   }
   if (route.page === "skyWriteups" && route.skyWriteupWorkspaceView === "daily-summary") {
     return prefixesQuery(["cms/sky-daily-summary/", "cms/sky-debility/"]);
+  }
+  if (route.page === "skyWriteups" && route.skyWriteupWorkspaceView === "detriment-fall") {
+    return prefixesQuery(["cms/sky-debility/"]);
   }
   if (route.page === "skyWriteups") return prefixesQuery(STUDIO_SKY_WRITEUP_PREFIXES, "all", "sky-types");
   if (route.page === "knowledge" && route.betweenYouTwoWorkspace) {

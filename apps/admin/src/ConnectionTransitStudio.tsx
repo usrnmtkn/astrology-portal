@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { AdminSelect } from "./AdminNativeControls";
 import { StudioButton } from "./StudioControls";
+import { FrictionFlowStudio } from "./FrictionFlowStudio";
 import { connectionActivationKey, connectionAspects, connectionPoints, connectionPointTitle, connectionBridgeTemplates } from "../../web/src/content/connectionTransit";
 
 export default function ConnectionTransitStudio({ onEdit, onOpenTransits, busy }: {
@@ -9,6 +10,7 @@ export default function ConnectionTransitStudio({ onEdit, onOpenTransits, busy }
   const [selection, setSelection] = useState(["ascendant", "square", "saturn"]);
   const key = connectionActivationKey(...selection as [string,string,string])!;
   return <section className="studio-surface studio-section" aria-label="Connection transit sources">
+    <FrictionFlowStudio busy={busy} onEdit={onEdit}/>
     <section className="admin-editor-guidance" aria-label="Transit reading source">
       <h2>Transit reading</h2>
       <p>Existing complete You/Friend transit reading with calculated timing.</p>

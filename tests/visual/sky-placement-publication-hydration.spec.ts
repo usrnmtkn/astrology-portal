@@ -75,7 +75,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (con
  });
 }
 
-for (const width of [390, 1440]) test(`placement publication stays authoritative at ${width}px`, async ({ page }) => {
+for (const width of [390, 1440]) test(`placement publication stays authoritative at ${width}px`, async ({ page, context }) => {
   test.setTimeout(180_000);
   await page.setViewportSize({ width, height: 1000 });
   await page.clock.setFixedTime(new Date('2026-09-13T23:40:00Z'));
@@ -116,11 +116,14 @@ for (const width of [390, 1440]) test(`placement publication stays authoritative
   await page.route('**/content-studio-last-known-good.json', route => route.fulfill({ json: { schema: 'content-studio-last-known-good-v2', rows: [], publications: [], rowCount: 0 } }));
   const relayStatuses: number[] = [];
   const unrelatedId = 'dddddddd-dddd-dddd-dddd-dddddddddddd';
+  let unrelatedRevision = 1;
+  const unrelatedDated = () => ({ content_key: 'sky-article/chiron/pisces/2011/2011-02-08',
+    state: 'retired' as const, revision: unrelatedRevision, row_id: null, row_updated_at: null, updated_at: timestamp() });
   const readDelayMs = Number(process.env.SKY_ARTICLE_READ_DELAY_MS ?? 2500);
   const contentQueries: Array<{ids?: string[];scope?: string;keys?: string[];startedAt:number;finishedAt?:number}> = [];
   await page.route('**/api/content-publications*', async route => {
     const scoped=new URL(route.request().url()).searchParams.get('scope')==='sky-list';
-    const publications = canonicalPublicationLedger([ledger, {content_key:'sky-placement/article/jupiter/capricorn',state:'live',revision:1,row_id:unrelatedId,row_updated_at:timestamp(),updated_at:timestamp()}, { content_key: key, state: retired ? 'retired' : 'live', revision,
+    const publications = canonicalPublicationLedger([ledger, unrelatedDated(), {content_key:'sky-placement/article/jupiter/capricorn',state:'live',revision:1,row_id:unrelatedId,row_updated_at:timestamp(),updated_at:timestamp()}, { content_key: key, state: retired ? 'retired' : 'live', revision,
       row_id: row().id, row_updated_at: timestamp(), updated_at: timestamp() }].filter(record=>!scoped||isSkyListPublicationKey(record.content_key)));
     const etag = await publicationLedgerTag(publications);
     const unchanged = route.request().headers()['if-none-match'] === etag;
@@ -132,7 +135,7 @@ for (const width of [390, 1440]) test(`placement publication stays authoritative
     const path = new URL(route.request().url()).pathname;
     if (path.endsWith('/content_publications')) {
       await new Promise(resolve => setTimeout(resolve, 500));
-      return route.fulfill({ json: [{ content_key: key, state: retired ? 'retired' : 'live', revision,
+      return route.fulfill({ json: [unrelatedDated(), { content_key: key, state: retired ? 'retired' : 'live', revision,
         row_id: row().id, row_updated_at: timestamp(), updated_at: timestamp() }] });
     }
     return route.fulfill({ json: [] });
@@ -202,6 +205,20 @@ for (const width of [390, 1440]) test(`placement publication stays authoritative
   for (let sample = 0; sample < 12; sample++) {
     await expect(article).toContainText('Fixture published final sentence 1000.');
     expect(await article.evaluate(el => el.getBoundingClientRect().height)).toBe(height);
+    await page.waitForTimeout(300);
+  }
+  // A different dated edition must not replace this complete article with a loader.
+  const unchangedText = await article.textContent();
+  const emitStorage = await publicationStorageEmitter(context);
+  unrelatedRevision++;
+  await emitStorage([unrelatedDated()]);
+  for (let sample = 0; sample < 12; sample++) {
+    const visible = await page.evaluate(() => {
+      const body = document.querySelector('.sky-detail-article .article-body-inner');
+      return { height: body?.getBoundingClientRect().height ?? 0, text: body?.textContent ?? null };
+    });
+    expect(visible.height, 'Unrelated dated publication retains the complete article on every sample').toBe(height);
+    expect(visible.text).toBe(unchangedText);
     await page.waitForTimeout(300);
   }
   revision++;

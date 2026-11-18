@@ -308,7 +308,7 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onEditField
     : selectedBase, [selectedBase, rows, exampleValues]);
   const [loadError, setLoadError] = useState("");
   const [retryLoad, setRetryLoad] = useState(0);
-  const pendingRows = scope === "templates" && selected ? [selected.row, ...selected.preview.sources.map(source => source.row)].filter(row => (row as CompositionMapRow & { inventory_only?: boolean }).inventory_only) : [];
+  const pendingRows = scope === "templates" && selected ? [selected.row, ...selected.preview.pendingSources.map(source => source.row)].filter(row => (row as CompositionMapRow & { inventory_only?: boolean }).inventory_only) : [];
   const pendingKey = pendingRows.map(row => row.id).join("|");
   useEffect(() => {
     setLoadError("");

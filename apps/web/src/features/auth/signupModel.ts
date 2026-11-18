@@ -1,3 +1,4 @@
+import type { PronounChoice } from "../../services/personReferences";
 import type { LocationInput } from "../../types";
 import { normalizeBirthTime, twentyFourHourTimeToDisplay } from "../../services/chartTime";
 
@@ -13,6 +14,10 @@ export type SignupForm = {
   unknownBirthTime: boolean;
   birthCity: string;
   birthLocation: LocationInput | null;
+  pronouns?: PronounChoice;
+  currentLocation?: string;
+  currentLocationData?: LocationInput | null;
+  onboarding?: boolean;
 };
 
 export type SignupTimeParts = {

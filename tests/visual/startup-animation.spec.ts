@@ -16,19 +16,26 @@ async function useMoonDocument(page: Page) {
   await page.route("**/", async route => {
     if (route.request().resourceType() !== "document") { await route.continue(); return; }
     const response = await route.fetch();
-    const body = (await response.text()).replace('id="app-startup"', 'id="app-startup" data-loader="moon"');
+    const body = (await response.text()).replace('data-loader="orbit"', 'data-loader="moon"');
     await route.fulfill({ response, body });
   });
 }
 
 test.beforeEach(async ({ page }) => {
+  // The production orbit has separate handoff coverage. Keep the optional
+  // four-symbol player and its recovery lifecycle under explicit selection.
+  await page.route("**/", async route => {
+    if (route.request().resourceType() !== "document") return route.continue();
+    const response = await route.fetch();
+    await route.fulfill({ response, body: (await response.text()).replace('data-loader="orbit"', 'data-loader="celestial"') });
+  });
   await page.addInitScript(() => { if (!localStorage.getItem("tldrastro:pageAnimations")) localStorage.setItem("tldrastro:pageAnimations", "system"); });
   await page.route("**/rest/v1/**", route => route.fulfill({ json: [] }));
   await page.route("**/api/content-reader", route => route.fulfill({ json: readerResponse([]) }));
 });
 
 for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
-  test(`initial page wait uses the moon phase at ${width} ${theme}`, async ({ page }, info) => {
+  test(`initial route wait uses the reading skeleton at ${width} ${theme}`, async ({ page }, info) => {
     await page.setViewportSize({ width, height: 900 });
     await page.emulateMedia({ reducedMotion: "no-preference" });
     await page.addInitScript(value => localStorage.setItem("tldrastro:theme", value), theme);
@@ -37,23 +44,15 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await page.route(/\/assets\/CalendarRoute-.*\.js$/, async route => { await held; await route.continue().catch(() => {}); });
     await page.goto("/#calendar", { waitUntil: "domcontentloaded" });
     try {
-      const loading = page.getByRole("status", { name: "Loading calendar…", exact: true });
-      const moon = loading.locator(".loading-moon");
-      const shadow = moon.locator(".loading-moon__shadow");
-      await expect(moon).toBeVisible();
-      await expect(loading.locator(".loading-spinner")).toHaveCount(0);
-      await expect(moon).toHaveCSS("width", "48px");
-      await expect(moon).toHaveCSS("height", "48px");
-      await expect(moon).toHaveCSS("color", theme === "dark" ? "rgb(236, 238, 242)" : "rgb(28, 31, 38)");
-      await expect(shadow).toHaveCSS("animation-duration", "2.6s");
-      await expect(shadow).toHaveCSS("animation-timing-function", "cubic-bezier(0.6, 0, 0.4, 1)");
-      const bounds = await moon.boundingBox();
-      const before = await shadow.evaluate(node => getComputedStyle(node).transform);
-      await expect.poll(() => shadow.evaluate(node => getComputedStyle(node).transform)).not.toBe(before);
-      expect(await moon.boundingBox()).toEqual(bounds);
-      const label = loading.locator("span");
-      await expect(label).toHaveCSS("font-size", "14px");
-      expect((await label.boundingBox())!.y - bounds!.y - bounds!.height).toBe(22);
+      const loading = page.locator('.app-loading[aria-label="Loading calendar…"]');
+      await expect(loading).toBeVisible();
+      await expect(loading).toHaveAttribute("aria-busy", "true");
+      await expect(loading.locator(".loading-card")).toHaveCount(1);
+      await expect(loading.locator(".loading-moon, .loading-spinner")).toHaveCount(0);
+      await expect(loading.locator(".card-skeleton-bar").first()).toHaveCSS("animation-name", "skeleton-pulse");
+      const bounds = await loading.boundingBox();
+      await page.waitForTimeout(200);
+      expect(await loading.boundingBox()).toEqual(bounds);
       await page.screenshot({ path: info.outputPath("initial-moon.png") });
     } finally { release(); }
     await expect(page.getByRole("region", { name: "Lunar calendar", exact: true })).toBeVisible();
@@ -61,17 +60,17 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   });
 }
 
-test("initial page moon respects reduced motion and still hands off", async ({ page }) => {
+test("initial route skeleton respects reduced motion and still hands off", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   let release!: () => void;
   const held = new Promise<void>(resolve => { release = resolve; });
   await page.route(/\/assets\/CalendarRoute-.*\.js$/, async route => { await held; await route.continue().catch(() => {}); });
   await page.goto("/#calendar", { waitUntil: "domcontentloaded" });
   try {
-    const moon = page.locator(".app-loading .loading-moon");
-    await expect(moon).toBeVisible();
-    await expect(moon.locator(".loading-moon__shadow")).toHaveCSS("animation-name", "none");
-    await expect(moon.locator(".loading-moon__shadow")).toHaveCSS("transform", "matrix(1, 0, 0, 1, 8, 0)");
+    const loading = page.locator('.app-loading[aria-label="Loading calendar…"]');
+    await expect(loading).toBeVisible();
+    await expect(loading.locator(".card-skeleton-bar").first()).toHaveCSS("animation-name", "none");
+    await expect(loading.locator(".loading-moon")).toHaveCount(0);
   } finally { release(); }
   await expect(page.getByRole("region", { name: "Lunar calendar", exact: true })).toBeVisible();
   await expect(page.locator(".app-loading .loading-moon")).toHaveCount(0);
@@ -93,8 +92,8 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
       await expect(artwork.locator(".startup-linework__fill")).toHaveCSS("fill", ink);
       await expect(artwork).toHaveCSS("width", "80px");
       await expect(page.locator("[data-startup-message]")).toHaveCSS("font-size", "14px");
-      await expect(page.locator("[data-startup-message]")).toHaveCSS("color", theme === "dark" ? "rgb(141, 147, 160)" : "rgb(110, 118, 133)");
-      await expect(page.locator("body")).toHaveCSS("background-color", theme === "dark" ? "rgb(22, 24, 27)" : "rgb(238, 240, 243)");
+      await expect(page.locator("[data-startup-message]")).toHaveCSS("color", theme === "dark" ? "rgb(154, 161, 173)" : "rgb(110, 118, 133)");
+      await expect(page.locator("body")).toHaveCSS("background-color", theme === "dark" ? "rgb(18, 20, 24)" : "rgb(228, 232, 238)");
       const frame = await artwork.locator(".startup-artwork__animation svg").innerHTML();
       await expect.poll(() => artwork.locator(".startup-artwork__animation svg").innerHTML()).not.toBe(frame);
       await expect(page.getByText("Loading TLDR Astro…", { exact: true })).toBeVisible();
@@ -371,7 +370,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
       await expect(moon.locator(".startup-moon__lit")).toHaveCSS("fill", theme === "dark" ? "rgb(236, 238, 242)" : "rgb(28, 31, 38)");
       await expect(shadow).toHaveCSS("fill", await page.locator("body").evaluate(el => getComputedStyle(el).backgroundColor));
       await expect(label).toHaveCSS("font-size", "14px");
-      await expect(label).toHaveCSS("color", theme === "dark" ? "rgb(141, 147, 160)" : "rgb(110, 118, 133)");
+      await expect(label).toHaveCSS("color", theme === "dark" ? "rgb(154, 161, 173)" : "rgb(110, 118, 133)");
       const iconBox = await moon.boundingBox();
       const labelBox = await label.boundingBox();
       expect(labelBox!.y - iconBox!.y - iconBox!.height).toBe(22);
@@ -436,12 +435,10 @@ for (const choice of ["on", "off"] as const) {
         await expect(page.locator("script[data-startup-decoration]")).toHaveCount(0);
       }
       release();
-      const shadow = page.locator(".app-loading .loading-moon__shadow");
-      await expect(shadow).toHaveCount(1);
-      await expect(shadow).toHaveCSS("animation-name", choice === "on" ? "startup-moon-phase" : "none");
-      const before = await shadow.evaluate(node => getComputedStyle(node).transform);
-      if (choice === "on") await expect.poll(() => shadow.evaluate(node => getComputedStyle(node).transform)).not.toBe(before);
-      else await expect(shadow).toHaveCSS("transform", "matrix(1, 0, 0, 1, 8, 0)");
+      const loading = page.locator('.app-loading[aria-label="Loading calendar…"]');
+      await expect(loading).toBeVisible();
+      await expect(loading.locator(".loading-moon")).toHaveCount(0);
+      await expect(loading.locator(".card-skeleton-bar").first()).toHaveCSS("animation-name", "none");
     } finally { release(); releaseCalendar(); }
     await expect(page.getByRole("region", { name: "Lunar calendar", exact: true })).toBeVisible();
   });

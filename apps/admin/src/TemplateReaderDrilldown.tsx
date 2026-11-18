@@ -22,6 +22,8 @@ type Props = {
    * with no passage to show. The parent loads those rows when this reports them.
    */
   onLoadSourceDocuments?: (rowIds: string[]) => void;
+  onEditSource?: (row: CompositionMapRow) => void;
+  disabled?: boolean;
 };
 
 function segmentButton(
@@ -29,11 +31,13 @@ function segmentButton(
   key: string,
   label: string,
   onOpenVariable: Props["onOpenVariable"],
-  color: string | undefined
+  color: string | undefined,
+  onEditSource?: Props["onEditSource"],
+  disabled = false
 ) {
   if (!segment.name || !segment.kind) return segment.text;
   const action = segment.source
-    ? `Open the saved source for ${label}`
+    ? `${onEditSource ? 'Edit the complete saved wording' : 'Open the saved source'} for ${label}`
     : segment.kind === "fact"
       ? `Inspect how ${label} is calculated`
       : `Inspect ${label}`;
@@ -45,8 +49,9 @@ function segmentButton(
       data-variable-label={label}
       data-variable-name={segment.name}
       data-variable-color={color}
+      disabled={disabled}
       key={key}
-      onClick={() => onOpenVariable(segment.name!, segment.source?.row.id ?? null)}
+      onClick={() => segment.source && onEditSource ? onEditSource(segment.source.row) : onOpenVariable(segment.name!, segment.source?.row.id ?? null)}
       title={action}
     >
       {segment.text}
@@ -54,7 +59,7 @@ function segmentButton(
   );
 }
 
-export default function TemplateReaderDrilldown({ rows, templateRow, onOpenVariable, previewOptions, compact = false, onLoadSourceDocuments }: Props) {
+export default function TemplateReaderDrilldown({ rows, templateRow, onOpenVariable, previewOptions, compact = false, onLoadSourceDocuments, onEditSource, disabled = false }: Props) {
   const [audience, setAudience] = useState<"you" | "they">(previewOptions?.initialAudience ?? "you");
   // The parent rebuilds `templateRow` on every render, so key the memo on its
   // content rather than its identity; otherwise every keystroke in the editor
@@ -65,10 +70,7 @@ export default function TemplateReaderDrilldown({ rows, templateRow, onOpenVaria
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [previewOptions, rows, templateKey]
   );
-  const pendingSourceIds = useMemo(() => [...new Set(template.preview.fields
-    .flatMap((field) => field.paragraphs.flat())
-    .filter((segment) => segment.source?.row.inventory_only)
-    .map((segment) => segment.source!.row.id))], [template]);
+  const pendingSourceIds = useMemo(() => template.preview.pendingSources.map(source => source.row.id), [template]);
   useEffect(() => {
     if (pendingSourceIds.length) onLoadSourceDocuments?.(pendingSourceIds);
   }, [onLoadSourceDocuments, pendingSourceIds.join("|")]);
@@ -89,6 +91,8 @@ export default function TemplateReaderDrilldown({ rows, templateRow, onOpenVaria
       </header>
 
       <CompositionVariableKey slots={template.slots} colors={variableColors} />
+      {pendingSourceIds.length > 0 && <p role="status">Some saved wording has not loaded. Load its complete source to read or edit it.</p>}
+      {onEditSource && template.preview.lineage === 'not-traceable' && <p role="status">{template.preview.lineageNote} Available saved sources can still be opened below. This example is not verified reader copy.</p>}
 
       <div className="admin-template-reader-surface">
         <div className="admin-composition-preview-chrome">
@@ -112,7 +116,9 @@ export default function TemplateReaderDrilldown({ rows, templateRow, onOpenVaria
                     `${field.key}-${paragraphIndex}-${segmentIndex}`,
                     slot?.label ?? segment.name ?? "variable",
                     onOpenVariable,
-                    segment.name ? variableColors.get(segment.name) : undefined
+                    segment.name ? variableColors.get(segment.name) : undefined,
+                    onEditSource,
+                    disabled
                   );
                 });
                 return field.key.startsWith("headline")
@@ -129,6 +135,11 @@ export default function TemplateReaderDrilldown({ rows, templateRow, onOpenVaria
           )}
         </div>
       </div>
+      {onEditSource && <div className="admin-new-actions" role="group" aria-label="Saved wording sources">
+        {[...template.preview.sources, ...template.preview.pendingSources].map(source => <StudioButton key={source.row.id} type="button" data-template-source-key={source.row.content_key}
+          disabled={disabled} onClick={() => onEditSource(source.row)}>{source.row.inventory_only ? 'Load and edit' : 'Edit'} {template.slots.filter(slot => slot.sources.some(item => item.row.id === source.row.id)).map(slot => slot.label).join(', ') || source.label}</StudioButton>)}
+        {!template.preview.sources.length && !template.preview.pendingSources.length && <p>No saved source wording is available for this example. Use Variables to inspect the source selection.</p>}
+      </div>}
       {!compact && <p className="admin-field-hint">The preview is representative, not a live chart. Matching colors identify the same variable throughout the template and assembled write-up.</p>}
     </section>
   );

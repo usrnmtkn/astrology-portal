@@ -1,3 +1,5 @@
+import {installSyntheticNetworkGuard} from "../helpers/synthetic-network-guard";
+import {geocodedCaliforniaCity, selectGeocodedCaliforniaCity} from '../helpers/geocoded-city';
 import { test, expect, type Page, type Request, type Locator } from '@playwright/test';
 import { readerResponse } from '../helpers/reader-response';
 import { fork } from 'node:child_process';
@@ -23,11 +25,20 @@ const cadenceLogs = new WeakMap<Page, unknown[]>();
 test.afterEach(async({page},testInfo)=>{
   const log=cadenceLogs.get(page);
   if(log) await testInfo.attach('connection-source-cadence',{body:JSON.stringify(log,null,2),contentType:'application/json'});
-  const effects=await page.evaluate(()=> (window as any).__connectionEffectTrace ?? []).catch(()=>[]);
-  if(effects.length) await testInfo.attach('connection-source-effects',{body:JSON.stringify(effects,null,2),contentType:'application/json'});
 });
+async function isolatedRest(page: Page) {
+  await page.route('**/rest/v1/**', async route => {
+    const table=new URL(route.request().url()).pathname.split('/').pop();
+    if(table==='user_profiles')return route.fulfill({json:{data:{version:1,profile:await page.evaluate(()=>JSON.parse(localStorage.getItem('tldrastro:userProfile')!))}}});
+    if(table==='manual_charts')return route.fulfill({status:400,json:{message:'Synthetic unavailable chart sync'}});
+    return route.fulfill({json:[]});
+  });
+}
 async function seed(page: Page, theme: string, multipleContacts = false, mixedContacts = false) {
-  await page.addInitScript(({ fixtureUserId, fixtureFriendName, incompleteChart, theme, multipleContacts, mixedContacts }) => {
+  const user={id:fixtureUserId,email:'qa-connection-source@example.test',aud:'authenticated',role:'authenticated',app_metadata:{provider:'email'},user_metadata:{name:'Project Author'}};
+  const authKey=`sb-${new URL(process.env.VITE_SUPABASE_URL??'https://visual-smoke.supabase.test').hostname.split('.')[0]}-auth-token`;
+  await page.route('**/auth/v1/**',route=>route.fulfill({json:user}));
+  await page.addInitScript(({ fixtureUserId, fixtureFriendName, incompleteChart, theme, multipleContacts, mixedContacts, user, authKey }) => {
     if (window.localStorage.getItem("tldrastro:friendsPerformanceSeeded")) {
       return;
     }
@@ -35,6 +46,7 @@ async function seed(page: Page, theme: string, multipleContacts = false, mixedCo
     window.localStorage.clear();
     window.localStorage.setItem("tldrastro:friendsPerformanceSeeded", "true");
     window.localStorage.setItem("tldrastro:theme", theme);
+    window.localStorage.setItem("tldrastro:pageAnimations", "off");
     window.localStorage.setItem("tldrastro:sunriseOrb", "true");
     window.localStorage.setItem("tldrastro:dyslexiaFont", "false");
     window.localStorage.setItem("tldrastro:friendsTab", "charts");
@@ -147,6 +159,7 @@ async function seed(page: Page, theme: string, multipleContacts = false, mixedCo
 
     window.localStorage.setItem("tldrastro:selectedLocation", JSON.stringify(location));
     window.localStorage.setItem("tldrastro:userProfile", JSON.stringify(profile));
+    localStorage.setItem(authKey,JSON.stringify({access_token:"synthetic-connection-token",refresh_token:"synthetic-connection-refresh",expires_at:Math.floor(Date.now()/1000)+3600,token_type:"bearer",user}));
     window.localStorage.setItem(
       `tldrastro:manualCharts:${fixtureUserId}`,
       JSON.stringify([friendChart, { ...friendChart, id: "friend-casey", displayName: "Casey", firstName: "Casey" }])
@@ -154,14 +167,14 @@ async function seed(page: Page, theme: string, multipleContacts = false, mixedCo
   }, {
     fixtureUserId,
     fixtureFriendName,
-    incompleteChart: false, theme, multipleContacts, mixedContacts
+    incompleteChart: false, theme, multipleContacts, mixedContacts, user, authKey
   });
 }
 test('transit titles identify the sky sign and natal chart owner in both sections', async ({ page }, testInfo) => {
   await page.clock.setFixedTime(new Date('2026-10-15T16:00:00Z'));
   await seed(page, testInfo.project.name.endsWith('dark') ? 'dark' : 'light', true);
   await page.route('https://tldrastro-api-27165565299.us-central1.run.app/**', route => route.fulfill({ status: 503, body: 'Isolated calculation fallback.' }));
-  await page.route('**/rest/v1/**', route => route.fulfill({ json: [] }));
+  await isolatedRest(page);
   await page.route('**/api/content-publications', route => route.fulfill({ json: { schema: 'tldr-publications/v1', publications: [] } }));
   await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse([], []) }));
   await page.goto('/#friends?tab=charts&chart=friend-nikki&view=transits');
@@ -172,10 +185,11 @@ test('transit titles identify the sky sign and natal chart owner in both section
   const readerTitle = 'Saturn in Aries trine your natal Mars';
   await expect(between.getByRole('heading', { name: readerTitle, exact: true })).toBeVisible();
   await expect(active).toBeVisible();
-  await expect(page.getByRole('heading', { level: 1 })).toHaveCount(0);
-  expect(await page.locator('.friend-transit-group > .friend-section-label').allTextContents()).toEqual(expect.arrayContaining(['Between you two', 'Active for Nikki']));
-  const labels = await page.locator('.friend-transit-group > .friend-section-label').allTextContents();
-  expect(labels.indexOf('Between you two')).toBeLessThan(labels.indexOf('Active for Nikki'));
+  await expect(page.locator('.sky-detail-page h1')).toHaveCount(0);
+  const labels = await page.locator('.friend-transit-group > .friend-section-label, .friend-transit-group > .friend-profile-section-heading > h2').allTextContents();
+  expect(labels).toEqual(expect.arrayContaining(['Short-term transits', 'Long-term transits', 'Between you two']));
+  expect(labels.indexOf('Short-term transits')).toBeLessThan(labels.indexOf('Long-term transits'));
+  expect(labels.indexOf('Long-term transits')).toBeLessThan(labels.indexOf('Between you two'));
 
   const activeHeadings = active.getByRole('heading', { level: 3 });
   const activeTitles = await activeHeadings.allTextContents();
@@ -183,11 +197,16 @@ test('transit titles identify the sky sign and natal chart owner in both section
   for (const title of activeTitles) {
     expect(title).toMatch(/^.+ in (?:Aries|Taurus|Gemini|Cancer|Leo|Virgo|Libra|Scorpio|Sagittarius|Capricorn|Aquarius|Pisces) (?:conjunct|opposite|square|trine|sextile) Nikki's natal .+$/);
   }
-  const titleStyles = await page.locator('.friend-transit-row h3').evaluateAll(headings => headings.map(heading => {
-    const style = getComputedStyle(heading);
-    return Object.fromEntries(['fontFamily', 'fontSize', 'fontWeight', 'lineHeight', 'letterSpacing', 'marginTop', 'marginBottom', 'textTransform', 'textAlign'].map(property => [property, style[property as keyof CSSStyleDeclaration]]));
-  }));
-  for (const style of titleStyles) expect(style).toEqual(titleStyles[0]);
+  // Primary transit cards and supplemental relationship cards have separate DS roles.
+  for (const [selector, size] of [['.personal-transit-card h3', '30px'], ['.friend-transit-row:not(.personal-transit-card) h3', '26px']]) {
+    const titles = page.locator(selector);
+    await expect(titles.first()).toHaveCSS('font-size', size);
+    const titleStyles = await titles.evaluateAll(headings => headings.map(heading => {
+      const style = getComputedStyle(heading);
+      return Object.fromEntries(['fontFamily', 'fontSize', 'fontWeight', 'lineHeight', 'letterSpacing', 'marginTop', 'marginBottom', 'textTransform', 'textAlign'].map(property => [property, style[property as keyof CSSStyleDeclaration]]));
+    }));
+    for (const style of titleStyles) expect(style).toEqual(titleStyles[0]);
+  }
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   await page.screenshot({ path: `test-results/friend-transit-titles-${testInfo.project.name}.png`, fullPage: true, animations: 'disabled' });
 
@@ -197,7 +216,7 @@ test('transit titles identify the sky sign and natal chart owner in both section
   await expect(relationshipCard).not.toContainText('activating the connections');
   await relationshipCard.click();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(readerTitle);
-  await expect(page.locator('.article-eyebrow')).toHaveAttribute('aria-label', 'Aspect: Saturn trine Mars');
+  await expect(page.locator('.aspect-badge').first()).toHaveAttribute('data-aspect', 'trine');
   const facts = await openConnectionFacts(page);
   await expect(facts.locator('p').first()).toHaveText("This transit may bring your existing Mars connections with Nikki into focus.");
   await expectConnectionFact(facts, "Your natal Mars conjunct Nikki's natal Saturn", '1° 51′');
@@ -217,25 +236,29 @@ test('transit titles identify the sky sign and natal chart owner in both section
   const factStyles = await facts.locator('.connection-facts__row').first().evaluate(element => {
     const s = getComputedStyle(element), reference = getComputedStyle(document.querySelector('.sky-detail-intro-section p')!);
     return { font: s.fontFamily, size: s.fontSize, line: s.lineHeight, tracking: s.letterSpacing,
-      weight: s.fontWeight, expectedFont: reference.fontFamily };
+      weight: s.fontWeight, expectedFont: reference.fontFamily, expectedSize:reference.fontSize, expectedLine:reference.lineHeight };
   });
   expect(factStyles.font).toBe(factStyles.expectedFont);
-  expect(factStyles.size).toBe('16px');
+  expect(factStyles.size).toBe('19px');
   expect(factStyles.weight).toBe('400');
-  expect(factStyles.line).toBe('25.6px');
+  expect(factStyles.line).toBe('28.5px');
   expect(factStyles.tracking).toBe('normal');
   const headingStyles = await facts.evaluate(element => {
     const title = getComputedStyle(element.querySelector('h2')!);
     const label = getComputedStyle(element.querySelector('h3')!);
     return { titleFont: title.fontFamily, titleSize: title.fontSize,
       articleFont: getComputedStyle(document.querySelector('.sky-detail-page h1')!).fontFamily,
-      labelFont: label.fontFamily, labelWeight: label.fontWeight, labelSize: label.fontSize };
+      labelFont: label.fontFamily, labelWeight: label.fontWeight, labelSize: label.fontSize,
+      labelLine: label.lineHeight, labelTracking: label.letterSpacing, labelMargin: label.marginBottom };
   });
   expect(headingStyles.titleFont).toBe(headingStyles.articleFont);
-  expect(headingStyles.titleSize).toBe(testInfo.project.name.startsWith('390') ? '28px' : '42px');
+  expect(headingStyles.titleSize).toBe((page.viewportSize()?.width ?? 1440) <= 800 ? '30px' : '36px');
   expect(headingStyles.labelFont).toBe(factStyles.font);
   expect(headingStyles.labelWeight).toBe('600');
-  expect(headingStyles.labelSize).toBe('18px');
+  expect(headingStyles.labelSize).toBe('22px');
+  expect(headingStyles.labelLine).toBe('27.5px');
+  expect(headingStyles.labelTracking).toBe('normal');
+  expect(headingStyles.labelMargin).toBe('16px');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   await page.screenshot({ path: `test-results/connection-facts-${testInfo.project.name}.png`, fullPage: true, animations: 'disabled' });
   await facts.getByRole('button', { name: 'Close connection details' }).click();
@@ -261,7 +284,7 @@ test('relationship context separates direct transits from connections through on
   await page.clock.setFixedTime(new Date('2026-10-15T16:00:00Z'));
   await seed(page, testInfo.project.name.endsWith('dark') ? 'dark' : 'light', true, true);
   await page.route('https://tldrastro-api-27165565299.us-central1.run.app/**', route => route.fulfill({ status: 503, body: 'Isolated calculation fallback.' }));
-  await page.route('**/rest/v1/**', route => route.fulfill({ json: [] }));
+  await isolatedRest(page);
   await page.route('**/api/content-publications', route => route.fulfill({ json: { schema: 'tldr-publications/v1', publications: [] } }));
   await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse([], []) }));
   await page.goto('/#friends?tab=charts&chart=friend-nikki&view=transits');
@@ -284,9 +307,16 @@ test('relationship context separates direct transits from connections through on
     'Other connections through your natal Mars:'
   ]);
   const close = facts.getByRole('button', {name: 'Close connection details'});
-  await expect(close).toBeFocused();
+  const reading = facts.getByRole('region', {name: 'Reading text', exact: true});
+  await expect(facts.getByRole('heading', {level: 2})).toBeFocused();
   await page.keyboard.press('Tab');
   await expect(close).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(reading).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(close).toBeFocused();
+  await page.keyboard.press('Shift+Tab');
+  await expect(reading).toBeFocused();
   await page.keyboard.press('Shift+Tab');
   await expect(close).toBeFocused();
   await page.keyboard.press('Escape');
@@ -321,10 +351,9 @@ test('relationship context separates direct transits from connections through on
 for (const [activationLive, bridgeLive] of [[false,false],[true,false],[true,true]]) test(`connection detail separates transit, activation ${activationLive ? 'published' : 'draft'}, bridge ${bridgeLive ? 'published' : 'draft'}`, async ({ page }, testInfo) => {
   test.setTimeout(90_000);
   await page.clock.setFixedTime(new Date('2026-10-15T16:00:00Z'));
-  await page.addInitScript(()=>{(window as any).__connectionEffectTrace=[];});
   await seed(page,testInfo.project.name.endsWith('dark')?'dark':'light');
   await page.route('https://tldrastro-api-27165565299.us-central1.run.app/**', route => route.fulfill({ status:503,body:'Isolated calculation fallback.' }));
-  await page.route('**/rest/v1/**', route => route.fulfill({json:[]}));
+  await isolatedRest(page);
   await page.route('**/api/content-publications', route => route.fulfill({json:{schema:'tldr-publications/v1',publications:[]}}));
   let sourceRequests = 0, pendingSources = 0, lastSourceAt = Date.now();
   let phase = 'cold';
@@ -344,6 +373,9 @@ for (const [activationLive, bridgeLive] of [[false,false],[true,false],[true,tru
     }
   });
   const settled = async()=>{
+    // Source cadence starts after the retained profile has finished its daily
+    // peak/timing work, including navigation beneath an open detail.
+    await expect(page.locator('.app-loading[aria-label="Calculating transits for the selected date…"]')).toHaveCount(0, {timeout:60000});
     await expect.poll(()=>pendingSources).toBe(0);
     await expect.poll(()=>Date.now()-lastSourceAt).toBeGreaterThan(500);
     cadence.push({event:'settled',phase,at:Date.now(),sourceRequests});
@@ -389,12 +421,13 @@ for (const [activationLive, bridgeLive] of [[false,false],[true,false],[true,tru
   await expect(unavailable).toBeDisabled();
   await expect(unavailable.locator('.card-read-more')).toHaveCount(0);
   await expect(unavailable.locator('.updates-aspect-row__title')).toHaveText("Pluto in Aquarius conjunct Nikki's natal Pluto");
-  await expect(page.getByRole('heading',{level:1})).toHaveCount(0);
+  await expect(page.locator('.sky-detail-page h1')).toHaveCount(0);
   const button=group.getByRole('button',{name:'Open full entry for Saturn in Aries trine your natal Mars',exact:true});
   const opening=await button.locator('.updates-aspect-row__description').first().innerText();
   await button.click();
   await expect(page.getByRole('heading',{level:1})).toBeVisible();
-  await expect(page.locator('.sky-detail-intro-section, .sky-detail-section').first()).not.toContainText(opening);
+  await expect(page.locator('.sky-detail-intro-section p').first()).toHaveText(opening);
+  await expect(page.getByRole('heading', {name:'Personal transit',exact:true})).toBeVisible();
   await expect(page.locator('main')).not.toContainText('{{untilDate}}');
   const disclosure = await openConnectionFacts(page);
   await expectConnectionFact(disclosure, "Your natal Mars conjunct Nikki's natal Saturn", '1° 51′');
@@ -408,7 +441,7 @@ for (const [activationLive, bridgeLive] of [[false,false],[true,false],[true,tru
     await expect(page.getByText(/connecting this transit to the pattern below/)).toHaveCount(0);
   }
   await page.screenshot({path:`test-results/connection-transit-${activationLive?'published':'draft'}-bridge-${bridgeLive?'published':'draft'}-${testInfo.project.name}.png`,fullPage:true,animations:'disabled'});
-  const hiddenOwner=page.locator('div[hidden][inert]').filter({has:page.locator('.friends-layout')});
+  const hiddenOwner=page.locator('div[hidden][inert]').filter({has:page.locator('.friends-layout')}).last();
   await expect(hiddenOwner).toHaveCount(1);
   await expect(hiddenOwner).toBeHidden();
   expect(await hiddenOwner.evaluate(el=>el.contains(document.activeElement))).toBe(false);
@@ -457,16 +490,24 @@ for (const [activationLive, bridgeLive] of [[false,false],[true,false],[true,tru
     await expect(name).toBeFocused();
     await page.getByRole('dialog').getByRole('button',{name:'Close',exact:true}).click();
     await expect(edit).toBeFocused();
-    const more=page.getByRole('button',{name:'More, 2 sections',exact:true});
-    await more.click();
-    await expect(page.getByRole('menu',{name:'More chart profile sections',exact:true})).toBeVisible();
+    const tabs=page.getByRole('tablist',{name:'Chart profile sections',exact:true});
+    await expect(tabs.getByRole('tab')).toHaveText((page.viewportSize()?.width ?? 1440)<=800?['Compatibility','Transits','Natal']:['Compatibility','Transits','Natal','Synastry','Composite']);
+    await tabs.getByRole('tab',{name:'Transits',exact:true}).focus();
     await page.goto(detailUrl);
     await expect(page.getByRole('heading',{level:1})).toBeVisible();
     await expect(page.getByRole('menu')).toHaveCount(0);
     await expect(page.getByRole('tooltip')).toHaveCount(0);
     await page.getByRole('button',{name:'Close detail',exact:true}).click();
-    await expect(page.getByRole('menu',{name:'More chart profile sections',exact:true})).toBeVisible();
-    await more.click();
+    await expect(tabs).toBeVisible();
+    if((page.viewportSize()?.width ?? 1440)<=800){
+      await tabs.getByRole('button',{name:'More, 2 sections',exact:true}).click();
+      const menu=page.getByRole('menu',{name:'More chart profile sections',exact:true});
+      await expect(menu.getByRole('menuitemradio')).toHaveText([/Synastry/,/Composite/]);
+      await tabs.getByRole('button',{name:'More, 2 sections',exact:true}).click();
+    }else{
+      await expect(tabs.getByRole('tab',{name:'Synastry',exact:true})).toBeVisible();
+      await expect(tabs.getByRole('tab',{name:'Composite',exact:true})).toBeVisible();
+    }
     await page.goto(detailUrl);
     await expect(page.getByRole('heading',{level:1})).toBeVisible();
   }
@@ -515,7 +556,8 @@ for (const [activationLive, bridgeLive] of [[false,false],[true,false],[true,tru
   if(activationLive) await expect(page.getByText('You talk to Casey. This is the final activation sentence.',{exact:true}).first()).toBeVisible();
   await expect(page.getByText('You talk to Nikki. This is the final activation sentence.',{exact:true})).toHaveCount(0);
   await page.goto(detailUrl);
-  await expect(page.getByRole('heading',{level:1})).toBeVisible();
+  await expect(page.getByRole('button',{name:'Why this involves Nikki',exact:true})).toBeVisible();
+  if(activationLive) await expect(page.getByText('You talk to Nikki. This is the final activation sentence.',{exact:true}).first()).toBeVisible();
   await settled();
   releaseHeldRead=undefined;
   callerAborts=0;
@@ -530,7 +572,7 @@ for (const [activationLive, bridgeLive] of [[false,false],[true,false],[true,tru
     await expect(page.getByText('You talk to Nikki. This is the final activation sentence.',{exact:true})).toHaveCount(0);
     await settled();
     expect(sourceRequests).toBe(beforeReplacement+1);
-    await expect(aBody).toHaveText(completeABody);
+    await expect(aBody).toHaveText(completeABody,{useInnerText:true});
     phase='bridge-retirement';
     const beforeBridgeRetirement=sourceRequests;
     await install(connectionBridgeTemplates.map(template=>({...unrelated,content_key:template.contentKey,state:'retired',revision:707})));
@@ -543,7 +585,7 @@ for (const [activationLive, bridgeLive] of [[false,false],[true,false],[true,tru
     await expect(page.getByText('About these connections',{exact:true})).toHaveCount(0);
     await expect(page.getByText(/connecting this transit to the pattern below/)).toHaveCount(0);
     await expect(page.getByRole('heading',{level:1})).toBeVisible();
-    await expect(aBody).toHaveText(completeABody);
+    await expect(aBody).toHaveText(completeABody,{useInnerText:true});
   }
   await settled();
   phase='held-read-unmount';
@@ -563,7 +605,7 @@ for (const [activationLive, bridgeLive] of [[false,false],[true,false],[true,tru
     await page.goto(detailUrl);
     const notice=page.getByRole('status').filter({hasText:'The full placement reading could not load. Approved available copy remains below.'});
     await expect(notice).toBeVisible({timeout:30000});
-    await expect(aBody).toHaveText(completeABody);
+    await expect(aBody).toHaveText(completeABody,{useInnerText:true});
     const beforeRetry=placementSourceAttempts;
     await notice.getByRole('button',{name:'Retry',exact:true}).click();
     await expect.poll(()=>placementSourceAttempts,{timeout:30000}).toBeGreaterThan(beforeRetry);
@@ -586,14 +628,14 @@ for (const [activationLive, bridgeLive] of [[false,false],[true,false],[true,tru
       } finally { for(const release of releasePlacements) release(); }
       await expect.poll(()=>[...placementOutcomes.values()]).toEqual(Array.from({length:releasePlacements.length},()=>({outcome:'finished',status:503,failure:null})));
       await expect(page.getByRole('region',{name:'Casey chart profile',exact:true})).toBeVisible();
-      await expect(page.getByRole('heading',{level:1})).toHaveCount(0);
+      await expect(page.locator('.sky-detail-page h1')).toHaveCount(0);
       await expect(notice).toHaveCount(0);
       await expect(page.getByText('You talk to Nikki. The revised final sentence stays complete.',{exact:true})).toHaveCount(0);
       await page.waitForTimeout(750);
       expect(placementSourceAttempts).toBe(beforeHeldRetry+3*releasePlacements.length);
       expect([...heldPlacementAttempts.values()]).toEqual(Array.from({length:releasePlacements.length},()=>3));
       await expect(page.getByRole('region',{name:'Casey chart profile',exact:true})).toBeVisible();
-      await expect(page.getByRole('heading',{level:1})).toHaveCount(0);
+      await expect(page.locator('.sky-detail-page h1')).toHaveCount(0);
       await expect(notice).toHaveCount(0);
       await expect(page.getByText('You talk to Nikki. The revised final sentence stays complete.',{exact:true})).toHaveCount(0);
       cadence.push({event:'late-placement-failure',requests:[...placementOutcomes].map(([request,result])=>({query:request.postDataJSON(),...result}))});
@@ -602,6 +644,9 @@ for (const [activationLive, bridgeLive] of [[false,false],[true,false],[true,tru
 });
 
 test('Studio saves and reopens separate activation and editable bridge drafts through the real handler', async({page},testInfo)=>{
+  // Studio also observes the public publication ledger. Keep that ancillary
+  // transport inside the same synthetic boundary as its actual-handler fixture.
+  await isolatedRest(page);
   const child=fork(path.resolve('tests/helpers/calendar-review-api.mjs'),['--ipc'],{env:{...process.env,CALENDAR_REVIEW_FIXTURE:path.resolve('tests/fixtures/connection-transit-empty-inventory.json')},execArgv:['--import','tsx'],stdio:['ignore','pipe','pipe','ipc']});
   const pending=new Map<number,{resolve:(v:any)=>void,reject:(e:Error)=>void}>();let sequence=0,stderr='';
   child.stderr?.on('data',data=>{stderr+=data;});
@@ -614,7 +659,7 @@ test('Studio saves and reopens separate activation and editable bridge drafts th
   await ready;
   await page.addInitScript(theme=>{localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture');localStorage.setItem('tldrastro:studio-theme',theme);},testInfo.project.name.endsWith('dark')?'dark':'light');
   const activationSource='authored/connection-activation/ascendant/square/saturn';
-  const draftModule=/\/(?:admin-source-drafts|connectionTransitSources)-[^/]+\.js$/;
+  const draftModule=/\/(?:admin-source-drafts|connectionTransitSources|studioSourceDraft)-[^/]+\.js$/;
   const moduleReads:Request[]=[];
   const outcomes=new Map<Request,{outcome:'pending'|'finished'|'failed';status:number|null;failure:string|null}>();
   let holdSource=false,sourceStarted=false,releaseSource=()=>{},heldSource:Request|null=null;
@@ -730,10 +775,18 @@ for (const heldStage of ['prepare', 'edition-fetch'] as const) for (const target
   const publications = [{ content_key: row.content_key, state: 'live', revision: 801, row_id: row.id,
     row_updated_at: row.updated_at, updated_at: row.updated_at }];
   await page.route('https://tldrastro-api-27165565299.us-central1.run.app/**', route => route.fulfill({ status: 503, body: 'Isolated calculation fallback.' }));
-  await page.route('**/rest/v1/**', route => route.fulfill({ json: [] }));
+  await isolatedRest(page);
   await page.route('**/api/content-publications', route => route.fulfill({ json: { schema: 'tldr-publications/v1', publications: phase === 'initial' ? [] : publications } }));
-  await page.route('**/content-studio-last-known-good.json', route => route.fulfill({ json: { schema: 'content-studio-last-known-good-v2', rows: [], publications: [], rowCount: 0 } }));
   let phase: 'initial' | 'fail' | 'retry' | 'changed' | 'released' | 'returning-sky' | 'returned' = 'initial';
+  const failedSnapshotReleases: (() => Promise<void>)[] = [];
+  await page.route('**/content-studio-last-known-good.json', async route => {
+    const send = () => route.fulfill({ json: { schema: 'content-studio-last-known-good-v2', rows: [], publications: [], rowCount: 0 } });
+    if (heldStage === 'edition-fetch' && phase === 'fail') {
+      await new Promise<void>((resolve, reject) => failedSnapshotReleases.push(() => send().then(resolve, reject)));
+      return;
+    }
+    await send();
+  });
   await page.route('**/rest/v1/content_publications?**', route => {
     const filters = new URL(route.request().url()).searchParams.getAll('content_key');
     const rows = phase === 'initial' ? [] : publications.filter(row => filters.every(filter =>
@@ -816,6 +869,8 @@ for (const heldStage of ['prepare', 'edition-fetch'] as const) for (const target
   };
   const navigate = async (name: 'Sky' | 'Friends') => {
     await closeDetail();
+    const picker=page.getByRole('dialog',{name:/^(Date and location|Transit date)$/});
+    if(await picker.isVisible())await page.keyboard.press('Escape');
     const button = primary.getByRole('button', { name, exact: true });
     if (await button.isVisible()) await button.click();
     else {
@@ -826,7 +881,7 @@ for (const heldStage of ['prepare', 'edition-fetch'] as const) for (const target
   };
   const openChart = async (name: string) => {
     await navigate('Friends');
-    const charts = page.getByRole('tablist', { name: 'Friends views', exact: true }).getByRole('tab', { name: /^Charts ·/ });
+    const charts = page.getByRole('tablist', { name: 'Friends views', exact: true }).getByRole('tab', { name: /^Charts(?:\s|$)/ });
     await expect(charts).toBeVisible();
     if (await charts.getAttribute('aria-selected') !== 'true') await charts.click();
     await expect(charts).toHaveAttribute('aria-selected', 'true');
@@ -844,7 +899,7 @@ for (const heldStage of ['prepare', 'edition-fetch'] as const) for (const target
   await page.evaluate(records => window.dispatchEvent(new StorageEvent('storage', {
     key: 'tldrastro:content-publications:v1', newValue: JSON.stringify(records)
   })), publications);
-  await expect(page.getByText('The placement readings could not load. Please try again.', { exact: true })).toBeVisible({ timeout: 30000 });
+  await expect(page.getByRole('alert').filter({ hasText: 'The placement readings could not load. Please try again.' })).toBeVisible({ timeout: 30000 });
   const notice = page.getByRole('status').filter({ hasText: 'The full placement reading could not load. Approved available copy remains below.' });
   if (heldStage === 'prepare') {
     await openChart('Nikki');
@@ -856,9 +911,12 @@ for (const heldStage of ['prepare', 'edition-fetch'] as const) for (const target
     await notice.getByRole('button', { name: 'Retry', exact: true }).click();
   } else {
     // The ordinary list is the actual owner of its required edition await.
-    const listError = page.getByRole('alert').filter({ hasText: 'The placement readings could not load. Please try again.' });
+    const listError = page.locator('.load-error').filter({ hasText: 'The placement readings could not load. Please try again.' });
+    // Keep the older edition's failed-read recovery pending while the user
+    // retries. Otherwise a fast snapshot hides the same-generation join race.
+    await expect.poll(() => failedSnapshotReleases.length, { timeout: 30000 }).toBeGreaterThan(0);
     phase = 'retry';
-    await listError.getByRole('button', { name: 'Retry', exact: true }).click();
+    await listError.getByRole('button', { name: 'Try again', exact: true }).click();
   }
   let currentCaseyCopy = '';
   const caseyProfile = page.getByRole('region', { name: 'Casey chart profile', exact: true });
@@ -866,6 +924,10 @@ for (const heldStage of ['prepare', 'edition-fetch'] as const) for (const target
     // Fail if the intended stage never starts; a test that merely navigates away
     // before preparation or edition fetching cannot cover its continuation guard.
     await expect.poll(() => releases.length, { timeout: 30000 }).toBeGreaterThan(0);
+    if (heldStage === 'edition-fetch') {
+      await Promise.all(failedSnapshotReleases.splice(0).map(release => release()));
+      await expect(page.locator('.load-error').filter({ hasText: 'The placement readings could not load. Please try again.' })).toBeHidden();
+    }
     if (heldStage === 'prepare') {
       const originalQueries = new Set(log.filter(read => read.phase === 'fail' && read.skyRead && !read.exactEdition && new URL(read.url).hash.startsWith('#sky')).map(read => normalized(read.query)));
       const expectedSet = [...originalQueries].sort();
@@ -884,9 +946,12 @@ for (const heldStage of ['prepare', 'edition-fetch'] as const) for (const target
         if (heldStage === 'prepare') await page.getByRole('button', { name: /^Pick Date\. Viewing transits/ }).click();
         else {
           await page.locator('.sky-header-date-button').click();
-          await page.getByRole('dialog', { name: 'Sky controls', exact: true }).getByRole('button', { name: 'Date', exact: true }).click();
+          await page.getByRole('dialog', {name:/^(Date and location|Transit date)$/}).getByRole('tab', { name: 'Date', exact: true }).click();
         }
-        await page.getByRole('region', { name: 'Pick Date', exact: true }).getByRole('gridcell', { name: 'Friday, October 16, 2026', exact: true }).click();
+        const picker=page.getByRole('dialog', {name:/^(Date and location|Transit date)$/});
+        if(heldStage==='prepare') await picker.getByRole('tab',{name:'Date',exact:true}).click();
+        await picker.getByRole('gridcell', { name: 'Friday, October 16, 2026', exact: true }).click();
+        await picker.getByRole('button',{name:'Apply date',exact:true}).click();
         if (heldStage === 'prepare') await expect(page.getByRole('button', { name: /^Pick Date\. Viewing transits/ })).toHaveAttribute('aria-label', /Fri, Oct 16/);
         else await expect(page.locator('.sky-header-date-button')).toHaveAttribute('aria-label', /^Tomorrow,/);
         expect(new URL(page.url()).searchParams.get('date')).toBe('2026-10-16');
@@ -895,12 +960,10 @@ for (const heldStage of ['prepare', 'edition-fetch'] as const) for (const target
         await navigate('Sky');
         await assertRetained();
         await page.locator('.sky-header-date-button').click();
-        const controls = page.getByRole('dialog', { name: 'Sky controls', exact: true });
+        const controls = page.getByRole('dialog', {name:/^(Date and location|Transit date)$/});
         await controls.locator('.mobile-sky-controls__location').click();
-        const city = controls.getByRole('textbox', { name: 'City', exact: true });
-        await city.fill('Synthetic Recovery City');
-        await controls.getByRole('button', { name: 'Update', exact: true }).click();
-        await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('tldrastro:selectedLocation') ?? 'null')?.label)).toBe('Synthetic Recovery City');
+        await selectGeocodedCaliforniaCity(page);
+        await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('tldrastro:selectedLocation') ?? 'null'))).toMatchObject(geocodedCaliforniaCity);
       }
     }
     await openChart('Casey');
@@ -912,6 +975,7 @@ for (const heldStage of ['prepare', 'edition-fetch'] as const) for (const target
     currentCaseyCopy = await caseyProfile.innerText();
   } finally {
     phase = 'released';
+    await Promise.all(failedSnapshotReleases.splice(0).map(release => release()));
     await Promise.all(releases.map(release => release()));
   }
   await requireSuccessfulCompletion(heldRequests, 'released-recovery-transport-proof');
@@ -924,19 +988,19 @@ for (const heldStage of ['prepare', 'edition-fetch'] as const) for (const target
   expect(await caseyProfile.innerText()).toBe(currentCaseyCopy);
   const heldQuerySet = new Set([...heldRequests.values()].map(request => request.query));
   expect(log.filter(read => read.phase === 'released' && heldQuerySet.has(normalized(read.query)))).toHaveLength(0);
-  await expect(page.getByRole('heading', { level: 1 })).toHaveCount(0);
+  await expect(page.locator('.sky-detail-page h1')).toHaveCount(0);
   await expect(notice).toHaveCount(0);
   await expect(page.getByText('Synthetic recovery opening. Synthetic recovery final sentence.', { exact: true })).toHaveCount(0);
   await openChart('Nikki');
   await page.getByRole('region', { name: 'Between you two', exact: true }).getByRole('button', { name: 'Open full entry for Saturn in Aries trine your natal Mars', exact: true }).click();
-  if (targetChange === 'route') await expect(aBody).toHaveText(completeA);
+  if (targetChange === 'route') await expect(aBody).toHaveText(completeA,{useInnerText:true});
   else await expect(aBody).toBeVisible();
   if (heldStage === 'edition-fetch' && targetChange === 'route') {
     phase = 'returning-sky';
     try {
       await navigate('Sky');
       await expect.poll(() => returnRequests.size, { timeout: 30000 }).toBeGreaterThan(0);
-      const list = page.getByRole('list', { name: 'Daily planetary placements', exact: true });
+      const list = page.getByRole('region', {name:'Planets',exact:true}).getByRole('list', { name: 'Daily planetary placements', exact: true });
       await expect(list).toHaveAttribute('aria-busy', 'true');
       await expect(list.getByRole('button', { name: 'Read more about Sun in Libra', exact: true })).toHaveCount(0);
       await assertRetained();
@@ -946,10 +1010,18 @@ for (const heldStage of ['prepare', 'edition-fetch'] as const) for (const target
       await Promise.all(returnReleases.map(release => release()));
     }
     await requireSuccessfulCompletion(returnRequests, 'returned-sky-transport-proof');
-    const list = page.getByRole('list', { name: 'Daily planetary placements', exact: true });
+    const list = page.getByRole('region', {name:'Planets',exact:true}).getByRole('list', { name: 'Daily planetary placements', exact: true });
     await expect(list).toHaveAttribute('aria-busy', 'false');
     await list.getByRole('button', { name: 'Read more about Sun in Libra', exact: true }).click();
     await expect(page.getByText('Synthetic recovery opening. Synthetic recovery final sentence.', { exact: true })).toBeVisible();
     await assertRetained();
   }
+});
+
+const guards = new WeakMap<import('@playwright/test').Page, Awaited<ReturnType<typeof installSyntheticNetworkGuard>>>();
+test.beforeEach(async ({page,baseURL}) => { guards.set(page, await installSyntheticNetworkGuard(page.context(), new URL(baseURL!).origin)); });
+test.afterEach(async ({page}, info) => {
+ const guard = guards.get(page);
+ await info.attach('synthetic-network-boundary', {body:JSON.stringify(guard),contentType:'application/json'});
+ expect(guard?.unhandledExternal).toEqual([]);
 });

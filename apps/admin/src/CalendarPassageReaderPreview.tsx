@@ -21,6 +21,14 @@ export default function CalendarPassageReaderPreview({ date, timeZone, published
       <StudioButton aria-pressed={view === 'draft'} onClick={() => setView('draft')}>Draft</StudioButton>
     </div>
     <p>{view === 'published' ? 'Published · what readers see for this date.' : `Draft · ${dirty ? 'includes unsaved wording' : saved ? 'saved unpublished wording' : publishedSource ? 'current published wording; no draft changes' : 'starting wording; not yet saved'}.`}</p>
+    <div className="admin-template-reader-surface"><div className="admin-template-reader-copy" aria-label="Assembled passage preview" aria-live="polite">
+      <p><strong>{current.sourceLabel}</strong></p>
+      {current.body && !(view === 'draft' && invalid.length) ? <CalendarPassageProse text={current.body} /> : <p role="status">No complete passage can be assembled for this date. Review missing values and conditions before publishing.</p>}
+    </div></div>
+    {current.transition && !(view === 'draft' && invalid.length) && <div className="admin-template-reader-surface"><div className="admin-template-reader-copy" aria-label="Moon transition reader passage">
+      <p><strong>Moon transition · event card</strong></p>
+      <CalendarPassageProse text={current.transition.body} />
+    </div></div>}
     <div className="studio-variable-description studio-context-panel" aria-label="Calendar publication impact">
       <p><strong>{invalid.length ? 'Draft needs valid wording' : unchanged ? 'Reader wording unchanged' : 'Reader wording will change'}</strong></p>
       <details><AdminDisclosureSummary>What publishing will change</AdminDisclosureSummary>
@@ -39,14 +47,6 @@ export default function CalendarPassageReaderPreview({ date, timeZone, published
       {!invalid.length && unchanged && scope === 'shared' && published.sourceLabel !== 'Date-only passage' && <p>The Calendar selects other writing for this date, or this edit resolves to the same reader wording.</p>}
       {invalid.length > 0 && <p role="alert">{invalid.join(' ')} Save remains available; publishing is blocked.</p>}
     </div>
-    <div className="admin-template-reader-surface"><div className="admin-template-reader-copy" aria-label="Assembled passage preview" aria-live="polite">
-      <p><strong>{current.sourceLabel}</strong></p>
-      {current.body && !(view === 'draft' && invalid.length) ? <CalendarPassageProse text={current.body} /> : <p role="status">No complete passage can be assembled for this date. Review missing values and conditions before publishing.</p>}
-    </div></div>
-    {current.transition && !(view === 'draft' && invalid.length) && <div className="admin-template-reader-surface"><div className="admin-template-reader-copy" aria-label="Moon transition reader passage">
-      <p><strong>Moon transition · event card</strong></p>
-      <CalendarPassageProse text={current.transition.body} />
-    </div></div>}
     <details className="admin-workspace-details"><AdminDisclosureSummary>Reader source details</AdminDisclosureSummary>
       <p>Editing source: <code>{sourceKey}</code></p>
       {current.sourceKey && <p>Daily overview source: <code>{current.sourceKey}</code></p>}

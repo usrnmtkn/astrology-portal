@@ -1,4 +1,5 @@
-import { expect, test } from "@playwright/test";
+import { expectSkyAspectBody } from "../helpers/sky-aspect-reading";
+import { expect, test } from "../helpers/polish-test";
 import { mkdir } from "node:fs/promises";
 import { readFileSync } from "node:fs";
 import { bundledPublications } from "../helpers/bundled-publications";
@@ -49,6 +50,10 @@ for (const theme of ['light', 'dark'] as const) for (const width of [390, 1440])
         expect(await card.evaluate(node => getComputedStyle(node).backgroundColor)).not.toBe('rgba(0, 0, 0, 0)');
       }
       await expect(week.getByRole('link', { name: 'Read more', exact: true })).toHaveAttribute('href', '/?date=2026-10-10#sky/lunation/2026-10-10/libra');
+      expect(await week.locator('.calendar-day-group__blurb p').first().evaluate(node => {
+        const style = getComputedStyle(node);
+        return { family: style.fontFamily, size: style.fontSize, weight: style.fontWeight, leading: style.lineHeight, tracking: style.letterSpacing };
+      })).toEqual({ family: expect.stringContaining('Newsreader'), size: '19px', weight: '400', leading: '28.5px', tracking: 'normal' });
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
       if (load === 0) await page.reload();
     }
@@ -75,7 +80,7 @@ for (const theme of ['light', 'dark'] as const) for (const width of [390, 1440])
 const jupiterLilithBody = JSON.parse(readFileSync("packages/astro-knowledge/data/transits/jupiter-trine-lilith.json", "utf8")).readerCopy.body as string;
 
 for (const theme of ["light", "dark"] as const) for (const width of [390, 1440]) {
-  test(`Calendar aspect keeps its complete passage without a duplicate article link ${theme} ${width}`, async ({ page }) => {
+  test(`Calendar aspect opens its complete passage in Sky ${theme} ${width}`, async ({ page }) => {
     test.setTimeout(90_000);
     const assertNoErrors = watchBrowserErrors(page);
     await page.setViewportSize({ width, height: 1000 });
@@ -91,28 +96,19 @@ for (const theme of ["light", "dark"] as const) for (const width of [390, 1440])
     await page.goto("/#calendar?view=day&date=2026-09-24");
     const aspect = page.getByRole("button", { name: "Jupiter trines Lilith", exact: true });
     await aspect.click();
-    const reading = page.getByRole("dialog", { name: "Event detail", exact: true });
-    await expect(reading.getByRole("heading", { name: "Jupiter trines Lilith", exact: true })).toBeVisible();
-    await expect(reading.locator(".calendar-reading__body")).toHaveText(jupiterLilithBody);
-    await expect(reading.getByRole("button", { name: "Read article" })).toHaveCount(0);
-    await expect(reading.locator(".calendar-reading__article-card")).toHaveCount(0);
-    await expect(page).toHaveURL(/#calendar\?view=day&date=2026-09-24$/u);
+    const reading = await expectSkyAspectBody(page, jupiterLilithBody);
+    await expect(page).toHaveURL(/#sky\/aspect\/jupiter\/trine\/lilith\/at\//u);
     expect(await reading.evaluate(panel => panel.scrollWidth <= panel.clientWidth + 1)).toBe(true);
     await mkdir(output, { recursive: true });
     await page.screenshot({ path: `${output}/aspect-article-link-${theme}-${width}.png` });
-    await reading.getByRole("button", { name: "Close", exact: true }).click();
+    await page.getByRole("button", { name: "Close detail", exact: true }).click();
     await expect(reading).toHaveCount(0);
     await expect(aspect).toBeVisible();
     assertNoErrors();
   });
 }
 
-const virgoBlocks = JSON.parse(readFileSync("apps/web/src/features/calendar/data/lunar-journal.entries.json", "utf8"))
-  .entries.find((entry: { type: string; sign: string }) => entry.type === "season" && entry.sign === "Virgo").blocks as Array<{
-    type: string; text?: string; label?: string; items?: string[];
-  }>;
-
-for (const theme of ["light", "dark"] as const) for (const width of [320, 390, 430, 1440]) {
+for (const theme of ["light", "dark"] as const) for (const width of [320, 390, 430, 678, 768, 1440]) {
   test(`Calendar controls and reading spacing ${theme} ${width}`, async ({ page }) => {
     test.setTimeout(90_000);
     const assertNoErrors = watchBrowserErrors(page);
@@ -134,12 +130,19 @@ for (const theme of ["light", "dark"] as const) for (const width of [320, 390, 4
       await page.getByRole("tab", { name: view, exact: true }).click();
       const tabs = page.locator(".lunar-calendar-segmented");
       const box = (await tabs.boundingBox())!;
-      for (const tab of await tabs.getByRole("tab").all()) {
-        const item = (await tab.boundingBox())!;
-        if (width < 720) expect(item.height).toBeGreaterThanOrEqual(44);
-        expect(item.y).toBeGreaterThan(box.y);
-        expect(item.y + item.height).toBeLessThan(box.y + box.height);
-      }
+      expect(box.height).toBe(width > 760 ? 44 : 42);
+      await expect.poll(() => tabs.getByRole('tab', { selected: true }).evaluate(node => {
+        const style = getComputedStyle(node);
+        return [style.backgroundColor, style.color, style.fontWeight];
+      })).toEqual(theme === 'dark' ? ['rgb(236, 238, 242)', 'rgb(18, 20, 24)', '600']
+        : width > 760 ? ['rgb(255, 255, 255)', 'rgb(28, 31, 38)', '600']
+        : ['rgb(0, 75, 69)', 'rgb(255, 255, 255)', '600']);
+      await expect.poll(()=>tabs.evaluate(element=>{
+        const box=element.getBoundingClientRect();
+        return Array.from(element.querySelectorAll('[role="tab"]')).map(tab=>{
+          const item=tab.getBoundingClientRect();return {height:item.height,top:item.y-box.y,bottom:box.bottom-item.bottom};
+        });
+      })).toEqual(Array.from({length:3},()=>({height:width>760?36:34,top:4,bottom:4})));
       for (const button of await page.locator(".lunar-calendar-controls button").all()) {
         const bounds = (await button.boundingBox())!;
         if (width < 720) expect(Math.min(bounds.width, bounds.height)).toBeGreaterThanOrEqual(44);
@@ -159,27 +162,29 @@ for (const theme of ["light", "dark"] as const) for (const width of [320, 390, 4
         expect(clipped).toEqual([]);
       }
       const contrast = await page.locator(".is-today-disc, .is-full-disc, .calendar-kind--season.is-inverted, .lunar-week-day__season")
-        .evaluateAll(nodes => nodes.filter(node => node.getBoundingClientRect().width > 0).map(node => {
-          const luminance = (color: string) => {
-            const channels = color.match(/[\d.]+/g)!.slice(0, 3).map(value => {
-              const channel = Number(value) / 255;
-              return channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
-            });
-            return channels[0] * 0.2126 + channels[1] * 0.7152 + channels[2] * 0.0722;
+        .evaluateAll(nodes => {
+          // These visible date labels are aria-hidden because the day button
+          // already names the date. They still need visual contrast. Canvas
+          // resolves color-mix/sRGB values and alpha against ancestor surfaces.
+          const canvas = document.createElement("canvas");canvas.width = canvas.height = 1;
+          const context = canvas.getContext("2d", {willReadFrequently:true})!;
+          const rgba = (color:string) => {
+            context.clearRect(0,0,1,1);context.fillStyle=color;context.fillRect(0,0,1,1);
+            const p=Array.from(context.getImageData(0,0,1,1).data);return [p[0],p[1],p[2],p[3]/255];
           };
-          const style = getComputedStyle(node);
-          let backgroundNode = node;
-          let backgroundColor = style.backgroundColor;
-          while (backgroundColor === "rgba(0, 0, 0, 0)" && backgroundNode.parentElement) {
-            backgroundNode = backgroundNode.parentElement;
-            backgroundColor = getComputedStyle(backgroundNode).backgroundColor;
-          }
-          const foreground = luminance(style.color);
-          const background = luminance(backgroundColor);
-          return (Math.max(foreground, background) + 0.05) / (Math.min(foreground, background) + 0.05);
-        }));
+          const over = (fg:number[],bg:number[]) => fg.slice(0,3).map((v,i)=>v*fg[3]+bg[i]*(1-fg[3])).concat(1);
+          const luminance = (color:number[]) => color.slice(0,3).map(v=>v/255).map(v=>v<=.04045?v/12.92:((v+.055)/1.055)**2.4).reduce((sum,v,i)=>sum+v*[.2126,.7152,.0722][i],0);
+          return nodes.filter(node=>node.getBoundingClientRect().width>0).map(node=>{
+            const ancestors:Element[]=[];
+            for(let current:Element|null=node;current;current=current.parentElement)ancestors.unshift(current);
+            let background=rgba(getComputedStyle(document.documentElement).getPropertyValue("--bg"));
+            for(const ancestor of ancestors)background=over(rgba(getComputedStyle(ancestor).backgroundColor),background);
+            const fg=luminance(over(rgba(getComputedStyle(node).color),background)),bg=luminance(background);
+            return {className:node.className,text:node.textContent,ratio:(Math.max(fg,bg)+.05)/(Math.min(fg,bg)+.05)};
+          });
+        });
       if (view === "Month") expect(contrast.length).toBeGreaterThan(2);
-      for (const ratio of contrast) expect(ratio).toBeGreaterThanOrEqual(4.5);
+      expect(contrast.filter(item=>item.ratio<4.5)).toEqual([]);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
       await page.screenshot({ path: `${output}/mobile-${theme}-${width}-${view.toLowerCase()}.png` });
     }
@@ -197,37 +202,21 @@ for (const theme of ["light", "dark"] as const) for (const width of [320, 390, 4
     await page.getByRole("tab", { name: "Day", exact: true }).click();
     await page.locator('.lunar-week-day[data-calendar-date="2026-09-21"]').click();
     await page.locator(width < 720 ? ".calendar-season-pill" : ".calendar-header-season").click();
-    const reading = page.getByRole("dialog", { name: "Event detail", exact: true });
-    await expect(reading.getByRole("heading", { level: 2, name: /Virgo/ })).toBeVisible();
-    const body = reading.locator(".calendar-reading__body");
-    for (const block of virgoBlocks) {
-      if (block.text) await expect(body).toContainText(block.text);
-      for (const item of block.items ?? []) await expect(body).toContainText(item);
-    }
-    await expect(reading.locator(".calendar-reading__mark")).toHaveCount(0);
-    const spacing = await reading.locator(".calendar-reading__card").evaluateAll(cards => cards.flatMap(card => {
-      const children = Array.from(card.children);
-      return children.slice(1).map((child, i) => child.getBoundingClientRect().top - children[i].getBoundingClientRect().bottom);
-    }));
-    for (const gap of spacing) expect(gap).toBeGreaterThanOrEqual(8);
-    const bodyStyles = await body.locator("p, li").evaluateAll(nodes => nodes.map(node => {
+    const reading = page.locator('.sky-detail-article');
+    await expect(reading.locator('#sky-detail-title')).toHaveText('Sun in Virgo');
+    await expect(page.getByRole('dialog', { name: 'Event detail', exact: true })).toHaveCount(0);
+    const body = reading.locator('.sky-detail-body .article-body-inner').first();
+    await expect(body.locator('p').first()).not.toBeEmpty();
+    const paragraphs = await body.locator('p').allTextContents();
+    await page.reload();
+    await expect(body.locator('p')).toHaveText(paragraphs, { timeout: 60000 });
+    const bodyStyles = await body.locator('p:not(aside p), li:not(aside li)').evaluateAll(nodes => nodes.map(node => {
       const style = getComputedStyle(node);
       return [style.fontFamily, style.fontSize, style.fontWeight, style.lineHeight, style.letterSpacing];
     }));
     expect(new Set(bodyStyles.map(style => JSON.stringify(style))).size).toBe(1);
-    const prompt = reading.locator(".calendar-reading__card").filter({ hasText: "Journal prompt" });
-    await prompt.scrollIntoViewIfNeeded();
-    if (width < 720) await expect(reading.getByRole("button", { name: "Close", exact: true })).toBeInViewport();
-    await page.screenshot({ path: `${output}/mobile-${theme}-${width}-prompts.png` });
-    if (width >= 430) {
-      const write = reading.getByRole("button", { name: "Write about this" });
-      expect((await write.boundingBox())!.height).toBeGreaterThanOrEqual(44);
-      await write.click();
-      const checkIn = page.getByRole("dialog", { name: "Check-in", exact: true });
-      await expect(checkIn).toBeVisible();
-      await expect(checkIn.getByRole("heading", { name: virgoBlocks.find(block => block.type === "prompt")!.text!, exact: true })).toBeVisible();
-      await expect(checkIn.locator("textarea")).toBeEditable();
-    }
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
+    await page.screenshot({ path: `${output}/mobile-${theme}-${width}-full-sky-season.png` });
     assertNoErrors();
   });
 }

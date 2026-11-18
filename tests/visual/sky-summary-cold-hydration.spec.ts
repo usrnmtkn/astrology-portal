@@ -85,7 +85,7 @@ for (const width of [390, 1440]) for (const delivery of ['external edit', 'stora
     await expect(summary).not.toContainText(second);
     await expect(summary).not.toContainText('obsolete offline Moon');
     unavailable = false;
-    await summary.getByRole('button', { name: 'Retry', exact: true }).click();
+    await summary.getByRole('button', { name: 'Try again', exact: true }).click();
     await expect(summary).toContainText(third, { timeout: 30000 });
     await expect(summary.getByRole('link', { name: 'Read about Moon in Libra' })).toHaveAttribute('href', '#sky/placement/moon/libra');
     await page.screenshot({ path: `test-results/sky-summary-cold-${width}-${delivery.replaceAll(' ', '-')}.png` });

@@ -94,6 +94,7 @@ assert.equal(readerDestinationPolicyBySurface["sky-aspect-detail"].mode, "exact-
 assert.equal(readerDestinationPolicyBySurface["generated-reports"].mode, "exact-context");
 assert.equal(readerDestinationPolicyBySurface["friends-synastry-contact"].mode, "context-required");
 assert.equal(readerDestinationPolicyBySurface["daily-at-a-glance"].mode, "context-required");
+assert.equal(readerDestinationPolicyBySurface["interactive-wheel-tooltips"].mode, "context-required");
 assert.equal(readerDestinationPolicyBySurface["sky-calendar-event-cards"].mode, "context-required");
 assert.equal(readerDestinationPolicyBySurface["surface-specs-builders"].mode, "not-reader");
 

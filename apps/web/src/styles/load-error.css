@@ -1,0 +1,40 @@
+.load-error { width: 100%; min-width: 0; color: var(--ink); }
+.load-error__message h2, .load-error__message p { margin: 0; }
+.load-error__message p { color: var(--ink-2); font-family: var(--font-ui); font-size: var(--type-table-value-size); font-weight: var(--weight-regular); line-height: var(--leading-body); letter-spacing: var(--tracking-normal); text-wrap: pretty; }
+.load-error--page { display: grid; justify-items: center; gap: var(--lunar-space-14); max-width: var(--container-form); margin-inline: auto; padding: var(--feedback-card-inset); border-radius: var(--card-radius); background: var(--surface); text-align: center; }
+.load-error--page .eight-ball { width: var(--feedback-art-size); }
+.load-error--page .load-error__message { display: grid; justify-items: center; gap: var(--lunar-space-14); }
+.load-error--page h2 { margin-top: var(--space-2); font-family: var(--font-display); font-size: var(--text-title); font-weight: var(--weight-regular); line-height: var(--leading-display); letter-spacing: var(--tracking-normal); text-wrap: balance; }
+.load-error--page .load-error__message p { text-align: center; max-width: var(--feedback-copy-measure); }
+.load-error__retry { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); flex: none; min-height: var(--size-6); padding: var(--feedback-action-padding); border: 0; border-radius: var(--radius-pill); background: var(--feedback-action-bg); color: var(--feedback-action-fg); font-family: var(--font-ui); font-size: var(--type-ui-copy-size); font-weight: var(--weight-semibold); line-height: var(--leading-meta); cursor: pointer; }
+.load-error--page .load-error__retry { margin-top: var(--space-2); }
+.load-error--page .load-error__retry:hover { background: var(--feedback-action-hover); }
+.load-error__retry:focus-visible, .load-error__today:focus-visible { outline: var(--border-width-medium) solid var(--focus-ring); outline-offset: var(--space-1); }
+.load-error__retry:disabled { opacity: var(--opacity-muted); cursor: wait; }
+.load-error__today { color: var(--accent); font-family: var(--font-ui); font-size: var(--type-ui-copy-size); font-weight: var(--weight-semibold); text-decoration: none; }
+.load-error__spinner { width: var(--lunar-space-14); height: var(--lunar-space-14); border: var(--border-width-medium) solid var(--feedback-spinner-track); border-top-color: currentColor; border-radius: var(--radius-circle); animation: load-error-spin var(--unavailable-motion-duration) linear infinite; }
+.load-error--section { display: grid; grid-template-columns: var(--control-navigation-size) minmax(0,1fr) auto; gap: var(--space-4); align-items: center; padding: var(--lunar-space-18) var(--lunar-space-18) var(--lunar-space-18) var(--space-5); border-radius: var(--radius-card-compact); background: var(--surface); }
+.load-error__icon { display: grid; place-items: center; width: var(--control-navigation-size); height: var(--control-navigation-size); border-radius: var(--radius-circle); background: var(--surface-2); }
+.load-error--section h2 { font-family: var(--font-ui); font-size: var(--type-table-value-size); font-weight: var(--weight-semibold); line-height: var(--leading-meta); letter-spacing: var(--tracking-normal); }
+.load-error--section p { font-size: var(--type-meta-size); }
+.load-error--section .load-error__retry { min-height: var(--size-5); padding-inline: var(--space-4); background: var(--surface-2); color: var(--ink); }
+.sky-page.sky-layout:has(.load-error--page) { width: min(var(--container-form),var(--page-content-width)); grid-template-columns: minmax(0,1fr); gap: var(--space-6); margin-inline: auto; }
+.sky-page.sky-layout:has(.load-error--page) .load-error--page { grid-column: 1 / -1; }
+.sky-page.sky-layout:has(.load-error--page) > .sky-chart-column { display: none; }
+.sky-page.sky-layout:has(.load-error--page) > .today-hero, .sky-page.sky-layout:has(.load-error--page) > .sky-content-column { grid-column: 1; grid-row: auto; }
+.sky-page.sky-layout:has(.load-error--page) .sky-intro__lead { font-size: var(--text-title); }
+.you-chart-page > .chart-layout > .load-error--page { grid-column: 1 / -1; }
+.app-shell > .load-error--page { margin-top: var(--page-top); }
+@keyframes load-error-spin { to { transform: rotate(360deg); } }
+@media (max-width: 800px) {
+  .load-error--page { min-height: var(--feedback-sheet-min-height); align-content: center; gap: var(--space-3); padding: var(--space-6) 0 var(--space-8); border-radius: 0; background: transparent; }
+  .load-error--page .eight-ball { width: var(--feedback-art-compact-size); }
+  .load-error--page h2 { font-size: var(--type-sheet-title-size); }
+  .load-error--page .load-error__retry { width: 100%; min-height: var(--control-primary-height); }
+  .load-error--section { background: transparent; }
+  .load-error--section .load-error__retry { grid-column: 2; justify-self: start; }
+  .sky-page.sky-layout:has(.load-error--page) { width: 100%; padding: var(--space-6); border-radius: 0 0 var(--sheet-radius) var(--sheet-radius); background: var(--surface-sheet); }
+  .sky-page.sky-layout:has(.load-error--page) .sky-intro__lead { font-size: var(--type-page-title-mobile-size); }
+  :is(.learn-page, .articles-page, .horoscope-page, .you-chart-page, .friends-unified-panel, .lunar-calendar-view, .reports-library):has(.load-error--page) { background: var(--surface-sheet); border-radius: 0 0 var(--sheet-radius) var(--sheet-radius); }
+}
+@media (prefers-reduced-motion: reduce) { .load-error__spinner { animation: none; } }

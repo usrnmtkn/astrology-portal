@@ -181,7 +181,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"] as const)
       await expect(guidance.locator("p")).toHaveText([paragraphs[0]], { timeout: 30_000 });
       await guidance.getByRole("button", { name: "Read more", exact: true }).click();
       await expect(guidance.locator("p")).toHaveText(paragraphs);
-      await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem("tldrastro:fallbackArchitectureV3:dashboardBundle:sky") ?? "null")?.schema)).toBe("fallback-architecture-v3-dashboard-overlay-cache-v9");
+      await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem("tldrastro:fallbackArchitectureV3:dashboardBundle:sky") ?? "null")?.schema)).toBe("fallback-architecture-v3-dashboard-overlay-cache-v10");
       // A scoped visit must discard the obsolete unscoped cache as well, so
       // another reader cannot revive it after this publication is hydrated.
       expect(await page.evaluate(() => localStorage.getItem("tldrastro:fallbackArchitectureV3:dashboardBundle"))).toBeNull();

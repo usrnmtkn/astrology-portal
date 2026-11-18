@@ -71,11 +71,13 @@ export function ReportFulfillmentAdminPanel({ secret }: { secret: string }) {
   const [selectedUnitId, setSelectedUnitId] = useState("");
   const [unitDraft, setUnitDraft] = useState<ReportUnitDraft | null>(null);
   const [lifetimeBudgets, setLifetimeBudgets] = useState<Record<string, string>>({});
-  const [loading, setLoading] = useState(false);
+  const [requestLoading, setRequestLoading] = useState(false);
+  const [unitActionPending, setUnitActionPending] = useState(false);
+  const loading = requestLoading || unitActionPending;
   const [grant, setGrant] = useState({ userId: "", reportDomain: "general", reportHorizon: "12_months", windowStart: new Date().toISOString().slice(0, 10) });
 
   async function request(init?: RequestInit, query = "") {
-    setLoading(true);
+    setRequestLoading(true);
     try {
       const response = await fetch(`/api/admin/report-fulfillment${query}`, {
         ...init,
@@ -89,7 +91,7 @@ export function ReportFulfillmentAdminPanel({ secret }: { secret: string }) {
       if (!response.ok) throw new AdminRequestError(payload.error ?? `Request failed with ${response.status}.`, response.status, payload.code);
       return payload;
     } finally {
-      setLoading(false);
+      setRequestLoading(false);
     }
   }
 
@@ -158,9 +160,11 @@ export function ReportFulfillmentAdminPanel({ secret }: { secret: string }) {
       setSelectedUnitId(nextUnit?.id ?? "");
       setUnitDraft(nextUnit ? editableUnit(nextUnit) : null);
       setMessage("");
+      return true;
     } catch (error) {
       setMessageTone("error");
       setMessage(error instanceof Error ? error.message : "Report preview unavailable.");
+      return false;
     }
   }
 
@@ -169,28 +173,37 @@ export function ReportFulfillmentAdminPanel({ secret }: { secret: string }) {
     setUnitDraft(editableUnit(unit));
   }
 
+  async function changeUnit(
+    actionName: "save_report_unit_draft" | "publish_report_unit_correction" | "discard_report_unit_draft",
+    successMessage: string,
+    extra: Record<string, unknown> = {}
+  ) {
+    if (!inspection || !selectedUnitId || loading) return;
+    setUnitActionPending(true);
+    try {
+      if (!await action(actionName, String(inspection.report.id), undefined, {
+        unitId: selectedUnitId, expectedUpdatedAt: inspection.units.find(unit => unit.id === selectedUnitId)?.updated_at, ...extra
+      })) return;
+      if (!await inspectReport(String(inspection.report.id), selectedUnitId)) return;
+      setMessageTone("success");
+      setMessage(successMessage);
+    } finally {
+      setUnitActionPending(false);
+    }
+  }
+
   async function saveUnitDraft() {
-    if (!inspection || !selectedUnitId || !unitDraft) return;
-    if (!await action("save_report_unit_draft", String(inspection.report.id), undefined, { unitId: selectedUnitId, expectedUpdatedAt: inspection.units.find(unit => unit.id === selectedUnitId)?.updated_at, ...unitDraft })) return;
-    await inspectReport(String(inspection.report.id), selectedUnitId);
-    setMessageTone("success");
-    setMessage("Correction draft saved. Readers still see the currently published copy.");
+    if (!unitDraft) return;
+    await changeUnit("save_report_unit_draft", "Correction draft saved. Readers still see the currently published copy.", unitDraft);
   }
 
   async function publishUnitCorrection() {
-    if (!inspection || !selectedUnitId) return;
-    if (!await action("publish_report_unit_correction", String(inspection.report.id), undefined, { unitId: selectedUnitId, expectedUpdatedAt: inspection.units.find(unit => unit.id === selectedUnitId)?.updated_at })) return;
-    await inspectReport(String(inspection.report.id), selectedUnitId);
-    setMessageTone("success");
-    setMessage("The reviewed correction is now the report copy readers see.");
+    if (unitHasUnsavedChanges || !selectedUnit?.source_snapshot?.adminCorrectionDraft) return;
+    await changeUnit("publish_report_unit_correction", "The reviewed correction is now the report copy readers see.");
   }
 
   async function discardUnitDraft() {
-    if (!inspection || !selectedUnitId) return;
-    if (!await action("discard_report_unit_draft", String(inspection.report.id), undefined, { unitId: selectedUnitId, expectedUpdatedAt: inspection.units.find(unit => unit.id === selectedUnitId)?.updated_at })) return;
-    await inspectReport(String(inspection.report.id), selectedUnitId);
-    setMessageTone("success");
-    setMessage("Correction draft discarded. Published report copy was not changed.");
+    await changeUnit("discard_report_unit_draft", "Correction draft discarded. Published report copy was not changed.");
   }
 
   useEffect(() => { if (secret) void load(); }, [secret]);
@@ -202,6 +215,9 @@ export function ReportFulfillmentAdminPanel({ secret }: { secret: string }) {
     row.querySelector<HTMLButtonElement>("button")?.focus({ preventScroll: true });
   }, [dashboard, focusedReportId]);
   const metrics = dashboard?.metrics;
+  const selectedUnit = inspection?.units.find(unit => unit.id === selectedUnitId);
+  const unitHasUnsavedChanges = Boolean(unitDraft && selectedUnit
+    && JSON.stringify(unitDraft) !== JSON.stringify(editableUnit(selectedUnit)));
 
   return (
     <section className="admin-template-page">
@@ -270,7 +286,7 @@ export function ReportFulfillmentAdminPanel({ secret }: { secret: string }) {
               <Text size="body">Select a section to read the exact delivered copy. Save creates a private correction draft; only Publish correction changes what the reader sees.</Text>
             </Stack>
             <label>Report section
-              <AdminSelect value={selectedUnitId} onChange={(event) => {
+              <AdminSelect value={selectedUnitId} disabled={loading} onChange={(event) => {
                 const unit = inspection.units.find((candidate) => candidate.id === event.target.value);
                 if (unit) chooseUnit(unit);
               }}>
@@ -296,27 +312,27 @@ export function ReportFulfillmentAdminPanel({ secret }: { secret: string }) {
                 </div>
                 <div className="admin-template-two-column">
                 <label>Title
-                  <StudioInput value={unitDraft.headline} onChange={(event) => setUnitDraft({ ...unitDraft, headline: event.target.value })} />
+                  <StudioInput value={unitDraft.headline} disabled={loading} onChange={(event) => setUnitDraft({ ...unitDraft, headline: event.target.value })} />
                 </label>
                 <label>TL;DR
-                  <StudioTextarea value={unitDraft.summary} onChange={(event) => setUnitDraft({ ...unitDraft, summary: event.target.value })} />
+                  <StudioTextarea value={unitDraft.summary} disabled={loading} onChange={(event) => setUnitDraft({ ...unitDraft, summary: event.target.value })} />
                 </label>
                 <label>Timing line
-                  <StudioTextarea value={unitDraft.timing} onChange={(event) => setUnitDraft({ ...unitDraft, timing: event.target.value })} />
+                  <StudioTextarea value={unitDraft.timing} disabled={loading} onChange={(event) => setUnitDraft({ ...unitDraft, timing: event.target.value })} />
                 </label>
                 <label className="admin-field-wide">Body
-                  <StudioTextarea value={unitDraft.body} onChange={(event) => setUnitDraft({ ...unitDraft, body: event.target.value })} />
+                  <StudioTextarea value={unitDraft.body} disabled={loading} onChange={(event) => setUnitDraft({ ...unitDraft, body: event.target.value })} />
                 </label>
                 {unitDraft.sections.map((section, index) => (
                   <div className="admin-field-wide" key={`${selectedUnitId}-section-${index}`}>
                     <label>Section {index + 1} title
-                      <StudioInput value={section.heading ?? ""} onChange={(event) => setUnitDraft({
+                      <StudioInput value={section.heading ?? ""} disabled={loading} onChange={(event) => setUnitDraft({
                         ...unitDraft,
                         sections: unitDraft.sections.map((candidate, candidateIndex) => candidateIndex === index ? { ...candidate, heading: event.target.value } : candidate)
                       })} />
                     </label>
                     <label>Section {index + 1} body
-                      <StudioTextarea value={section.body ?? ""} onChange={(event) => setUnitDraft({
+                      <StudioTextarea value={section.body ?? ""} disabled={loading} onChange={(event) => setUnitDraft({
                         ...unitDraft,
                         sections: unitDraft.sections.map((candidate, candidateIndex) => candidateIndex === index ? { ...candidate, body: event.target.value } : candidate)
                       })} />
@@ -333,10 +349,10 @@ export function ReportFulfillmentAdminPanel({ secret }: { secret: string }) {
             {inspection.units.find((unit) => unit.id === selectedUnitId)?.source_snapshot?.adminCorrectionDraft && (
               <>
                 <StudioButton type="button" disabled={loading} onClick={() => void discardUnitDraft()}>Discard draft</StudioButton>
-                <StudioButton type="button" disabled={loading} onClick={() => void publishUnitCorrection()}>Publish correction</StudioButton>
+                <StudioButton type="button" disabled={loading || unitHasUnsavedChanges} title={unitHasUnsavedChanges ? "Save your latest edits before publishing this correction." : undefined} onClick={() => void publishUnitCorrection()}>Publish correction</StudioButton>
               </>
             )}
-            <StudioButton type="button" onClick={() => { setInspection(null); setSelectedUnitId(""); setUnitDraft(null); }}>Close preview</StudioButton>
+            <StudioButton type="button" disabled={loading} onClick={() => { setInspection(null); setSelectedUnitId(""); setUnitDraft(null); }}>Close preview</StudioButton>
           </div>
         </section>
       )}

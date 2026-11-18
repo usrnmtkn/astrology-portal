@@ -2,9 +2,7 @@ import { LoadingStatus, SkeletonBar } from "../CardSkeleton";
 
 export function AspectRowSkeleton() {
   return <button className="article-related-aspect-row aspect-row aspect-row-button card-skeleton" type="button" disabled tabIndex={-1} aria-hidden="true">
-    <span className="aspect-row-glyphs">
-      <span className="card-skeleton-disc" /><span className="card-skeleton-disc" /><span className="card-skeleton-disc" />
-    </span>
+    <span className="aspect-badge aspect-row-glyphs card-skeleton-disc" />
     <span className="aspect-row-copy">
       <h4><SkeletonBar title /></h4>
       <span className="aspect-row-timing"><span><SkeletonBar /></span></span>

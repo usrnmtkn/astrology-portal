@@ -5,6 +5,16 @@ import fs from "node:fs";
 const deployment = JSON.parse(fs.readFileSync("vercel.json", "utf8"));
 const functionRules=Object.keys(deployment.functions??{});
 assert.equal(functionRules.at(-1),'api/**/*.ts','The API catch-all must follow specific function rules so Vercel can match each endpoint.');
+const synastryFiles = new Set(fs.globSync(deployment.functions['api/**/*.ts'].includeFiles));
+for (const source of ['data/writing/synastry-primary-style-20261024.json',
+  'data/writing/synastry-voice-approval-20261022.json', 'data/writing/synastry-voice-approval-20261023.json',
+  'data/writing/synastry-voice-approval-20261023-next-ten.json',
+  'packages/astro-knowledge/data/synastry/aspects/A-mercury_B-mars_square.json',
+  'api/_lib/synastry-approved-voice.cjs', 'api/_lib/synastry-knowledge-sources.cjs']) {
+  assert(synastryFiles.has(source), `Synastry readiness must package its actual runtime source: ${source}`);
+}
+assert(![...synastryFiles].some(source => source.includes('.private-documents/')),
+  'Protected Synastry paragraphs must come from server secrets, not bundled files.');
 const memoryConfig = JSON.parse(fs.readFileSync("config/agent-memory-sources-v1.json", "utf8"));
 const correctionSources = memoryConfig.sources
   .filter((source) => source.kind === "correction")

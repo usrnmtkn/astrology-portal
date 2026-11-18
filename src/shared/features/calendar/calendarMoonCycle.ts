@@ -5,6 +5,7 @@ export type CalendarEclipseKind = "solar eclipse" | "lunar eclipse";
 export type CalendarQuarterKind = "first-quarter" | "last-quarter";
 
 export type CalendarMoonCycleFacts = {
+  timeZone?: string;
   dateKey: string;
   date: string;
   dayOfWeek: string;
@@ -205,6 +206,7 @@ export function calendarMoonCycleFactsForDays(
     );
 
     facts.set(day.dateKey, {
+      timeZone,
       dateKey: day.dateKey,
       date: day.date,
       dayOfWeek,

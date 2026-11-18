@@ -20,10 +20,10 @@ export function NavigationPill({ children }: { children: ReactNode }) {
         return;
       }
       const style = getComputedStyle(header);
-      // Desktop navigation is centered: reserve the controls and gutter on both sides.
+      // Center the complete group while reserving space for its adjacent controls.
       pill.style.maxWidth = compact ? "" : `${header.clientWidth - 2 * (
-        actions.offsetWidth + parseFloat(style.paddingLeft) + parseFloat(style.columnGap)
-      )}px`;
+        parseFloat(style.paddingLeft)
+      ) - actions.offsetWidth - parseFloat(style.columnGap)}px`;
       const pillStyle = getComputedStyle(pill);
       const edge = pill.getBoundingClientRect().right - parseFloat(pillStyle.paddingRight)
         - parseFloat(pillStyle.borderRightWidth);

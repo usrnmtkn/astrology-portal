@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Page } from "../helpers/polish-test";
 import { bundledPublications } from "../helpers/bundled-publications";
 import { readerResponse } from "../helpers/reader-response";
 import { lessonRows } from "../helpers/astro101-reader-fixture";
@@ -82,7 +82,7 @@ test.describe("body paragraph type", () => {
   });
 
   for (const mode of modes) {
-    test(`${mode.name}: every reading paragraph shares one family and 16px`, async ({ page }) => {
+    test(`${mode.name}: reading paragraphs use shared body and longform roles`, async ({ page }) => {
       test.setTimeout(180_000);
       const samples: string[] = [];
 
@@ -92,17 +92,27 @@ test.describe("body paragraph type", () => {
         await page.locator("body").waitFor({ state: "visible" });
         await waitForRoute(page, route.name);
         await applyMode(page, mode.theme, mode.dyslexia);
+        // A sign-in gate contains UI guidance rather than a reading. Verify
+        // that role separately; it must not masquerade as narrative coverage.
+        if (route.name === "friends" && await page.locator(".friends-signin-card").isVisible()) {
+          const guidance = page.locator(".friends-signin-card p");
+          await expect(guidance).toHaveCSS("font-size", "15px");
+          await expect(guidance).toHaveCSS("font-family", mode.dyslexia ? /Atkinson/ : /system-ui/);
+          continue;
+        }
         await expect.poll(async () => (await collectBodyParagraphs(page)).length, {
           message: `${route.name} rendered no reading paragraph`,
           timeout: 20_000
         }).toBeGreaterThan(0);
         const found = await collectBodyParagraphs(page);
-        samples.push(...found.map((item) => `${item.family} @ ${item.size} | ${route.name} | ${item.selector} | ${item.text}`));
+        for (const item of found) {
+          expect(item.size, `${route.name}: ${item.selector}`).toBe(['article', 'lead'].includes(item.role) ? '26px' : item.role === 'preview' ? '20px' : '19px');
+        }
+        samples.push(...found.map((item) => `${item.family} | ${item.size} | ${route.name} | ${item.selector} | ${item.text}`));
       }
 
       const pairs = [...new Set(samples.map((sample) => sample.split(" | ")[0]))];
       expect(pairs, samples.join("\n")).toHaveLength(1);
-      expect(pairs[0]).toContain("16px");
       if (mode.dyslexia) {
         expect(pairs[0].toLowerCase()).toContain("atkinson");
       } else {
@@ -149,7 +159,7 @@ test.describe("body paragraph type", () => {
     for (const width of [390, 1280]) {
       await page.setViewportSize({ width, height: 900 });
       for (const route of [
-        { name: "sky", path: routes[0].path, selectors: [".article-body-inner > .article-section p, .article-body-inner > .sky-detail-section p", ".article-related-aspects__copy p"] },
+        { name: "sky", path: routes[0].path, selectors: [".article-body-inner > .article-section p, .article-body-inner > .sky-detail-section p", ".article-related-aspect-row p"] },
         { name: "calendar-day", path: routes[1].path, selectors: [".calendar-sky-card__body p", ".calendar-stoic-card__excerpt"] },
         { name: "calendar-week", path: routes[2].path, selectors: [".calendar-day-group__excerpt, .calendar-day-group__blurb p"] }
       ]) {
@@ -209,7 +219,7 @@ async function waitForRoute(page: Page, name: string) {
   } else if (name === "you") {
     await expect(page.getByRole("region", { name: "In-depth transit reports" })).toBeVisible({ timeout: 60_000 });
   } else if (name === "friends") {
-    await expect(page.locator(".friends-unified-empty p").first()).toBeVisible({ timeout: 60_000 });
+    await expect(page.locator(".friends-unified-empty p, .friends-signin-card p").first()).toBeVisible({ timeout: 60_000 });
   } else if (name === "settings") {
     await expect(page.locator(".settings-row-description").first()).toBeVisible({ timeout: 60_000 });
   } else if (name === "report") {
@@ -274,6 +284,9 @@ async function collectBodyParagraphs(page: Page) {
       return [{
         family: style.fontFamily,
         size: style.fontSize,
+        role: node.matches('.lunation-transit .weekly-horoscope__macro-body > p:first-child') ? 'lead'
+          : node.closest('.horoscope-prose') ? 'article' : node.closest('.article-related-aspects') ? 'preview'
+          : node.closest('.article-page:not(.saved-generated-report) .article-body-inner') ? 'article' : 'body',
         selector: node.className || node.tagName,
         text: text.slice(0, 80)
       }];

@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
-import { fittedWheelMarkerLayouts, houseBoundedWheelMarkerLayouts } from '../apps/web/src/components/charts/wheelGeometry.ts';
+import { fittedWheelMarkerLayouts, houseBoundedWheelMarkerLayouts } from '../apps/web/src/components/charts/fittedWheelGeometry.ts';
+import { avoidWheelLabelCollisions,
+  wheelDegreeOffset, wheelPlacementBounds, wheelAngleBadgeBounds, wheelTickGeometry } from '../apps/web/src/components/charts/wheelGeometry.ts';
 const normalized = angle => ((angle % 360) + 360) % 360;
 function layout(longitudes, radius = 218, rotation = 0) {
   return houseBoundedWheelMarkerLayouts(longitudes.map((longitude, i) => ({ key: String(i), longitude })), item => item.key, item => item.longitude, {
@@ -125,3 +127,74 @@ for (const radius of [123, 218, 220]) for (let rotation = 0; rotation < 360; rot
   }
 }
 console.log('Page-fitting wheels: fixed rings, full-size glyphs and exact ticks passed through all rotations.');
+
+function assertSeparate(boxes) {
+  boxes.forEach((a, index) => boxes.slice(index + 1).forEach(b => {
+    assert.ok(Math.abs(a.x - b.x) >= a.halfWidth + b.halfWidth - 1e-6
+      || Math.abs(a.y - b.y) >= a.halfHeight + b.halfHeight - 1e-6,
+    `Visible glyphs, degrees and angle badges must not overlap: ${JSON.stringify({a,b})}`);
+  }));
+}
+for (let rotation = 0; rotation < 360; rotation += 15) {
+  const radians = rotation * Math.PI / 180;
+  const marker = { x: 300 + Math.cos(radians) * 218, y: 300 - Math.sin(radians) * 218 };
+  const degree = wheelDegreeOffset(300, marker, 26);
+  assert.ok(Math.abs(degree.x) >= 25.999999 || Math.abs(degree.y) >= 19.999999,
+    'Degree clearance uses upright glyph/text bounds at every angle.');
+  for (const longitudes of [[214,230,208,136,143,9,64,2,303,327,147,251,28,45],
+    [329,322,307,284,256,223,169,150,55,71,109,281,347,167],
+    [358,359,0,1,2,3,4], Array(22).fill(0)]) {
+    const labels = ['ASC','MC','DSC','IC'].map((label, index) => {
+      const angle = (rotation + index * 90) * Math.PI / 180;
+      return { label, x: 300 + Math.cos(angle) * 240, y: 300 - Math.sin(angle) * 240 };
+    });
+    const badges = wheelAngleBadgeBounds(labels, 300);
+    const fit = (radius, glyphSize, minimumRadius) => fittedWheelMarkerLayouts(
+      longitudes.map((longitude,index) => ({ key: String(index), longitude })), item => item.key, item => item.longitude,
+      { radius, minimumRadius, center:300, minimumSpacing:glyphSize === 22 ? 33 : 37.5,
+        rowSpacing:54, glyphSize, annotationOffset:22, angleForLongitude:longitude => longitude + rotation });
+    const initial = fit(218, 26, 142);
+    const placed = avoidWheelLabelCollisions(initial, 300, 26, 22, badges);
+    const boxes = [...placed.values()].flatMap(point => wheelPlacementBounds(300, point.marker, 26));
+    assertSeparate([...badges, ...boxes]);
+    placed.forEach((point, key) => assert.equal(point.angle, initial.get(key).angle, 'Collision avoidance never changes a calculated longitude.'));
+    const inner = avoidWheelLabelCollisions(fit(162, 22, 148), 300, 22, 22);
+    const innerBoxes = [...inner.values()].flatMap(point => wheelPlacementBounds(300, point.marker, 22));
+    const outer = avoidWheelLabelCollisions(fit(218, 26, 202), 300, 26, 22, [...badges, ...innerBoxes]);
+    assertSeparate([...badges, ...innerBoxes, ...[...outer.values()].flatMap(point => wheelPlacementBounds(300, point.marker, 26))]);
+  }
+}
+console.log('Angle badges, own degree labels and both synastry rings remain separate through all rotations.');
+
+{
+let seed=17;const random=()=>((seed=(seed*1664525+1013904223)>>>0)/2**32);
+for(let trial=0;trial<300;trial++){
+ const rotation=random()*360;
+ const points=Array.from({length:14},(_,i)=>({key:String(i),longitude:random()*360}));
+ const fit=(radius,glyphSize,minimumRadius,rowSpacing)=>fittedWheelMarkerLayouts(points,p=>p.key,p=>p.longitude,{radius,glyphSize,minimumRadius,center:300,minimumSpacing:glyphSize===22?33:37.5,rowSpacing,annotationOffset:22,angleForLongitude:a=>a+rotation});
+ const badges=wheelAngleBadgeBounds([0,75,180,255].map((a,i)=>({label:['ASC','MC','DSC','IC'][i],x:300+240*Math.cos((a+rotation)*Math.PI/180),y:300-240*Math.sin((a+rotation)*Math.PI/180)})),300);
+ const outerTicks=points.map(p=>wheelTickGeometry(300,p.longitude+rotation,234,240));
+ const innerTicks=points.map(p=>wheelTickGeometry(300,p.longitude+rotation,184,190));
+ const tickBoxes=outerTicks.map(tick=>tick.bounds);
+ for(const [index,tick] of [...outerTicks,...innerTicks].entries()){
+  assert.ok(Math.abs(Math.hypot(tick.outer.x-tick.inner.x,tick.outer.y-tick.inner.y)-6)<1e-6,'Every longitude stroke has a consistent length.');
+  const actual=normalized(Math.atan2(300-tick.outer.y,tick.outer.x-300)*180/Math.PI);
+  const expected=normalized(points[index%points.length].longitude+rotation);
+  assert.ok(Math.abs(((actual-expected+540)%360)-180)<1e-6,'The stroke always marks the calculated longitude.');
+ }
+ const inner=avoidWheelLabelCollisions(fit(162,22,148,40),300,22,22,tickBoxes);
+ const innerBoxes=[...inner.values()].flatMap(p=>wheelPlacementBounds(300,p.marker,22));
+ for(const paired of [false,true]){
+ const outer=avoidWheelLabelCollisions(fit(paired?210:212,26,paired?202:142,paired?40:54),300,26,22,[...badges,...(paired?innerBoxes:[]),...(paired?tickBoxes:outerTicks.map(tick=>tick.bounds))]);
+ const boxes=[...badges,...(paired?innerBoxes:[]),...[...outer.values()].flatMap(p=>wheelPlacementBounds(300,p.marker,26))];
+ for(let i=0;i<boxes.length;i++)for(let j=i+1;j<boxes.length;j++){
+  const a=boxes[i],b=boxes[j];assert(Math.abs(a.x-b.x)>=a.halfWidth+b.halfWidth-1e-6||Math.abs(a.y-b.y)>=a.halfHeight+b.halfHeight-1e-6,`Collision in random chart ${trial} paired=${paired}: ${i},${j}`);
+ }
+ const labels=boxes.slice(badges.length);
+ for(const a of labels)for(const b of paired?tickBoxes:outerTicks.map(tick=>tick.bounds)){
+  assert(Math.abs(a.x-b.x)>=a.halfWidth+b.halfWidth-1e-6||Math.abs(a.y-b.y)>=a.halfHeight+b.halfHeight-1e-6,`Tick crosses a glyph/degree in random chart ${trial} paired=${paired}`);
+ }
+ }
+}
+console.log('300 irregular composite and paired charts: glyphs, degrees, exact longitude strokes and non-orthogonal angle badges remain separate.');
+}

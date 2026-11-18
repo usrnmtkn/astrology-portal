@@ -11,6 +11,9 @@ import {loadLunarSavedWriting} from './lunar-saved-writing.js';
 import {LUNAR_SAVED_WRITING_GUIDANCE} from '../../src/astro-writing/lunationSavedWriting.mjs';
 import {GHOSTWRITING_SKILL_INSTRUCTIONS} from '../../src/astro-writing/ghostwritingSkill.mjs';
 import {loadExplicitWritingFeedback} from './studio-explicit-writing-feedback.js';
+import {prepareDraftRequest} from '../../src/astro-writing/generateDraft.mjs';
+import {getContentSpine} from '../../src/astro-writing/spineRegistry.mjs';
+import {writingExport,unapprovedWritingInput} from '../../src/astro-writing/writingExport.mjs';
 
 export const workspaceKey=(phase:string,sign:string)=>{lunationContentKey(phase,sign);return `${LUNATION_WORKSPACE_PREFIX}${phase}/${sign}`;};
 export async function lunarStorage(params:URLSearchParams,options:RequestInit={}) {
@@ -95,6 +98,13 @@ export function lunarPlanPreview(value:any) {
   return {planHash:value.planHash,outline:value.prepared.argumentOutline,facts:value.facts,profile:value.profile,
     ownerPassages:[...value.savedWriting.references.map((r:any)=>({sourceId:`${r.title} · ${r.contentKey}`,sourcePath:r.contentKey,sourceSha256:r.bodySha256,text:r.body})),...value.prepared.context.sameFamilyExamples],meaning:value.prepared.context.reviewedMeaningExamples,savedWriting:value.savedWriting,
     corrections:value.feedback.rows,receipt:value.prepared.receipt};
+}
+export function lunarWritingExport(value:any) {
+  const {request}=prepareDraftRequest({plan:value.prepared.plan,context:value.prepared.context,argumentOutline:value.prepared.argumentOutline,
+    spine:getContentSpine('lunations'),engineFacts:value.facts,familyContext:{savedLunarWriting:value.savedWriting},writingProfile:value.profile,
+    family:'lunations',surface:'calendar-lunation',register:'second_person',target:lunationWritingTarget,
+    task:'Write this New or Full Moon body and journal question for owner review.'});
+  return writingExport({title:`${value.facts.event.kind} in ${value.facts.event.sign} writing plan`,requests:[{label:'Lunar body and journal question',...request,input:unapprovedWritingInput(request.input)}],notes:['Unsigned writing brief for review or use in another writing tool. No generation or publication is authorized by this export.']});
 }
 export function runStudioLunation(value:any,workspace:any,writerClient:any,approvalReference:string,approvalRuling='I approve this exact plan and one writer call.') {
   const outline=approveArgumentOutline(value.prepared.argumentOutline,{exactOwnerRuling:approvalRuling});

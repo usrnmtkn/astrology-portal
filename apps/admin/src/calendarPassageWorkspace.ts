@@ -12,20 +12,24 @@ export const calendarDefaultPattern = (period: CalendarPassagePeriod) => period 
   : period === 'monthly' ? '{{overview}}' : ['sunday','monday','tuesday','wednesday','thursday','friday','saturday']
     .map(day => `{{#${day}Writeup}}{{${day}Date}}\n\n{{${day}Writeup}}{{/${day}Writeup}}`).join('\n\n');
 
-/** Simulate one publication without mutating the reader cache or publication ledger. */
+type PassageDraft = { key: string; body: string };
+/** Simulate source and wrapper edits without mutating the reader cache or ledger. */
 export function calendarWorkspaceReading(period: CalendarPassagePeriod, context: CalendarPassageContext, date: string,
-  sky: SkySnapshot, published: Map<string, LiveGeneratedContent>, draft?: { key: string; body: string }) {
+  sky: SkySnapshot, published: Map<string, LiveGeneratedContent>, draft?: PassageDraft | PassageDraft[]) {
   const content = new Map(published);
-  if (draft) content.set(draft.key, { ...content.get(draft.key), id: 'preview-only', contentKey: draft.key, body: draft.body,
+  const drafts = draft ? Array.isArray(draft) ? draft : [draft] : [];
+  const editedKeys = new Set(drafts.map(draft => draft.key));
+  for (const draft of drafts) content.set(draft.key, { ...content.get(draft.key), id: 'preview-only', contentKey: draft.key, body: draft.body,
     surface: 'sky', mode: 'feed', status: 'LIVE', eventType: null, targetDate: null, headline: null, summary: null,
     sections: null, model: null, updatedAt: '' });
-  const values = calendarPeriodPassageValues(period, context, date, new Map([[date, sky]]), content, calendarStudioMoonSources(content));
+  const previewSun = drafts.some(draft => draft.key.startsWith('cms/sky-daily-summary/'));
+  const values = calendarPeriodPassageValues(period, context, date, new Map([[date, sky]]), content, calendarStudioMoonSources(content), previewSun);
   const selected = resolveCalendarPassage(period, date, context.timeZone, content, values,
-    key => key !== draft?.key && isContentRetired(key));
+    key => !editedKeys.has(key) && isContentRetired(key));
   const body = selected?.body ?? renderCalendarPassage(calendarDefaultPattern(period), values);
   const event = context.days.find(day => day.dateKey === date)?.events.find(event => event.type === 'ingress' && event.planet === 'Moon');
   const transition = event ? calendarMoonTransitionReading(event, content,
-    (key, id, updatedAt) => key === draft?.key || publicationAllowsContent(key, id, updatedAt)) : null;
+    (key, id, updatedAt) => editedKeys.has(key) || publicationAllowsContent(key, id, updatedAt)) : null;
   return { body, values, transition, sourceKey: selected?.contentKey ?? null,
     sourceLabel: selected ? selected.contentKey === calendarPassageKey(period) ? `Shared ${period} template` : 'Date-only passage' : 'Calendar source assembly' };
 }

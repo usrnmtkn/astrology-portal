@@ -5,6 +5,7 @@ import {horoscopeEditionAt,horoscopeEditionKey} from '../../content/horoscopeEdi
 import {monthlyHoroscopeTldr} from '../../content/monthlyHoroscopeTldr.mjs';
 import {zonedDateTimeToUtc} from '../../services/timezones';
 import {CalendarPassageProse} from './CalendarPassageProse';
+import {PageLoadState} from '../../components/PageLoading';
 
 /** Calendar previews only the authored TLDR; Horoscopes owns the full edition. */
 export function PublishedMonthlyOverview({month,timeZone}:{month:string;timeZone:string}) {
@@ -32,13 +33,12 @@ export function PublishedMonthlyOverview({month,timeZone}:{month:string;timeZone
       }).catch(()=>{if(!controller.signal.aborted)setState({key,error:true});});
     return()=>controller.abort();
   },[key,month,timeZone,version]);
-  if(state.key!==key)return <p role="status">Loading the monthly overview…</p>;
-  if(state.error)return <p role="status">The monthly overview couldn’t load. <button type="button" className="learn-jump__link" onClick={retry}>Try again</button></p>;
+  if(state.key!==key||state.error)return <PageLoadState what="The monthly overview" failed={Boolean(state.error)} pending={state.key!==key} onRetry={retry}><p role="status">Loading the monthly overview…</p></PageLoadState>;
   if(!state.reading)return null;
   return <section className="lunar-month-overview lunar-month-overview--monthly" aria-labelledby="lunar-month-overview-heading">
-    <h2 className="calendar-sky-card__title" id="lunar-month-overview-heading">{state.reading.headline}</h2>
+    <h2 className="sr-only" id="lunar-month-overview-heading">{state.reading.headline}</h2>
     {state.reading.tldr&&<>
-      <p><strong>TLDR</strong></p>
+      <span className="lunar-month-overview__label">TLDR</span>
       <CalendarPassageProse text={state.reading.tldr}/>
     </>}
     <a className="learn-jump__link" href={state.reading.href} aria-label={`Read more: ${state.reading.headline}`}>Read more</a>

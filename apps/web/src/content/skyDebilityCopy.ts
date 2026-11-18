@@ -8,6 +8,7 @@ import type { SkyDebilityDisplayPosition } from "./skyDebilityPresentation";
 export { skyDebilitySlots } from "./skyDebilityAssembly.js";
 
 export function skyDebilityContentKeys() { return skyDebilityFields.map(field => field.key); }
+export function skyDebilityDefinition(content?: CmsGeneratedContentMap) { return savedCopy(content, "cms/sky-debility/dignityDefinition"); }
 
 function savedCopy(content: CmsGeneratedContentMap | undefined, key: string) {
   const publication = contentPublication(key);

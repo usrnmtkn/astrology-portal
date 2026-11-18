@@ -1,6 +1,6 @@
 import { isNatalPlacementAngle, natalPlacementResolverDependencyKeys } from "../../apps/admin/src/natalPlacementSources.js";
 import { emptyHouseSourceKeys } from "../../apps/admin/src/emptyHouseSources.js";
-import { publicationLedgerKey, validContentPublication, publicationTimestamp, type ContentPublication } from "../../apps/web/src/content/contentPublicationState.js";
+import { publicationLedgerKey, validContentPublication, publicationTimestamp, publicationRestoresBaseline, type ContentPublication } from "../../apps/web/src/content/contentPublicationState.js";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { createRequire } from "node:module";
 // The generated package bundle is the production renderer used by the reader app.
@@ -96,19 +96,23 @@ export function normalizeNatalPlacementPreviewInput(value: unknown) {
   const sign = typeof input.sign === "string" ? input.sign : "";
   const house = typeof input.house === "string" ? input.house : "";
   const audience = input.audience === "they" ? "they" : "you";
+  if (input.ownerName !== undefined && (typeof input.ownerName !== "string" || input.ownerName.trim().length > 100)) throw new Error("The preview name must be 100 characters or fewer.");
+  const ownerName = typeof input.ownerName === "string" && input.ownerName.trim() ? input.ownerName.trim() : "Maya";
   const motion: "direct" | "retrograde" = input.motion === "retrograde" || input.isRetrograde === true ? "retrograde" : "direct";
   const rulerHouse = emptyHouse && typeof input.rulerHouse === "number" ? input.rulerHouse : null;
   if (input.kind !== undefined && input.kind !== "empty-house") throw new Error("Unknown preview kind.");
   if (emptyHouse && (!/^(?:[1-9]|1[0-2])$/u.test(house) || !Number.isInteger(rulerHouse)
     || rulerHouse! < 1 || rulerHouse! > 12 || rulerHouse === Number(house))) throw new Error("Choose an empty house and a different ruler house between 1 and 12.");
-  if (!planets.has(planet) || !signs.has(sign) || (house && !/^(?:[1-9]|1[0-2])$/u.test(house))) {
-    throw new Error("Choose a valid planet or point and sign. If provided, the house must be between 1 and 12.");
+  if (!planets.has(planet) || (input.sign !== undefined && typeof input.sign !== "string")
+    || (sign ? !signs.has(sign) : !house || emptyHouse || isNatalPlacementAngle(planet))
+    || (house && !/^(?:[1-9]|1[0-2])$/u.test(house))) {
+    throw new Error("Choose a valid planet or point and a sign or house. If provided, the house must be between 1 and 12. Angles and empty houses require a sign.");
   }
   if (!Array.isArray(input.overrides) || input.overrides.length > 64) throw new Error("Preview source overrides are invalid.");
   const overrides = input.overrides
     .map(normalizeOverrideCandidate)
     .filter((candidate): candidate is PreviewOverrideCandidate => Boolean(candidate));
-  return { audience, house, motion, overrides, planet, sign, emptyHouse, rulerHouse };
+  return { audience, house, motion, overrides, planet, sign, emptyHouse, rulerHouse, ownerName };
 }
 
 function ignoredReason(candidate: PreviewOverrideCandidate): IgnoredPreviewOverride["reason"] | null {
@@ -200,7 +204,8 @@ export function renderNatalPlacementPreviewState(input: ReturnType<typeof normal
       && publicationTimestamp(publication.row_updated_at) === publicationTimestamp(candidate.updatedAt);
   }));
   const applied = new Set(productionOverrides.appliedOverrideKeys);
-  const blockedContentKeys = publications.filter((publication) => publication.state === "retired" || !applied.has(publication.content_key)).map((publication) => publication.content_key);
+  const blockedContentKeys = publications.filter((publication) => !publicationRestoresBaseline(publication)
+    && (publication.state === "retired" || !applied.has(publication.content_key))).map((publication) => publication.content_key);
 
   productionOverrides.appliedRows.forEach((row) => {
     if (row.contentKey.startsWith("fallback-template/")) templates.set(row.contentKey, row);
@@ -219,13 +224,13 @@ export function renderNatalPlacementPreviewState(input: ReturnType<typeof normal
   }, { includeEmptyHouseBridge: true }) : isNatalPlacementAngle(input.planet) ? renderer.renderNatalAngle({
     angle: input.planet,
     sign: input.sign,
-    voice: input.audience === "you" ? "you" : "Maya"
+    voice: input.audience === "you" ? "you" : input.ownerName
   }) : renderer.renderNatalPlacement({
     ...(input.house ? { house: Number(input.house) } : {}),
     isRetrograde: input.motion === "retrograde",
     planet: input.planet,
     sign: input.sign,
-    voice: input.audience === "you" ? "you" : "Maya"
+    voice: input.audience === "you" ? "you" : input.ownerName
   });
 
   return {

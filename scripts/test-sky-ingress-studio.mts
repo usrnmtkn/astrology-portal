@@ -2,6 +2,7 @@ import { INGRESS_WRITER_CONTRACT, ingressWriterContractReceipt } from '../api/_l
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import { ingressFixtureValues } from './fixtures/sky-ingress-writing.mjs';
+import { verifySkyVisitWriter } from './fixtures/sky-visit-writer-route.mts';
 import { RHETORICAL_WRITER_POLICY } from '../src/astro-writing/rhetoricalPatterns.mjs';
 import { validateExplicitWritingFeedback } from '../src/astro-writing/explicitWritingFeedback.mjs';
 import { approvedVoiceStyleReference } from '../src/astro-writing/approvedVoiceStyle.mjs';
@@ -35,6 +36,7 @@ const template = { id, content_key: "sky/article-template/sun/libra", event_type
   status: "REVIEWED", lane: "reference", review_state: null, source_snapshot: { review_status: "approved" },
   body: "# Immutable owner template\n\nSynthetic complete original writing. {{legacyField}}" };
 let prompts: string[] = [];
+let sentInstructions='';
 let requested: string[] = [];
 let rejectWriterCopy = false;
 let liveCorrections = false;
@@ -221,6 +223,7 @@ try {
     if (String(url).startsWith("https://ssd.jpl.nasa.gov/")) return new Response("Synthetic outage", { status: 503 });
     if (String(url) === "https://api.openai.com/v1/responses") {
       const request = JSON.parse(String(init.body)); prompts.push(request.input);
+      sentInstructions=request.instructions;
       assertSummaryGuidance('openai', request.input, request.text.format.schema, request.instructions);
       requested = request.text.format.schema.properties.slotValues.required;
       const slotValues = ingressFixtureValues(request.input, requested);
@@ -239,6 +242,7 @@ try {
     }
     if (String(url) === 'https://api.anthropic.com/v1/messages') {
       const request = JSON.parse(String(init.body)); prompts.push(request.messages[0].content[0].text);
+      sentInstructions=request.system;
       assertSummaryGuidance('claude', request.messages[0].content[0].text, request.tools[0].input_schema, request.system);
       requested = request.tools[0].input_schema.properties.slotValues.required;
       matches(request.system, /DATED INGRESS EDITORIAL AUTHORITY/);
@@ -371,13 +375,14 @@ try {
   const approval = { approved: true, action: "approve-sky-article-edition", contentKey: edition.contentKey,
     templateKey: edition.templateKey, templateHash: edition.templateHash, fixedProseHash: edition.fixedProseHash, compiledHash: edition.compiledHash };
   const projected = projectReaderRow({ id, content_key: edition.contentKey, status: "LIVE", lane: "serving", event_type: "sky-article-edition", updated_at: "2026-10-09T00:00:00Z",
+    headline: edition.headline, summary: edition.tldr, body: edition.body,
     sections: { skyArticleEdition: edition }, source_snapshot: { ownerApproval: approval, engineFacts: facts } });
   assert.equal(projected.sections.skyArticleEdition.format, SKY_INGRESS_ESSAY_FORMAT);
   assert.equal(isGeneratedContentReaderBoundaryAllowed(projected), true);
   assert.equal(isGeneratedContentReaderBoundaryAllowed({ ...projected, status: "DRAFT" }), false);
   assert.equal(isGeneratedContentReaderBoundaryAllowed({ ...projected, source_snapshot: {} }), false);
   assert(!JSON.stringify(projected).includes("requestUrl"), "Private fact receipts must not enter reader payloads");
-  const candidate = { id, contentKey: edition.contentKey, status: "LIVE", sections: projected.sections, sourceSnapshot: projected.source_snapshot };
+  const candidate = { ...projected, contentKey: edition.contentKey, sourceSnapshot: projected.source_snapshot, reviewState: projected.review_state };
   const context = { activeInstant: "2026-10-09T12:00:00Z", planet: "sun", sign: "libra" };
   const publication = { content_key: edition.contentKey, state: "live" as const, row_id: id,
     row_updated_at: "2026-10-09T00:00:00Z", updated_at: "2026-10-09T00:00:00Z", revision: 1 };
@@ -388,7 +393,7 @@ try {
     { ...publication, content_key: "sky-article/sun/scorpio/2026/2026-10-23" },
     { ...publication, content_key: "sky-article/sun/libra/2024/2024-09-22", state: "retired" },
     { ...publication, content_key: "sky-article/sun/libra/2023/2023-09-22", row_id: null }
-  ], context), [edition.contentKey, "sky-article/sun/libra/2025/2025-09-22"]);
+  ], context), [edition.contentKey, "sky-article/sun/libra/2025/2025-09-22", "sky-article/sun/libra/2026"]);
   const reading = skyIngressEssayReaderSection([candidate], context);
   assert.equal(reading?.body, edition.body);
   assert.equal(reading?.tldr, edition.tldr);
@@ -478,11 +483,19 @@ try {
   assert.deepEqual(narrativeFacts.facts.events, facts.events, 'Changing the article contract cannot change calculated event coverage.');
   const beforeNarrative = prompts.length;
   for (const provider of ['openai', 'claude']) {
+    const beforePreview=prompts.length;
+    const exported=await invoke(slotsHandler,'POST','/api/admin/sky-article-template-slots',{preview:true,templateId:id,referenceDate:'2026-10-09',format:SKY_INGRESS_ARTICLE_FORMAT,provider});
+    assert.equal(exported.status,200,'The owner can inspect the complete dated writer material');
+    assert.equal(prompts.length,beforePreview,'A preview must not dispatch a provider');
+    assert.equal(exported.writingExport.saved,false);assert.equal(exported.writingExport.published,false);
+    assert.equal((await invoke(slotsHandler,'POST','/api/admin/sky-article-template-slots',{preview:true,templateId:id,referenceDate:'2026-10-09',format:SKY_INGRESS_ARTICLE_FORMAT,provider},false)).status,401);
     const narrative = await invoke(slotsHandler, 'POST', '/api/admin/sky-article-template-slots', {
       templateId: id, referenceDate: '2026-10-09', format: SKY_INGRESS_ARTICLE_FORMAT, provider,
       ...(provider === 'openai' ? { expectedModel: 'gpt-5.6-sol' } : {})
     });
     assert.equal(narrative.status, 200, 'The actual narrative handler must accept its full-body provider schema.');
+    assert(exported.writingExport.text.includes(prompts.at(-1)!),'The complete portable input equals the dispatched native input');
+    assert(exported.writingExport.text.includes(sentInstructions),'The portable instructions include the exact final provider instructions');
     assert.equal(narrative.generation.providerCalls, 1);
     assert.equal(narrative.generation.ingressValidation.passed, true);
     assert.equal(narrative.generation.ingressValidation.ownerApproved, false);
@@ -550,5 +563,6 @@ try {
   assert.equal((await skyIngressNasaReceipt("sun", context.activeInstant, 191.5)).status, "matched");
   assert.equal((await skyIngressNasaReceipt("sun", context.activeInstant, 191)).status, "disagreement");
   assert.equal((await skyIngressNasaReceipt("north-node", context.activeInstant, 191)).status, "unsupported");
+  await verifySkyVisitWriter(invoke, slotsHandler, factsHandler);
   console.log("PASS ingress Studio: actual authenticated facts/slot handlers, real Swiss roots, provider request, retained fields, isolated companion, exact approved reader payload, expiry, DST and scoped NASA receipts.");
 } finally { globalThis.fetch = originalFetch; }

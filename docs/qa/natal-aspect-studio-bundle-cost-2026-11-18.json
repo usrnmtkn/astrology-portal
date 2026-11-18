@@ -1,0 +1,31 @@
+{
+  "schema": "natal-aspect-studio-bundle-cost/v1",
+  "date": "2026-11-18",
+  "baseRevision": "0891044436f2ea2d9eaf4e8bc4e20fc37d5b2f03",
+  "featureSourceRevision": "aaaa2bf5f9cac65af963bc99c0e528b469988f15",
+  "featureSourceTree": "d6b79bc5ced073f3f9804b4290a2cf6a0ad21a1a",
+  "profile": "Separate locked npm-ci worktrees; ARM64 Node22.20.0 / zlib1.3.1-470d3a2; identical visual-smoke public Supabase URL/anon key; ordinary prerequisite builds without metadata normalization.",
+  "control": {
+    "entryJavaScriptRawBytes": 844015,
+    "entryJavaScriptGzipBytes": 245756,
+    "totalJavaScriptGzipBytes": 933713,
+    "files": 81
+  },
+  "candidate": {
+    "entryJavaScriptRawBytes": 843692,
+    "entryJavaScriptGzipBytes": 245662,
+    "totalJavaScriptGzipBytes": 934065,
+    "files": 81
+  },
+  "previousAggregateLimit": 934006,
+  "aggregateAllocation": 352,
+  "newAggregateLimit": 934358,
+  "preservedAggregateHeadroom": 293,
+  "retainedFailure": {
+    "candidateRevision": "aaaa2bf5f9cac65af963bc99c0e528b469988f15",
+    "aggregateGzipBytes": 934065,
+    "limit": 934006,
+    "overage": 59
+  },
+  "scope": "Public source/build measurements only. No owner content writes, private input handoff, dependency changes or paid generation. The ordinary final build and all required exact-head gates remain mandatory."
+}

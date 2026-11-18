@@ -71,8 +71,8 @@ export const StudioInput = forwardRef<HTMLInputElement, ComponentPropsWithoutRef
     return <input {...props} ref={ref} data-studio-component="input" />;
   }
 );
-const StudioFormattingEditor = lazy(() => import("./StudioFormattingEditor"), ({ onDone }) =>
-  <StudioPanelLoadError><StudioButton onClick={onDone}>Back to plain text</StudioButton></StudioPanelLoadError>
+const StudioFormattingEditor = lazy(() => import("./StudioFormattingEditor"), ({ onDone, error }) =>
+  <StudioPanelLoadError error={error}><StudioButton onClick={onDone}>Back to plain text</StudioButton></StudioPanelLoadError>
 );
 export const StudioTextarea = forwardRef<HTMLTextAreaElement, ComponentPropsWithoutRef<"textarea"> & { formatting?: boolean; highlight?: ReactNode }>(
   function StudioTextarea({ formatting = true, highlight, ...props }, ref) {
@@ -114,7 +114,7 @@ export const StudioTextarea = forwardRef<HTMLTextAreaElement, ComponentPropsWith
       {highlighted && !format && <span ref={backdrop} className="studio-highlighted-backdrop" aria-hidden="true"><span>{highlight}{'\u200b'}</span></span>}
       <textarea {...props} onScroll={event => { syncHighlight(); props.onScroll?.(event); }} aria-label={props["aria-label"] ?? (props["aria-labelledby"] ? undefined : label)} ref={textarea} hidden={Boolean(format)} data-studio-component="textarea" />
       {format ? <Suspense fallback={<span role="status">Loading formatting…</span>}>
-        <StudioFormattingEditor value={typeof props.value === "string" ? props.value : format.value} label={format.label} maxLength={props.maxLength} onDone={close} onChange={value => {
+        <StudioFormattingEditor readOnly={Boolean(props.disabled || props.readOnly)} value={typeof props.value === "string" ? props.value : format.value} label={format.label} maxLength={props.maxLength} onDone={close} onChange={value => {
           const field = textarea.current;
           if (field && value !== field.value) {
             // Dispatch through the existing native field so every editor keeps its own save/validation path.

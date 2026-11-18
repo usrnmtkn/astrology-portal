@@ -102,6 +102,10 @@ export const readerDestinationPolicyBySurface: Record<string, ReaderDestinationP
     mode: "context-required",
     reason: "Requires the exact chart placement row whose microcopy is being inspected."
   },
+  "interactive-wheel-tooltips": {
+    mode: "context-required",
+    reason: "Select the chart and wheel target in the tooltip preview."
+  },
   "natal-empty-house": {
     mode: "context-required",
     reason: "Requires the exact natal chart, house, sign, and ruler placement."

@@ -10,13 +10,17 @@ import {
   isFriendsHref,
   parseFriendProfileTab,
   parseFriendsTab,
-  registerFriendHandleRoute
+  registerFriendHandleRoute,
+  updateFriendProfileUrl
 } from "../apps/web/src/features/friends/friendsRouting.ts";
 import { friendProfileWorkForTab } from "../apps/web/src/features/friends/friendProfileWork.ts";
+import { forecastDialogReturnUrl, returnToArticleParent } from "../apps/web/src/services/articleNavigation.ts";
 
 assert.equal(parseFriendsTab("charts"), "charts");
 assert.equal(parseFriendsTab("requests"), "requests");
-assert.equal(parseFriendsTab("unknown"), "circle");
+assert.equal(parseFriendsTab("feed"), "feed");
+assert.equal(parseFriendsTab("circle"), "circle");
+assert.equal(parseFriendsTab("unknown"), "feed");
 assert.equal(parseFriendProfileTab("synastry"), "synastry");
 assert.equal(parseFriendProfileTab("unknown"), "compatibility");
 
@@ -90,10 +94,10 @@ assert.equal(standaloneProfileUrl.searchParams.get("detail"), "pattern / 1");
 const hashProfileUrl = new URL(friendProfileHref("https://example.com/#sky", "chart-2", "natal"));
 assert.equal(hashProfileUrl.hash, "#friends?tab=charts&chart=chart-2&view=natal");
 
-assert.equal(registerFriendHandleRoute("project-author", "social:user-1"), true);
+assert.equal(registerFriendHandleRoute("project_author", "social:user-1"), true);
 assert.equal(registerFriendHandleRoute("settings", "social:user-2"), false);
 assert.deepEqual(
-  friendsRouteStateFromHref("https://example.com/project-author"),
+  friendsRouteStateFromHref("https://example.com/project_author"),
   {
     tab: "charts",
     chartId: "social:user-1",
@@ -102,7 +106,7 @@ assert.deepEqual(
   }
 );
 assert.deepEqual(
-  friendsRouteStateFromHref("https://example.com/project-author/transits?detail=moon-square-mars"),
+  friendsRouteStateFromHref("https://example.com/project_author/transits?detail=moon-square-mars"),
   {
     tab: "charts",
     chartId: "social:user-1",
@@ -110,26 +114,26 @@ assert.deepEqual(
     detail: "moon-square-mars"
   }
 );
-assert.equal(friendsRouteStateFromHref("https://example.com/project-author/not-a-tab"), null);
+assert.equal(friendsRouteStateFromHref("https://example.com/project_author/not-a-tab"), null);
 assert.equal(friendsRouteStateFromHref("https://example.com/settings"), null);
 assert.equal(friendsRouteStateFromHref("https://example.com/learn"), null);
-assert.equal(friendsTabFromHref("https://example.com/project-author/natal"), "charts");
-assert.equal(isFriendsHref("https://example.com/project-author"), true);
+assert.equal(friendsTabFromHref("https://example.com/project_author/natal"), "charts");
+assert.equal(isFriendsHref("https://example.com/project_author"), true);
 
 const readableCompatibilityUrl = new URL(
-  friendHandleProfileHref("https://example.com/friends?tab=charts", "@project-author", "compatibility")
+  friendHandleProfileHref("https://example.com/friends?tab=charts", "@project_author", "compatibility")
 );
-assert.equal(readableCompatibilityUrl.pathname, "/project-author");
+assert.equal(readableCompatibilityUrl.pathname, "/project_author");
 assert.equal(readableCompatibilityUrl.search, "");
 assert.equal(readableCompatibilityUrl.hash, "");
 
 const readableTransitUrl = new URL(
   friendProfileHref("https://example.com/friends", "social:user-1", "transits")
 );
-assert.equal(readableTransitUrl.pathname, "/project-author/transits");
+assert.equal(readableTransitUrl.pathname, "/project_author/transits");
 assert.equal(readableTransitUrl.search, "");
 
-const readableFriendsHubUrl = new URL(friendsTabHref("https://example.com/project-author/natal", "requests"));
+const readableFriendsHubUrl = new URL(friendsTabHref("https://example.com/project_author/natal", "requests"));
 assert.equal(readableFriendsHubUrl.pathname, "/friends");
 assert.equal(readableFriendsHubUrl.search, "?tab=requests");
 
@@ -138,4 +142,76 @@ assert.equal(
   "friends?tab=charts&chart=chart+%2F+1&view=synastry&detail=contact+%2F+1"
 );
 
-console.log("Friends routing tests passed.");
+const feedHref = "https://example.com/?date=2026-10-13#friends?tab=feed";
+const entries = [];
+let backCount = 0;
+globalThis.window = {
+  location: { href: feedHref, origin: "https://example.com" },
+  history: {
+    state: null,
+    pushState(state, _, href) { entries.push({ state, href }); this.state = state; window.location.href = href; },
+    replaceState(state, _, href) { this.state = state; window.location.href = href; },
+    back() { backCount += 1; }
+  }
+};
+updateFriendProfileUrl("social:user-1", "transits", "push", "transit-mars-square-moon");
+assert.equal(entries.length, 1);
+assert.equal(entries[0].state.articleParent, feedHref);
+assert.equal(entries[0].state.articleUrl, window.location.href);
+assert.equal(new URL(window.location.href).hash, "");
+updateFriendProfileUrl("social:user-1", "transits", "push", "transit-mars-square-moon");
+assert.equal(entries.length, 1, "Rehydrating an already-routed article must not push another entry.");
+assert.equal(returnToArticleParent(), true);
+assert.equal(backCount, 1);
+window.location.href = "https://example.com/#friends?tab=charts&chart=manual-1&view=natal";
+updateFriendProfileUrl("manual-1", "natal", "push", "natal-placement-sun");
+assert.equal(entries[1].state.articleParent, "https://example.com/#friends?tab=charts&chart=manual-1&view=natal");
+assert.equal(entries[1].state.articleUrl, window.location.href);
+const originalPopStateEvent = globalThis.PopStateEvent;
+globalThis.PopStateEvent = class extends Event {};
+const events = [];
+window.dispatchEvent = event => { events.push(event.type); return true; };
+for (const parent of [
+  "https://example.com/?date=2026-10-29&flowPair=social%3Auser-1&flowDate=2026-10-30#friends?tab=feed",
+  "https://example.com/friends?tab=feed&date=2026-10-29&flowPair=social%3Auser-1&flowDate=2026-10-30"
+]) {
+  window.location.href = parent;
+  assert.equal(forecastDialogReturnUrl(parent)?.href, parent);
+  const url = new URL("https://example.com/project_author/transits?detail=transit-sun-sextile-lilith&date=2026-10-30");
+  const returnUrl = new URL(parent);
+  url.searchParams.set("flowReturn", returnUrl.pathname + returnUrl.search + returnUrl.hash);
+  window.location.href = url.href;
+  window.history.state = null;
+  assert.equal(returnToArticleParent(), true, "Reopened links restore the exact friend and selected day without entry state.");
+  assert.equal(window.location.href, parent);
+  assert.equal(returnToArticleParent(), false, "The restored dialog must not create a return loop.");
+}
+assert.deepEqual(events, ["popstate", "popstate"]);
+for (const hash of ["#friends", "#/friends", "#/friends?tab=feed"]) {
+  const parent = `https://example.com/?flowPair=friend&flowDate=2026-10-29${hash}`;
+  assert.equal(forecastDialogReturnUrl(parent)?.href, parent);
+}
+for (const invalid of [
+  "https://elsewhere.example/friends?flowPair=friend&flowDate=2026-10-29",
+  "/friends?tab=charts&flowPair=friend&flowDate=2026-10-29",
+  "/friends?tab=feed&chart=another&flowPair=friend&flowDate=2026-10-29",
+  "/friends?flowPair=friend&flowDate=invalid",
+  "/friends?flowDate=2026-10-29",
+  "/project_author/transits?flowPair=friend&flowDate=2026-10-29#friends?tab=feed",
+  "/?flowPair=friend&flowDate=2026-10-29#friends-extra?tab=feed",
+  "/?flowPair=friend&flowDate=2026-10-29#/friends/other?tab=feed",
+  "/?flowPair=friend&flowDate=2026-10-29#sky?tab=feed"
+]) {
+  assert.equal(forecastDialogReturnUrl(invalid), null);
+  const article = new URL("https://example.com/project_author/transits?detail=transit-sun-sextile-lilith");
+  article.searchParams.set("flowReturn", invalid);
+  window.location.href = article.href;
+  window.history.state = null;
+  assert.equal(returnToArticleParent(), false, "Invalid return context must leave the article untouched.");
+  assert.equal(window.location.href, article.href);
+}
+if (originalPopStateEvent) globalThis.PopStateEvent = originalPopStateEvent;
+else delete globalThis.PopStateEvent;
+delete globalThis.window;
+
+console.log("Friends routing tests passed, including single-entry articles and immediate reader parents.");

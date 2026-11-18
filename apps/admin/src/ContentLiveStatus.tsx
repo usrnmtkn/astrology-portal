@@ -95,6 +95,7 @@ function editorialStatusPresentation(row: StatusRow): { label: string; tone: Stu
 }
 
 function savedStatusPresentation(row: StatusRow, live: LiveStatus): { label: string; tone: StudioStatusTone } {
+  if (row.status === "LIVE" && live.detail.startsWith("Scheduled for ")) return { label: "Scheduled", tone: "ready" };
   if (live.live) return { label: "Live", tone: "live" };
   // A successful negative serving check overrides a saved LIVE state.
   if (row.status?.toUpperCase() === "LIVE") return { label: "Inactive", tone: "inactive" };

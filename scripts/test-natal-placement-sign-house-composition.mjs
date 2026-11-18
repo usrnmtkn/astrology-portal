@@ -30,6 +30,18 @@ rows.vocabularyRows.push(...interim.vocabularyRows);
 
 const renderBrowserPlacement = createFallbackRenderer(templates, rows).renderNatalPlacement;
 const renderShippedPlacement = shippedDist.createFallbackRenderer(templates, rows).renderNatalPlacement;
+for (const render of [renderNodePlacement, renderBrowserPlacement, renderShippedPlacement]) {
+  for (const voice of ["you", "Maya"]) {
+    const houseOnly = render({ planet: "mars", house: 12, voice });
+    const combined = render({ planet: "mars", sign: "aries", house: 12, voice });
+    assert.equal(houseOnly.headline, "Mars in the 12th house");
+    assert.deepEqual(houseOnly.parts, combined.parts.slice(1), "House-only preserves the complete existing house section.");
+    assert.deepEqual(houseOnly.partKeys, combined.partKeys.slice(1));
+    assert.equal(houseOnly.body, houseOnly.parts.join("\n\n"));
+    assert.doesNotMatch(houseOnly.body, /\{\{|\}\}/u);
+  }
+  assert.throws(() => render({ planet: "mars", voice: "you" }), /requires a sign or house/u);
+}
 const expectedSignBody = rows.hookRows.find(
   (row) => row.contentKey === "fallback-hook/natal-you-placement-sign-final/moon/scorpio"
 )?.body;
@@ -737,7 +749,7 @@ assert.match(
 );
 assert.match(
   appSource,
-  /activePlacementRouteId,\s*fallbackArchitectureV3Version,\s*generatedContent,/u,
+  /activePlacementRouteId,\s*fallbackArchitectureV3Version,\s*natalPlacementSources\.status,\s*generatedContent,/u,
   "An open natal placement must refresh after its deferred exact-copy bundle loads."
 );
 

@@ -1,6 +1,7 @@
 import { skyPlacementLinkLabel, type BodyMotion } from "./skyMotionLabels";
 import { isDisplayRetrograde } from "../services/astrologyDisplay";
 import { DIGNITY_SIGNS, TRADITIONAL_DIGNITY_PLANETS } from "../services/planetSignDignity.mjs";
+import { skyDebilityPlacementSlots } from "./skyDebilityIdentity.mjs";
 
 export type SkyDebilityDisplayPart = {
   text: string;
@@ -73,6 +74,10 @@ export function emphasizeSkyDebilityCount(parts: readonly SkyDebilityDisplayPart
 export function presentSkyDebilityParts(parts: readonly SkyDebilityDisplayPart[], links: readonly SkyDebilityPlacementLink[]): SkyDebilityDisplayPart[] {
   const highlighted = emphasizeSkyDebilityCount(parts);
   return highlighted.flatMap((part, index): SkyDebilityDisplayPart[] => {
+    if (skyDebilityPlacementSlots.some(slot => slot.name === part.slot)) {
+      const link = links.find(value => normalized(value.text) === normalized(part.text));
+      return [{ ...part, ...(link ? { href: link.href } : {}) }];
+    }
     if (!placementListSlots.has(part.slot ?? "") || !links.length) return [part];
     if (part.slot === "dignityPlacementList") return part.text.split(/(,? and |, |; | is in | are in )/u).map(text => {
       const link = links.find(value => value.text.replace(" retrograde in ", " in ") === text);

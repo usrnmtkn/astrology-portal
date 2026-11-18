@@ -154,9 +154,9 @@ export function ReportsGlobalLayer() {
       {toast ? (
         <aside className="report-ready-toast" role="status" aria-live="polite">
           <button className="report-ready-toast__open" type="button" onClick={() => void openReport(toast)}>
-            <span className="report-ready-toast__eyebrow">Report ready</span>
-            <strong>{toast.title}</strong>
-            <span>View report</span>
+            <span className="report-ready-toast__icon" aria-hidden="true"><FileText size={20}/></span>
+            <span className="report-ready-toast__copy"><span className="report-ready-toast__eyebrow">Report ready</span>
+            <strong>{toast.title}</strong><span className="report-ready-toast__action">View report</span></span>
           </button>
           <button className="report-ready-toast__dismiss" type="button" aria-label="Dismiss report notification" onClick={() => setToast(null)}>
             <X size={18} aria-hidden="true" />

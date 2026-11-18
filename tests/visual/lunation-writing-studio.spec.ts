@@ -1,11 +1,79 @@
 import {test,expect} from '@playwright/test';
 import {routeStudioInventoryApi} from '../helpers/studio-inventory-route';
 import {studioApiStore} from '../helpers/studio-api-store';
+import {checkWritingExport} from '../helpers/check-writing-export';
 
 const typography=(element:Element)=>{
   const style=getComputedStyle(element);
   return Object.fromEntries(['fontFamily','fontSize','fontWeight','lineHeight','letterSpacing','marginTop','marginBottom','textTransform','textAlign'].map(key=>[key,style[key as keyof CSSStyleDeclaration]]));
 };
+for(const width of [390,1440])for(const theme of ['light','dark'] as const){
+  test(`Manual lunation draft avoids writer preparation at ${width} ${theme}`,async({page})=>{
+    const inventory=await studioApiStore([]),writer=await studioApiStore([],{lunationWriting:true});
+    const actions:string[]=[],listQueries:string[]=[];
+    try{
+      await page.context().route('**/*',route=>new URL(route.request().url()).pathname.startsWith('/api/')?route.abort():route.continue());
+      await routeStudioInventoryApi(page,{call:inventory.call,listRows:()=>[]});
+      await page.route('**/api/admin/calendar-feed-events',route=>route.fulfill({json:{ok:true,events:[]}}));
+      await page.route(/\/api\/admin\/(?:calendar-lunation-writing|lunation-writing)/,async route=>{
+        const req=route.request(),url=new URL(req.url()),body=req.method()==='POST'?req.postDataJSON():undefined;
+        if(body)actions.push(body.action);
+        if(req.method()==='GET'&&url.pathname==='/api/admin/lunation-writing'&&!url.searchParams.has('month')&&!url.searchParams.has('id'))listQueries.push(url.search);
+        const result=await writer.call({method:req.method(),url:url.pathname+url.search,...(body?{body}:{})});
+        await route.fulfill({status:result.status,contentType:'application/json',body:JSON.stringify(result.payload)});
+      });
+      await page.setViewportSize({width,height:1000});await page.emulateMedia({colorScheme:theme});
+      await page.addInitScript(value=>{localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture');localStorage.setItem('tldrastro:studio-theme',value);},theme);
+      await page.goto('/admin/content#calendar-writeups?view=lunation-writing');
+      const workspace=page.getByRole('region',{name:'Lunation writing',exact:true});
+      await workspace.getByLabel('Month',{exact:true}).fill('2027-02');
+      await workspace.getByLabel('Time zone',{exact:true}).fill('UTC');
+      await expect(workspace.getByRole('button',{name:'Write manually',exact:true})).toBeEnabled();
+      await expect(workspace.getByText('Write manually opens a blank article.',{exact:false})).toBeVisible();
+      await page.screenshot({path:`test-results/lunation-manual-entry-${width}-${theme}.png`,fullPage:true});
+      await workspace.getByRole('button',{name:'Write manually',exact:true}).click();
+      const selected=workspace.getByRole('region',{name:'Selected lunation draft',exact:true});
+      await expect(selected).toBeFocused();
+      await expect(selected.getByLabel('Full article',{exact:true})).toBeVisible();
+      await expect(selected.getByRole('button',{name:'Create draft',exact:true})).toHaveCount(0);
+      await expect(selected.getByRole('button',{name:'Reject & regenerate',exact:true})).toHaveCount(0);
+      await expect(selected.getByText('Writing plan and sources',{exact:true})).toHaveCount(0);
+      const copy='Synthetic manual opening preserved in full.\n\nSynthetic final manual paragraph and ending.';
+      await selected.getByLabel('Article title',{exact:true}).fill('Synthetic manual Moon article');
+      await selected.getByLabel('Full article',{exact:true}).fill(copy);
+      await selected.getByRole('button',{name:'Save draft',exact:true}).click();
+      await expect(selected.getByRole('status')).toHaveText('Draft saved.');
+      let row=(await writer.call({method:'rows'})).find((r:any)=>r.content_key.startsWith('studio-lunation/'));
+      expect(row.body).toBe(copy);expect(row.source_snapshot.lunationWriting.authoringSource).toBe('manual');
+      expect(row.source_snapshot.lunationWriting.preview).toBeUndefined();
+      await page.reload();
+      await workspace.getByRole('region',{name:'Saved lunation drafts',exact:true}).getByRole('button',{name:'Synthetic manual Moon article',exact:true}).click();
+      await expect(selected.getByLabel('Full article',{exact:true})).toHaveValue(copy);
+      await expect(selected.getByRole('button',{name:'Review & publish',exact:true})).toBeEnabled();
+      await workspace.getByRole('button',{name:'Archive draft',exact:true}).click();
+      await expect(selected.getByRole('status')).toHaveText('Draft archived. Restore it to continue editing.');
+      await expect(selected.getByLabel('Full article',{exact:true})).toBeDisabled();
+      await workspace.getByRole('button',{name:'Restore draft',exact:true}).click();
+      await expect(selected.getByRole('status')).toHaveText('Draft restored. Review and publish when ready.');
+      await expect(selected.getByLabel('Full article',{exact:true})).toHaveValue(copy);
+      await expect(selected.getByLabel('Full article',{exact:true})).toBeEnabled();
+      expect(actions).toEqual(['create-manual','save','archive','restore']);
+      expect(listQueries.length).toBeGreaterThan(0);expect(listQueries.every(query=>new URLSearchParams(query).get('listing')==='true')).toBe(true);
+      expect((await writer.call({method:'provider'})).calls).toBe(0);
+      row=(await writer.call({method:'rows'})).find((r:any)=>r.id===row.id);
+      expect(row.status).toBe('DRAFT');expect(row.lane).toBe('reference');expect(row.body).toBe(copy);
+      expect(row.source_snapshot.lunationWriting.preview).toBeUndefined();
+      expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+      await page.screenshot({path:`test-results/lunation-manual-${width}-${theme}.png`,fullPage:true});
+    }finally{
+      try{
+        // The context API-deny route stays installed while page callbacks drain.
+        await page.unrouteAll({behavior:'wait'});
+        await page.close();
+      }finally{await writer.close();await inventory.close();}
+    }
+  });
+}
 for(const width of [390,1440])for(const theme of ['light','dark'] as const){
   test(`Lunation writer saves and recovers its draft at ${width} ${theme}`,async({page})=>{
     test.setTimeout(240000);
@@ -70,6 +138,10 @@ for(const width of [390,1440])for(const theme of ['light','dark'] as const){
       await expect(workspace.getByRole('region',{name:'Saved lunation drafts',exact:true})).toHaveCount(0);
       await expect(workspace.locator('button.admin-primary-button:visible:enabled')).toHaveCount(1);
       expect((await writer.call({method:'provider'})).calls).toBe(0);
+      const beforeExport=await writer.call({method:'rows'});
+      await checkWritingExport(page,workspace,'Synthetic saved full-moon aries opening.\n\nSynthetic complete full-moon aries ending.');
+      expect(await writer.call({method:'rows'})).toEqual(beforeExport);
+      expect((await writer.call({method:'provider'})).calls).toBe(0);
       await workspace.getByText('Your writing examples',{exact:true}).click();
       await expect(workspace.getByText('Synthetic saved full-moon aries opening.\n\nSynthetic complete full-moon aries ending.',{exact:true})).toBeVisible();
       await workspace.getByText('Your writing examples',{exact:true}).click();
@@ -97,7 +169,8 @@ for(const width of [390,1440])for(const theme of ['light','dark'] as const){
       await expect(workspace.getByText('Writing your new draft…',{exact:true})).toBeVisible();
       await expect(workspace.getByLabel('Article generation progress',{exact:true})).toBeFocused();
       await expect(workspace.getByLabel('Full article',{exact:true})).toHaveCount(0);
-      await expect.poll(async()=>(await writer.call({method:'provider'})).polls).toBeGreaterThanOrEqual(3);
+      // The first check runs after one second, followed by five-second intervals.
+      await expect.poll(async()=>(await writer.call({method:'provider'})).polls,{timeout:20000}).toBeGreaterThanOrEqual(3);
       expect(disabledDuringPoll.length).toBeGreaterThanOrEqual(3);
       expect(disabledDuringPoll.every(disabled=>!disabled)).toBe(true);
       await page.screenshot({path:`test-results/lunation-writer-progress-${width}-${theme}.png`,fullPage:true});
@@ -106,7 +179,7 @@ for(const width of [390,1440])for(const theme of ['light','dark'] as const){
       await page.getByRole('region',{name:'Saved lunation drafts',exact:true}).getByRole('button',{name:'Full Moon in Aries',exact:true}).click();
       await expect(workspace.getByText('Writing your new draft…',{exact:true})).toBeVisible();
       await writer.call({method:'provider',body:{pollFailures:1}});
-      await expect(workspace.getByText('Progress checks paused.',{exact:true})).toBeVisible();
+      await expect(workspace.getByText('Progress checks paused.',{exact:true})).toBeVisible({timeout:15000});
       await expect(workspace.getByRole('alert')).toContainText('The writer result is temporarily unavailable.');
       expect((await writer.call({method:'provider'})).calls).toBe(1);
       if(width===1440&&theme==='light'){
@@ -205,6 +278,122 @@ for(const width of [390,1440])for(const theme of ['light','dark'] as const){
       await page.getByRole('tab',{name:'Reusable sign readings',exact:true}).click();
       await expect(page.getByRole('textbox',{name:'Voice and clarity',exact:true})).toHaveValue(/Synthetic shared guidance marker/);
       expect(errors).toEqual([]);
-    }finally{inventory.close();writer.close();}
+    }finally{
+      try{
+        // The context API-deny route stays installed while page callbacks drain.
+        await page.unrouteAll({behavior:'wait'});
+        await page.close();
+      }finally{await writer.close();await inventory.close();}
+    }
+  });
+  test(`Lunation workspace archives and restores complete writing at ${width} ${theme}`,async({page})=>{
+    const inventory=await studioApiStore([]),writer=await studioApiStore([],{lunationWriting:true});
+    const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
+    const title='Synthetic recoverable lunar draft';
+    const body='Synthetic complete archive opening.\n\nSynthetic exact final sentence.';
+    try{
+      await page.context().route('**/*',route=>new URL(route.request().url()).pathname.startsWith('/api/')?route.abort():route.continue());
+      await routeStudioInventoryApi(page,{call:inventory.call,listRows:()=>[]});
+      await page.route('**/api/admin/calendar-feed-events',route=>route.fulfill({json:{ok:true,events:[]}}));
+      await page.route(/\/api\/admin\/(?:calendar-lunation-writing|lunation-writing)/,async route=>{
+        const req=route.request(),url=new URL(req.url());
+        const result=await writer.call({method:req.method(),url:url.pathname+url.search,...(req.method()==='POST'?{body:req.postDataJSON()}:{})});
+        await route.fulfill({status:result.status,json:result.payload});
+      });
+      await page.setViewportSize({width,height:1000});await page.emulateMedia({colorScheme:theme});
+      await page.addInitScript(value=>{localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture');localStorage.setItem('tldrastro:studio-theme',value);},theme);
+      await page.goto('/admin/content#calendar-writeups?view=lunation-writing&writing=dated');
+      const workspace=page.getByRole('region',{name:'Lunation writing',exact:true});
+      await workspace.getByLabel('Month',{exact:true}).fill('2026-09');
+      await workspace.getByLabel('Time zone',{exact:true}).fill('America/New_York');
+      await workspace.getByRole('combobox',{name:'Event type',exact:true}).selectOption('full-moon');
+      await workspace.getByRole('combobox',{name:'Moon or eclipse',exact:true}).selectOption({label:'Full Moon in Aries'});
+      await workspace.getByRole('button',{name:'Create new draft',exact:true}).click();
+      await workspace.getByRole('button',{name:'Archive draft',exact:true}).click();
+      await expect(workspace.getByText('Draft archived. Restore it to continue editing.',{exact:true})).toBeVisible();
+      await expect(workspace.getByRole('button',{name:'Create draft',exact:true})).toHaveCount(0);
+      await workspace.getByRole('button',{name:'Restore draft',exact:true}).click();
+      await expect(workspace.getByText('Draft restored. Review and publish when ready.',{exact:true})).toBeVisible();
+      await workspace.getByText('Write or paste a draft instead',{exact:true}).click();
+      await workspace.getByLabel('Article title',{exact:true}).fill(title);
+      await workspace.getByLabel('Full article',{exact:true}).fill(body);
+      await workspace.getByRole('button',{name:'Save draft',exact:true}).click();
+      await expect(workspace.getByText('Draft saved.',{exact:true})).toBeVisible();
+      const saved=(await writer.call({method:'rows'})).find((row:any)=>row.content_key.startsWith('studio-lunation/'));
+      await workspace.getByLabel('Full article',{exact:true}).fill(body+' Unsaved.');
+      await expect(workspace.getByRole('button',{name:'Archive draft',exact:true})).toBeDisabled();
+      await workspace.getByLabel('Full article',{exact:true}).fill(body);
+      await workspace.getByLabel('Full article',{exact:true}).locator('..').getByRole('button',{name:'Format text',exact:true}).click();
+      const formatted=workspace.getByRole('textbox',{name:'Full article formatted text',exact:true});
+      await expect(formatted).toHaveAttribute('contenteditable','true');
+      const visibleBeforeArchive=await formatted.innerText();
+      await expect(workspace.getByRole('button',{name:'Archive draft',exact:true})).toBeEnabled();
+      await workspace.getByRole('button',{name:'Archive draft',exact:true}).click();
+      await expect(workspace.getByText('Draft archived. Restore it to continue editing.',{exact:true})).toBeVisible();
+      const locked=(await writer.call({method:'rows'})).find((row:any)=>row.id===saved.id);
+      expect(locked.body).toBe(body);expect((await writer.call({method:'provider'})).calls).toBe(0);
+      await expect(formatted).toHaveAttribute('contenteditable','false');
+      for(const name of ['Bold','Italic','Bulleted list','Numbered list','Undo formatting','Redo formatting']){
+        await expect(workspace.getByRole('button',{name,exact:true})).toBeDisabled();
+      }
+      await formatted.scrollIntoViewIfNeeded();
+      const lockedBounds=await formatted.boundingBox();
+      expect(lockedBounds).not.toBeNull();
+      await page.mouse.click(lockedBounds!.x+lockedBounds!.width/2,lockedBounds!.y+Math.min(lockedBounds!.height/2,20));
+      await page.keyboard.press('ControlOrMeta+b');
+      await page.keyboard.type('Blocked archived keyboard edit.');
+      await page.keyboard.press('ControlOrMeta+i');
+      await expect(formatted).toHaveText(visibleBeforeArchive,{useInnerText:true});
+      expect(await formatted.innerText()).toBe(visibleBeforeArchive);
+      const afterLockedInput=(await writer.call({method:'rows'})).find((row:any)=>row.id===saved.id);
+      expect(afterLockedInput.status).toBe('ARCHIVED');expect(afterLockedInput.body).toBe(body);
+      await workspace.getByRole('button',{name:'Restore draft',exact:true}).click();
+      await expect(workspace.getByText('Draft restored. Review and publish when ready.',{exact:true})).toBeVisible();
+      await expect(formatted).toHaveAttribute('contenteditable','true');
+      expect(await formatted.innerText()).toBe(visibleBeforeArchive);
+      await expect(workspace.getByRole('button',{name:'Bold',exact:true})).toBeEnabled();
+      expect((await writer.call({method:'rows'})).find((row:any)=>row.id===saved.id).body).toBe(body);
+      await workspace.getByRole('button',{name:'Archive draft',exact:true}).click();
+      await expect(workspace.getByText('Draft archived. Restore it to continue editing.',{exact:true})).toBeVisible();
+      await expect(workspace.getByLabel('Full article',{exact:true})).toBeDisabled();
+      await expect(workspace.getByLabel('Full article',{exact:true})).toHaveValue(body);
+      await expect(workspace.getByRole('button',{name:'Review & publish',exact:true})).toHaveCount(0);
+      await expect(workspace.getByRole('button',{name:'Create draft',exact:true})).toHaveCount(0);
+      const archived=(await writer.call({method:'rows'})).find((row:any)=>row.id===saved.id);
+      expect(archived.status).toBe('ARCHIVED');expect(archived.lane).toBe('reference');
+      for(const field of ['headline','summary','body','facts','sections','source_snapshot'])expect(archived[field]).toEqual(saved[field]);
+      await page.reload();
+      await expect(workspace.getByRole('region',{name:'Saved lunation drafts',exact:true}).getByRole('button',{name:title,exact:true})).toHaveCount(0);
+      await workspace.getByRole('button',{name:'Show archived drafts',exact:true}).click();
+      await workspace.getByRole('region',{name:'Saved lunation drafts',exact:true}).getByRole('button',{name:title,exact:true}).click();
+      await expect(workspace.getByLabel('Full article',{exact:true})).toBeDisabled();
+      await expect(workspace.getByLabel('Full article',{exact:true})).toHaveValue(body);
+      await page.screenshot({path:`test-results/lunation-archived-${width}-${theme}.png`,fullPage:true});
+      await workspace.getByRole('button',{name:'Restore draft',exact:true}).click();
+      await expect(workspace.getByText('Draft restored. Review and publish when ready.',{exact:true})).toBeVisible();
+      await expect(workspace.getByLabel('Full article',{exact:true})).toBeEnabled();
+      await expect(workspace.getByLabel('Full article',{exact:true})).toHaveValue(body);
+      const restored=(await writer.call({method:'rows'})).find((row:any)=>row.id===saved.id);
+      expect(restored.status).toBe('DRAFT');expect(restored.lane).toBe('reference');
+      const newerBody=body+'\n\nSynthetic newer complete writing.';
+      expect((await writer.call({method:'POST',body:{action:'save',id:restored.id,expectedUpdatedAt:restored.updated_at,headline:title,body:newerBody}})).status).toBe(200);
+      await workspace.getByRole('button',{name:'Archive draft',exact:true}).click();
+      await expect(workspace.getByRole('alert')).toContainText('This draft changed.');
+      await expect(workspace.getByLabel('Full article',{exact:true})).toHaveValue(body);
+      const retained=(await writer.call({method:'rows'})).find((row:any)=>row.id===saved.id);
+      expect(retained.status).toBe('DRAFT');expect(retained.body).toBe(newerBody);
+      await page.reload();
+      await workspace.getByRole('region',{name:'Saved lunation drafts',exact:true}).getByRole('button',{name:title,exact:true}).click();
+      await expect(workspace.getByLabel('Full article',{exact:true})).toHaveValue(newerBody);
+      expect((await writer.call({method:'provider'})).calls).toBe(0);
+      expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth+1)).toBe(true);
+      expect(errors).toEqual([]);
+    }finally{
+      try{
+        // The context API-deny route stays installed while page callbacks drain.
+        await page.unrouteAll({behavior:'wait'});
+        await page.close();
+      }finally{await writer.close();await inventory.close();}
+    }
   });
 }

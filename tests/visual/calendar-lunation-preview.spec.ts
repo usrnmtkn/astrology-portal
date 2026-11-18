@@ -1,7 +1,80 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Request } from "@playwright/test";
 import { bundledPublications } from "../helpers/bundled-publications";
 import { readerResponse } from "../helpers/reader-response";
 import { watchBrowserErrors } from "./qaRuntimeGuards";
+import { studioApiStore } from '../helpers/studio-api-store';
+import { lunarOwnerDraft } from '../helpers/lunar-owner-publication.mjs';
+import { canonicalPublicationLedger, publicationLedgerTag } from '../../apps/web/src/services/publicationLedgerTransport';
+import skyHandler from '../../api/sky';
+import calendarHandler from '../../api/calendar';
+import type { IncomingMessage, ServerResponse } from 'node:http';
+
+// Calculated event fixtures; production matching always uses the event snapshot.
+const aspectDestinations = [
+  {date: '2026-07-14', sign: 'cancer', key: 'lunation.new.cancer.conjunction.mercury.cancer'},
+  {date: '2045-03-18', sign: 'pisces', key: 'lunation.new.pisces.conjunction.venus.pisces'},
+  {date: '2003-11-09', sign: 'taurus', key: 'lunation.full.taurus.trine.jupiter.virgo'},
+  {date: '2027-02-20', sign: 'virgo', key: 'lunation.full.virgo.square.uranus.gemini'}
+];
+
+for (const [index, destination] of aspectDestinations.entries()) {
+  test(`Published lunation aspect destination ${destination.key}`, async ({page, request}) => {
+    test.setTimeout(120_000);
+    const live = process.env.LUNATION_READER_LIVE === 'true';
+    let body = `Synthetic lunar aspect ${index} begins here. The complete final sentence survives direct navigation and reload.`;
+    const row = {id: `10000000-0000-4000-8000-00000000001${index}`, content_key: destination.key,
+      updated_at: '2026-11-17T12:00:00Z', surface: 'sky', mode: 'in_depth', event_type: 'lunation-aspect',
+      block_type: 'fallback_hook', status: 'DRAFT', lane: 'reference', review_state: 'owner-review-required',
+      headline: 'Synthetic lunar aspect', summary: '', body, sections: {}, facts: {},
+      source_snapshot: {content_role: 'full_copy', review_status: 'needs_review'}};
+    const store = live ? null : await studioApiStore([row]);
+    try {
+      await page.setViewportSize({width: index === 3 ? 390 : 1440, height: 1000});
+      await page.clock.setFixedTime(new Date(`${destination.date}T20:00:00Z`));
+      await page.addInitScript(({location, theme}) => {
+        localStorage.setItem('tldrastro:selectedLocation', JSON.stringify(location));
+        localStorage.setItem('tldrastro:theme', theme);
+      }, {location, theme: index === 3 ? 'dark' : 'light'});
+      if (store) {
+        const result = await store.call({method: 'PATCH', body: {id: row.id, expectedUpdatedAt: row.updated_at,
+          ownerAction: 'publish-owner-content'}});
+        expect(result.status).toBe(200);
+        await bundledPublications(page);
+        await page.route('**/api/content-publications', async route => {
+          const publications = canonicalPublicationLedger(await store.call({method: 'publications'}));
+          await route.fulfill({json: {schema: 'tldr-publications/v1', publications}});
+        });
+        await page.route('**/api/content-reader', async route => {
+          const result = await store.call({method: 'POST', url: '/api/content-reader', body: route.request().postDataJSON()});
+          await route.fulfill({status: result.status, json: result.payload});
+        });
+        for (const [pattern, handler] of [['**/api/sky?**', skyHandler], ['**/api/calendar?**', calendarHandler]] as const) {
+          await page.route(pattern, async route => {
+            const response = {statusCode: 200, setHeader() {}, end(body: string) {
+              void route.fulfill({status: this.statusCode, contentType: 'application/json', body});
+            }};
+            await handler({method: 'GET', url: route.request().url()} as IncomingMessage, response as unknown as ServerResponse);
+          });
+        }
+      } else {
+        const result = await request.post('/api/content-reader', {data: {keys: [destination.key]}});
+        expect(result.status()).toBe(200);
+        const saved = (await result.json()).rows.find((item: any) => item.content_key === destination.key);
+        expect(Boolean(saved?.body)).toBe(true);
+        body = saved.body;
+      }
+      await page.goto(`/?date=${destination.date}#sky/lunation/${destination.date}/${destination.sign}`);
+      const verify = async () => {
+        const passage = page.locator('.sky-detail-article').getByText(body, {exact: true});
+        await expect(passage).toBeVisible({timeout: 90_000});
+        expect((await passage.innerText()) === body).toBe(true);
+      };
+      await verify();
+      await page.reload();
+      await verify();
+    } finally {store?.close();}
+  });
+}
 
 // Owner-supplied Calendar preview; the remainder is synthetic test-only copy.
 const opening = "The Full Moon in Aries shines a sharp light on the cost of keeping the peace. We may begin to recognize how much quiet frustration has accumulated beneath our instinct to be accommodating. When you are the one who always rearranges your schedule or swallows an objection, being easy to get along with becomes an expensive habit. Something you agreed to do as a one-time favor has become an expectation, and you are tired of being the default compromise.";
@@ -10,6 +83,8 @@ const remainder = ["The second fixture paragraph remains part of this saved arti
 const location = { label: "New York, NY", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" };
 
 const scenarios = [
+  {theme: 'light', width: 1440, date: '2026-09-26', kind: 'full-moon', sign: 'aries', opening: 'Synthetic timing: September 26 at 12:49 PM EDT.', remainder, timingTemplate: 'Synthetic timing: {{startDate}} at {{startTime}}.'},
+  {theme: 'dark', width: 390, date: '2026-07-14', kind: 'new-moon', sign: 'cancer', opening: 'Synthetic timing: July 14 at 5:43 AM EDT.', remainder, timingTemplate: 'Synthetic timing: {{startDate}} at {{startTime}}.'},
   ...["light", "dark"].flatMap(theme => [390,1440].map(width=>({theme,width,date:"2026-09-26",kind:"full-moon",sign:"aries",opening:"Synthetic dated article opening, preserved exactly.",remainder,dated:true}))),
   ...["light", "dark"].flatMap(theme => [390, 1440].map(width => ({ theme, width, date: "2026-09-26", kind: "full-moon", sign: "aries", opening, remainder }))),
   { theme: "light", width: 390, date: "2026-07-14", kind: "new-moon", sign: "cancer", opening: "The complete opening of the New Moon fixture.", remainder },
@@ -17,9 +92,28 @@ const scenarios = [
 ];
 
 for (const scenario of scenarios) {
-  test(`Calendar lunation preview ${scenario.kind} ${scenario.theme} ${scenario.width} ${scenario.remainder.length} extra paragraphs ${"dated" in scenario ? "dated" : "reusable"}`, async ({ page }) => {
+  test(`Calendar lunation preview ${scenario.kind} ${scenario.theme} ${scenario.width} ${scenario.remainder.length} extra paragraphs ${"timingTemplate" in scenario ? "timing" : "dated" in scenario ? "dated" : "reusable"}`, async ({ page, browserName }, testInfo) => {
     test.setTimeout(120_000);
-    const assertNoErrors = watchBrowserErrors(page);
+    const assertNoErrors = watchBrowserErrors(page, { webkitReaderReload: browserName === 'webkit' });
+    const assetRequests: Request[] = [];
+    page.on('request', request => {
+      if (/^\/assets\/.*\.(?:js|css)$/u.test(new URL(request.url()).pathname)) assetRequests.push(request);
+    });
+    let checkedAssets = 0;
+    const finishAssetReads = async () => {
+      do {
+        const batch = assetRequests.slice(checkedAssets);
+        await Promise.all(batch.map(async request => {
+          const response = await request.response();
+          expect(response, 'An executable asset must finish before deliberate document replacement').not.toBeNull();
+          expect(response!.status()).toBe(200);
+          expect(await response!.finished()).toBeNull();
+          expect(request.failure()).toBeNull();
+        }));
+        checkedAssets += batch.length;
+        await page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
+      } while (checkedAssets < assetRequests.length);
+    };
     await page.setViewportSize({ width: scenario.width, height: 1000 });
     await page.clock.setFixedTime(new Date(`${scenario.date}T22:00:00Z`));
     await page.emulateMedia({ reducedMotion: "reduce" });
@@ -31,7 +125,7 @@ for (const scenario of scenarios) {
     const row = {
       id: "lunation-preview-fixture", content_key: key, updated_at: `${scenario.date}T12:00:00.000Z`,
       status: "LIVE", lane: "serving", review_state: "reviewed", surface: "sky", mode: "article",
-      headline: "Lunation fixture", body: [scenario.opening, ...scenario.remainder].join("\n\n"),
+      headline: "Lunation fixture", body: ['timingTemplate' in scenario ? scenario.timingTemplate : scenario.opening, ...scenario.remainder].join("\n\n"),
       sections: { packageRecord: { contentKey: key, content_role: "authored", review_status: "approved" } }
     };
     const rows = [row, {
@@ -40,8 +134,46 @@ for (const scenario of scenarios) {
       headline: "Sun fixture", body: sunSummary,
       source_snapshot: { contentType: "mustache-template", contentSystem: "cms-surface-override", allowedSlots: [] }
     }];
+    const store = 'dated' in scenario ? await studioApiStore([
+      {...lunarOwnerDraft(), body: row.body}, rows[1]
+    ]) : null;
+    try {
     await bundledPublications(page);
-    await page.route("**/api/content-reader", route => route.fulfill({ json: readerResponse(rows) }));
+    if (store) {
+      await page.context().route('**/*', route => {
+        const request = route.request();
+        return new URL(request.url()).pathname.startsWith('/api/') || !['GET', 'HEAD'].includes(request.method())
+          ? route.abort() : route.continue();
+      });
+      await page.route('**/rest/v1/**', route => route.fulfill({json: []}));
+      await page.route('**/api/sky?**', async route => {
+        const response = {statusCode: 200, setHeader() {}, end(body: string) {
+          void route.fulfill({status: this.statusCode, contentType: 'application/json', body});
+        }};
+        await skyHandler({method: 'GET', url: route.request().url()} as IncomingMessage, response as unknown as ServerResponse);
+      });
+      await page.route('**/api/calendar?**', route => route.fulfill({json: {ok: true, calendar: {days: []}}}));
+      await page.route('**/content-studio-last-known-good.json', route => route.fulfill({json: {
+        schema: 'content-studio-last-known-good-v2', rows: [], publications: [], rowCount: 0
+      }}));
+      const draft = lunarOwnerDraft();
+      const published = await store.call({method: 'PATCH', body: {id: draft.id,
+        expectedUpdatedAt: draft.updated_at, ownerAction: 'publish-owner-content'}});
+      expect(published.status).toBe(200);
+      expect(published.payload.rows[0].source_snapshot.lunationPublicationCheck.lint.validationProfile).toBe('legacy');
+      await page.route('**/api/content-publications', async route => {
+        const publications = canonicalPublicationLedger(await store.call({method: 'publications'}));
+        await route.fulfill({headers: {etag: await publicationLedgerTag(publications)}, json: {
+          schema: 'tldr-publications/v1', publications
+        }});
+      });
+      await page.route('**/api/content-reader', async route => {
+        const result = await store.call({method: 'POST', url: '/api/content-reader', body: route.request().postDataJSON()});
+        await route.fulfill({status: result.status, json: result.payload});
+      });
+    } else {
+      await page.route("**/api/content-reader", route => route.fulfill({ json: readerResponse(rows) }));
+    }
     await page.goto(`/?date=${scenario.date}#calendar?view=day&date=${scenario.date}`);
     const card = page.getByLabel("Selected lunar day", { exact: true });
     const moon = card.locator(`[data-guidance-key="${key}"]`);
@@ -76,11 +208,62 @@ for (const scenario of scenarios) {
     await expect(sun).toHaveText(sunBefore);
     expect(await card.evaluate(el => el.scrollWidth <= el.clientWidth + 1)).toBe(true);
     await card.locator(".calendar-sky-card").screenshot({ path: `test-results/lunation-preview-${scenario.kind}-${scenario.theme}-${scenario.width}-${scenario.remainder.length}.png` });
+    if ('timingTemplate' in scenario) {
+      const title = `${scenario.kind === 'full-moon' ? 'Full Moon' : 'New Moon'} in ${scenario.sign.charAt(0).toUpperCase()}${scenario.sign.slice(1)}`;
+      const eventCard = page.getByRole('button', {name: title, exact: true});
+      await expect(eventCard.locator('.calendar-stoic-card__excerpt')).toHaveText(scenario.opening);
+      await eventCard.click();
+      await expect(page.getByRole('dialog', {name: 'Event detail', exact: true})).toHaveCount(0);
+      await expect(page.locator('.sky-detail-article').getByText(scenario.opening, {exact: true})).toBeVisible({timeout: 60_000});
+      await expect(page.locator('.sky-detail-article').getByText(remainder.at(-1)!, {exact: true})).toBeVisible();
+      await finishAssetReads();
+      await assertNoErrors.reload();
+      await expect(page.locator('.sky-detail-article').getByText(scenario.opening, {exact: true})).toBeVisible({timeout: 60_000});
+      await expect(page.locator('.sky-detail-article').getByText(remainder.at(-1)!, {exact: true})).toBeVisible();
+    }
     if('dated' in scenario){
-      await page.goto(`/?date=${scenario.date}#sky/lunation/${scenario.date}/${scenario.sign}`);
+      const eventCard = page.getByRole('button', {name: 'Full Moon in Aries', exact: true});
+      await expect(eventCard.locator('.calendar-stoic-card__excerpt')).toHaveText(scenario.opening);
+      await eventCard.click();
+      await expect(page.getByRole('dialog', {name: 'Event detail', exact: true})).toHaveCount(0);
+      await expect(page).toHaveURL(/#sky\/event\/lunation\/full-moon\/aries\/at\//);
+      await expect(page.locator('#sky-detail-title')).toHaveText('Full Moon in Aries');
       await expect(page.getByText(scenario.opening,{exact:true})).toBeVisible({timeout:60000});
       await expect(page.getByText(remainder.at(-1)!,{exact:true})).toBeVisible();
+      await finishAssetReads();
+      await assertNoErrors.reload();
+      await expect(page.getByText(scenario.opening,{exact:true})).toBeVisible({timeout:60000});
+      await expect(page.getByText(remainder.at(-1)!,{exact:true})).toBeVisible();
+      const live = (await store!.call({method: 'rows'})).find((item: any) => item.content_key === key);
+      const retired = await store!.call({method: 'POST', url: '/api/admin/content-publication', body: {
+        action: 'retire', id: live.id, contentKey: key, expectedUpdatedAt: live.updated_at
+      }});
+      expect(retired.status).toBe(200);
+      await finishAssetReads();
+      const retirementRead = page.waitForResponse(async response => {
+        if (response.status() !== 200 || !['/api/content-reader', '/api/content-publications'].includes(new URL(response.url()).pathname)) return false;
+        return (await response.json()).publications?.some((item: any) => item.content_key === key && item.state === 'retired') === true;
+      });
+      await assertNoErrors.reload();
+      expect(await (await retirementRead).finished()).toBeNull();
+      await expect(page.getByRole('heading', { name: 'Sky event unavailable', exact: true })).toBeVisible({ timeout: 60000 });
+      await page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
+      await expect(page.getByText(scenario.opening,{exact:true})).toHaveCount(0);
+      await expect(page.getByText(remainder.at(-1)!,{exact:true})).toHaveCount(0);
+      await finishAssetReads();
+      await page.goto(`/?date=${scenario.date}#calendar?view=day&date=${scenario.date}`);
+      await expect(eventCard).toBeVisible({timeout:60000});
+      await expect(eventCard.locator('.calendar-stoic-card__excerpt')).toHaveCount(0);
+      await expect(page.getByText(scenario.opening,{exact:true})).toHaveCount(0);
     }
+    await finishAssetReads();
     assertNoErrors();
+    } finally {
+      store?.close();
+      await testInfo.attach('intentional-reload-cancellations', {
+        body: JSON.stringify({ count: assertNoErrors.reloadCancellations.length, events: assertNoErrors.reloadCancellations }),
+        contentType: 'application/json'
+      });
+    }
   });
 }

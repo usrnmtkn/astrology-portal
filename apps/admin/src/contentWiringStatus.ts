@@ -1,5 +1,7 @@
 import { calendarPlanetaryIdentity } from "./calendarPlanetarySources.js";
+import { studioPackageObject as record } from "../../../src/shared/studioPackagePatch.js";
 import { standaloneArticleKind } from "../../../src/shared/articleLibrary.js";
+import { isLunationHoroscopeKey, isLunationAspectKey } from "../../../src/shared/lunationHoroscopeIdentity.js";
 
 export type ContentWiringRow = {
   block_type?: string | null;
@@ -19,12 +21,6 @@ export type ContentWiringStatus = {
   reason: "connected" | "retired" | "source-material" | "unfinished" | "unknown";
   state: "connected" | "not-connected" | "not-serving" | "unknown";
 };
-
-function record(value: unknown): Record<string, unknown> {
-  return value && typeof value === "object" && !Array.isArray(value)
-    ? value as Record<string, unknown>
-    : {};
-}
 
 function text(value: unknown) {
   return typeof value === "string" ? value.trim() : "";
@@ -72,6 +68,12 @@ function retirementReason(row: ContentWiringRow) {
   return "";
 }
 
+function isLunationSourceKey(key: string) {
+  return isLunationHoroscopeKey(key)
+    || key.startsWith('authored/lunation-eclipse-section/')
+    || key.startsWith('authored/lunation-eclipse-house-layer/');
+}
+
 function isSourceMaterial(row: ContentWiringRow) {
   const source = record(row.source_snapshot);
   const facts = record(row.facts);
@@ -94,11 +96,13 @@ function isSourceMaterial(row: ContentWiringRow) {
     || role === "fallback-source"
     || renderPolicy.includes("reference-only")
     || reviewState === "source-material-generic-aspect-baseline"
-    || row.lane === "reference" && !row.content_key.startsWith("authored/sky-lunation-macro/");
+    || row.lane === "reference" && !row.content_key.startsWith("authored/sky-lunation-macro/") && !isLunationSourceKey(row.content_key);
 }
 
 function isKnownRenderedKey(contentKey: string) {
   return contentKey.startsWith("authored/connection-activation/")
+    || isLunationAspectKey(contentKey)
+    || isLunationSourceKey(contentKey)
     || contentKey.startsWith("fallback-template/connection-transit.bridge/")
     || contentKey.startsWith("horoscope/")
     || contentKey.startsWith("sky-season-fallback/")
@@ -114,6 +118,7 @@ function isKnownRenderedKey(contentKey: string) {
     || contentKey.startsWith("sky-article/")
     || contentKey.startsWith("house-horoscope-core/")
     || contentKey.startsWith("fallback-hook/natal-you-placement-complete-final/")
+    || contentKey.startsWith("fallback-hook/natal-retrograde-modifier/")
     || contentKey.startsWith("authored/sky-lunation-macro/");
 }
 

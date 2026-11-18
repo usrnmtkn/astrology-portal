@@ -33,8 +33,9 @@ const row = (content_key, index) => ({ id: id(revision, index), content_key, upd
   sections: {}, source_snapshot: { contentType: 'manual' } });
 const rows = () => [row(mainKey, 0), row(vocabularyKey, 1)];
 const requests = [], unexpected = [];
-let offlineReads = 0;
+let offlineReads = 0, offlineHold = null;
 const originalFetch = globalThis.fetch;
+const originalTimeout = AbortSignal.timeout;
 const state = { client: { from(table) {
   assert.equal(table, 'content_publications');
   let lower, upper, after;
@@ -55,6 +56,12 @@ try {
   globalThis.fetch = async (input, init) => {
     if (String(input) === '/content-studio-last-known-good.json') {
       offlineReads++;
+      const gate = offlineHold;
+      if (gate) {
+        gate.started.resolve();
+        await gate.promise;
+        return Response.json({ schema: 'content-studio-last-known-good-v2', rows: [], rowCount: 0, publications: [] });
+      }
       return Response.json({ schema: 'content-studio-last-known-good-v2', rows: rows(), rowCount: 2, publications: publications() });
     }
     if (String(input) !== '/api/content-reader') { unexpected.push(String(input)); throw Error('Unexpected fixture destination'); }
@@ -161,6 +168,37 @@ try {
   const retried = await load();
   assert.equal(requests.length, beforeFailure + 4, 'A later explicit same-generation call must get a new transport');
   assert.equal(body(retried), 'Synthetic complete approved opening revision 4. Synthetic final sentence revision 4.');
+  // A user can retry after one source plane fails while the older targeted
+  // read is still recovering its offline snapshot. Retry must start new live
+  // work rather than inherit that pending failure; peers of the same attempt
+  // should still share it, even after the older fallback finishes.
+  const retryApi = await import(pathToFileURL(modulePath).href + '?retry-during-offline-recovery');
+  offlineHold = { ...deferred(), started: deferred() };
+  failures = 3;
+  const beforeRetry = requests.length;
+  const olderRead = retryApi.loadLiveGeneratedContentForKeys([mainKey]);
+  let retryGate;
+  try {
+    await offlineHold.started.promise;
+    assert.equal(requests.length, beforeRetry + 3);
+    holdNext = deferred(); retryGate = holdNext;
+    const renewed = retryApi.loadLiveGeneratedContentForKeys([mainKey], { retryKey: 1 });
+    await waitForRequests(beforeRetry + 4);
+    const sameAttempt = retryApi.loadLiveGeneratedContentForKeys([mainKey], { retryKey: 1 });
+    offlineHold.resolve();
+    assert.equal((await olderRead).size, 0, 'The older failed read keeps its own empty recovery result');
+    const afterOlderCompletion = retryApi.loadLiveGeneratedContentForKeys([mainKey], { retryKey: 1 });
+    await new Promise(resolve => setTimeout(resolve, 0));
+    assert.equal(requests.length, beforeRetry + 4, 'Older fallback completion cannot evict the newer retry attempt');
+    retryGate.resolve();
+    for (const result of await Promise.all([renewed, sameAttempt, afterOlderCompletion])) assert.equal(body(result), body(retried));
+    await retryApi.loadLiveGeneratedContentForKeys([mainKey], { retryKey: 1 });
+    assert.equal(requests.length, beforeRetry + 5, 'A settled retry does not become a response cache');
+  } finally {
+    offlineHold.resolve(); retryGate?.resolve();
+    await olderRead;
+    offlineHold = null;
+  }
   // Use a fresh actual module instance so dated offline fixtures cannot alter
   // the preceding undated publication-version/retirement controls.
   const datedApi = await import(pathToFileURL(modulePath).href + '?dated-offline');
@@ -172,9 +210,55 @@ try {
   assert.equal(body(await loadDated(['you'], '2026-10-16')), body(retried), 'Other surfaces retain matching dated offline rows');
   assert.ok((await loadDated(['you'], '2026-10-15')).has(vocabularyKey), 'Undated shared vocabulary remains eligible');
   assert.equal(body(await loadDated(['you'])), body(retried), 'An undated request retains dated offline rows');
-  assert.equal(offlineReads, 2, 'Dated controls use a separate actual offline cache');
+  assert.equal(offlineReads, 3, 'Dated controls use a separate actual offline cache');
+
+  // A healthy paged inventory can exceed eight seconds in total. Exercise the
+  // actual surface entry point with a virtual clock instead of waiting in CI.
+  state.client = onlineClient; rowTargetDate = null; revision = 5;
+  const inventory = Array.from({ length: 14 }, (_, index) => ({ ...row(`${mainKey}/page-${index + 1}`, 0),
+    id: `00000000-0000-4000-9000-${String(index + 1).padStart(12, '0')}` }));
+  const inventoryPublications = inventory.map(item => ({ content_key: item.content_key, state: 'live', revision,
+    row_id: item.id, row_updated_at: item.updated_at, updated_at: item.updated_at }));
+  let clock = 0, slowPage = -1, completedPages = 0, pageRequests = 0, deadlines = [];
+  AbortSignal.timeout = milliseconds => {
+    const controller = new AbortController();
+    deadlines.push({ at: clock + milliseconds, controller });
+    return controller.signal;
+  };
+  globalThis.fetch = async (input, init) => {
+    if (String(input) === '/content-studio-last-known-good.json') {
+      return Response.json({ schema: 'content-studio-last-known-good-v2', rows: [], rowCount: 0, publications: [] });
+    }
+    assert.equal(String(input), '/api/content-reader');
+    const query = JSON.parse(String(init.body));
+    const index = query.afterId ? inventory.findIndex(item => item.id === query.afterId) + 1 : 0;
+    assert.equal(index, completedPages, 'The cursor must continue from the previous complete page');
+    pageRequests++;
+    clock += index === slowPage ? 21_000 : 1_000;
+    for (const deadline of deadlines) if (deadline.at <= clock) {
+      deadline.controller.abort(new DOMException('Synthetic page timeout', 'TimeoutError'));
+    }
+    init.signal.throwIfAborted();
+    completedPages++;
+    return Response.json({ schema: READER_ROW_SCHEMA, rows: [inventory[index]], publications: [inventoryPublications[index]],
+      nextCursor: index + 1 < inventory.length ? inventory[index].id : null });
+  };
+  const inventoryApi = await import(pathToFileURL(modulePath).href + '?inventory');
+  const completeInventory = await inventoryApi.loadLiveGeneratedContentForSurfaces(['natal', 'you']);
+  assert.equal(completedPages, 14, 'The full surface inventory must finish past the former whole-read deadline');
+  assert.equal(clock, 14_000);
+  for (const item of inventory) assert.equal(completeInventory.get(item.content_key)?.body, item.body,
+    'Every complete published passage, including the final page, must survive pagination');
+  for (const stalledPage of [0, 9]) {
+    clock = 0; deadlines = []; completedPages = 0; pageRequests = 0; slowPage = stalledPage;
+    const failedInventory = await inventoryApi.loadLiveGeneratedContentForSurfaces(['natal', 'you']);
+    assert.equal(pageRequests, stalledPage + 1, 'A stalled page must stop without fetching another page');
+    assert.equal(completedPages, stalledPage);
+    assert.equal(failedInventory.size, 0, 'A failed inventory must not expose its partial new pages');
+  }
   assert.deepEqual(unexpected, []);
-  console.log('PASS actual surface loader: post-ledger active sharing, separate query identities, settled eviction, generation isolation, retirement, no-client/offline recovery and explicit retry.');
+  console.log('PASS actual surface loader: sharing, identities, generation isolation, retirement, offline recovery, full paged inventory and stalled-page bounds.');
 } finally {
-  globalThis.fetch = originalFetch; delete globalThis[symbol]; rmSync(temporary, { recursive: true, force: true });
+  globalThis.fetch = originalFetch; AbortSignal.timeout = originalTimeout;
+  delete globalThis[symbol]; rmSync(temporary, { recursive: true, force: true });
 }

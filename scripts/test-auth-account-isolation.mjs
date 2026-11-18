@@ -6,6 +6,7 @@ globalThis.authIsolationFixture = fixture;
 const result = await build({
   stdin: { contents: `export * from './apps/web/src/services/socialFriends.ts';
     export * from './apps/web/src/services/readerAuthReturn.ts';
+    export * from './apps/web/src/services/authCallback.ts';
     export * from './apps/web/src/services/verifiedAccountObserver.ts';`, resolveDir: process.cwd() },
   bundle: true, write: false, platform: "node", format: "esm",
   plugins: [{ name: "auth-transport", setup(b) {
@@ -35,7 +36,10 @@ const storage = () => {
 };
 globalThis.window = Object.assign(new EventTarget(), {
   sessionStorage: storage(), localStorage: storage(),
-  location: { href: "https://app.example.test/", origin: "https://app.example.test", replace: path => { window.location.href = path; } }
+  location: { href: "https://app.example.test/", origin: "https://app.example.test",
+    get pathname() { return new URL(this.href, this.origin).pathname; },
+    get search() { return new URL(this.href, this.origin).search; },
+    replace: path => { window.location.href = path; } }
 });
 globalThis.document = Object.assign(new EventTarget(), { visibilityState: "visible" });
 const key = "tldrastro.pending-social-invitation";
@@ -83,17 +87,63 @@ try {
   for (const value of ["https://evil.test/", "//evil.test/", "/\\evil.test/", "/admin/content", "/?code=secret#account", "/#access_token=secret", "/reports/a#s=secret", "/reports/../admin"]) {
     assert.equal(api.validReaderReturnPath(value), null, value);
   }
-  for (const path of ["/#account?view=journal", "/#friends?tab=circle", "/#you", "/reports/fixture-reading"]) {
+  for (const path of ["/#account?view=journal", "/#friends?tab=circle", "/#calendar", "/#you", "/reports/fixture-reading"]) {
     window.location.href = `https://app.example.test/?readerReturn=${encodeURIComponent(path)}`;
     assert.equal(api.rememberReaderReturnPath(), path);
     window.location.href = "https://app.example.test/#access_token=fixture";
-    assert.equal(api.returnToReaderAfterSignIn(), true);
+    assert.equal(api.returnToReaderAfterSignIn(), path.startsWith("/reports/"), "Hash navigation continues account loading; a different document restarts it");
     assert.equal(window.location.href, path);
     window.location.href = "https://app.example.test/";
     assert.equal(api.rememberReaderReturnPath(), null, "Return is consumed once");
   }
+  for (const path of ["/#friends?tab=requests", "/#friends?chart=fixture&tab=requests"]) {
+    window.location.href = `https://app.example.test/?readerReturn=${encodeURIComponent(path)}`;
+    assert.equal(api.rememberReaderReturnPath(), "/#you");
+    window.location.href = "https://app.example.test/";
+    assert.equal(api.returnToReaderAfterSignIn(), false);
+    assert.equal(window.location.href, "/#you", "Sign-in never resumes the Requests tab");
+  }
+  window.sessionStorage.setItem("tldrastro:readerAuthReturn", JSON.stringify({path:"/#friends?tab=requests", at: Date.now()}));
+  window.location.href = "https://app.example.test/";
+  assert.equal(api.returnToReaderAfterSignIn(), false);
+  assert.equal(window.location.href, "/#you", "Previously stored Requests returns are normalized too");
+  window.sessionStorage.setItem("tldrastro:readerAuthReturn", JSON.stringify({path:"/#friends?tab=circle", at: Date.now()}));
+  window.location.href = "https://app.example.test/#sky";
+  assert.equal(api.rememberReaderReturnPath(true), null);
+  assert.equal(window.sessionStorage.getItem("tldrastro:readerAuthReturn"), null, "A new login clears stale return state");
+  window.location.href = "https://app.example.test/#you";
+  window.sessionStorage.setItem("tldrastro:readerAuthReturn", JSON.stringify({path:"/#you", at: Date.now()}));
+  assert.equal(api.returnToReaderAfterSignIn(), false, "An already-reached return page cannot interrupt account loading");
+  assert.equal(window.location.href, "https://app.example.test/#you");
   window.sessionStorage.setItem("tldrastro:readerAuthReturn", JSON.stringify({path:"/#account", at: Date.now() - 25*3600*1000}));
   assert.equal(api.rememberReaderReturnPath(), null);
+
+  const assets = deferred();
+  window.__tldrastroRecoverPageAssets = () => assets.promise;
+  window.location.href = "https://app.example.test/?readerReturn=%2F%23friends%3Ftab%3Dcircle";
+  assert.equal(api.returnToReaderAfterSignIn(), true, "Asset recovery owns the pending navigation");
+  assert.match(window.location.href, /readerReturn=/, "Do not navigate before the failed asset cache is refreshed");
+  assets.resolve();
+  await tick();
+  assert.equal(window.location.href, "/#friends?tab=circle", "Recovery retains the requested feature");
+  const staleAssets = deferred();
+  window.__tldrastroRecoverPageAssets = () => staleAssets.promise;
+  window.location.href = "https://app.example.test/?readerReturn=%2F%23friends%3Ftab%3Dcircle";
+  assert.equal(api.returnToReaderAfterSignIn(), true);
+  window.location.href = "https://app.example.test/#sky";
+  staleAssets.resolve();
+  await tick();
+  assert.equal(window.location.href, "https://app.example.test/#sky", "A later navigation supersedes pending auth recovery");
+  const cancelledAssets = deferred();
+  let cancelled = false;
+  window.__tldrastroRecoverPageAssets = () => cancelledAssets.promise;
+  window.location.href = "https://app.example.test/?readerReturn=%2F%23friends%3Ftab%3Dcircle";
+  assert.equal(api.returnToReaderAfterSignIn(() => cancelled), true);
+  cancelled = true;
+  cancelledAssets.resolve();
+  await tick();
+  assert.match(window.location.href, /readerReturn=/, "A superseded account must not navigate when asset recovery finishes");
+  delete window.__tldrastroRecoverPageAssets;
 
   const states = [];
   const stop = api.observeVerifiedAccount(state => states.push(state));
@@ -118,3 +168,89 @@ try {
 } finally {
   delete globalThis.window; delete globalThis.document; delete globalThis.authIsolationFixture;
 }
+
+const guardBuild = await build({ entryPoints: ['tests/helpers/synthetic-network-guard.ts'], bundle: true, write: false, platform: 'node', format: 'esm' });
+const { installSyntheticNetworkGuard } = await import(`data:text/javascript;base64,${Buffer.from(guardBuild.outputFiles[0].text).toString('base64')}`);
+let routeHandler;
+const network = await installSyntheticNetworkGuard({
+  routeWebSocket: async () => {},
+  route: async (_pattern, handler) => { routeHandler = handler; }
+}, 'http://127.0.0.1:4436');
+const stylesheet = deferred(), fulfillment = deferred(), font = deferred();
+const requests = [];
+function fontRoute(url, resourceType, response, fulfill) {
+  return {
+    request: () => ({ url: () => url, method: () => 'GET', resourceType: () => resourceType,
+      headers: () => ({ accept: '*/*', 'user-agent': 'Synthetic browser', cookie: 'must-not-forward', authorization: 'must-not-forward', referer: 'must-not-forward' }) }),
+    fetch: async options => { requests.push(options); return response; }, fulfill
+  };
+}
+let lateTransfer;
+const firstTransfer = routeHandler(fontRoute('https://fonts.googleapis.com/css2?family=Fixture', 'stylesheet', stylesheet.promise, async () => {
+  lateTransfer = routeHandler(fontRoute('https://fonts.gstatic.com/s/atkinsonhyperlegible/v1/fixture.woff2', 'font', font.promise, async () => {}));
+  await fulfillment.promise;
+}));
+let drained = false;
+const drain = network.finishStaticFonts().then(() => { drained = true; });
+await tick();
+assert.equal(drained, false, 'Teardown waits for the already-started stylesheet request');
+stylesheet.resolve({ status: () => 200 });
+await tick();
+assert.equal(drained, false, 'Receiving a response does not finish its route fulfillment');
+fulfillment.resolve();
+await tick();
+assert.equal(drained, false, 'A font request started by the stylesheet must finish too');
+let blocked = false;
+await routeHandler({ request: () => ({ url: () => 'https://external.example.test/private', method: () => 'POST', resourceType: () => 'fetch' }), abort: async () => { blocked = true; } });
+assert.equal(blocked, true, 'Containment stays installed during teardown');
+font.resolve({ status: () => 200 });
+await Promise.all([firstTransfer, lateTransfer, drain]);
+assert.equal(drained, true);
+assert.equal(network.staticFontRequests.length, 2);
+// Standalone Studio declares these display faces in its shipped HTML. The
+// Newsreader URL is the actual mobile CI request that containment rejected.
+for (const url of [
+  'https://fonts.gstatic.com/s/newsreader/v26/cY9AfjOCX1hbuyalUrK4397yjA.woff2',
+  'https://fonts.gstatic.com/s/geistmono/v6/fixture.woff2'
+]) await routeHandler(fontRoute(url, 'font', { status: () => 200 }, async () => {}));
+await network.finishStaticFonts();
+assert.equal(network.staticFontRequests.length, 4, 'Declared Studio display fonts complete through the sanitized font transport');
+const rejectedFonts = [
+  ['https://fonts.gstatic.com/s/newsreader/v26/fixture.woff2', 'fetch', 'GET'],
+  ['https://fonts.gstatic.com/s/newsreader/v26/fixture.woff2', 'font', 'POST'],
+  ['https://fonts.gstatic.com.example.test/s/newsreader/v26/fixture.woff2', 'font', 'GET'],
+  ['https://fonts.gstatic.com/s/undeclaredfamily/v1/fixture.woff2', 'font', 'GET'],
+  ['https://fonts.gstatic.com/s/newsreader/v26/private.json', 'font', 'GET']
+];
+for (const [url, resourceType, method] of rejectedFonts) {
+  let aborted = false;
+  await routeHandler({ request: () => ({ url: () => url, method: () => method, resourceType: () => resourceType }), abort: async () => { aborted = true; } });
+  assert.equal(aborted, true, 'Font exceptions must retain method, resource type, exact host, family and path containment');
+}
+assert.deepEqual(network.unhandledExternal, [
+  'POST https://external.example.test/private',
+  ...rejectedFonts.map(([url, , method]) => { const parsed = new URL(url); return `${method} ${parsed.origin}${parsed.pathname}`; })
+]);
+for (const options of requests) assert.deepEqual(options, { headers: { accept: '*/*', 'user-agent': 'Synthetic browser' }, maxRedirects: 0 });
+const redirectUrls = ['https://fonts.googleapis.com/css2',
+  'https://fonts.gstatic.com/s/newsreader/v26/fixture.woff2',
+  'https://fonts.gstatic.com/s/geistmono/v6/fixture.woff2'];
+for (const url of redirectUrls) for (const status of [300, 301, 302, 303, 304, 305, 307, 308, 399]) {
+  let rejected = false;
+  await routeHandler({
+    ...fontRoute(`${url}?status=${status}`, url.endsWith('.woff2') ? 'font' : 'stylesheet', { status: () => status }, async () => {
+      assert.fail('A font redirect must never be fulfilled, even to an allowed destination.');
+    }),
+    abort: async () => { rejected = true; }
+  });
+  assert.equal(rejected, true, `Font HTTP ${status} must be rejected before the browser can follow it`);
+}
+assert.equal(network.staticFontRequests.length, 4, 'Rejected font redirects are never recorded as accepted transfers');
+assert.deepEqual(network.unhandledExternal.slice(1 + rejectedFonts.length), redirectUrls.flatMap(url => Array(9).fill(`FONT_REDIRECT GET ${url}`)));
+for (const options of requests) assert.deepEqual(options, { headers: { accept: '*/*', 'user-agent': 'Synthetic browser' }, maxRedirects: 0 });
+const failure = new Error('Synthetic font transport failed');
+const failedRoute = fontRoute('https://fonts.googleapis.com/css2?family=Fixture', 'stylesheet', null, async () => {});
+failedRoute.fetch = async () => { throw failure; };
+await assert.rejects(routeHandler(failedRoute), error => error === failure);
+await assert.rejects(network.finishStaticFonts(), error => error === failure);
+console.log('Synthetic font teardown: complete transfers, nested requests, redirect denial, containment and error propagation passed.');

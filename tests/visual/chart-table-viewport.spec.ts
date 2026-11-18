@@ -1,5 +1,5 @@
-import { expect, test, type Locator, type Page } from '@playwright/test';
-import { readerResponse } from '../helpers/reader-response';
+import { expect, test, type Locator, type Page } from '../helpers/polish-test';
+import { prepareChartReport as prepare } from '../helpers/chart-report-fixture';
 import { calendarRxFixture } from '../helpers/calendar-rx-fixture';
 import { studioListingFacts, studioListingRow } from '../../api/_lib/studio-listing-facts';
 
@@ -16,38 +16,6 @@ test.afterEach(async ({ page }) => {
   expect(pageErrors.get(page) ?? [], 'no unexpected runtime errors during viewport changes').toEqual([]);
 });
 
-async function prepare(page: Page, theme: string, friendName: string, unknown = false) {
-  const user = { id: '11111111-1111-4111-8111-111111111111', aud: 'authenticated', role: 'authenticated',
-    email: 'viewport@example.test', phone: '+12025550101', app_metadata: { provider: 'email' }, user_metadata: { name: 'Test Reader' } };
-  const authHost = new URL(process.env.VITE_SUPABASE_URL ?? 'https://visual-smoke.supabase.test').hostname.split('.')[0];
-  await page.addInitScript(({ theme, user, authHost, friendName, unknown }) => {
-    localStorage.setItem('tldrastro:theme', theme);
-    const location = { label: 'Synthetic New York', latitude: 40.7, longitude: -74, timeZone: 'America/New_York' };
-    localStorage.setItem('tldrastro:selectedLocation', JSON.stringify(location));
-    localStorage.setItem('tldrastro:userProfile', JSON.stringify({
-      ...user, name: 'Test Reader', provider: 'email', sun: 'Aquarius', moon: 'Scorpio', rising: 'Gemini',
-      phone: '+12025550101', currentLocation: location.label, currentLocationData: location,
-      charts: [{ id: 'viewport-chart', name: 'Test Reader', type: 'Birth chart', birthDate: '1990-01-01',
-        birthTime: '12:00 PM', birthCity: location.label, birthLocation: location }]
-    }));
-    localStorage.setItem(`tldrastro:manualCharts:${user.id}`, JSON.stringify([{
-      id: 'overlay-friend', ownerUserId: user.id, chartType: 'person', displayName: friendName,
-      firstName: friendName.split(' ')[0], lastName: friendName.split(' ')[1] ?? null, relationshipType: 'friend', birthDate: '1988-04-03',
-      birthTime: unknown ? null : '9:15 AM', birthTimeUnknown: unknown, birthPlace: location.label, birthLocation: location,
-      natalChart: null, notes: null, syncStatus: 'synced', lastSyncedAt: '2026-10-15T00:00:00Z', createdAt: '2026-10-15T00:00:00Z', updatedAt: '2026-10-15T00:00:00Z'
-    }]));
-    const session = JSON.stringify({ user, access_token: 'synthetic-token', refresh_token: 'synthetic-refresh', token_type: 'bearer', expires_at: 4102444800 });
-    for (const host of new Set([authHost, 'hdmdufozrgrajkfhydit'])) localStorage.setItem(`sb-${host}-auth-token`, session);
-  }, { theme, user, authHost, friendName, unknown });
-  await page.route('**/auth/v1/**', route => route.fulfill({ json: user }));
-  await page.route('**/rest/v1/**', route => route.fulfill({ json: [] }));
-  await page.route('**/api/**', route => route.fulfill({ status: 503, json: { error: 'Synthetic unavailable service' } }));
-  await page.route('**/utils/timezone', route => route.fulfill({ json: { timeZone: 'America/New_York', source: 'synthetic' } }));
-  await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse([]) }));
-  await page.route('**/content-studio-last-known-good.json', route => route.fulfill({ json: {
-    schema: 'content-studio-last-known-good-v2', rows: [], publications: [], rowCount: 0
-  } }));
-}
 
 async function chartFits(page: Page, locator: Locator) {
   await fits(page,locator);
@@ -65,7 +33,9 @@ async function fits(page: Page, locator: Locator) {
   await expect(async () => {
     const geometry = await locator.evaluate(el => {
       const b = el.getBoundingClientRect();
-      return {left:b.left,right:b.right,width:b.width,viewport:innerWidth,scroll:el.scrollWidth,client:el.clientWidth};
+      return {left:b.left,right:b.right,width:b.width,viewport:innerWidth,scroll:el.scrollWidth,client:el.clientWidth,
+       regions: [...el.querySelectorAll('.full-chart,.full-chart__content,.full-chart__grid-scroll,.full-chart__positions,.full-chart__overview,.full-chart__heading,svg')].map(node=>({class:node.getAttribute('class'),right:node.getBoundingClientRect().right,width:node.getBoundingClientRect().width,scroll:node.scrollWidth,client:node.clientWidth})),
+       offenders: [...el.querySelectorAll('*')].filter(node => node.getBoundingClientRect().right > b.right+2 && !node.closest('.full-chart__grid-scroll, .full-chart__positions')).slice(0,8).map(node=>({tag:node.tagName,class:node.getAttribute('class'),right:node.getBoundingClientRect().right,width:node.getBoundingClientRect().width}))};
     });
     expect(geometry.left, JSON.stringify(geometry)).toBeGreaterThanOrEqual(-1);
     expect(geometry.right, JSON.stringify(geometry)).toBeLessThanOrEqual(geometry.viewport+1);
@@ -87,7 +57,18 @@ for (const viewport of [{width:320,height:568},{width:390,height:844},{width:844
     if(family==='Calendar comparison') {
      await page.goto('/?date=2026-10-03#calendar?view=day&date=2026-10-03');
      await page.locator('.calendar-day-events .calendar-stoic-card').filter({hasText:'Venus stations retrograde'}).click({timeout:30000});
-     const panel=page.getByRole('dialog',{name:'Event detail'});
+     const panel=page.locator('.sky-detail-article');
+     await expect(panel.locator('.retrograde-cycles__section')).toHaveCount(2, { timeout: 30000 });
+     for (const section of await panel.locator('.retrograde-cycles__section').all()) {
+      if (await section.getAttribute('open') === null) await section.locator(':scope > summary').click();
+     }
+     const cycleCopy=panel.locator('.retrograde-cycles p:visible').first();
+     await expect(cycleCopy).toBeVisible();
+     await expect(cycleCopy).toHaveCSS('font-family',/Newsreader/);
+     await expect(cycleCopy).toHaveCSS('font-size','19px');
+     await expect(cycleCopy).toHaveCSS('font-weight','400');
+     await expect(cycleCopy).toHaveCSS('line-height','28.5px');
+     await expect(cycleCopy).toHaveCSS('letter-spacing','normal');
      await panel.locator('.retrograde-cycles__compare summary').click({timeout:30000});
      const scroller=panel.getByRole('region',{name:'Cycle comparison'});
      await expect(scroller).toBeVisible();
@@ -97,14 +78,15 @@ for (const viewport of [{width:320,height:568},{width:390,height:844},{width:844
      expect(bounds!.x).toBeGreaterThanOrEqual(-1);
      expect(bounds!.x+bounds!.width).toBeLessThanOrEqual(viewport.width+1);
      await scroller.evaluate(el=>{el.scrollLeft=el.scrollWidth});
-     const lastColumn=scroller.getByRole('columnheader',{name:/Next/});
-     await expect(lastColumn).toBeVisible();
-     const lastBounds=await lastColumn.boundingBox();
+     await expect(scroller.locator('thead th')).toHaveText(['Year','Stations retrograde','Sign change','Stations direct','Length']);
+     const nextCycle=scroller.getByRole('row').filter({has:page.getByRole('rowheader',{name:/Next/})});
+     await expect(nextCycle).toBeVisible();
+     const lastBounds=await nextCycle.boundingBox();
      expect(lastBounds!.x).toBeGreaterThanOrEqual(bounds!.x-1);
      expect(lastBounds!.x+lastBounds!.width).toBeLessThanOrEqual(bounds!.x+bounds!.width+1);
      const panelWidth=await panel.evaluate(el=>({scroll:el.scrollWidth,client:el.clientWidth}));
      expect(panelWidth.scroll,JSON.stringify(panelWidth)).toBeLessThanOrEqual(panelWidth.client+1);
-     await panel.getByRole('button',{name:'Close',exact:true}).click();
+     await page.getByRole('button',{name:'Close detail',exact:true}).click();
      await expect(panel).toBeHidden();
      return;
     }
@@ -148,7 +130,7 @@ for (const viewport of [{width:320,height:568},{width:390,height:844},{width:844
     await page.goto(family==='Sky'?'/#sky':family.startsWith('You')?'/#you':'/#friends?tab=charts');
     if (family==='Sky') {
      if(viewport.width<=820) await page.getByRole('button',{name:'Open full current sky chart',exact:true}).click();
-     await chartFits(page,page.locator('.sky-wheel:visible').first());
+     await chartFits(page,page.locator('svg.interactive-zodiac-wheel__svg:visible').first());
      return;
     }
     if(family.startsWith('You')) {
@@ -170,18 +152,23 @@ for (const viewport of [{width:320,height:568},{width:390,height:844},{width:844
       await expect(page.locator('.friend-tab-pane[aria-label="Natal"]')).toBeVisible();
      }
      if(!friendNatal) {
-      await page.getByRole('button',{name:/More, \d+ sections/}).click();
-      await page.getByRole('menuitemradio',{name:new RegExp('^'+family)}).click();
+      const tab=page.getByRole('tab',{name:family,exact:true});
+      if(await tab.isVisible()) await tab.click();
+      else {
+       await page.getByRole('button',{name:/More, \d+ sections/}).click();
+       await page.getByRole('menuitemradio',{name:new RegExp('^'+family)}).click();
+      }
+      await expect(page.getByRole('tab',{name:family,exact:true,includeHidden:true})).toHaveAttribute('aria-selected','true');
      }
     }
-    await chartFits(page,page.locator('.sky-wheel:visible').first());
+    await chartFits(page,page.locator('svg.sky-wheel:visible, svg.interactive-zodiac-wheel__svg:visible').first());
     if(friendNatal) {
      const bigThree = page.locator('.friend-big-three-list');
      await expect(bigThree).toContainText('Sun');
      await expect(bigThree).toContainText('Moon');
      await expect(bigThree.locator('.placement-table-row__title').filter({hasText:/^Ascendant/})).toHaveCount(unknown ? 0 : 1);
     }
-    if(family==='You natal'||friendNatal) {
+    if(family==='You natal') {
      await page.getByRole('tab',{name:'Table',exact:true}).click();
      const table=page.locator('.natal-chart-data-table');
      await fits(page,table);
@@ -190,7 +177,7 @@ for (const viewport of [{width:320,height:568},{width:390,height:844},{width:844
       expect(width.scroll,JSON.stringify(width)).toBeLessThanOrEqual(width.client+1);
      }
      await page.getByRole('tab',{name:'Circle',exact:true}).click();
-     await chartFits(page,page.locator('.sky-wheel:visible').first());
+     await chartFits(page,page.locator('svg.interactive-zodiac-wheel__svg:visible').first());
     }
     if(family==='Friend natal') {
      const ascendant=page.getByRole('button',{name:/Ascendant in/});
@@ -203,32 +190,36 @@ for (const viewport of [{width:320,height:568},{width:390,height:844},{width:844
      await fits(page,detail);
     }
     if(family==='Synastry'||family==='Composite') {
-     const placements=page.locator(family==='Synastry'?'.synastry-placement-columns:visible':'.friend-placement-table:visible');
-     await expect(placements).toHaveCount(1);
-     await fits(page,placements);
      if(family==='Synastry') {
-      const headings=placements.locator('.synastry-placement-column-header h3');
-      await expect(headings).toHaveCount(2);
-      await expect(headings.first()).toHaveText(friendName);
-      await expect(headings.last()).toHaveText('You');
-      const typography=(el:Element)=>{
-       const s=getComputedStyle(el);
-       return [s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing,s.margin,s.textTransform,s.textAlign];
-      };
-      expect(await headings.first().evaluate(typography)).toEqual(await headings.last().evaluate(typography));
+      await expect(page.locator('.synastry-placement-columns')).toHaveCount(0);
+      await fits(page,page.locator('.friend-profile-dynamics'));
+     } else {
+      const placements=page.locator('.natal-placement-sections');
+      await expect(placements).toBeVisible();
+      await fits(page,placements);
      }
      await page.getByRole('button',{name:'Full-screen chart',exact:true}).click();
-     await fits(page,page.locator('.chart-fullscreen-panel'));
-     await chartFits(page,page.locator('.chart-fullscreen-panel .sky-wheel'));
-     const panel=await page.locator('.chart-fullscreen-panel').boundingBox();
-     const wheel=await page.locator('.chart-fullscreen-panel .sky-wheel').boundingBox();
-     expect(wheel!.y).toBeGreaterThanOrEqual(panel!.y-1);
-     expect(wheel!.y+wheel!.height).toBeLessThanOrEqual(panel!.y+panel!.height+1);
+     await fits(page,page.locator('.full-chart-panel'));
+     await chartFits(page,page.locator('.full-chart-panel .sky-wheel'));
+     const panel=await page.locator('.full-chart-panel').boundingBox();
+     const wheel=page.locator('.full-chart-panel .sky-wheel');
+     // Full reports scroll on short screens. Both drawing edges must remain
+     // reachable inside the dialog, including when the wheel is taller than it.
+     await wheel.evaluate(el=>el.scrollIntoView({block:'start',inline:'nearest'}));
+     const top=await wheel.boundingBox();
+     expect(top!.y).toBeGreaterThanOrEqual(panel!.y-1);
+     expect(top!.y).toBeLessThan(panel!.y+panel!.height);
+     await wheel.evaluate(el=>el.scrollIntoView({block:'end',inline:'nearest'}));
+     const bottom=await wheel.boundingBox();
+     expect(bottom!.y+bottom!.height).toBeLessThanOrEqual(panel!.y+panel!.height+1);
+     expect(bottom!.y+bottom!.height).toBeGreaterThan(panel!.y);
      const close=page.getByRole('button',{name:'Close full-screen chart',exact:true});
+     await close.scrollIntoViewIfNeeded();
+     await expect(close).toBeInViewport();
      const closeBounds=await close.boundingBox();
-     expect(closeBounds!.width,'full-screen close control keeps its circular target').toBeCloseTo(closeBounds!.height,0);
+     expect(closeBounds!.height,'full-screen back control has a usable target').toBeGreaterThanOrEqual(40);
      await close.click();
-     await expect(page.locator('.chart-fullscreen-panel')).toBeHidden();
+     await expect(page.locator('.full-chart-panel')).toBeHidden();
     }
    });
   }

@@ -5,6 +5,15 @@ import { readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { contentLiveStatuses, servingPackageRecords } from "../api/_lib/content-live-status";
+const dailyKey = 'calendar-passage/daily/2026-10-21/America%2FNew_York';
+const daily = { id: 'daily', content_key: dailyKey, status: 'LIVE', lane: 'serving', review_state: null,
+  body: 'Complete daily overview for {{moonSign}}.', surface: 'sky', provider: 'tldrastro-fallback-architecture-v3',
+  sections: { packageRecord: { contentKey: dailyKey, content_role: 'full_copy', review_status: 'approved' } } };
+assert.equal(contentLiveStatuses([daily])[0].live, true);
+assert.equal(contentLiveStatuses([daily], [daily], () => false)[0].live, false, 'A retired or replaced ledger version cannot appear published.');
+assert.equal(contentLiveStatuses([{ ...daily, content_key: 'calendar-passage/daily/2026-02-30/UTC' }])[0].live, false);
+assert.equal(contentLiveStatuses([{ ...daily, body: '{{unknown}}' }])[0].live, false);
+assert.equal(contentLiveStatuses([{ ...daily, sections: { ...daily.sections, packageDraft: { body: 'Different unpublished wording.' } } }], [daily])[0].live, false);
 for (const key of ["cms/personal-transit-aspect/you/template", "fallback-hook/transit-house-event-frame/sun", "fallback-template/transit.house-event"]) {
   const staleLive = { id: key, content_key: key, status: "LIVE", lane: "serving", body: "Historical approved copy.", provider: "tldrastro-fallback-architecture-v3", sections: { packageRecord: { contentKey: key, review_status: "approved", body: "Historical approved copy." } } };
   assert.equal(contentLiveStatuses([staleLive], [staleLive], () => true, () => true)[0].live, false, "Retirement wins even over a stale explicit publication.");
@@ -107,6 +116,12 @@ assert.equal((await catalog("wrong")).code, 401);
 const catalogResult = await catalog("live-status-qa-secret");
 assert.equal(catalogResult.code, 200);
 assert.ok(catalogResult.rows.some((row: any) => row.content_key === "fallback-hook/natal-you-placement-sign-final/uranus/scorpio"));
+for (const key of [
+  'house-horoscope-core/moon/sagittarius/house-1',
+  'authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/taurus/rising-aries/house-2',
+  'sky-lunation/full-moon/taurus',
+  'authored/compat-pair/jupiter/aries/aries'
+]) assert.ok(catalogResult.rows.some((row: any) => row.content_key === key), `${key}: complete source must be discoverable without a DB mirror`);
 assert.ok(catalogResult.rows.every((row: any) => !row.body && !row.sections), "Initial catalog should load identifiers; complete sources load on selection.");
 assert.equal((await request(["qa-virgo"], "wrong")).code, 401);
 assert.equal(storageReads, 0, "Unauthorized callers must not reach content storage.");
@@ -142,9 +157,10 @@ const astro101 = {
 assert.equal(contentLiveStatuses([astro101])[0].live, true, "Learn-serving Astro 101 rows stay Live even with an education packageRecord.");
 assert.equal(contentLiveStatuses([astro101], [astro101], () => false)[0].live, false, "Learn now uses the reader API and must honor its publication ledger.");
 assert.equal(contentLiveStatuses([{ ...astro101, status: "DRAFT" }])[0].live, false);
-for (const extra of [{ facts: { sourceStatus: "legacy" } }, { flags: ["BLOCKLIST_MATCH"], facts: { tldrStore: {} } }, { sections: { body: "Imported from approved project source material." } }, { review_state: "needs-review" }]) {
+for (const extra of [{ facts: { sourceStatus: "legacy" } }, { flags: ["BLOCKLIST_MATCH"], facts: { tldrStore: {} } }, { review_state: "needs-review" }]) {
   assert.equal(contentLiveStatuses([{ ...safe, ...extra }])[0].live, false, JSON.stringify(extra));
 }
+assert.equal(contentLiveStatuses([{...safe,sections:{body:'Imported from approved project source material.'}}])[0].live,true,'A wording fingerprint does not override valid publication state.');
 const natal = { ...safe, content_key: "fallback-hook/natal-aspect-lived/lilith/square/ascendant", provider: "tldrastro-fallback-architecture-v3", sections: { packageRecord: { contentKey: "fallback-hook/natal-aspect-lived/lilith/square/ascendant", content_role: "full_copy", reader_only: true, render_policy: "reader-only-exact-lived-v1", review_status: "approved", body_you: "QA approved natal aspect." } } };
 const { approveNatalAspectStudioCopy } = await import("../api/_lib/content-studio-approval");
 approveNatalAspectStudioCopy(natal.sections.packageRecord, natal.content_key);
@@ -211,7 +227,9 @@ console.log(`PASS: ${exactRows.length} actual Calendar exact rows, pending revis
 // Audit the second source class: installed CMS defaults with no database mirror.
 const { builtinContentRecords } = await import('../api/_lib/content-live-status');
 const { skyDailySummaryFields } = await import('../apps/web/src/content/skyDailySummaryCatalog');
-for (const field of skyDailySummaryFields) {
+const { skySeasonTransitionSummaryFields } = await import('../apps/web/src/content/skySeasonTransitionSummaryFields');
+const allSummaryFields = [...skyDailySummaryFields, ...skySeasonTransitionSummaryFields];
+for (const field of allSummaryFields) {
   const baseline = builtinContentRecords.get(field.key)!;
   assert.equal(contentLiveStatuses([baseline], [])[0].live, field.readerEnabled !== false && Boolean(field.body.trim()), field.key);
   const mirror = { ...baseline, id: 'summary-mirror', status: 'DRAFT', lane: 'serving', review_state: 'EDITORIAL_REVIEW_REQUIRED' };
@@ -241,7 +259,7 @@ assert.equal((await request([summaryRow.id])).statuses[0].label, 'Live');
 publications = [{ ...publications[0], state: 'retired', revision: 2 }];
 assert.equal((await request([summaryRow.id, summaryBuiltin.id])).statuses.every((status: any) => !status.live), true);
 globalThis.fetch = originalFetch;
-console.log(`PASS: all ${skyDailySummaryFields.length} Daily Sky defaults, absent/identical/different CMS rows, current publication, retired sources, and ordinary-row ledger checks`);
+console.log(`PASS: all ${allSummaryFields.length} Daily Sky defaults, absent/identical/different CMS rows, current publication, retired sources, and ordinary-row ledger checks`);
 
 // Initialized publications make each Sky source independent; status must not load a giant legacy mirror.
 const { isSkyPartitionKey } = await import('../api/_lib/content-live-status');

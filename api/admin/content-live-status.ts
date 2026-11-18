@@ -5,6 +5,7 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import { requireContentAdmin } from "../_lib/admin-auth.js";
 import { AdminHttpError, adminFetchJson, adminStorageRows, readAdminJsonBody, sendAdminJson, sendAdminMethodNotAllowed, adminErrorStatus, adminErrorMessage } from "../_lib/admin-http.js";
 import { contentLiveStatuses, servingPackageRecords, builtinContentRecords, isSkyPartitionKey, type LiveStatusRow } from "../_lib/content-live-status.js";
+import { isCompositionSurfaceSourceKey } from "../../apps/admin/src/compositionSurfaceSources.js";
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
   if (!await requireContentAdmin(req, res)) return;
@@ -13,7 +14,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const body = await readAdminJsonBody<{ ids?: string[]; action?: string }>(req);
     if (body.action === "composition-catalog") {
       const rows = [...servingPackageRecords.values()]
-        .filter((record) => /^(?:fallback-hook|fallback-template|fallback-vocab|vocab|slot-template|sky-placement|sky-context|sky-nodes|sky-lilith)\//.test(record.contentKey))
+        .filter((record) => isCompositionSurfaceSourceKey(record.contentKey))
         .map((record) => ({ content_key: record.contentKey, headline: record.headline ?? null, role: record.content_role }));
       return sendAdminJson(res, 200, { ok: true, rows });
     }

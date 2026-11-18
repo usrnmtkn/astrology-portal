@@ -1,8 +1,11 @@
-import { openSkyPlacementSourceDetails } from '../helpers/sky-placement-workspace-navigation';
+import { openSkyPlacementChooser, openSkyPlacementSourceDetails } from '../helpers/sky-placement-workspace-navigation';
 import { expect, test } from "@playwright/test";
 import { studioApiStore } from "../helpers/studio-api-store";
 import { moonStudioRows } from "../helpers/sky-moon-studio";
 import { skyMoonWriteupKeys } from "../../apps/admin/src/skyMoonWriteup";
+import { canonicalPublicationLedger, publicationLedgerTag } from '../../apps/web/src/services/publicationLedgerTransport';
+import { isSkyListPublicationKey } from '../../apps/web/src/content/skyListPublicationScope';
+import { syntheticPublicationPage } from '../helpers/synthetic-publication-page';
 
 for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
  test(`Moon complete write-up discovery edit and reload ${width} ${theme}`, async ({ page }) => {
@@ -15,6 +18,8 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
    headline: "Moon in Cancer", body: "", sections: { packageRecord: { contentKey: "sky-placement/article/moon/cancer", studio_content_type: "continuous-placement", placementArticle: "" } } };
   const store = await studioApiStore([...originals, placeholder], { uuidIds: true });
   const errors: string[] = []; page.on("pageerror", error => errors.push(error.message));
+  let publicationServiceUnavailable=false;
+  let unavailableApiReads=0,unavailableRestReads=0;
   try {
    await page.context().route("**/*", route => {
     const request = route.request();
@@ -32,12 +37,23 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
    await page.route("**/content-studio-last-known-good.json", route => route.fulfill({ json: {
     schema: "content-studio-last-known-good-v2", rows: [], publications: [], rowCount: 0
    } }));
-   await page.route("**/rest/v1/**", route => route.fulfill({ json: [] }));
-   await page.route("**/api/content-publications", async route => route.fulfill({ json: {
-    schema: "tldr-publications/v1", publications: await store.call({ method: "publications" })
-   } }));
+   await page.route("**/rest/v1/**", async route => {
+    const url=new URL(route.request().url());
+    if(url.pathname.endsWith('/content_publications')){
+     if(publicationServiceUnavailable){unavailableRestReads++;return route.fulfill({status:503,json:{error:'Synthetic anonymous ledger unavailable.'}});}
+     return route.fulfill({json:syntheticPublicationPage(await store.call({method:'publications'}),url.searchParams)});
+    }
+    return route.fulfill({json:[]});
+   });
+   await page.route(/\/api\/content-publications(?:\?|$)/, async route => {
+    if(publicationServiceUnavailable){unavailableApiReads++;return route.fulfill({status:503,json:{error:'Synthetic publication service unavailable.'}});}
+    const scope=new URL(route.request().url()).searchParams.get('scope');expect([null,'sky-list']).toContain(scope);
+    const publications=canonicalPublicationLedger(await store.call({method:'publications'})).filter(row=>!scope||isSkyListPublicationKey(row.content_key));
+    return route.fulfill({headers:{etag:await publicationLedgerTag(publications)},json:{schema:scope?'tldr-sky-list-publications/v1':'tldr-publications/v1',publications}});
+   });
    await page.route("**/api/content-reader", async route => {
-    const result = await store.call({ method: "POST", url: "/api/content-reader", body: route.request().postDataJSON() });
+    const body=route.request().postDataJSON();
+    const result = await store.call({ method: "POST", url: "/api/content-reader", body });
     return route.fulfill({ status: result.status, json: result.payload });
    });
    await page.route("**/api/calendar?**", route => route.fulfill({ json: { ok: true, calendar: { days: [] } } }));
@@ -101,6 +117,8 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     copies[index] = revised;
     await editor.getByRole("button", { name: "Close", exact: true }).click();
     await page.reload();
+    await expect(page.getByLabel('Admin status', { exact: true })).toContainText('Connected');
+    await openSkyPlacementChooser(page, width === 1440 && theme === 'dark');
     await page.getByLabel("Sky placement planet or point").selectOption("moon");
     await page.getByLabel("Sky placement zodiac sign").selectOption("cancer");
     await openSkyPlacementSourceDetails(page);
@@ -111,6 +129,8 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
    const saved = await store.call({ method: "rows" });
    for (const row of originals.filter(row => !keys.includes(row.content_key))) expect(saved.find((item: any) => item.id === row.id)).toEqual(row);
    for (const key of keys) expect(saved.find((row: any) => row.content_key === key && row.status === "LIVE").sections.packageRecord.body_they).toBe(originals.find(row => row.content_key === key)!.sections.packageRecord.body_they);
+   await openSkyPlacementChooser(page);
+   await expect(page.getByRole("searchbox", { name: "Search Sky write-ups", exact: true })).toBeVisible();
    await page.getByRole("searchbox", { name: "Search Sky write-ups", exact: true }).fill("no matching moon section");
    await expect(table).toContainText("No Sky write-ups match");
    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -138,11 +158,18 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     action: "retire", contentKey: retiredKey, id: live.id, expectedUpdatedAt: live.updated_at
    } });
    expect(retired.status, JSON.stringify(retired.payload)).toBe(200);
+   expect((await store.call({method:'publications'})).find((row:any)=>row.content_key===retiredKey)?.state).toBe('retired');
    await page.reload();
+   await expect.poll(()=>page.evaluate(key=>JSON.parse(localStorage.getItem('tldrastro:content-publications:v1')??'[]').find((row:any)=>row.content_key===key)?.state,retiredKey)).toBe('retired');
    await expect(page.getByRole("heading", { name: "Moon in Cancer", exact: true })).toBeVisible();
    await expect(page.locator(".sky-detail-article")).toBeVisible();
    await expect(article).toHaveCount(0);
    await expect(page.locator(".sky-detail-article")).not.toContainText("Synthetic Moon section");
+   // An outage cannot undo a retirement already verified by the reader.
+   publicationServiceUnavailable=true;await page.reload();
+   await expect(page.getByRole('heading',{name:'Moon in Cancer',exact:true})).toBeVisible();
+   await expect(article).toHaveCount(0);await expect(page.locator('.sky-detail-article')).not.toContainText('Synthetic Moon section');
+   expect(unavailableApiReads+unavailableRestReads).toBeGreaterThan(0);
    expect(errors).toEqual([]);
   } finally {
    // Stop reader hydration while its isolated API is still available, then

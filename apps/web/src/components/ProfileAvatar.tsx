@@ -6,6 +6,7 @@ export type ProfileAvatarProps = {
   email: string;
   name: string;
   size?: ProfileAvatarSize;
+  aspect?: string;
 };
 
 export function profileInitials(name: string, email: string) {
@@ -19,14 +20,17 @@ export function profileInitials(name: string, email: string) {
   return source.slice(0, 2).toUpperCase();
 }
 
-export function ProfileAvatar({ avatarUrl, className, email, name, size = "regular" }: ProfileAvatarProps) {
+export function ProfileAvatar({ avatarUrl, className, email, name, size = "regular", aspect }: ProfileAvatarProps) {
   return (
-    <span className={["profile-avatar", `profile-avatar-${size}`, className].filter(Boolean).join(" ")} aria-hidden="true">
+    <span className={["profile-avatar", `profile-avatar-${size}`, aspect && "profile-avatar--aspect", className].filter(Boolean).join(" ")} aria-hidden="true">
       {avatarUrl ? (
         <img src={avatarUrl} alt="" referrerPolicy="no-referrer" />
       ) : (
         profileInitials(name, email)
       )}
+      {aspect && <span className="profile-avatar__aspect" data-aspect={aspect}>
+        {({ square: "□", trine: "△", sextile: "⚹", opposition: "☍", conjunction: "☌" } as Record<string, string>)[aspect] ?? "✦"}
+      </span>}
     </span>
   );
 }

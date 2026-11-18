@@ -23,6 +23,18 @@ try {
   assert.equal(article.sections[0].body, source.plainTranslation);
   assert.equal(runtime.normalizeCompositeAspectSurface({ ...aspect, from: "Pluto", to: "Mars" }).sections[0].body, source.plainTranslation);
   assert.equal(runtime.normalizeCompositeAspectSurface({ ...aspect, from: "Unknown" }).status, "not-servable");
+  const { approvedSourceBaseline } = await import('../api/_lib/approved-source-recovery.ts');
+  const signKey = 'composite-sun-in-leo';
+  const position = {planet:'Sun',sign:'Leo'};
+  const original = runtime.normalizeCompositePlacementSurface(position);
+  assert.equal(original.status,'servable');
+  assert.equal(approvedSourceBaseline(signKey)?.reviewStatus,'REVIEWED');
+  for(const key of ['composite-mars-in-leo','composite-sun-in-unknown','composite.private-profile','composite-sun-in-leo/extra'])assert.equal(approvedSourceBaseline(key),null);
+  const publication = {content_key:signKey,state:'retired',revision:1,row_id:null,row_updated_at:null,updated_at:'2026-11-12T00:00:00Z'};
+  installContentPublications([publication]);
+  assert.equal(runtime.normalizeCompositePlacementSurface(position).status,'not-servable');
+  installContentPublications([{...publication,state:'live',revision:2}]);
+  assert.deepEqual(runtime.normalizeCompositePlacementSurface(position),original);
   const key = compositeAspectContentKey("Mars", "trine", "Pluto");
   const fullBody = [source.plainTranslation, "Second fixture paragraph.", "Final fixture sentence."].join("\n\n");
   const generated = new Map([[key, { id: "composite-test", contentKey: key, body: fullBody, summary: "Short fixture summary.", sections: {}, sourceSnapshot: {}, updatedAt: "2026-09-08T00:00:00Z" }]]);

@@ -16,9 +16,10 @@ export type CalendarTemplateHandle = { insertVariable: (name: string) => void };
 export default forwardRef<CalendarTemplateHandle, {
   value: string; onChange: (value: string) => void; disabled: boolean; label: string;
   values: Record<string, CalendarOverviewValue>; actions: ReactNode;
-  workspace?: { reader: ReactNode; date: string; timeZone: string; literal?: boolean; preferredSection?: string;
+  sharedWording?: (names: string[]) => ReactNode;
+  workspace?: { reader: ReactNode; date: string; timeZone: string; literal?: boolean; template?: boolean; preferredSection?: string;
     source: (name: string) => ReactNode };
-}>(function CalendarPassageTemplateEditor({ value, onChange, disabled, label, values, actions, workspace }, ref) {
+}>(function CalendarPassageTemplateEditor({ value, onChange, disabled, label, values, actions, workspace, sharedWording }, ref) {
   const field = useRef<HTMLTextAreaElement>(null);
   const sectionField = useRef<HTMLTextAreaElement>(null);
   const hintId = useId();
@@ -32,11 +33,12 @@ export default forwardRef<CalendarTemplateHandle, {
   const [query, setQuery] = useState('');
   const [includeMissing, setIncludeMissing] = useState(false);
   const active = sections.find(section => section.id === activeId);
+  const shared = Boolean(sharedWording);
   useEffect(() => {
-    if (!activeId) return;
+    if (!activeId || shared) return;
     sectionField.current?.focus();
     sectionField.current?.scrollIntoView({ block: 'center', behavior: 'instant' });
-  }, [activeId]);
+  }, [activeId, shared]);
   const names = [...new Set(parts.filter(part => part.name && !part.marker).map(part => part.name!))];
   const variables = calendarPassageVariables.filter(name => (includeMissing || values[name] || names.includes(name))
     && variableMatches(query, name, variableLabel(name), calendarVariableKind(name, values[name]), calendarPassageVariableHelp(name) ?? ''));
@@ -44,11 +46,14 @@ export default forwardRef<CalendarTemplateHandle, {
   const kind = (name: string) => !calendarPassageVariables.includes(name) ? 'Unknown variable' : !values[name] ? 'Unavailable for this date' : calendarVariableKind(name, values[name]);
   const openSection = (id: string) => {
     setActiveId(id); setWholeTemplate(false);
-    if (id === activeId) sectionField.current?.focus();
+    if (id === activeId && !shared) sectionField.current?.focus();
   };
   const openTemplate = () => {
     setActiveId(null); setWholeTemplate(true);
-    requestAnimationFrame(() => field.current?.focus());
+    requestAnimationFrame(() => {
+      if (shared) field.current?.closest('details')?.setAttribute('open', '');
+      field.current?.focus();
+    });
   };
   const insertVariable = (name: string) => {
     if (disabled || !calendarPassageVariables.includes(name)) return;
@@ -58,6 +63,7 @@ export default forwardRef<CalendarTemplateHandle, {
     const inserted = insertCalendarVariable(value, name, start, end);
     onChange(inserted.value);
     requestAnimationFrame(() => {
+      if (shared) target?.closest('details')?.setAttribute('open', '');
       target?.focus();
       target?.setSelectionRange(inserted.start - (active?.start ?? 0), inserted.end - (active?.start ?? 0));
     });
@@ -91,11 +97,21 @@ export default forwardRef<CalendarTemplateHandle, {
     if (!usedNames.includes(section.name)) usedNames.push(section.name);
   }
   const displayedNames = workspace?.literal ? ['moonSign', 'nextMoonSign', 'nextMoonSignEntryTime'] : usedNames;
+  const TemplateContainer = sharedWording ? 'details' : 'div';
+  const showTemplateAction = shared || workspace?.template;
   return <div className={workspace ? 'studio-grid studio-dated-workspace' : undefined}>
-    <div className="studio-calendar-template-editor studio-workspace-pane">
-    {!workspace?.literal && sections.length > 0 && <label><span>Editing section</span><AdminSelect aria-label="Calendar editing section" value={active?.id ?? ''} disabled={disabled} onChange={event => event.target.value ? openSection(event.target.value) : openTemplate()}>
+    {workspace?.reader}
+    <div className="studio-calendar-template-editor studio-workspace-pane" role={workspace ? 'region' : undefined}
+      aria-label={workspace ? workspace.template ? 'Calendar template workspace' : 'Calendar writing workspace' : undefined}>
+    {workspace?.template && <header className="admin-section-heading-row"><div><h3>Template</h3></div></header>}
+    {!workspace?.literal && sections.length > 0 && <label><span>Editing section</span><AdminSelect aria-label="Calendar editing section" value={active?.id ?? ''} disabled={disabled} onChange={event => event.target.value ? openSection(event.target.value) : shared ? setActiveId(null) : openTemplate()}>
       <option value="">Complete passage</option>{sections.map(section => <option key={section.id} value={section.id}>{sectionLabel(section.name)}</option>)}
     </AdminSelect></label>}
+    {showTemplateAction && sections.length > 0 && <div className="admin-new-actions">
+      <StudioButton disabled={disabled} onClick={openTemplate}>Edit complete template</StudioButton>
+    </div>}
+    <TemplateContainer className={sharedWording ? 'admin-workspace-details' : undefined} {...(shared ? { open: true } : {})}>
+    {sharedWording && <AdminDisclosureSummary>Template structure</AdminDisclosureSummary>}
     <p id={hintId} className="admin-field-hint">Save draft keeps your edits. Publish passage updates the Calendar.</p>
     {active && <label id={sectionId}><span>{sectionLabel(active.name)} wording · {label}</span><StudioTextarea
       key={active.id} ref={sectionField} aria-label={`${sectionLabel(active.name)} wording`} aria-describedby={hintId} rows={8}
@@ -113,7 +129,9 @@ export default forwardRef<CalendarTemplateHandle, {
         ? <span key={index} data-variable-name={part.name} data-variable-color={calendarVariableColor(part.name)}
           className={`studio-template-token ${part.marker ? 'studio-template-marker' : 'studio-template-value'}`}>{part.text}</span>
         : part.section ? <span key={index} className="studio-template-sentences" data-template-section={part.section} data-variable-color={calendarVariableColor(part.section)}>{part.text}</span> : part.text) : undefined} /></label>
+    </TemplateContainer>
     {actions}
+    {sharedWording?.(usedNames)}
     {workspace && <details className="admin-workspace-details" aria-label="Calendar passage values and sources">
       <AdminDisclosureSummary>Values and sources for this passage</AdminDisclosureSummary>
       <p>{workspace.date} · {workspace.timeZone}</p>
@@ -146,7 +164,7 @@ export default forwardRef<CalendarTemplateHandle, {
       </li>)}
     </AssemblySections>}
     <div className="admin-new-actions">
-      {sections.length > 0 && <StudioButton disabled={disabled} onClick={openTemplate}>Edit complete template</StudioButton>}
+      {!showTemplateAction && sections.length > 0 && <StudioButton disabled={disabled} onClick={openTemplate}>Edit complete template</StudioButton>}
       <StudioButton aria-pressed={colors} onClick={() => setColors(current => !current)}>{colors ? 'Hide template colors' : 'Show template colors'}</StudioButton>
     </div>
     {!active && names.length > 0 && <div className="studio-template-variable-key" aria-label="Template variable key">{names.map(name => <span key={name} className="admin-variable-key-item">
@@ -154,6 +172,5 @@ export default forwardRef<CalendarTemplateHandle, {
     </span>)}</div>}
     </details>}
   </div>
-    {workspace?.reader}
   </div>;
 });

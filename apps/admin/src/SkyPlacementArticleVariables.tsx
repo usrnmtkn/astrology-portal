@@ -11,6 +11,8 @@ import { PageLoading } from "../../../src/shared/components/PageLoading";
 import { skyPlacementArticleVariableSegments } from "../../web/src/content/fallbackArchitectureV3/resolver/skyPlacementArticleVariables.mjs";
 // @ts-ignore Calculated values have the existing article contract.
 import { skyPlacementVariableFacts } from "../../web/src/content/fallbackArchitectureV3/resolver/skyPlacementVariables.mjs";
+// @ts-ignore Resolve complete linked writing with the reader's scope/hash checks.
+import { resolveIngressSource } from "../../web/src/content/fallbackArchitectureV3/resolver/skyIngressComposition.mjs";
 
 type RecordValue = Record<string, any>;
 type Props = {
@@ -67,6 +69,15 @@ export default function SkyPlacementArticleVariables(props: Props) {
   const selectedMotion = fieldPath === "placementArticleDirect" ? "direct" : fieldPath === "placementArticleRetrograde" ? "retrograde" : motion;
   const facts: SkyVariableFacts = skyPlacementVariableFacts(calculated ?? { planet, sign, isRetrograde: selectedMotion === "retrograde" });
   const gaps = skyPlacementArticleVariableSegments(value, facts, record, [record, ...references]).filter((part: any) => part.token && !part.available);
+  const linkedPhrase = editingSource?.reference ? resolveIngressSource(record, editingPhrase, [record, ...references]) : null;
+
+  function editPhrase(id: string) {
+    if (disabled) return;
+    const sharedKey = zodiacSeasonSourceKey(id, sign);
+    if (sharedKey && !composition?.sources[id]) { props.onOpenSource(sharedKey, 'body'); return; }
+    setEditingPhrase(id);
+    props.onPrepareLibrary();
+  }
 
   useEffect(() => {
     if (!editingPhrase || !editingSource || editingSource.reference) return;
@@ -116,17 +127,14 @@ export default function SkyPlacementArticleVariables(props: Props) {
       <AdminDisclosureSummary>Article variables</AdminDisclosureSummary>
       <StudioVariableInsert variables={source?._studioVariables ?? []} context={{ planet, sign }} onInsert={props.onInsert} disabled={disabled} loading={Boolean(source?._studioVariablesLoading)} error={typeof source?._studioVariablesError === "string" ? source._studioVariablesError : ""} />
       <SkyPlacementVariableKey usedNames={[...value.matchAll(/\{\{\s*(\w+)\s*\}\}/gu)].map(match => match[1])} facts={facts} disabled={disabled} onInsert={props.onInsert} onInsertPhrase={props.onInsert} omitKinds={["aspect"]}
-        phraseSource={{ planet, sign, record, onLoadSource: props.onLoadSource, onEdit: id => {
-          const sharedKey = zodiacSeasonSourceKey(id, sign);
-          if (sharedKey && !composition?.sources[id]) { props.onOpenSource(sharedKey, "body"); return; }
-          setEditingPhrase(id);
-          props.onPrepareLibrary();
-        } }} />
+        phraseSource={{ planet, sign, record, onLoadSource: props.onLoadSource, onEdit: editPhrase }} />
     </details>
     {editingPhrase && <section className="admin-sky-writing-context" aria-label="Edit article phrase">
       <p>{editingField?.label ?? editingPhrase} <code>{`{{${editingPhrase}}}`}</code></p>
       {editingField && <p>{editingField.description}</p>}
       {!editingSource ? <PageLoading compact message="Preparing this phrase in your draft…" /> : editingSource.reference ? <>
+        {linkedPhrase?.text && !linkedPhrase.reason ? <p className="studio-variable-value studio-preview-canvas" aria-label="Complete shared phrase wording"><SkyVariableText value={linkedPhrase.text} facts={facts} /></p>
+          : <p role="status">{linkedPhrase?.reason || 'Shared wording is unavailable in this preview.'} Open its source to load the complete saved wording.</p>}
         <p>These words are shared with every {titleWord(planet)} sign, so they are stored once, on <code>{editingSource.reference.contentKey}#{editingSource.reference.field}</code>.</p>
         <div className="admin-sky-writing-source-actions">
           <StudioButton type="button" disabled={disabled} onClick={() => {
@@ -156,13 +164,14 @@ export default function SkyPlacementArticleVariables(props: Props) {
     <details className="admin-workspace-details" open>
       <AdminDisclosureSummary>Preview this section</AdminDisclosureSummary>
       <p>Draft preview. Missing phrases must be filled before publishing. Dates and aspects appear only when the calculation supplies them.</p>
+      <p>Click saved wording in the preview to edit its complete phrase. Calculated values stay separate.</p>
       <div className="admin-sky-writing-source-actions">
         <label>Reference date<StudioInput type="date" value={date} onChange={event => { generation.current++; setCalculating(false); setCalculated(null); setDate(event.target.value); }} /></label>
         <label>Time zone<StudioInput value={timeZone} onChange={event => { generation.current++; setCalculating(false); setCalculated(null); setTimeZone(event.target.value); }} /></label>
         <StudioButton type="button" disabled={calculating} onClick={() => void calculatePreview()}>{calculating ? "Calculating…" : "Calculate article preview"}</StudioButton>
       </div>
       {calculated && <p role="status">Calculated context: {calculated.ingressOccurrence.asOfDate} · {calculated.isRetrograde ? "retrograde" : "direct"} · {timeZone}</p>}
-      <p className="admin-sky-writing-preview">{value ? <SkyVariableText value={value} facts={facts} source={record} references={[record, ...references]} /> : "No writing saved for this section."}</p>
+      <p className="admin-sky-writing-preview">{value ? <SkyVariableText value={value} facts={facts} source={record} references={[record, ...references]} onEditPhrase={editPhrase} disabled={disabled} /> : "No writing saved for this section."}</p>
       {gaps.length > 0 && <p role="status">{[...new Set(gaps.map((part: any) => `${part.token}: ${part.reason}`))].join(" · ")}</p>}
     </details>
   </>;

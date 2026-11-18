@@ -4,6 +4,7 @@ import legacyAssembly from "./skyDailySummaryLegacyAssembly.json" with { type: "
 import assembly from "./skyDailySummaryAssembly.json" with { type: "json" };
 import clauses from "./skyDailySummaryClauses.json" with { type: "json" };
 import timing from "./skyDailySummaryTiming.json" with { type: "json" };
+import { calendarSeasonTransitionSummaryKey } from '../../../../src/shared/features/calendar/calendarSeasonTransitionSummaryKey.js';
 
 export const skySummarySigns = ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"];
 export type SkySummaryField = { key: string; label: string; group: string; body: string; allowedSlots: string[]; readerEnabled?: boolean; optionalSlots?: boolean };
@@ -76,7 +77,8 @@ export const skyDailySummaryFields: SkySummaryField[] = [
 // These slots are required because the summary preserves calculated facts and linked event names.
 export function skySummaryTemplateErrors(key: string, body: string): string[] {
   body = currentSkySummaryWording(key, body);
-  const field = [...skyDailySummaryFields, ...skyIngressSummaryFields].find(field => field.key === key);
+  const field: Pick<SkySummaryField, 'allowedSlots' | 'optionalSlots' | 'group'> | undefined = [...skyDailySummaryFields, ...skyIngressSummaryFields].find(field => field.key === key)
+    ?? (skySeasonTransitionSummaryKeys.includes(key) ? { group: '', allowedSlots: [] } : undefined);
   if (!field) return key.startsWith("cms/sky-daily-summary/") ? ["Unknown daily sky summary field."] : [];
   const slots = Array.from(body.matchAll(/\{([^{}]+)\}/gu), match => match[1]);
   const errors: string[] = [];
@@ -85,8 +87,6 @@ export function skySummaryTemplateErrors(key: string, body: string): string[] {
     if (slots.includes(`${planet}Name`) && !placementPattern.test(body)) errors.push("Keep each planet, sign, and degree together in that order so the complete placement links to its article.");
   }
   if (/[{}]/u.test(body.replace(/\{[^{}]+\}/gu, ""))) errors.push("Close every slot with matching single braces.");
-  if (key.includes("/assembly/") && /\b(?:also today|there (?:is|are)(?: also)?|today brings)\b/iu.test(body)) errors.push("Use direct event sentences without Also today, There are, or Today brings.");
-  if (body.includes("—")) errors.push("Use sentence punctuation without em dashes.");
   if (body.includes("{{") || body.includes("}}")) errors.push("Use single-brace calculated slots, for example {name}.");
   if (slots.some(slot => !field.allowedSlots.includes(slot))) errors.push("This field contains an unsupported calculated slot.");
   if (key === "cms/sky-daily-summary/lunation" && !body.includes("{name} in {sign}")) errors.push("Keep {name} in {sign} together so the complete event name links to its article.");
@@ -99,3 +99,12 @@ export function skySummaryTemplateErrors(key: string, body: string): string[] {
   }
   return errors;
 }
+
+export function skySummaryWordingAdvisories(key: string, body: string): string[] {
+  const errors: string[] = [];
+  if (key.includes("/assembly/") && /\b(?:also today|there (?:is|are)(?: also)?|today brings)\b/iu.test(body)) errors.push("Use direct event sentences without Also today, There are, or Today brings.");
+  if (body.includes("—")) errors.push("Use sentence punctuation without em dashes.");
+  return errors;
+}
+
+const skySeasonTransitionSummaryKeys = skySummarySigns.map((from, index) => calendarSeasonTransitionSummaryKey(from, skySummarySigns[(index + 1) % skySummarySigns.length]));

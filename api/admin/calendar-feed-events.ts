@@ -4,7 +4,6 @@ import { loadLocalWebEnv } from "../_lib/local-env.js";
 import { requireContentAdmin } from "../_lib/admin-auth.js";
 import { AdminHttpError, readAdminJsonBody, sendAdminJson, adminErrorStatus } from "../_lib/admin-http.js";
 import { allCalendarRows, calendarStorage, parseCalendarEvent } from "../_lib/calendar-subscriptions.js";
-import { readerCopyIssues } from "../../apps/web/src/content/editorialCopyBoundary.mjs";
 import type { CalendarFeedEventRecord } from "../../apps/web/src/features/calendar/calendarSubscription.js";
 loadLocalWebEnv();
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
@@ -24,7 +23,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     }
     if (body.action === "cancel" && !current?.published) throw new AdminHttpError(400, "Only a published event can be cancelled.");
     const draft = body.action === "cancel" ? current!.draft : parseCalendarEvent(body.event);
-    if (body.action === "publish" && (readerCopyIssues({ headline: draft.title, body: draft.description }).length || /\{\{[^]*?\}\}/u.test(draft.description))) throw new AdminHttpError(422, "Remove drafting notes and unresolved variables before publishing.");
+    if (body.action === "publish" && /\{\{[^]*?\}\}/u.test(draft.description)) throw new AdminHttpError(422, "Resolve variables before publishing.");
     const fields = {
       ...(current ? {} : { id: randomUUID() }), draft,
       ...(body.action === "publish" ? { published: draft, cancelled: false, revision: (current?.revision ?? 0) + 1, published_at: new Date().toISOString() } : {}),

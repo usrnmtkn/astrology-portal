@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {store,invokeHoroscopeWriting} from '../tests/helpers/sky-article-save-api.mts';
 import {readerRouteResponse} from '../tests/helpers/content-reader-route.mjs';
-import {createSeasonalPublicationFixture,seasonalClaimBodies,createMonthlyAspectPublicationFixture,monthlyAspectBody,monthlyManualBody,createWeeklyAspectPublicationFixture,weeklyAspectBodies,weeklyAspectParserCases,createWeeklyContextPublicationFixture,weeklyContextBodies} from '../tests/helpers/horoscope-publication-fixture.mts';
+import {createSeasonalPublicationFixture,seasonalClaimBodies,createMonthlyAspectPublicationFixture,monthlyAspectBody,monthlyManualBody,createWeeklyAspectPublicationFixture,weeklyAspectBodies,weeklyAspectParserCases,createWeeklyContextPublicationFixture,weeklyContextBodies,createWeeklyGrammarPublicationFixture} from '../tests/helpers/horoscope-publication-fixture.mts';
 import {horoscopeAspectFindings,horoscopeAspectPattern,horoscopeAspectClaim,supportsHoroscopeAspect} from '../src/astro-writing/horoscopeAspectClaims.mjs';
 import {horoscopeEventsInWindow,horoscopeHouse} from '../src/astro-writing/horoscopeDevelopments.mjs';
 import {validateHoroscopeReading} from '../src/astro-writing/horoscopeValidation.mjs';
@@ -163,7 +163,7 @@ for(const [body,ready] of [
 ] as const){
  meetingPassage.body=body;meeting.body=horoscopeEditionBody(meeting.sections.horoscopeEdition);store.rows.set(meeting.id,structuredClone(meeting));
  const preflight=await invokeHoroscopeWriting({action:'validate-publication',id:meeting.id,expectedUpdatedAt:meeting.updated_at});
- assert.equal(preflight.status,200);assert.equal(preflight.payload.publication.ready,ready,body);
+ assert.equal(preflight.status,200);assert.equal(preflight.payload.publication.ready,true,body);
  const published=await store.invoke('PATCH',{id:meeting.id,expectedUpdatedAt:meeting.updated_at,status:'LIVE'});
  assert.equal(published.status,ready?200:422,body);assert.equal(store.rows.get(meeting.id).body,meeting.body);
  assert.equal(store.rows.get(meeting.id).status,ready?'LIVE':'DRAFT');
@@ -181,8 +181,8 @@ assert.equal((await invokeHoroscopeWriting({...checkInput,expectedUpdatedAt:'200
 const beforeCheck=structuredClone(store.rows.get(manual.id));
 const checked=await invokeHoroscopeWriting(checkInput);
 assert.equal(checked.status,200,JSON.stringify(checked.payload));
-assert.equal(checked.payload.publication.ready,false);
-assert.deepEqual([...new Set(checked.payload.publication.issues.map((issue:any)=>issue.sign))],['aries','leo']);
+assert.equal(checked.payload.publication.ready,true);
+assert.deepEqual([...new Set(checked.payload.publication.advisories.filter((issue:any)=>issue.category==='horoscope_fact_boundary').map((issue:any)=>issue.sign))],['aries','leo']);
 assert.deepEqual(store.rows.get(manual.id),beforeCheck,'Preflight never edits, publishes, refreshes a plan or dispatches AI');
 const invalidImport=await store.invoke('PATCH',{id:manual.id,expectedUpdatedAt:manual.updated_at,status:'LIVE'});
 assert.equal(invalidImport.status,422,'Missing AI metadata cannot bypass the factual check');
@@ -230,7 +230,7 @@ for(const [sign,bad] of [
  assert(issues(sign,bad,contextBrief).length,`False context claim accepted: ${bad}`);
  const invalid=structuredClone(contextRow);invalid.sections.horoscopeEdition.passages.find((p:any)=>p.sign===sign).body=bad;invalid.body=horoscopeEditionBody(invalid.sections.horoscopeEdition);store.rows.set(invalid.id,invalid);
  const preflight=await invokeHoroscopeWriting({action:'validate-publication',id:invalid.id,expectedUpdatedAt:invalid.updated_at});
- assert.equal(preflight.status,200);assert.equal(preflight.payload.publication.ready,false,bad);
+ assert.equal(preflight.status,200);assert.equal(preflight.payload.publication.ready,true,bad);
  const denied=await store.invoke('PATCH',{id:invalid.id,expectedUpdatedAt:invalid.updated_at,status:'LIVE'});
  assert.equal(denied.status,422);assert.deepEqual(store.rows.get(invalid.id),invalid,'A refusal must preserve every saved byte');
 }
@@ -314,3 +314,35 @@ console.log('PASS house-only ingresses: destinations require the same planet’s
  assert.equal(base.sections.horoscopeEdition.passages[0].body,monthlyAspectBody);
  console.log('PASS save recovery: local three-way comparison preserves text and nonoverlapping edits; facts, row identity, publication and active-generation changes cannot be rebased.');
 }
+
+// Preflight may recognize natural grammar; it must never rewrite or publish it.
+const grammar=await createWeeklyGrammarPublicationFixture(m=>store.invoke(m.method,m.body,m.url));
+assert.equal(grammar.status,200,JSON.stringify(grammar.payload));
+const grammarRow=grammar.payload.rows[0],grammarBrief=grammarRow.facts.horoscopeBrief.brief;
+const grammarBefore=structuredClone(store.rows.get(grammarRow.id));
+const grammarCheck=await invokeHoroscopeWriting({action:'validate-publication',id:grammarRow.id,expectedUpdatedAt:grammarRow.updated_at});
+assert.equal(grammarCheck.status,200);assert.equal(grammarCheck.payload.publication.ready,true,JSON.stringify(grammarCheck.payload.publication.issues));
+assert.deepEqual(grammarCheck.payload.publication.issues,[]);
+assert.deepEqual(store.rows.get(grammarRow.id),grammarBefore);assert.equal(store.rows.get(grammarRow.id).status,'DRAFT');
+for(const p of grammarRow.sections.horoscopeEdition.passages)assert.deepEqual(issues(p.sign,p.body,grammarBrief),[],p.sign);
+for(const bad of [
+ 'The Sun meets your ruling planet, retrograde Mars. You can review the fixture.',
+ 'The Sun meets your ruling planet, direct Mercury. You can review the fixture.',
+ 'The Sun meets your ruling planet, retrograde Mercury and Jupiter. You can review the fixture.',
+ 'Venus retrograde also sextiles a colleague. You can review the fixture.',
+ 'Venus retrograde also trines Jupiter. You can review the fixture.',
+ 'Venus direct also sextiles Jupiter. You can review the fixture.',
+ 'Venus retrograde in your eighth house also sextiles Jupiter in your fifth house. You can review the fixture.',
+ 'You were born with a preference for the fixture.',
+ 'Your natal placement explains the fixture.',
+ 'You have carried this fixture since childhood.'
+]){
+ assert(issues('aries',bad,grammarBrief).length,`False grammar claim accepted: ${bad}`);
+ const invalid=structuredClone(grammarBefore);invalid.sections.horoscopeEdition.passages[0].body=bad;invalid.body=horoscopeEditionBody(invalid.sections.horoscopeEdition);store.rows.set(invalid.id,invalid);
+ const check=await invokeHoroscopeWriting({action:'validate-publication',id:invalid.id,expectedUpdatedAt:invalid.updated_at});
+ assert.equal(check.status,200);assert.equal(check.payload.publication.ready,true,bad);
+ const denied=await store.invoke('PATCH',{id:invalid.id,expectedUpdatedAt:invalid.updated_at,status:'LIVE'});
+ assert.equal(denied.status,422);assert.deepEqual(store.rows.get(invalid.id),invalid);
+}
+console.log('PASS natural grammar: twelve exact drafts clear preflight without writes; missing/wrong planets, aspects, motion, houses and natal biography remain blocked.');
+await import('./test-horoscope-described-aspect.mjs');

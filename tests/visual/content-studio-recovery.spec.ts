@@ -1,4 +1,4 @@
-import { openSkyPlacementDefaultReading } from '../helpers/sky-placement-workspace-navigation';
+import { openSkyPlacementChooser, openSkyPlacementDefaultReading } from '../helpers/sky-placement-workspace-navigation';
 import { expect, test, type Page } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import { fork } from "node:child_process";
@@ -72,9 +72,76 @@ async function openStudioPage(page: Page, name: string) {
 }
 
 async function selectSaturnPlacement(page: Page) {
+  await openSkyPlacementChooser(page);
   await page.getByLabel("Sky placement planet or point").selectOption("saturn");
   await page.getByLabel("Sky placement zodiac sign").selectOption("aries");
   await openSkyPlacementDefaultReading(page);
+}
+
+for (const [width, theme] of [[1440, "light"], [390, "dark"]] as const) {
+  test(`aspect editing survives a missing article editor ${width} ${theme}`, async ({ page, context }, testInfo) => {
+    const studioOrigin = new URL(testInfo.project.use.baseURL as string).origin;
+    const row = structuredClone(inventory.find(row => row.content_key === "sky.aspect.moon.trine.pluto")!);
+    // Mirror the live record's declared fields; the last-known-good transport
+    // does not contain this editor metadata.
+    Object.assign((row.sections as any).packageRecord, {
+      studio_content_type: "aspect",
+      studio_editable_fields: [{ path: "Summary", label: "Summary" }, { path: "Body", label: "Body" }]
+    });
+    const store = await studioApiStore([row]);
+    let editorDownloads = 0, writes = 0;
+    try {
+      await page.setViewportSize({ width, height: 1000 });
+      await page.addInitScript(value => {
+        localStorage.setItem("tldrastro:contentAdminSecret", "calendar-api-fixture");
+        localStorage.setItem("tldrastro:studio-theme", value);
+      }, theme);
+      await context.route("**/*", route => {
+        const url = new URL(route.request().url());
+        // Only frontend assets may reach the target. Every API response belongs
+        // to the isolated handler fixture, including during production checks.
+        return url.origin === studioOrigin && !url.pathname.startsWith("/api/")
+          ? route.continue() : route.abort("blockedbyclient");
+      });
+      await page.route(url => /\/SkyFallbackFieldsEditor-[^/]+\.js$/u.test(url.pathname), route => {
+        editorDownloads++;
+        return route.fulfill({ status: 404, contentType: "text/javascript", body: "/* Old deployment chunk is gone. */" });
+      });
+      await routeStudioInventoryApi(page, { call: message => {
+        if (["POST", "PATCH", "DELETE"].includes(message.method)) writes++;
+        return store.call(message);
+      } });
+      const destination = `${studioPath}#exact-content?category=Calendar+Aspects&first=moon&aspect=trine&second=pluto`;
+      await page.goto(destination);
+      const open = () => page.getByRole("row").filter({ hasText: row.content_key }).getByRole("button", { name: "Edit", exact: true }).click();
+      await open();
+      const editor = page.getByRole("dialog", { name: "Generated content editor", exact: true });
+      const body = editor.getByRole("textbox", { name: "Fallback field Body", exact: true });
+      const original = (row.sections as any).packageRecord;
+      await expect(body).toHaveValue(original.Body);
+      await expect(editor.getByRole("textbox", { name: "Fallback field Summary", exact: true })).toHaveValue(original.Summary);
+      expect(editorDownloads).toBe(0);
+      expect(writes).toBe(0);
+      const complete = "Synthetic complete aspect opening.\n\nThe complete final sentence survives a missing optional module.";
+      await body.fill(complete);
+      await editor.getByRole("button", { name: "Save draft", exact: true }).click();
+      await expect.poll(async () => (await store.call({ method: "rows" })).some((saved: any) => saved.sections.packageDraft?.Body === complete)).toBe(true);
+      expect(writes).toBe(1);
+      const saved = (await store.call({ method: "rows" })).find((saved: any) => saved.sections.packageDraft?.Body === complete);
+      expect(saved.status).toBe("DRAFT");
+      await page.reload();
+      // The fixture lists the original first and its new private revision last.
+      await page.getByRole("row").filter({ hasText: row.content_key }).last().getByRole("button", { name: "Edit", exact: true }).click();
+      await expect(body).toHaveValue(complete);
+      expect((await store.call({ method: "rows" })).find((saved: any) => saved.id === row.id)).toEqual(row);
+      expect(editorDownloads).toBe(0);
+      await expect(editor.getByRole("alert").filter({ hasText: "This section could not load." })).toHaveCount(0);
+      await page.screenshot({ path: testInfo.outputPath("aspect-editor-with-missing-article-chunk.png") });
+    } finally {
+      await page.unrouteAll({ behavior: "wait" });
+      store.close();
+    }
+  });
 }
 
 for (const { status, width, theme, late, action } of [
@@ -139,13 +206,16 @@ for (const { status, width, theme, late, action } of [
       ? route.continue() : route.abort("blockedbyclient"));
     const statuses: number[] = [];
     const dialogs: string[] = [];
-    const moduleName = action ? "HoroscopeSaveRecovery" : "HoroscopeWritingStudio";
+    // Standalone Studio shares the two optional editing panels. The web entry
+    // keeps a separate recovery chunk; exercise the actual import in both.
+    const moduleNames = action ? ["HoroscopeSaveRecovery", "HoroscopeWritingStudio"] : ["HoroscopeWritingStudio"];
+    const modulePattern = new RegExp(`/(?:${moduleNames.join("|")})-[^/]+\\.js$`);
     let unavailable = status === 503;
     page.on("response", response => {
-      if (new RegExp(`/${moduleName}-[^/]+\\.js$`).test(new URL(response.url()).pathname)) statuses.push(response.status());
+      if (modulePattern.test(new URL(response.url()).pathname)) statuses.push(response.status());
     });
     page.on("dialog", async dialog => { dialogs.push(dialog.type()); await dialog.dismiss(); });
-    await page.route(`**/${moduleName}-*.js`, async route => {
+    await page.route(modulePattern, async route => {
       requests++;
       if (late) await assetGate;
       return unavailable ? route.fulfill({ status: 503, contentType: "text/javascript", body: "/* Synthetic unavailable module. */" }) : route.continue();
@@ -316,7 +386,7 @@ for (const { malformed, width, theme } of [
   expect(errors).toEqual([]);
 });
 
-for (const initialPage of ["review-queue", "articles"]) {
+for (const [initialPage, inventoryScope] of [["review-queue", "all"], ["articles", "article-library"]] as const) {
   test(`invalid inventory pages retry automatically before completing from ${initialPage}`, async ({ page }) => {
     await mockStudio(page);
     const attempts: Record<string, number> = {};
@@ -324,7 +394,7 @@ for (const initialPage of ["review-queue", "articles"]) {
     const expectedAttempts = initialPage === "review-queue" ? { "0": 3, "1": 1, "2": 1 } : { section: 3 };
     await page.route("**/api/admin/generated-content**", async route => {
       const url = new URL(route.request().url());
-      if (url.searchParams.get("scope") === "all" && !url.searchParams.has("cursor")) {
+      if (url.searchParams.get("scope") === inventoryScope && !url.searchParams.has("cursor")) {
         const pass = url.searchParams.get("partition") ?? "section";
         attempts[pass] = (attempts[pass] ?? 0) + 1;
         if (pass === failingPass && attempts[pass] <= 2) {
@@ -348,7 +418,7 @@ for (const initialPage of ["review-queue", "articles"]) {
     const expectedPasses = initialPage === "review-queue" ? ["0", "1", "2"] : ["section"];
     await page.route("**/api/admin/generated-content**", async route => {
       const url = new URL(route.request().url());
-      if (invalid && url.searchParams.get("scope") === "all") {
+      if (invalid && url.searchParams.get("scope") === inventoryScope) {
         const pass = url.searchParams.get("partition") ?? "section";
         attempts[pass] = (attempts[pass] ?? 0) + 1;
         await route.fulfill({ json: null });
@@ -415,11 +485,12 @@ for (const theme of ["light", "dark"]) for (const width of [390, 1440]) {
     // Retry remounts the dashboard and reloads its inventory without clearing authentication.
     await page.evaluate(() => document.documentElement.setAttribute("data-qa-recovered", ""));
     await page.getByRole("button", { name: "Retry page", exact: true }).click();
+    await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Connected", recoveryReadiness);
+    await openSkyPlacementChooser(page);
     await expect(page.getByLabel("Sky placement planet or point")).toBeVisible();
     expect(await page.evaluate(() => localStorage.getItem("tldrastro:contentAdminSecret"))).toBe("studio-recovery-fixture");
 
     // A repeated crash can be escaped through a separate Studio destination.
-    await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Connected", recoveryReadiness);
     await openStudioPage(page, "Review Queue");
     await page.evaluate(() => document.documentElement.removeAttribute("data-qa-recovered"));
     await openStudioPage(page, "Sky Write-ups");
@@ -436,6 +507,8 @@ for (const theme of ["light", "dark"]) for (const width of [390, 1440]) {
       page.waitForEvent("load"),
       page.getByRole("button", { name: "Reload page", exact: true }).click()
     ]);
+    await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Connected", recoveryReadiness);
+    await openSkyPlacementChooser(page);
     await expect(page.getByLabel("Sky placement planet or point")).toBeVisible();
     await selectSaturnPlacement(page);
     await expect(page.getByRole("alert").filter({ hasText: "This page could not load." })).toHaveCount(0);
@@ -475,6 +548,7 @@ for (const action of ['Retry page', 'Open Review Queue']) {
 
 for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   test(`new unsaved guide survives a formatting asset failure ${width} ${theme}`, async ({ page, context }, testInfo) => {
+    const studioOrigin = new URL(testInfo.project.use.baseURL as string).origin;
     const store = await studioApiStore([]);
     try {
       let missing = true, writes = 0;
@@ -485,9 +559,14 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
         localStorage.setItem("tldrastro:contentAdminSecret", "calendar-api-fixture");
         localStorage.setItem("tldrastro:studio-theme", value);
       }, theme);
-      await context.route("**/*", route => new URL(route.request().url()).hostname === "127.0.0.1"
-        ? route.continue() : route.abort("blockedbyclient"));
-      await page.route("**/StudioFormattingEditor-*.js", route => missing
+      await context.route("**/*", route => {
+        const url = new URL(route.request().url());
+        // Only frontend assets may reach the target. Every API response belongs
+        // to the isolated handler fixture, including during production checks.
+        return url.origin === studioOrigin && !url.pathname.startsWith("/api/")
+          ? route.continue() : route.abort("blockedbyclient");
+      });
+      await page.route(url => /\/StudioFormattingEditor-[^/]+\.js$/u.test(url.pathname), route => missing
         ? route.fulfill({ status: 503, contentType: "text/javascript", body: "/* Optional formatting unavailable. */" })
         : route.continue());
       page.on("response", response => {
@@ -498,7 +577,8 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
         return store.call(message);
       } });
       await page.goto(`${studioPath}#articles`);
-      await page.getByRole("button", { name: "New guide", exact: true }).click();
+      await page.getByRole("button", { name: "Create", exact: true }).click();
+      await page.getByRole("menuitem", { name: /New guide/u }).click();
       const editor = page.getByRole("dialog", { name: "Generated content editor", exact: true });
       const body = editor.getByLabel("Article body", { exact: true });
       await editor.getByLabel("Article title", { exact: true }).fill("Synthetic unsaved recovery guide");
@@ -506,8 +586,11 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
       const mountedEditor = await editor.elementHandle();
       expect(await store.call({ method: "rows" })).toEqual([]);
       await body.locator("..").getByRole("button", { name: "Format text", exact: true }).click();
+      await expect.poll(() => statuses).toEqual([503]);
       const recovery = editor.getByRole("alert").filter({ hasText: "This section could not load." });
       await expect(recovery).toBeVisible();
+      await recovery.getByText("Error details", { exact: true }).click();
+      await expect(recovery).toContainText(/StudioFormattingEditor-/);
       expect(statuses).toEqual([503]);
       expect(await mountedEditor!.evaluate(element => element.isConnected)).toBe(true);
       await expect(page.locator(".admin-dashboard")).toHaveAttribute("data-studio-theme", theme);
@@ -581,7 +664,8 @@ for (const [width, theme] of [[390, "dark"], [1440, "light"]] as const) {
         window.dispatchEvent(new StorageEvent("storage", { key: storageKey }));
       }, { storageKey, token: token(signature) });
       await page.goto(`${studioPath}#articles`);
-      await page.getByRole("button", { name: "New guide", exact: true }).click();
+      await page.getByRole("button", { name: "Create", exact: true }).click();
+      await page.getByRole("menuitem", { name: /New guide/u }).click();
       const editor = page.getByRole("dialog", { name: "Generated content editor", exact: true });
       const body = editor.getByLabel("Article body", { exact: true });
       await editor.getByLabel("Article title", { exact: true }).fill("Synthetic retained access recovery");

@@ -2,8 +2,82 @@ import {test,expect} from '@playwright/test';
 import {fork} from 'node:child_process';
 import path from 'node:path';
 import {routeStudioInventoryApi} from '../helpers/studio-inventory-route';
-import {createSeasonalPublicationFixture,seasonalClaimBodies,createMonthlyAspectPublicationFixture,monthlyAspectBody,createWeeklyAspectPublicationFixture,weeklyAspectBodies,weeklyRulerBodies,createWeeklyContextPublicationFixture} from '../helpers/horoscope-publication-fixture.mts';
+import {createSeasonalPublicationFixture,seasonalClaimBodies,createMonthlyAspectPublicationFixture,monthlyAspectBody,createWeeklyAspectPublicationFixture,weeklyAspectBodies,weeklyRulerBodies,createWeeklyContextPublicationFixture,createWeeklyGrammarPublicationFixture} from '../helpers/horoscope-publication-fixture.mts';
 import {horoscopeEditionBody} from '../../apps/web/src/content/horoscopeEditions.mjs';
+
+for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dark']] as const){
+ test(`Published horoscope editions archive safely and remain recoverable ${width} ${theme}`,async({page})=>{
+  test.setTimeout(120000);
+  const child=fork(path.resolve('tests/helpers/sky-article-save-api.mts'),[],{env:{...process.env,ZODIAC_TEMPLATE_FIXTURE:'1',HOROSCOPE_WRITER_FIXTURE:'1'},execArgv:['--import','tsx'],stdio:['ignore','ignore','ignore','ipc']});
+  let sequence=0,loseArchiveResponse=false,archiveRequests=0;
+  const pending=new Map<number,{resolve:(v:any)=>void;reject:(e:Error)=>void}>();
+  const ready=new Promise<void>((resolve,reject)=>{child.on('message',(m:any)=>{if(m.ready)return resolve();const task=pending.get(m.id);if(task){pending.delete(m.id);m.error?task.reject(new Error(m.error)):task.resolve(m.result);}});child.on('exit',code=>{const error=new Error(`Fixture exited ${code}`);reject(error);pending.forEach(t=>t.reject(error));});});
+  const call=(m:any)=>new Promise<any>((resolve,reject)=>{const id=++sequence;pending.set(id,{resolve,reject});child.send({...m,id});});
+  try{
+   await ready;const created=await createWeeklyGrammarPublicationFixture(call);expect(created.status).toBe(200);
+   const draft=created.payload.rows[0];
+   const result=await call({method:'PATCH',body:{id:draft.id,expectedUpdatedAt:draft.updated_at,ownerAction:'publish-owner-content'}});
+   expect(result.status).toBe(200);const original=result.payload.rows[0];
+   await page.setViewportSize({width,height:1000});await page.clock.setFixedTime(new Date('2026-10-20T16:00:00Z'));
+   await page.addInitScript(theme=>{localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture');localStorage.setItem('tldrastro:studio-theme',theme);localStorage.setItem('tldrastro:theme',theme);},theme);
+   await routeStudioInventoryApi(page,{call,answer:async(route,url)=>{
+    if(url.pathname==='/api/admin/horoscope-writing'){const result=await call({method:'writing',body:route.request().postDataJSON()});await route.fulfill({status:result.status,json:result.payload});return true;}
+    return false;
+   }});
+   await page.route('**/api/admin/generated-content**',async route=>{
+    const url=new URL(route.request().url());
+    if(url.pathname==='/api/admin/generated-content'&&route.request().method()==='PATCH'&&route.request().postDataJSON().status==='ARCHIVED'){
+     archiveRequests++;const body=route.request().postDataJSON();expect(body.id).toBe(original.id);expect(body.expectedUpdatedAt).toBeTruthy();expect(Object.keys(body).sort()).toEqual(['expectedUpdatedAt','id','status']);
+     const result=await call({method:'PATCH',body,url:url.pathname+url.search});
+     if(loseArchiveResponse){loseArchiveResponse=false;await route.abort('failed');}else await route.fulfill({status:result.status,json:result.payload});return true;
+    }
+    await route.fallback();
+   });
+   const studio=page.getByRole('region',{name:'Horoscope editions'});
+   await page.goto(`/admin/content#horoscopes?edition=${original.id}`);
+   const archive=studio.getByRole('button',{name:'Archive edition',exact:true});await expect(archive).toBeVisible();
+   // A second editor changes the version after this editor has opened it.
+   const concurrent=await call({method:'PATCH',body:{id:original.id,expectedUpdatedAt:original.updated_at,reviewerNotes:'Synthetic concurrent metadata edit.'}});
+   expect(concurrent.status).toBe(200);const newer=concurrent.payload.rows[0];
+   await archive.click();await expect(studio.getByRole('alert')).toContainText('Reload the saved edition before retrying');await expect(archive).toBeDisabled();
+   expect((await call({method:'rows'})).find((row:any)=>row.id===original.id)).toEqual(newer);expect(archiveRequests).toBe(1);
+   await studio.getByRole('button',{name:'Reload saved edition',exact:true}).click();await expect(archive).toBeEnabled();
+   loseArchiveResponse=true;await archive.click();
+   await expect(studio.getByRole('alert')).toContainText('Reload the saved edition before retrying');await expect(archive).toBeDisabled();expect(archiveRequests).toBe(2);
+   await studio.getByRole('button',{name:'Reload saved edition',exact:true}).click();await studio.getByRole('button',{name:'4 · Publish',exact:true}).click();
+   await expect(studio.getByText('This edition is archived. Its saved readings are preserved.',{exact:true})).toBeVisible();
+   await expect(archive).toHaveCount(0);await expect(studio.getByRole('link',{name:'Read published edition'})).toHaveCount(0);
+   const archived=(await call({method:'rows'})).find((row:any)=>row.id===original.id);expect(archived.status).toBe('ARCHIVED');expect(archived.sections).toEqual(original.sections);expect(archived.body).toBe(original.body);
+   for(const body of [{ids:[original.id]},{keys:[original.content_key]}])expect((await call({method:'reader',body})).payload.rows).toEqual([]);
+   await page.reload();await studio.getByRole('button',{name:'4 · Publish',exact:true}).click();await expect(studio.getByText('This edition is archived. Its saved readings are preserved.',{exact:true})).toBeVisible();
+   await studio.getByRole('button',{name:'Restore as draft',exact:true}).click();await expect(studio.getByRole('status').filter({hasText:'Saved edition draft.'})).toBeVisible();
+   expect((await call({method:'rows'})).find((row:any)=>row.id===original.id).status).toBe('DRAFT');
+   expect((await call({method:'reader',body:{ids:[original.id]}})).payload.rows).toEqual([]);
+   await studio.getByRole('button',{name:'4 · Publish',exact:true}).click();
+   await studio.getByLabel('I have reviewed and approve the exact wording of every saved reading in this edition.').check();
+   await studio.getByRole('button',{name:'Publish edition',exact:true}).click();await expect(archive).toBeVisible();
+   await archive.click();await expect(studio.getByText('This edition is archived. Its saved readings are preserved.',{exact:true})).toBeVisible();await expect(studio.getByRole('region',{name:'Weekly batch editorial gate'})).toHaveCount(0);
+   await page.screenshot({path:`test-results/horoscope-archived-state-${width}-${theme}.png`,fullPage:true});
+   await studio.getByRole('button',{name:'Review archived readings',exact:true}).click();await expect(studio.getByLabel('Complete reading')).toHaveValue(original.sections.horoscopeEdition.passages[0].body);
+   expect((await call({method:'writer-state'})).calls).toBe(0);expect(archiveRequests).toBe(3);
+   await page.screenshot({path:`test-results/horoscope-archive-${width}-${theme}.png`,fullPage:true});
+   const emptyEdition=structuredClone(original.sections.horoscopeEdition);
+   for(const passage of emptyEdition.passages){passage.headline='';passage.body='';}
+   const latest=(await call({method:'rows'})).find((row:any)=>row.id===original.id);
+   const emptySaved=await call({method:'PATCH',body:{id:latest.id,expectedUpdatedAt:latest.updated_at,status:'DRAFT',body:horoscopeEditionBody(emptyEdition),sections:{horoscopeEdition:emptyEdition}}});expect(emptySaved.status).toBe(200);expect(emptySaved.payload.rows[0].sections.horoscopeEdition).toEqual(emptyEdition);
+   await page.reload();
+   await expect(studio.getByRole('button',{name:'4 · Publish',exact:true})).toBeDisabled();await expect(archive).toBeEnabled();await archive.click();
+   await expect(studio.getByText('This edition is archived. Its saved readings are preserved.',{exact:true})).toBeVisible();
+   const emptyArchived=(await call({method:'rows'})).find((row:any)=>row.id===original.id);expect(emptyArchived.status).toBe('ARCHIVED');expect(emptyArchived.sections.horoscopeEdition).toEqual(emptyEdition);
+   await page.reload();await expect(studio.getByRole('button',{name:'Restore as draft',exact:true})).toBeVisible();
+   await studio.getByRole('button',{name:'Review archived readings',exact:true}).click();await expect(studio.getByLabel('Complete reading')).toHaveValue('');
+   await studio.getByRole('button',{name:'Restore as draft',exact:true}).click();await expect(studio.getByRole('status').filter({hasText:'Saved edition draft.'})).toBeVisible();
+   expect((await call({method:'rows'})).find((row:any)=>row.id===original.id).status).toBe('DRAFT');
+   expect((await call({method:'reader',body:{ids:[original.id]}})).payload.rows).toEqual([]);
+   expect(archiveRequests).toBe(4);expect((await call({method:'writer-state'})).calls).toBe(0);
+  }finally{try{await page.unrouteAll({behavior:'wait'});}finally{child.kill();}}
+ });
+}
 
 for(const [width,theme] of [[390,'light'],[1440,'dark']] as const){
  test(`Saved seasonal, monthly and weekly claims publish without rewriting ${width} ${theme}`,async({page})=>{
@@ -79,17 +153,19 @@ for(const [width,theme] of [[390,'light'],[1440,'dark']] as const){
    const changed=await call({method:'PATCH',body:{id:ruler.id,expectedUpdatedAt:ruler.updated_at,sections:invalid,body:horoscopeEditionBody(invalid.horoscopeEdition)}});expect(changed.status).toBe(200);ruler=changed.payload.rows[0];
    await page.goto(`/admin/content#horoscopes?edition=${ruler.id}`);
    await studio.getByRole('button',{name:'4 · Publish',exact:true}).click();
-   const checks=studio.getByRole('region',{name:'Publication checks'}),approval=studio.getByLabel('I have reviewed and approve the exact wording of every saved reading in this edition.');
+   const checks=studio.locator('details[aria-label="Optional writing suggestions"]'),approval=studio.getByLabel('I have reviewed and approve the exact wording of every saved reading in this edition.');
+   await expect(checks).toBeVisible();await checks.locator('summary').click();
    await expect(checks).toContainText('Aries:');await expect(checks).toContainText('Leo:');
-   await expect(approval).toBeDisabled();
+   await expect(approval).toBeEnabled();
    const override=studio.getByLabel('I have reviewed these automated checks and want to override them for this saved edition.');
-   await override.check();await expect(approval).toBeEnabled();await approval.check();await override.uncheck();await expect(approval).not.toBeChecked();await expect(approval).toBeDisabled();
+   await expect(override).toHaveCount(0);await approval.check();await expect(approval).toBeChecked();await approval.uncheck();
    await expect(studio.getByText('Ready to publish the complete edition.',{exact:true})).toHaveCount(0);
-   await expect(studio.locator('footer')).toHaveCSS('position','static');
+   await expect(studio.locator('footer')).toHaveCSS('position','sticky');
    await checks.scrollIntoViewIfNeeded();await expect(checks).toBeVisible();
    await checks.getByRole('button',{name:'Edit Aries reading',exact:true}).click({trial:true});
    await page.screenshot({path:`test-results/weekly-publication-issues-${width}-${theme}.png`,fullPage:true});
    for(const sign of ['aries','leo']){
+    if(await checks.getAttribute('open')===null)await checks.locator('summary').click();
     await checks.getByRole('button',{name:`Edit ${sign[0].toUpperCase()+sign.slice(1)} reading`,exact:true}).click();
     await studio.getByLabel('Complete reading').fill(weeklyRulerBodies[sign]);
     if(sign==='leo')failPreflight=true;
@@ -97,7 +173,7 @@ for(const [width,theme] of [[390,'light'],[1440,'dark']] as const){
    }
    await expect(studio.getByRole('alert')).toContainText('Synthetic publication check unavailable.');await expect(approval).toBeDisabled();
    await studio.getByRole('button',{name:'Check publication again',exact:true}).click();
-   await expect(checks).toHaveCount(0);await expect(approval).toBeEnabled();
+   await expect(approval).toBeEnabled();
    for(const [sign,body] of Object.entries(weeklyRulerBodies))await expect(studio.getByRole('region',{name:`${sign[0].toUpperCase()+sign.slice(1)} reading preview`})).toContainText(body);
    await approval.check();
    await studio.getByRole('button',{name:'Publish edition',exact:true}).click();
@@ -111,12 +187,12 @@ for(const [width,theme] of [[390,'light'],[1440,'dark']] as const){
    await page.clock.setFixedTime(new Date('2026-10-20T16:00:00Z'));
    await page.goto(`/admin/content#horoscopes?edition=${contextRow.id}`);
    await studio.getByRole('button',{name:'4 · Publish',exact:true}).click();
-   await expect(checks).toBeVisible();await expect(approval).toBeDisabled();await override.check();await expect(approval).toBeEnabled();
+   await expect(checks).toBeVisible();await checks.locator('summary').click();await expect(approval).toBeEnabled();await expect(override).toHaveCount(0);
    for(const p of contextRow.sections.horoscopeEdition.passages)await expect(studio.getByRole('region',{name:`${p.sign[0].toUpperCase()+p.sign.slice(1)} reading preview`})).toContainText(p.body);
    await approval.check();await studio.getByRole('button',{name:'Publish edition',exact:true}).click();
    await expect(studio.getByRole('status')).toContainText('Published the complete edition.');
    const contextSaved=(await call({method:'rows'})).find((r:any)=>r.id===contextRow.id);
-   expect(contextSaved.sections).toEqual(contextRow.sections);expect(contextSaved.source_snapshot.studioOwnerApproval.horoscopeValidationOverride.approved).toBe(true);expect(contextSaved.source_snapshot).toEqual({...contextRow.source_snapshot,review_status:"approved",studioOwnerApproval:expect.objectContaining({action:"publish-owner-content",contentKey:contextRow.content_key,savedVersion:contextRow.updated_at})});
+   expect(contextSaved.sections).toEqual(contextRow.sections);expect(contextSaved.source_snapshot.studioOwnerApproval.horoscopeValidationOverride).toBeUndefined();expect(contextSaved.source_snapshot).toEqual({...contextRow.source_snapshot,review_status:"approved",studioOwnerApproval:expect.objectContaining({action:"publish-owner-content",contentKey:contextRow.content_key,savedVersion:contextRow.updated_at})});
    expect((await call({method:'writer-state'})).calls).toBe(0);
    for(const sign of ['aries','taurus','libra','sagittarius']){
     await page.goto(`/#horoscopes?edition=${contextRow.id}&period=weekly&sign=${sign}`);
@@ -124,6 +200,14 @@ for(const [width,theme] of [[390,'light'],[1440,'dark']] as const){
     const exact=contextRow.sections.horoscopeEdition.passages.find((p:any)=>p.sign===sign).body;
     await expect(article).toContainText(exact);await page.reload();await expect(article).toContainText(exact);
    }
+   const grammar=await createWeeklyGrammarPublicationFixture(call);expect(grammar.status).toBe(200);const grammarRow=grammar.payload.rows[0];
+   await page.goto(`/admin/content#horoscopes?edition=${grammarRow.id}`);
+   await studio.getByRole('button',{name:'4 · Publish',exact:true}).click();
+   await expect(studio).toContainText('12/12 readings ready');await expect(checks).toHaveCount(0);await expect(approval).toBeEnabled();await expect(approval).not.toBeChecked();
+   await expect(studio.getByRole('button',{name:'Publish edition',exact:true})).toBeDisabled();
+   for(const p of grammarRow.sections.horoscopeEdition.passages)await expect(studio.getByRole('region',{name:`${p.sign[0].toUpperCase()+p.sign.slice(1)} reading preview`})).toContainText(p.body);
+   await page.reload();await studio.getByRole('button',{name:'4 · Publish',exact:true}).click();await expect(checks).toHaveCount(0);await expect(approval).toBeEnabled();await expect(approval).not.toBeChecked();
+   const unchanged=(await call({method:'rows'})).find((r:any)=>r.id===grammarRow.id);expect(unchanged).toEqual(grammarRow);expect(unchanged.status).toBe('DRAFT');expect((await call({method:'writer-state'})).calls).toBe(0);
   }finally{
    // Reader refreshes may still be using the fixture after the final visible
    // assertion. Drain their handlers before terminating its IPC transport.

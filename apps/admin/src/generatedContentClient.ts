@@ -66,6 +66,10 @@ function rowsFromPayload(payload: Record<string, unknown>): GeneratedContentEdit
   return payload.rows as GeneratedContentEditorRow[];
 }
 
+export function isPendingPackageRevision(row: { status?: string; event_type?: string | null } | undefined) {
+  return row?.status === "DRAFT" && row.event_type === "studio-package-source-draft";
+}
+
 export function studioInventoryDocumentPath(contentKey: string, extras: { status?: string; limit?: number } = {}) {
   const params = new URLSearchParams({
     contentKey,
@@ -77,8 +81,8 @@ export function studioInventoryDocumentPath(contentKey: string, extras: { status
 }
 
 // Several rows at once, for surfaces that show saved copy the inventory list does not carry.
-export function studioInventoryDocumentsPath(contentKeys: readonly string[]) {
-  const params = new URLSearchParams({ status: "all", visibility: "all", limit: "80" });
+export function studioInventoryDocumentsPath(contentKeys: readonly string[], limit = 80) {
+  const params = new URLSearchParams({ status: "all", visibility: "all", limit: String(limit) });
   for (const key of contentKeys) params.append("contentKeys", key);
   return `/api/admin/generated-content-inventory?${params}`;
 }
@@ -97,7 +101,10 @@ export async function readStudioContentDocument(
   secret: string,
   options: RequestInit = {}
 ): Promise<StudioContentDocument> {
-  const payload = await request(studioInventoryDocumentPath(contentKey), secret, options);
+  // Source cards resume pending edits, while completed/private archive history
+  // must not displace the canonical source in this one-row lookup.
+  const path = `${studioInventoryDocumentPath(contentKey)}&excludeArchivedArticleRevisions=true&excludeArchivedPackageRevisions=true`;
+  const payload = await request(path, secret, options);
   if (!Array.isArray(payload.rows) || payload.rows.some((row) => !isObject(row) || row.content_key !== contentKey)) {
     throw new Error("The selected source could not be verified.");
   }

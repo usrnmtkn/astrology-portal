@@ -3,8 +3,8 @@ import { fork } from 'node:child_process';
 import path from 'node:path';
 import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
 const key='sky-card/venus/scorpio/sextile/mars/virgo';
-for(const width of [390,1440]) for(const theme of ['light','dark'] as const) {
- test(`Version conflict and lost-publication recovery at ${width} ${theme}`,async({page,context})=>{
+for(const [width, theme, blockRecovery] of [[390,'light',false],[390,'dark',false],[1440,'light',false],[1440,'dark',false],[390,'dark',true]] as const) {
+ test(`Version conflict and lost-publication recovery at ${width} ${theme}${blockRecovery ? ' with unavailable recovery module' : ''}`,async({page,context})=>{
   test.setTimeout(60_000);
   const child=fork(path.resolve('tests/helpers/calendar-review-api.mjs'),['--ipc'],{execArgv:['--import','tsx'],stdio:['ignore','pipe','pipe','ipc']});
   const pending=new Map<number,{resolve:(v:any)=>void,reject:(e:Error)=>void}>();let sequence=0,stderr='';
@@ -34,7 +34,15 @@ for(const width of [390,1440]) for(const theme of ['light','dark'] as const) {
    await field.fill(approved);await editor.getByRole('button',{name:'Save draft',exact:true}).click();
    await expect.poll(async()=>(await call({method:'rows'})).find((row:any)=>row.id===fixture.id)?.sections.packageDraft.Body).toBe(approved);
    const competing=`${fixture.body}\n\nSynthetic unsaved second-tab ending.`;
+   if (blockRecovery) await second.route('**/studioRevisionPublication-*.js', route => route.abort());
    await otherField.fill(competing);await other.getByRole('button',{name:'Save draft',exact:true}).click();
+   if (blockRecovery) {
+    await expect(other.getByRole('alert')).toContainText(/module|fetch|load/i);
+    await expect(otherField).toHaveValue(competing);
+    expect((await call({method:'rows'})).find((row:any)=>row.id===fixture.id)?.sections.packageDraft.Body).toBe(approved);
+    expect(errors).toEqual([]);
+    return;
+   }
    await expect(other.getByRole('alert')).toContainText(/changed/);await expect(otherField).toHaveValue(competing);
    await expect.poll(async()=>(await call({method:'rows'})).find((row:any)=>row.id===fixture.id)?.sections.packageDraft.Body).toBe(approved);
    await page.route('**/api/admin/generated-content',async route=>{

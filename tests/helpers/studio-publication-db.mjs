@@ -5,7 +5,18 @@ export const publicationMigrations = [
   '20260907061500_content_studio_revision_completion.sql',
   '20260907180000_content_publications.sql',
   '20260922002101_content_studio_private_versions.sql',
-  '20260922003250_content_studio_publication_receipts.sql'
+  '20260922003250_content_studio_publication_receipts.sql',
+  '20261025203653_standalone_article_revision_publication.sql',
+  '20261027071000_horoscope_revision_publication.sql',
+  '20261105195706_dated_moon_horoscope_revision_publication.sql',
+  '20261107123057_studio_approved_source_recovery.sql',
+  '20261109083214_astro101_private_revision_publication.sql',
+  '20261110192807_moon_horoscope_reusable_recovery.sql',
+  '20261112020848_calendar_event_private_revisions.sql',
+  '20261112205425_natal_editorial_private_revisions.sql',
+  '20261113005807_shared_composite_private_revisions.sql',
+  '20261113015845_dated_lunation_article_reusable_recovery.sql',
+  '20261113022308_dated_lunation_article_private_revisions.sql'
 ];
 export const publicationTestSchema = `create role anon; create role authenticated; create role service_role bypassrls;
 create table public.generated_interpretations (

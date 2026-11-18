@@ -1,5 +1,5 @@
 import { StudioButton } from "./StudioControls";
-import { Stack, Text } from "./studio-ds/primitives";
+import { Inline, Stack, Text } from "./studio-ds/primitives";
 import ContentLiveStatusBadge from "./ContentLiveStatus";
 import { useMemo } from "react";
 import type { TemplateVariableReference } from "./templateVariableReference";
@@ -21,6 +21,7 @@ export type TemplateVariableSourceRow = {
 
 type Props = {
   references: TemplateVariableReference[];
+  factExamples?: Record<string, string>;
   rows: TemplateVariableSourceRow[];
   templateContentKey: string;
   templateRow: CompositionMapRow;
@@ -82,7 +83,7 @@ function sourceCopyParts(value: string, references: TemplateVariableReference[],
 }
 
 export function TemplateVariableReviewPanels({
-  references, rows, templateContentKey, templateRow, selectedVariableName, selectedSourceId,
+  references, factExamples = {}, rows, templateContentKey, templateRow, selectedVariableName, selectedSourceId,
   onBackToVariables, onSelectSource, onSelectVariable, onEditSource
 }: Props) {
   const templateKey = compositionTemplateKey(templateRow);
@@ -92,8 +93,10 @@ export function TemplateVariableReviewPanels({
     [rows, templateKey]
   );
   const reviewReferences = atomicReferences.length ? atomicReferences : references;
-  const variable = reviewReferences.find((candidate) => candidate.name === selectedVariableName);
+  const variable = reviewReferences.find((candidate) => candidate.name === selectedVariableName)
+    ?? references.find((candidate) => candidate.name === selectedVariableName);
   if (!variable) return null;
+  const example = factExamples[variable.name]?.trim() || variable.example?.trim();
   const sources = templateVariableSourceCandidates(variable, rows, templateContentKey);
   const sourceSelectionNote = templateVariableSourceSelectionNote(variable);
   const hasEditableSources = variable.sourceKind === "saved-copy" || sources.length > 0;
@@ -141,7 +144,7 @@ export function TemplateVariableReviewPanels({
           {variable.sourceKind === "unmapped" && !sources.length ? (
             <div className="admin-empty-state admin-variable-runtime-note"><strong>Not connected to a source row</strong><p>This slot is declared by the template, but the current catalog and resolver do not provide editable writing for it.</p></div>
           ) : !hasEditableSources ? (
-            <div className="admin-empty-state admin-variable-runtime-note"><strong>No saved passage to review</strong><p>The app calculates this value from live chart, date, or person data.</p></div>
+            <section className="admin-hook-detail-section admin-variable-runtime-note" aria-label="Calculated value example"><Text size="meta" tone="secondary">Example value</Text><p>{example || "Calculated when the template is displayed."}</p></section>
           ) : (
             <section className="admin-variable-source-list" aria-label={`Source rows for ${variable.label}`}>
               {sourceSelectionNote && <p>{sourceSelectionNote}</p>}
@@ -157,7 +160,7 @@ export function TemplateVariableReviewPanels({
 
   return (
     <section className="admin-variables-rail-detail" role="region" aria-label={`${variable.label} variable details`}>
-      <nav className="admin-variables-rail-breadcrumb" aria-label="Variable path">
+      <Inline as="nav" align="center" className="admin-variables-rail-breadcrumb" aria-label="Variable path">
         <StudioButton type="button" onClick={onBackToVariables}>All variables</StudioButton>
         <span aria-hidden="true">›</span>
         {source ? (
@@ -169,7 +172,7 @@ export function TemplateVariableReviewPanels({
         ) : (
           <strong>{variable.label}</strong>
         )}
-      </nav>
+      </Inline>
       {source && (
         <div className="admin-variables-rail-source-head">
           <code>{source.content_key}</code>

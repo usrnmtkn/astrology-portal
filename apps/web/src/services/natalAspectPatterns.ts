@@ -29,6 +29,7 @@ export type NatalAspectPatternActivationTimingWindow = {
 export type NatalAspectPatternReaderItem = {
   patternId: string;
   patternType: string;
+  memberNames?: string[];
   copy: ResolvedAspectPatternCopy;
   activationCopy?: ResolvedAspectPatternActivationCopy;
   activationEmphasis: "primary" | "secondary" | "none";
@@ -294,6 +295,7 @@ export function natalAspectPatternReaderItems(snapshot: SkySnapshot | null): Nat
     return [{
       patternId: context.patternId,
       patternType: context.patternType,
+      memberNames: context.members?.flatMap(member => typeof member.planet === "string" ? [member.planet] : []),
       copy,
       activationCopy,
       activationEmphasis,

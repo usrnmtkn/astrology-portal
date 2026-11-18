@@ -83,7 +83,7 @@ assert.match(globalLayer, /window\.addEventListener\(reportReadyEvent/u);
 assert.match(globalLayer, /reports-nav-badge/u);
 assert.doesNotMatch(globalLayer, /styles\/report-library\.css/u);
 
-assert.match(libraryView, /id="report-library-title">Reports<\/h1>/u);
+assert.match(libraryView, /<h1\b[^>]*id="report-library-title"[^>]*>Reports<\/h1>/u);
 assert.match(libraryView, /SegmentedControl/u);
 assert.match(libraryView, /Archived/u);
 assert.match(libraryView, /Share2/u, "Ready reports must offer Share in the overflow menu.");
@@ -102,11 +102,11 @@ assert.match(libraryView, /Share link copied\./u);
 assert.match(libraryView, /MoreHorizontal/u);
 assert.doesNotMatch(libraryView, /ChevronRight/u);
 assert.match(libraryView, /Today, /u);
-assert.match(libraryView, /Created \{formatCreatedDate\(item\.createdAt\)\}/u);
+assert.match(libraryView, /formatCreatedDate\(item\.createdAt\)/u);
 assert.match(libraryView, /formatReadingWindowDates\(item\.targetDate, item\.periodEnd/u);
 assert.match(libraryView, /className="article-page sky-detail-page saved-generated-report"/u);
 assert.match(libraryView, /className="article-shell sky-detail-article saved-generated-report__article"/u);
-assert.match(libraryView, /className="sky-detail-back floating-back-button"/u);
+assert.match(libraryView, /<ReportBack href=\{backHref\}/u);
 
 assert.match(vanityView, /resolveReportLibraryItemByVanitySlug/u);
 assert.match(vanityView, /reportShareKeyFromHash/u);
@@ -115,9 +115,9 @@ assert.match(vanityView, /GeneratedReportDeliveryView reportId=\{item\.sourceId\
 assert.match(vanityView, /ReportDeliveryView reportId=\{item\.sourceId\}/u);
 assert.match(vanityView, /window\.location\.replace\(generatedReportVanityPath\(report\)\)/u, "Legacy generated UUID URLs must redirect to the vanity path.");
 
-assert.match(reportArticle, /className="report-article-back floating-back-button"/u);
+assert.match(reportArticle, /<ReportBack href=\{backHref\}/u);
 assert.match(reportArticle, /backHref = "\/reports\/"/u);
-assert.match(reportArticle, /<span>Back<\/span>/u);
+assert.match(read("apps/web/src/components/reports/ReportStateCard.tsx"), /Back to Reports/u);
 
 assert.match(reportRoute, /styles\/report-library\.css/u);
 assert.match(reportRoute, /path === "\/reports"[\s\S]*<ReportLibraryView/u);
@@ -139,8 +139,8 @@ assert.match(libraryStyles, /\.report-library-page/u);
 assert.match(libraryStyles, /\.report-library-row__menu/u);
 assert.match(libraryStyles, /\.report-library-share-toast/u);
 assert.match(libraryStyles, /var\(--sky-page-padding\)/u);
-assert.match(libraryStyles, /var\(--card-bg\)/u);
-assert.match(libraryStyles, /var\(--card-shadow\)/u);
+assert.match(libraryStyles, /var\(--surface\)/u);
+assert.match(libraryStyles, /var\(--overlay-shadow\)/u);
 assert.doesNotMatch(libraryStyles, /\.report-library-row__archive/u);
 assert.doesNotMatch(libraryStyles, /\.report-library-row__chevron/u);
 assert.doesNotMatch(libraryStyles, /\.report-ready-toast|\.reports-menu-slot/u);

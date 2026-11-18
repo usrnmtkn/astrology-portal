@@ -12,15 +12,22 @@ const selected = source.statements.filter(node => ts.isFunctionDeclaration(node)
   || ts.isVariableStatement(node) && node.declarationList.declarations.some(declaration => ts.isIdentifier(declaration.name) && names.includes(declaration.name.text)));
 assert.equal(selected.length, 5);
 const printer = ts.createPrinter();
-const code = transformSync(selected.map(node => printer.printNode(ts.EmitHint.Unspecified, node, source)).join('\n'), { loader: 'ts', format: 'cjs' }).code;
+const readerFile = 'apps/web/src/services/readerContentClient.ts';
+const readerSource = ts.createSourceFile(readerFile, fs.readFileSync(readerFile, 'utf8'), ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
+const navigation = readerSource.statements.filter(node => ts.isFunctionDeclaration(node) && node.name?.text === 'withReaderNavigation');
+assert.equal(navigation.length, 1, 'Use the actual navigation scope, not a fixture substitute.');
+const declarations = [...navigation.map(node => printer.printNode(ts.EmitHint.Unspecified, node, readerSource)),
+  ...selected.map(node => printer.printNode(ts.EmitHint.Unspecified, node, source))];
+const code = transformSync(declarations.join('\n'), { loader: 'ts', format: 'cjs' }).code;
 function harness() {
   const fixture: any = { generation: 1, reads: [], coreReads: [], speculations: 0, refresh: async () => {} };
-  const context: any = { module: { exports: {} }, refreshContentPublications: () => fixture.refresh(),
+  const context: any = { module: { exports: {} }, AbortController, AbortSignal, refreshContentPublications: () => fixture.refresh(),
     readSkyPlacementBundle: (selection: string, staged: unknown, canCache: () => boolean) => {
       let resolve!: (value: string) => void, reject!: (error: Error) => void;
       const promise = new Promise<string>((yes, no) => { resolve = yes; reject = no; });
       fixture.reads.push({ selection, staged, canCache, resolve, reject }); return promise;
-    }, readFallbackArchitectureV3DashboardBundle: (scope: string, canCache: () => boolean, early: unknown) => {
+    }, readFallbackArchitectureV3DashboardBundle: (scope: string, canCache: () => boolean, navigation: AbortSignal, early: unknown) => {
+      assert.ok(navigation instanceof AbortSignal); assert.equal(navigation.aborted, false);
       let resolve!: (value: string) => void, reject!: (error: Error) => void;
       const promise = new Promise<string>((yes, no) => { resolve = yes; reject = no; });
       fixture.coreReads.push({ scope, early, canCache, resolve, reject }); return promise;

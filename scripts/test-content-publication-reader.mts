@@ -270,3 +270,39 @@ console.log('PASS exact Sky aspect publication identity, microseconds, retiremen
   assert.deepEqual(ingressFacts(),ingressBaseline,'Ingress reset restores prior source selection rather than stale dated QA');
   } finally {await vite.close();}
 }
+
+{
+  const own = 'sky-article/sun/virgo/2030/2030-08-23';
+  const unrelated = 'sky-article/chiron/pisces/2011/2011-02-08';
+  const selected = 'article:sun/virgo';
+  installContentPublications([{ ...record, content_key: own, revision: 90001 }, { ...retired, content_key: unrelated, revision: 90001 }]);
+  const before = skyPlacementPublicationIdentity(selected), globalBefore = skyPlacementPublicationIdentity();
+  const unknownBefore = skyPlacementPublicationIdentity('article:unknown');
+  installContentPublications([{ ...retired, content_key: unrelated, revision: 90002 }]);
+  assert.equal(skyPlacementPublicationIdentity(selected), before, 'An unrelated dated retirement does not invalidate an open article');
+  assert.notEqual(skyPlacementPublicationIdentity(), globalBefore, 'Unscoped readers retain the full publication guard');
+  assert.notEqual(skyPlacementPublicationIdentity('article:unknown'), unknownBefore, 'Unknown article selection fails conservatively to the full guard');
+  installContentPublications([{ ...record, content_key: unrelated, revision: 90003 }]);
+  assert.equal(skyPlacementPublicationIdentity(selected), before, 'An unrelated dated publication does not invalidate the article');
+  installContentPublications([{ ...record, content_key: own, revision: 90002 }]);
+  const published = skyPlacementPublicationIdentity(selected);
+  assert.notEqual(published, before, 'Publishing the selected article invalidates its previous version');
+  installContentPublications([{ ...retired, content_key: own, revision: 90003 }]);
+  assert.notEqual(skyPlacementPublicationIdentity(selected), published, 'Retiring the selected article removes its previous reading immediately');
+  const sharedBefore = skyPlacementPublicationIdentity(selected);
+  installContentPublications([{ ...record, content_key: 'sky.aspect.sun.trine.pluto', revision: 90004 }]);
+  assert.notEqual(skyPlacementPublicationIdentity(selected), sharedBefore, 'Shared aspect sources remain guarded for every placement');
+  for (const content_key of ['sky-season-fallback/virgo', 'fallback-hook/sky-sign-copy/sun/virgo', 'sky-article/chiron/pisces/unknown']) {
+    const shared = skyPlacementPublicationIdentity(selected);
+    installContentPublications([{ ...record, content_key, revision: 90004 }]);
+    assert.notEqual(skyPlacementPublicationIdentity(selected), shared, 'Fallback and noncanonical source keys keep their conservative guard');
+  }
+  const axis = 'article:north-node/aries,south-node/libra';
+  for (const pair of ['north-node/aries', 'south-node/libra']) {
+    const beforeAxis = skyPlacementPublicationIdentity(axis);
+    installContentPublications([{ ...record, content_key: `sky-article/${pair}/2030/2030-01-01`, revision: 90005 }]);
+    assert.notEqual(skyPlacementPublicationIdentity(axis), beforeAxis, 'Both selected node-axis editions remain guarded');
+  }
+  assert.equal(skyPlacementPublicationIdentity('sun/virgo'), skyPlacementPublicationIdentity(), 'List selections retain the existing full ledger identity');
+}
+console.log('PASS dated article publication scope, selected publication/retirement, shared sources, node axes and conservative unknown selection');
