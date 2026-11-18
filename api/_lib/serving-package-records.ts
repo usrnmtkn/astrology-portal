@@ -33,6 +33,8 @@ for (const partition of readerPartitions as Record<string, any>[]) {
     for (const record of partition[bucket] ?? []) servingPackageRecords.set(record.contentKey, record);
   }
 }
+const natalPlacementTemplates = require("../../apps/web/src/content/fallbackArchitectureV3/source-rows/placement-interim-fixes-v1.json");
+for (const record of natalPlacementTemplates.templates) servingPackageRecords.set(record.contentKey, record);
 for (const record of calendarWritingSourceStarters) servingPackageRecords.set(record.contentKey, record);
 for (const record of lunarJournalPackageRecords) servingPackageRecords.set(record.contentKey, record);
 for (const record of calendarSeasonTransitionPackageRecords) servingPackageRecords.set(record.contentKey, record);
