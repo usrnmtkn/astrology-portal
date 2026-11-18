@@ -120,7 +120,7 @@ export function ReportArticle({ report, backHref = "/reports/" }: { report: Repo
   const legacyColophonEntries = publicColophonLines.length ? [] : [
     ...(report.colophon.factsEngine ? [{ label: "Facts engine", value: report.colophon.factsEngine }] : []),
     ...(report.colophon.generatedAt ? [{ label: "Generated", value: report.colophon.generatedAt }] : []),
-    ...(report.colophon.entries ?? [])
+    ...((report.colophon.entries ?? []) as Array<{ label: string; value: string }>)
   ].filter((entry) => entry.label.toLowerCase() !== "facts hash" && readable(entry.label) && readable(entry.value));
 
   return (

@@ -72,7 +72,7 @@ export function buildCustomerReportColophon(input: { facts: FactRecord; periodSt
   });
   natalLine.splice(2, 0, `Asc ${degree(asc)}`, `MC ${degree(mc)}`);
   const inclusiveEnd = exclusiveEnd
-    ? new Intl.DateTimeFormat("en-CA", { year: "numeric", month: "2-digit", day: "2-digit", timeZone }).format(new Date(Date.parse(exclusiveEnd) - 24 * 60 * 60 * 1000))
+    ? new Date(Date.parse(exclusiveEnd) - 24 * 60 * 60 * 1000).toISOString().slice(0, 10)
     : input.periodEnd;
   return {
     periodLine: reportPeriodLine(input.periodStart, inclusiveEnd, timeZone),
