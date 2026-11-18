@@ -84,6 +84,27 @@ test('missing sources and tampered indexed text fail closed; empty examples are 
   assert.throws(() => memoryDetail(index, r.id), /integrity/);
   assert.throws(() => buildMemoryIndex({ readSource: name => name === 'rules.md' ? (() => { throw new Error('missing'); })() : files[name] }), /missing/);
 });
+test('search matches complete words and phrases without concealing genuine references', () => {
+  const index = fixture();
+  const base = index.records.find(record => record.title === 'good');
+  index.records = [
+    { ...base, id: 'partial', title: 'Variation', body: 'A variation in sentence mechanics. Solar imagery.' },
+    { ...base, id: 'name', title: 'Named source', body: "ARIA’s complete source passage. The Sun in Aries." },
+    { ...base, id: 'unicode', title: 'Éva', body: 'Unicode name.' },
+    { ...base, id: 'unicode-partial', title: 'Dévaluation', body: 'A different word.' },
+  ];
+  const original = JSON.stringify(index);
+  for (const phrase of [false, true]) {
+    assert.deepEqual(queryMemory(index, { query: 'aria', phrase }).records.map(r => r.id), ['name']);
+    assert.deepEqual(queryMemory(index, { query: 'éva', phrase }).records.map(r => r.id), ['unicode']);
+    assert.equal(queryMemory(index, { query: 'chan', phrase }).total, 0);
+    assert.equal(queryMemory(index, { query: 'solar image', phrase }).total, phrase ? 0 : 1);
+  }
+  assert.equal(queryMemory(index, { query: 'mechanics' }).total, 1);
+  assert.equal(queryMemory(index, { query: 'Sun in Aries', phrase: true }).total, 1);
+  assert.equal(queryMemory(index, { query: 'Sun in Ari', phrase: true }).total, 0);
+  assert.equal(JSON.stringify(index), original, 'Search must not redact source text or provenance');
+});
 test('real repository search finds the documented replacement and excludes empty rows', () => {
   const index = buildMemoryIndex({ root: process.cwd() });
   const result = recallMemory(index, 'the catch');
