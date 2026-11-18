@@ -3,6 +3,10 @@ import fs from 'node:fs';
 import { generateSkyArticleTemplateSlots } from '../api/_lib/content-generation.ts';
 import { GHOSTWRITING_SKILL_INSTRUCTIONS } from '../src/astro-writing/ghostwritingSkill.mjs';
 import { skyArticleTemplateKey } from '../apps/admin/src/skyArticleTemplateKeys.ts';
+import {withWritingRunStore} from '../src/astro-writing/writingRunArchive.cjs';
+import {writingRunArchiveFixture} from '../tests/helpers/writing-run-archive.mjs';
+
+await withWritingRunStore(writingRunArchiveFixture().store, async () => {
 Object.assign(process.env,{STUDIO_MEMORY_FEEDBACK_ENABLED:'true',SUPABASE_URL:'https://studio-memory.invalid',SUPABASE_SERVICE_ROLE_KEY:'synthetic',OPENAI_API_KEY:'synthetic',ANTHROPIC_API_KEY:'synthetic'});
 const memory={id:'11111111-1111-4111-8111-111111111111',source_row_id:'22222222-2222-4222-8222-222222222222',
  content_key:'sky-article/saturn/aries/2026',family:'sky-article',before_text:JSON.stringify({body:'Synthetic rejected article.'}),after_text:JSON.stringify({body:'Synthetic approved article replacement. Complete last sentence.'}),
@@ -83,3 +87,5 @@ try{
  }
  console.log('Article writer passed: provider prompt delivery, correction memory, authenticated browser action, visible controls, evergreen versus dated destinations, season/transit register enforcement, rate-limit fallback, sign-only evergreen validation, and deploy-safe correction-memory packaging.');
 }finally{delete process.env.STUDIO_MEMORY_FEEDBACK_ENABLED;}
+
+});

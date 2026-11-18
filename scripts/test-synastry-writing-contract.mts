@@ -8,6 +8,10 @@ import { callOpenAIResponses, governedInstructionsForRole } from '../src/astro-w
 import { GHOSTWRITING_SKILL_INSTRUCTIONS } from '../src/astro-writing/ghostwritingSkill.mjs';
 import { validateGeneratedContentQuality } from '../api/_lib/content-generation.js';
 import { sharedGenerationOwnerExamples } from '../api/_lib/shared-generation-owner-examples.js';
+import {withWritingRunStore} from '../src/astro-writing/writingRunArchive.cjs';
+import {writingRunArchiveFixture} from '../tests/helpers/writing-run-archive.mjs';
+
+await withWritingRunStore(writingRunArchiveFixture().store, async () => {
 
 const sharedStyle = readFileSync(new URL('../packages/astro-knowledge/voice/tldr-astro/style-guide.md', import.meta.url), 'utf8');
 
@@ -342,3 +346,5 @@ try {
   }
   console.log('PASS synastry actual handler and both providers: directional facts, complete source and owner evidence, developed interpretation without forced advice, unchanged schema, valid and invalid results, denied access and composite isolation. All provider responses intercepted; zero billed calls.');
 } finally { globalThis.fetch = originalFetch; }
+
+});

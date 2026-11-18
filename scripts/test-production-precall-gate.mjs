@@ -8,6 +8,10 @@ import path from "node:path";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import { validateCopy } from "../src/astro-writing/validateCopy.mjs";
+import {withWritingRunStore} from '../src/astro-writing/writingRunArchive.cjs';
+import {writingRunArchiveFixture} from '../tests/helpers/writing-run-archive.mjs';
+
+await withWritingRunStore(writingRunArchiveFixture().store, async () => {
 
 const require = createRequire(import.meta.url);
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -320,7 +324,7 @@ for (const match of openAiCalls) {
   const prefix = productionSource.slice(Math.max(0, match.index - 900), match.index);
   assert.match(prefix, /assertProductionRoleGate\(/u, "an OpenAI call lacks an immediately preceding production gate");
 }
-const claudeCalls = [...productionSource.matchAll(/fetch\("https:\/\/api\.anthropic\.com\/v1\/messages"/gu)];
+const claudeCalls = [...productionSource.matchAll(/archivedWritingFetch\("https:\/\/api\.anthropic\.com\/v1\/messages"/gu)];
 assert.equal(claudeCalls.length, 2, "all production Claude call sites must remain enumerated");
 for (const match of claudeCalls) {
   const prefix = productionSource.slice(Math.max(0, match.index - 1100), match.index);
@@ -356,3 +360,5 @@ console.log(JSON.stringify({
   telemetryUsesHashedIdentifiers: true,
   liveCallsMade: 0
 }, null, 2));
+
+});

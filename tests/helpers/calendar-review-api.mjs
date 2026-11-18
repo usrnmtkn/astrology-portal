@@ -1,3 +1,4 @@
+import {writingRunArchiveFixture} from './writing-run-archive.mjs';
 // Real API handler with a strict, isolated PostgREST store. Never contacts a service.
 import { publicationRpcFixture } from "./studio-publication-rpc.mjs";
 import { randomUUID } from "node:crypto";
@@ -78,6 +79,7 @@ export async function createApiStore(initial = fixtures, storeOptions = {}) {
   const { default: handler } = await import(process.env.CALENDAR_TEST_HANDLER ?? "../../api/admin/generated-content.ts");
   Object.assign(process.env, env);
   const rows = new Map(initial.map(row => [row.id, structuredClone(row)]));
+  const writingRuns = writingRunArchiveFixture();
   const publication = publicationRpcFixture(() => [...rows.values()], saved => { for (const row of saved) rows.set(row.id, row); }, () => fixturePublications([...rows.values()]));
   let sequence = 0;
   let versionSequence = 0;
@@ -88,6 +90,8 @@ export async function createApiStore(initial = fixtures, storeOptions = {}) {
     const reader = await readerRouteResponse(input, options);
     if (reader) return reader;
     const url = new URL(String(input));
+    const archived = url.origin === env.SUPABASE_URL ? await writingRuns.handle(url,options) : null;
+    if (archived) return archived;
     if (url.origin === env.SUPABASE_URL && url.pathname === "/rest/v1/content_publications" && (!options.method || options.method === "GET")) return Response.json([...new Map([...fixturePublications([...rows.values()]), ...await publication.publications()].map(row => [row.content_key,row])).values()].filter(row=>matchesStoredInventory(row,url.searchParams)));
     if (url.origin !== env.SUPABASE_URL || url.pathname !== "/rest/v1/generated_interpretations") throw new Error(`Unexpected test storage request ${url.origin}${url.pathname}`);
     const found = [...rows.values()].filter(row => matchesStoredInventory(row, url.searchParams));
@@ -157,7 +161,7 @@ export async function createApiStore(initial = fixtures, storeOptions = {}) {
       try { const selectedHandler = url.startsWith("/api/admin/content-baseline-recovery") ? (await import("../../api/admin/content-baseline-recovery.ts")).default : url.startsWith("/api/admin/content-live-status") ? (await import("../../api/admin/content-live-status.ts")).default : url.startsWith("/api/admin/package-source") ? (await import("../../api/admin/package-source.ts")).default : url.startsWith("/api/admin/content-publication") ? (await import("../../api/admin/content-publication.ts")).default : url.startsWith("/api/admin/content-history") ? (await import("../../api/admin/content-history.ts")).default : url === "/api/content-reader" ? (await import("../../api/content-reader.ts")).default : url.startsWith("/api/admin/generated-content-inventory") ? (await import("../../api/admin/generated-content-inventory.ts")).default : handler; await selectedHandler(request, response); } catch (error) { reject(error); }
     });
   };
-  return { rows, invoke, publication, close: publication.close };
+  return { rows, invoke, publication, writingRuns, close: publication.close };
 }
 
 if (process.argv.includes("--ipc") && process.argv[1] === fileURLToPath(import.meta.url)) {

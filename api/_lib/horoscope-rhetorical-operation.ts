@@ -87,7 +87,7 @@ export async function horoscopeRhetoricalOperation({action,row:initialRow,persis
       // paid dispatch. Only a separately confirmed dispatch fence can send.
       operation={...operation,state:'starting'};await save();
       dispatchAttempted=true;
-      const {response,payload}=await responses.startStoredWritingResponse({apiKey,role:'RHETORICAL_REVIEWER',request,governedInstructions:instructions,surface:'horoscopes',family:'horoscope',fetchImpl:(url:any,options:any)=>fetch(url,{...options,signal:AbortSignal.timeout(25000)})});
+      const {response,payload}=await responses.startStoredWritingResponse({apiKey,role:'RHETORICAL_REVIEWER',request,governedInstructions:instructions,surface:'horoscopes',family:'horoscope',archiveContext:{period:row.sections.horoscopeEdition.window.period,contentKey:row.content_key,editionId:row.id,operationId:operation.id,sign:operation.sign},fetchImpl:(url:any,options:any)=>fetch(url,{...options,signal:AbortSignal.timeout(25000)})});
       if(!response.ok){
         if(response.status>=400&&response.status<500)return await hold('rhetorical_review_unavailable','The prose check could not start. The original draft is kept for editing or rejection.',{diagnostic:horoscopeProviderDiagnostic(payload)});
         return await hold('rhetorical_review_interrupted','The prose check could not be confirmed and may have been billed. Its original draft is kept. No automatic retry will be made.');

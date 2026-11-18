@@ -85,7 +85,7 @@ export async function dailyEditorialOperation({action,row:initial,persist,prepar
     responseId:null,requestHash:dailyEditorialHash({request,instructions}),config,input,request,instructions,startedAt:new Date().toISOString(),actor};
   await save({...gate,version:DAILY_BATCH_EDITORIAL,pending:operation});
   const {response,payload}=await startHoroscopeResponse({config,role,request,instructions,
-    context:{editionId:row.id,operationId:operation.id,requestHash:operation.requestHash}});
+    context:{period:row.sections.horoscopeEdition.window.period,contentKey:row.content_key,editionId:row.id,operationId:operation.id,requestHash:operation.requestHash}});
   if(!response.ok||typeof payload.id!=='string'||!/^resp_[A-Za-z0-9_-]+$/u.test(payload.id))
     throw new AdminHttpError(503,'The Daily review outcome is unknown. Check saved progress before retrying.');
   await save({...gate,pending:{...operation,state:'running',responseId:payload.id}});

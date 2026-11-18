@@ -1,3 +1,4 @@
+import {archivedWritingFetch, WritingRunArchiveError} from '../../src/astro-writing/writingRunArchive.cjs';
 import { RHETORICAL_WRITER_POLICY, RHETORICAL_JUDGE_POLICY } from "../../src/astro-writing/rhetoricalPatterns.mjs";
 import { reportFulfillmentConfig } from "./report-fulfillment-config.js";
 import { assertOpenAiStrictResponseSchema, ReportProviderSchemaError } from "./report-provider-schema.js";
@@ -36,12 +37,24 @@ export type ReportModelCallInput<T> = {
   disableFallback?: boolean;
   requestLimits?: { maxInputBytes: number; maxOutputTokens: number };
   productionKernel?: ReportProductionKernel;
+  archiveContext?: Record<string, unknown>;
   validateResponse?: (value: T) => void;
   beforeProviderCall?: (attempt: ReportProviderAttempt) => Promise<void>;
   afterProviderCall?: (attempt: ReportProviderAttempt, result: ReportModelResult<T>) => Promise<void>;
   onProviderCallError?: (attempt: ReportProviderAttempt, error: unknown) => Promise<void>;
 };
 export type ReportModelCall = <T>(input: ReportModelCallInput<T>) => Promise<ReportModelResult<T>>;
+
+
+function reportArchiveContext(input: ReportModelCallInput<unknown>) {
+  const kernel = input.productionKernel;
+  return {provider: input.provider === 'claude' ? 'anthropic' : input.provider,
+    role: kernel?.role ?? (/judge|critique|review|cold_read/.test(input.schemaName) ? 'REVIEWER' : 'WRITER'),
+    surface: kernel?.input.surface ?? '', family: 'reports',
+    context: {...input.archiveContext, schemaName: input.schemaName,
+      ...(kernel ? {contentKey:kernel.input.contentKey,reportId:kernel.input.facts.reportId,
+        reportDomain:kernel.input.facts.reportDomain,reportHorizon:kernel.input.facts.reportHorizon,unitId:kernel.input.facts.unitId} : {})}};
+}
 
 function usage(inputTokens = 0, outputTokens = 0, cachedInputTokens = 0): ReportModelUsage {
   return { inputTokens, cachedInputTokens, outputTokens, totalTokens: inputTokens + outputTokens };
@@ -81,6 +94,7 @@ async function callOpenAi<T>(input: {
   disableFallback?: boolean;
   requestLimits?: { maxInputBytes: number; maxOutputTokens: number };
   productionKernel?: ReportProductionKernel;
+  archiveContext?: Record<string, unknown>;
   validateResponse?: (value: T) => void;
   beforeProviderCall?: (attempt: ReportProviderAttempt) => Promise<void>;
   afterProviderCall?: (attempt: ReportProviderAttempt, result: ReportModelResult<T>) => Promise<void>;
@@ -93,7 +107,7 @@ async function callOpenAi<T>(input: {
   try {
     const key = process.env.OPENAI_API_KEY;
     if (!key) throw new ReportProviderUnavailableError("openai", "credentials");
-    const response = await fetch("https://api.openai.com/v1/responses", {
+    const response = await archivedWritingFetch("https://api.openai.com/v1/responses", {
     method: "POST",
     signal: input.signal,
     headers: { authorization: `Bearer ${key}`, "content-type": "application/json" },
@@ -102,7 +116,7 @@ async function callOpenAi<T>(input: {
       input: input.prompt,
       text: { format: { type: "json_schema", name: input.schemaName, strict: true, schema: input.schema } }
     }, input.requestLimits)
-  });
+  }, reportArchiveContext(input));
     const payload = await response.json() as Record<string, unknown> & { error?: { message?: string; code?: string; type?: string }; id?: string };
     if (!response.ok) throw reportProviderResponseError("openai", response.status, payload.error);
     const rawUsage = payload.usage && typeof payload.usage === "object" ? payload.usage as Record<string, unknown> : {};
@@ -153,6 +167,7 @@ async function callClaude<T>(input: {
   disableFallback?: boolean;
   requestLimits?: { maxInputBytes: number; maxOutputTokens: number };
   productionKernel?: ReportProductionKernel;
+  archiveContext?: Record<string, unknown>;
   validateResponse?: (value: T) => void;
   beforeProviderCall?: (attempt: ReportProviderAttempt) => Promise<void>;
   afterProviderCall?: (attempt: ReportProviderAttempt, result: ReportModelResult<T>) => Promise<void>;
@@ -164,7 +179,7 @@ async function callClaude<T>(input: {
   try {
     const key = process.env.ANTHROPIC_API_KEY;
     if (!key) throw new ReportProviderUnavailableError("claude", "credentials");
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
+    const response = await archivedWritingFetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     signal: input.signal,
     headers: { "x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json" },
@@ -175,7 +190,7 @@ async function callClaude<T>(input: {
       tools: [{ name: input.schemaName, description: "Return structured report fulfillment output.", input_schema: input.schema }],
       tool_choice: { type: "tool", name: input.schemaName }
     }, input.requestLimits)
-  });
+  }, reportArchiveContext(input));
     const payload = await response.json() as {
     id?: string; content?: Array<{ type?: string; name?: string; input?: T }>;
     usage?: { input_tokens?: number; output_tokens?: number }; error?: { message?: string; code?: string; type?: string };
@@ -210,6 +225,7 @@ async function directReportModelCall<T>(input: {
   disableFallback?: boolean;
   requestLimits?: { maxInputBytes: number; maxOutputTokens: number };
   productionKernel?: ReportProductionKernel;
+  archiveContext?: Record<string, unknown>;
   validateResponse?: (value: T) => void;
   beforeProviderCall?: (attempt: ReportProviderAttempt) => Promise<void>;
   afterProviderCall?: (attempt: ReportProviderAttempt, result: ReportModelResult<T>) => Promise<void>;
@@ -226,6 +242,7 @@ const callReportModel: ReportModelCall = async <T>(input: {
   disableFallback?: boolean;
   requestLimits?: { maxInputBytes: number; maxOutputTokens: number };
   productionKernel?: ReportProductionKernel;
+  archiveContext?: Record<string, unknown>;
   validateResponse?: (value: T) => void;
   beforeProviderCall?: (attempt: ReportProviderAttempt) => Promise<void>;
   afterProviderCall?: (attempt: ReportProviderAttempt, result: ReportModelResult<T>) => Promise<void>;
@@ -235,7 +252,7 @@ const callReportModel: ReportModelCall = async <T>(input: {
     return await directReportModelCall<T>(input);
   } catch (error) {
     if (input.disableFallback || input.signal?.aborted) throw error;
-    if (error instanceof ReportModelLifecycleError
+    if (error instanceof WritingRunArchiveError || error instanceof ReportModelLifecycleError
       || error instanceof ReportModelResponseRejectedError
       || error instanceof ReportProviderSchemaError) throw error;
     const config = reportFulfillmentConfig();

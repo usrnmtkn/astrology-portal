@@ -3,6 +3,10 @@ import assert from 'node:assert/strict';
 import {generateWithOpenAI,generateWithClaude,generateSkyArticleTemplateSlots} from '../api/_lib/content-generation.js';
 import {buildPersonalTransitWriterContext} from '../api/_lib/personal-transit-writer-context.js';
 import {syntheticTransitSources} from './fixtures/personal-transit-writing.mjs';
+import {withWritingRunStore} from '../src/astro-writing/writingRunArchive.cjs';
+import {writingRunArchiveFixture} from '../tests/helpers/writing-run-archive.mjs';
+
+await withWritingRunStore(writingRunArchiveFixture().store, async () => {
 
 Object.assign(process.env,{NODE_ENV:'test',OPENAI_API_KEY:'synthetic',ANTHROPIC_API_KEY:'synthetic',
  SUPABASE_URL:'https://writing-feedback.invalid',SUPABASE_SERVICE_ROLE_KEY:'synthetic',STUDIO_MEMORY_FEEDBACK_ENABLED:'true',
@@ -59,3 +63,5 @@ try{
  }
 }finally{globalThis.fetch=originalFetch;}
 console.log('PASS actual Synastry, Personal Transit and Sky template provider boundaries receive scoped complete feedback; storage failures stop before paid requests. All network intercepted; no prose generated.');
+
+});

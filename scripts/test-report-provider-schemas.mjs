@@ -18,6 +18,10 @@ import {
   REPORT_REVISION_PATCH_SCHEMA,
   reportSentenceAddressedCritiqueSchema
 } from "../api/_lib/report-writer-chain.ts";
+import {withWritingRunStore} from '../src/astro-writing/writingRunArchive.cjs';
+import {writingRunArchiveFixture} from '../tests/helpers/writing-run-archive.mjs';
+
+await withWritingRunStore(writingRunArchiveFixture().store, async () => {
 
 const markdownHeavyKeyDates = {
   headline: "KEY TURNING POINTS",
@@ -193,3 +197,5 @@ try {
 }
 
 console.log(`Report provider schema contract passed: ${providerSchemas.size} live schemas compile, the General 12-month overview enforces 5-7 sentences, unsupported keywords fail before billing, and sentence-ID uniqueness remains runtime-enforced.`);
+
+});

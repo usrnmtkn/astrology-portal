@@ -7,6 +7,10 @@ import { spawnSync } from 'node:child_process';
 import { prepareNatalPlacementSectWriting, runNatalPlacementSectWriting, natalPlacementSectDigest, validateNatalPlacementSectDraft } from '../../src/astro-writing/natalPlacementSectWriting.mjs';
 import { natalProfileDigest } from '../../src/astro-writing/natalWritingProfile.mjs';
 import openAI from '../../src/astro-writing/openAIResponses.cjs';
+import {withWritingRunStore} from '../../src/astro-writing/writingRunArchive.cjs';
+import {writingRunArchiveFixture} from '../helpers/writing-run-archive.mjs';
+
+await withWritingRunStore(writingRunArchiveFixture().store, async () => {
 
 function fixture(audience = 'you') {
   const selection = { planet: 'jupiter', sign: 'leo', house: 3, sect: 'day', audience };
@@ -127,4 +131,6 @@ test('the canonical CLI prepares without credentials and refuses dispatch withou
   assert.notEqual(denied.status, 0);
   assert.match(denied.stderr, /explicit owner authorization/);
   fs.rmSync(directory, { recursive: true, force: true });
+});
+
 });

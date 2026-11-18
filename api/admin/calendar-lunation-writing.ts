@@ -107,7 +107,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
     const request={...provider.buildProviderRequest({config:operation.config,role:'writer',input:captured.input,schema:captured.schema}),background:true,store:true};
     operation.requestHash=lunationDigest({request,instructions:captured.instructions});
     await persist({...row.sections,lunationRun:{...row.sections.lunationRun,active:operation,lastError:null,previousCandidate:{body:workspace.body,journalPrompt:workspace.journalPrompt}},approvedPlan:{outlineHash:operation.outlineHash,planHash:operation.planHash,sourceUri:operation.approvalReference,exactOwnerRuling:operation.approvalRuling}});
-    const {response,payload}=await responses.startStoredWritingResponse({apiKey,role:captured.role,request,governedInstructions:captured.instructions,surface:'calendar-lunation',family:'lunations',fetchImpl:(url:any,options:any)=>fetch(url,{...options,signal:AbortSignal.timeout(25000)})});
+    const {response,payload}=await responses.startStoredWritingResponse({archiveContext:{contentKey:row.content_key,operationId:operation.id},apiKey,role:captured.role,request,governedInstructions:captured.instructions,surface:'calendar-lunation',family:'lunations',fetchImpl:(url:any,options:any)=>fetch(url,{...options,signal:AbortSignal.timeout(25000)})});
     if(!response.ok) {
       if(response.status>=400&&response.status<500){await persist({...row.sections,lunationRun:{...row.sections.lunationRun,active:null,lastError:{message:'The provider declined the request. No automatic retry was made.',operationId:operation.id}}});}
       throw new AdminHttpError(503,'The Studio writer could not confirm a result. Reload to check the saved request before retrying.');
