@@ -1,5 +1,5 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { loadLocalWebEnv } from "./_lib/local-env.ts";
+import { loadLocalWebEnv } from "./_lib/local-env.js";
 import {
   composeRelationshipFacts,
   createSupabaseRelationshipFactsDataSource,
@@ -9,11 +9,11 @@ import {
   RelationshipFactsInputError,
   RelationshipReportUnavailableError,
   type RelationshipSubject
-} from "./_lib/relationship-facts.ts";
+} from "./_lib/relationship-facts.js";
 import {
   createSupabaseReportEnvelopeStore,
   ReportFactsFrozenError
-} from "./_lib/report-envelope.ts";
+} from "./_lib/report-envelope.js";
 
 loadLocalWebEnv();
 

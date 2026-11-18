@@ -7,11 +7,20 @@ import { spawnSync } from "node:child_process";
 import { build, transform } from "esbuild";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const apiLibRoot = path.join(repoRoot, "api", "_lib");
+const apiRoot = path.join(repoRoot, "api");
 const runtimeTypeScriptImports = [];
 
-for (const fileName of fs.readdirSync(apiLibRoot).filter((name) => name.endsWith(".ts")).sort()) {
-  const source = fs.readFileSync(path.join(apiLibRoot, fileName), "utf8");
+function apiTypeScriptFiles(root) {
+  return fs.readdirSync(root, { withFileTypes: true }).flatMap((entry) => {
+    const absolutePath = path.join(root, entry.name);
+    if (entry.isDirectory()) return apiTypeScriptFiles(absolutePath);
+    return entry.name.endsWith(".ts") ? [absolutePath] : [];
+  });
+}
+
+for (const absolutePath of apiTypeScriptFiles(apiRoot).sort()) {
+  const fileName = path.relative(apiRoot, absolutePath);
+  const source = fs.readFileSync(absolutePath, "utf8");
   const staticImportPattern = /\b(?:import|export)\s+([^;]*?)\s+from\s+["'](\.[^"']+\.ts)["'];/gu;
   const dynamicImportPattern = /\bimport\(\s*["'](\.[^"']+\.ts)["']\s*\)/gu;
 

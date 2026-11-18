@@ -1,16 +1,16 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { loadLocalWebEnv } from "./_lib/local-env.ts";
+import { loadLocalWebEnv } from "./_lib/local-env.js";
 import {
   composeReportFacts,
   createTldrAstroReportFactsClient,
   readReportFacts,
   ReportFactsInputError,
   type ComposeReportFactsInput
-} from "./_lib/report-facts.ts";
+} from "./_lib/report-facts.js";
 import {
   createSupabaseReportEnvelopeStore,
   ReportFactsFrozenError
-} from "./_lib/report-envelope.ts";
+} from "./_lib/report-envelope.js";
 
 loadLocalWebEnv();
 

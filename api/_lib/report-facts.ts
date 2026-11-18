@@ -16,7 +16,7 @@ import {
   type ReportDomain,
   type ReportHorizon
 } from "./report-types.js";
-import { canonicalReportEvents } from "./report-events.ts";
+import { canonicalReportEvents } from "./report-events.js";
 
 
 
