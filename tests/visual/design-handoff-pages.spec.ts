@@ -512,7 +512,10 @@ for (const width of [320, 390, 960, 1440]) for (const theme of ['light', 'dark']
     await expect(rail.locator('.chart-house-system-label, .interactive-zodiac-wheel__caption')).toHaveCount(0);
     const expand = rail.locator('.natal-chart-expand');
     await expect(expand).toHaveCSS('width', '48px'); await expect(expand).toHaveText('');
+    const houseGeometry = await rail.locator('.synastry-house-labels text').evaluateAll(nodes => nodes.map(node => [node.textContent, node.getAttribute('x'), node.getAttribute('y'), node.getAttribute('transform')]));
+    if (name === 'Compatibility' || name === 'Synastry') expect(houseGeometry).toHaveLength(24);
     await expand.click(); await expect(page.getByRole('dialog')).toBeVisible();
+    if (name === 'Compatibility' || name === 'Synastry') expect(await page.getByRole('dialog').locator('.synastry-house-labels text').evaluateAll(nodes => nodes.map(node => [node.textContent, node.getAttribute('x'), node.getAttribute('y'), node.getAttribute('transform')]))).toEqual(houseGeometry);
     await page.getByRole('button', {name: 'Close full-screen chart', exact: true}).click(); await expect(expand).toBeFocused();
     if (name === 'Composite') {
       const picker = rail.locator('.friend-compare-pill');

@@ -1272,6 +1272,7 @@ async function expectRelationshipWheelGeometry(page: Page, label: string) {
     expect(Math.max(...radii) - Math.min(...radii), `${label} keeps house numbers centered on one circle`).toBeLessThan(0.01);
   }
   expect(geometry.houses.radii[0], `${label} preserves twelve whole-sign house labels`).toHaveLength(12);
+  expect(geometry.houses.radii[1], `${label} preserves twelve independently numbered inner houses`).toHaveLength(12);
   expect(geometry.houses.degreeMin, `${label} keeps house labels clear of planet degree text`).toBeGreaterThanOrEqual(9);
   expect(geometry.houses.tickMin, `${label} keeps house labels clear of degree tick lines`).toBeGreaterThanOrEqual(6);
 }
@@ -6148,7 +6149,7 @@ for (const theme of ["light", "dark"] as const) {
         { selector: ".planet-marker-inner .planet-glyph-image", size: 22 }
       ];
       await expectFitsPage(synastry, synastryRings);
-      await expect(synastry.locator(".synastry-house-number")).toHaveCount(12);
+      await expect(synastry.locator(".synastry-house-number")).toHaveCount(24);
       await expect(synastry.locator(".wheel-surfaces > circle")).toHaveCount(5);
 
       // Find chart preferences through the site's existing menu, not on a profile.
@@ -6176,7 +6177,7 @@ for (const theme of ["light", "dark"] as const) {
       await expectNoHorizontalOverflow(page, "Synastry chart");
       await page.getByRole("button", { name: "Full-screen chart", exact: true }).click();
       const dialog = page.getByRole("dialog");
-      await expect(dialog.locator(".synastry-house-number")).toHaveCount(12);
+      await expect(dialog.locator(".synastry-house-number")).toHaveCount(24);
       await expect(dialog.locator(".relationship-wheel-viewport, .relationship-wheel-controls")).toHaveCount(0);
       expect((await dialog.locator(".sky-wheel").boundingBox())!.width).toBeGreaterThanOrEqual((await dialog.locator(".full-chart__wheel").boundingBox())!.width - 2);
       const synastryDialogBox = (await dialog.boundingBox())!;
