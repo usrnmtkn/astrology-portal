@@ -23,9 +23,52 @@ try {
     export { packageFallbackArchitectureV3CoreRows, packageAuthoredCardFromRow } from './apps/web/src/services/fallbackArchitectureV3CorePackaging';
     export { installContentPublications } from './apps/web/src/content/contentPublicationState';
     export { generatedContentMapFromRows } from './apps/web/src/services/generatedContent';
+    export { lunationAspectReaderKey, lunationAspectReaderKeys, resolveLunationAspectReading } from './apps/web/src/content/lunationAspectReading';
   `, resolveDir: process.cwd(), loader: "ts" }, bundle: true, outfile: bundle, platform: "node", format: "esm",
     define: { "import.meta.env": "{}" }, logLevel: "silent" });
   const reader = await import(pathToFileURL(bundle).href);
+  for (const [index, [phase, sign, aspect, planet, planetSign]] of [
+    ['new', 'cancer', 'conjunction', 'mercury', 'cancer'],
+    ['new', 'pisces', 'conjunction', 'venus', 'pisces'],
+    ['full', 'taurus', 'trine', 'jupiter', 'virgo'],
+    ['full', 'virgo', 'square', 'uranus', 'gemini']
+  ].entries()) {
+    const key = `lunation.${phase}.${sign}.${aspect}.${planet}.${planetSign}`;
+    const event = {startsAt: '2026-01-01T12:00:00Z', phase: `${phase}-moon`, sign};
+    const contact = {from: 'Moon', to: planet, type: aspect, fromSign: sign, toSign: planetSign, orb: 0.2};
+    const snapshot = {moonEvent: null, positions: [], aspects: [contact]};
+    const body = `Synthetic lunation aspect ${index} opening.\n\nThe complete final sentence remains unchanged.`;
+    const row = {id: `10000000-0000-4000-8000-00000000000${index}`, content_key: key,
+      updated_at: '2026-01-01T12:00:00Z', surface: 'sky', mode: 'in_depth', event_type: 'lunation-aspect',
+      block_type: 'fallback_hook', status: 'DRAFT', lane: 'reference', review_state: 'owner-review-required',
+      headline: 'Synthetic lunar aspect', summary: '', body, sections: {}, facts: {},
+      source_snapshot: {content_role: 'full_copy', review_status: 'needs_review'}};
+    const store = await createApiStore([row]);
+    try {
+      reader.installContentPublications([]);
+      assert.equal(reader.lunationAspectReaderKey(event, contact, []), key);
+      assert(reader.lunationArticleSnapshotKeys(snapshot, event).includes(key), 'Both lunar article entry paths request the phase-specific key.');
+      assert.equal((await store.invoke('POST', {keys: [key]}, '/api/content-reader')).payload.rows.length, 0);
+      const published = await store.invoke('PATCH', {id: row.id, expectedUpdatedAt: row.updated_at, ownerAction: 'publish-owner-content'});
+      assert.equal(published.status, 200, JSON.stringify(published.payload));
+      const live = published.payload.rows[0];
+      const read = await store.invoke('POST', {keys: [key]}, '/api/content-reader');
+      const content = reader.generatedContentMapFromRows(read.payload.rows);
+      assert.equal(reader.resolveLunationAspectReading(event, contact, [], content)?.body, body);
+      assert.equal(reader.resolveLunationAspectReading(event, {...contact, from: planet, to: 'Moon', fromSign: planetSign, toSign: sign}, [], content)?.body, body);
+      assert.equal(reader.resolveLunationAspectReading({...event, phase: phase === 'new' ? 'full-moon' : 'new-moon'}, contact, [], content), null);
+      assert.equal(reader.resolveLunationAspectReading(event, {...contact, toSign: 'leo'}, [], content), null);
+      assert.equal(reader.lunationAspectReaderKey({...event, phase: 'first-quarter'}, contact, []), null);
+      assert.equal(reader.lunationAspectReaderKey({...event, sign: 'leo'}, contact, []), null);
+      const status = await store.invoke('POST', {ids: [live.id]}, '/api/admin/content-live-status');
+      assert.equal(status.payload.statuses[0].live, true, 'Studio verifies the same published source used by the lunar reader.');
+      assert.equal(contentWiringStatus(live).state, 'connected');
+      reader.installContentPublications([{content_key: key, state: 'retired', revision: 2, row_id: null,
+        row_updated_at: null, updated_at: live.updated_at}]);
+      assert.equal(reader.resolveLunationAspectReading(event, contact, [], content)?.body, '', 'Retirement cannot reveal an older generic interpretation.');
+    } finally {await store.close();}
+  }
+  reader.installContentPublications([]);
   assert.equal(reader.packageAuthoredCardFromRow({ id: 'ordinary-card', content_key: 'authored/transit/saturn/sun/trine',
     body: 'Saved owner revision. Complete final sentence.', sections: { packageRecord: { body: 'Stale packaged copy.' } } })?.body,
     'Saved owner revision. Complete final sentence.', 'Ordinary authored cards retain the complete saved top-level revision.');

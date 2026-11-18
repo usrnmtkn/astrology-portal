@@ -6,7 +6,75 @@ import { studioApiStore } from '../helpers/studio-api-store';
 import { lunarOwnerDraft } from '../helpers/lunar-owner-publication.mjs';
 import { canonicalPublicationLedger, publicationLedgerTag } from '../../apps/web/src/services/publicationLedgerTransport';
 import skyHandler from '../../api/sky';
+import calendarHandler from '../../api/calendar';
 import type { IncomingMessage, ServerResponse } from 'node:http';
+
+// Calculated event fixtures; production matching always uses the event snapshot.
+const aspectDestinations = [
+  {date: '2026-07-14', sign: 'cancer', key: 'lunation.new.cancer.conjunction.mercury.cancer'},
+  {date: '2045-03-18', sign: 'pisces', key: 'lunation.new.pisces.conjunction.venus.pisces'},
+  {date: '2003-11-09', sign: 'taurus', key: 'lunation.full.taurus.trine.jupiter.virgo'},
+  {date: '2027-02-20', sign: 'virgo', key: 'lunation.full.virgo.square.uranus.gemini'}
+];
+
+for (const [index, destination] of aspectDestinations.entries()) {
+  test(`Published lunation aspect destination ${destination.key}`, async ({page, request}) => {
+    test.setTimeout(120_000);
+    const live = process.env.LUNATION_READER_LIVE === 'true';
+    let body = `Synthetic lunar aspect ${index} begins here. The complete final sentence survives direct navigation and reload.`;
+    const row = {id: `10000000-0000-4000-8000-00000000001${index}`, content_key: destination.key,
+      updated_at: '2026-11-17T12:00:00Z', surface: 'sky', mode: 'in_depth', event_type: 'lunation-aspect',
+      block_type: 'fallback_hook', status: 'DRAFT', lane: 'reference', review_state: 'owner-review-required',
+      headline: 'Synthetic lunar aspect', summary: '', body, sections: {}, facts: {},
+      source_snapshot: {content_role: 'full_copy', review_status: 'needs_review'}};
+    const store = live ? null : await studioApiStore([row]);
+    try {
+      await page.setViewportSize({width: index === 3 ? 390 : 1440, height: 1000});
+      await page.clock.setFixedTime(new Date(`${destination.date}T20:00:00Z`));
+      await page.addInitScript(({location, theme}) => {
+        localStorage.setItem('tldrastro:selectedLocation', JSON.stringify(location));
+        localStorage.setItem('tldrastro:theme', theme);
+      }, {location, theme: index === 3 ? 'dark' : 'light'});
+      if (store) {
+        const result = await store.call({method: 'PATCH', body: {id: row.id, expectedUpdatedAt: row.updated_at,
+          ownerAction: 'publish-owner-content'}});
+        expect(result.status).toBe(200);
+        await bundledPublications(page);
+        await page.route('**/api/content-publications', async route => {
+          const publications = canonicalPublicationLedger(await store.call({method: 'publications'}));
+          await route.fulfill({json: {schema: 'tldr-publications/v1', publications}});
+        });
+        await page.route('**/api/content-reader', async route => {
+          const result = await store.call({method: 'POST', url: '/api/content-reader', body: route.request().postDataJSON()});
+          await route.fulfill({status: result.status, json: result.payload});
+        });
+        for (const [pattern, handler] of [['**/api/sky?**', skyHandler], ['**/api/calendar?**', calendarHandler]] as const) {
+          await page.route(pattern, async route => {
+            const response = {statusCode: 200, setHeader() {}, end(body: string) {
+              void route.fulfill({status: this.statusCode, contentType: 'application/json', body});
+            }};
+            await handler({method: 'GET', url: route.request().url()} as IncomingMessage, response as unknown as ServerResponse);
+          });
+        }
+      } else {
+        const result = await request.post('/api/content-reader', {data: {keys: [destination.key]}});
+        expect(result.status()).toBe(200);
+        const saved = (await result.json()).rows.find((item: any) => item.content_key === destination.key);
+        expect(Boolean(saved?.body)).toBe(true);
+        body = saved.body;
+      }
+      await page.goto(`/?date=${destination.date}#sky/lunation/${destination.date}/${destination.sign}`);
+      const verify = async () => {
+        const passage = page.locator('.sky-detail-article').getByText(body, {exact: true});
+        await expect(passage).toBeVisible({timeout: 90_000});
+        expect((await passage.innerText()) === body).toBe(true);
+      };
+      await verify();
+      await page.reload();
+      await verify();
+    } finally {store?.close();}
+  });
+}
 
 // Owner-supplied Calendar preview; the remainder is synthetic test-only copy.
 const opening = "The Full Moon in Aries shines a sharp light on the cost of keeping the peace. We may begin to recognize how much quiet frustration has accumulated beneath our instinct to be accommodating. When you are the one who always rearranges your schedule or swallows an objection, being easy to get along with becomes an expensive habit. Something you agreed to do as a one-time favor has become an expectation, and you are tired of being the default compromise.";

@@ -1,7 +1,7 @@
 import { calendarPlanetaryIdentity } from "./calendarPlanetarySources.js";
 import { studioPackageObject as record } from "../../../src/shared/studioPackagePatch.js";
 import { standaloneArticleKind } from "../../../src/shared/articleLibrary.js";
-import { isLunationHoroscopeKey } from "../../../src/shared/lunationHoroscopeIdentity.js";
+import { isLunationHoroscopeKey, isLunationAspectKey } from "../../../src/shared/lunationHoroscopeIdentity.js";
 
 export type ContentWiringRow = {
   block_type?: string | null;
@@ -101,6 +101,7 @@ function isSourceMaterial(row: ContentWiringRow) {
 
 function isKnownRenderedKey(contentKey: string) {
   return contentKey.startsWith("authored/connection-activation/")
+    || isLunationAspectKey(contentKey)
     || isLunationSourceKey(contentKey)
     || contentKey.startsWith("fallback-template/connection-transit.bridge/")
     || contentKey.startsWith("horoscope/")
