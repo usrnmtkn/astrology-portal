@@ -60,6 +60,35 @@ its head against the checkout and reject unknown commands or malformed paths.
 Selected API commands retain their knowledge prerequisite. Browser jobs retain
 their existing fresh builds/previews, timeouts, assertions and worker limits.
 
+## Visual acceptance before hosted CI
+
+For a layout or styling change, first reproduce the reported problem in a fresh
+local build and add an affected browser regression that fails for that problem.
+Check rendered geometry inside the changed components as well as their outer
+containers: card surfaces, child widths and ordering, spacing, overflow and
+overlap. A matching wrapper width or computed font does not establish that its
+contents are laid out correctly.
+
+Inspect the actual screenshots against the owner's approved reference and the
+shared design-system contract before starting hosted CI. Review the affected
+desktop and mobile layouts in both themes, including populated and applicable
+empty/loading/error states, long text and content below the fold. Generating or
+uploading screenshots is not evidence that someone inspected them. An existing
+broken screenshot must not become an accepted baseline merely to pass a test.
+
+Record the candidate revision, reference, inspected cases, discrepancies and
+remaining gaps separately from automated check results. Keep private screenshots
+and operational details local. Reuse unchanged passing evidence within its
+recorded scope, then freeze the candidate and run the existing affected gates;
+this visual review does not add a CI job or expand the complete-suite selection.
+
+Before calling a UI change live and accepted, verify its main deployment and
+repeat the affected rendered checks there with synthetic or intercepted data.
+Inspect the deployed screenshots too. Required CI success and visual acceptance
+are separate evidence; neither can be reported as the other. See the
+[Friends regression record](friend-profile-layout-repair-2026-11-18.md) for the
+failure this review step addresses.
+
 ## Execution and merge proof
 
 API matrix jobs run only the planned nonempty shards and selected native database
