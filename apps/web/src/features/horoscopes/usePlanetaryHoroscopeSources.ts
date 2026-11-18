@@ -30,6 +30,7 @@ export function usePlanetaryHoroscopeSources(selection?:string,context?:{positio
     const admission=prepared.then(sources=>!cancelled&&sources.identity===skyPlacementPublicationIdentity(selection)).catch(()=>false);
     const datedRequest=eventKeys.length?loadReaderRows({keys:eventKeys},abort.signal,{ready:admission}):Promise.resolve({data:[],error:null});
     const publishedRequest=prepared.then(async sources=>{
+      if(cancelled)return {sources,rows:[]};
       if(sources.identity!==skyPlacementPublicationIdentity(selection))throw new Error('Publication changed.');
       const publications=contentPublicationRecords();
       const pairs=selection?.startsWith('article:')?selection.slice(8).split(','):publications.flatMap(p=>/^sky-article\/([^/]+\/[^/]+)\//u.exec(p.content_key)?.[1]??[]);
