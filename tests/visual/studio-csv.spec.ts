@@ -62,7 +62,7 @@ for (const width of [390,1440]) for (const theme of ['light','dark']) {
       await page.goto('/admin/content#exact-content?category=Natal+Aspects&first=lilith&aspect=quincunx&second=sun');
       let dialog = await open();
       await expect(dialog.locator('[data-sky-field="body_they"]')).toHaveValue('');
-      await expect(dialog.getByRole('textbox',{name:'Reader copy',exact:true})).toHaveValue(you);
+      await expect(dialog.getByRole('textbox',{name:'Reader phrase · You',exact:true})).toHaveValue(you);
       await dialog.locator('[data-sky-field="body_they"]').fill(friend);
       await dialog.getByRole('button',{name:'Save & publish',exact:true}).click();
       await expect.poll(async () => {
@@ -79,7 +79,7 @@ for (const width of [390,1440]) for (const theme of ['light','dark']) {
       await page.reload();
       dialog = await open();
       await expect(dialog.locator('[data-sky-field="body_they"]')).toHaveValue(friend);
-      await expect(dialog.getByRole('textbox',{name:'Reader copy',exact:true})).toHaveValue(you);
+      await expect(dialog.getByRole('textbox',{name:'Reader phrase · You',exact:true})).toHaveValue(you);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       await dialog.screenshot({path:`test-results/studio-natal-friend-${width}-${theme}.png`});
     } finally { await closeCsvFixture(page,store); }

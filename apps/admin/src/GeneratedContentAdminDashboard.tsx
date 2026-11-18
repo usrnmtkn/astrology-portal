@@ -2446,19 +2446,6 @@ function aspectContextForFields({
   }
 
   if (
-    surface === "sky"
-    || contentKey.toLowerCase().startsWith("sky.aspect.")
-    || blockType === "sky_aspect"
-    || eventType === "collective-aspect-card"
-  ) {
-    return {
-      key: "sky-transit",
-      label: "Transit aspect · current sky",
-      detail: "Two bodies in the current sky making an aspect to each other."
-    };
-  }
-
-  if (
     surface === "natal"
     || /natal[./_ -]aspect|aspect[./_ -]natal/u.test(marker)
   ) {
@@ -2467,6 +2454,10 @@ function aspectContextForFields({
       label: "Natal aspect · birth chart",
       detail: "Two placements making an aspect within one natal chart."
     };
+  }
+
+  if (surface === "sky" || contentKey.toLowerCase().startsWith("sky.aspect.") || blockType === "sky_aspect" || eventType === "collective-aspect-card") {
+    return { key: "sky-transit", label: "Transit aspect · current sky", detail: "Two bodies in the current sky making an aspect to each other." };
   }
 
   return {
@@ -10606,6 +10597,7 @@ export function GeneratedContentAdminDashboard() {
     const aspectRetrogradeOptions = calendarAspectRetrogradeOptions(currentDraft.contentKey);
     const isSkyPlacementFrameTemplate = currentDraft.contentKey === skyPlacementFrameTemplateKey;
     const isExactNatalAspectDraft = currentDraft.contentKey.startsWith(natalAspectContentKeyPrefix);
+    const isStandaloneNatalAspectDraft = currentDraft.contentKey.startsWith('natal.aspect.');
     const isCompatibilityAspectDraft = currentDraft.contentKey.startsWith("fallback-hook/synastry-pair/");
     const compatibilityAspectMissingCopy = isCompatibilityAspectDraft
       && !["body_you", "body_they"].every(field => packageFieldString(currentDraft, field).trim());
@@ -10830,7 +10822,7 @@ export function GeneratedContentAdminDashboard() {
       && !isContinuousSkyPackage
       && (typeof editablePackageRecord.body_you === "string"
         || typeof objectRecord(currentDraft.sections)?.body_you === "string"
-        || isExactTransitReturnDraft || isBondEffectDraft);
+        || isExactTransitReturnDraft || isBondEffectDraft || isExactNatalAspectDraft);
     const showPackageBodyThey = isPackageDraft
       && !isVocabularyDraft
       && !isExactTransitReturnDraft
@@ -10990,7 +10982,10 @@ export function GeneratedContentAdminDashboard() {
       const next = element.value.slice(0, start) + token + element.value.slice(end);
       const field = element.dataset.skyField;
       const calendarField = element.dataset.calendarField;
-      if (field === "body_you" || field === "body_they") setDraft(setPackageSectionField(currentDraft, field, next));
+      if (field === "body_you" || field === "body_they") setDraft(field === 'body_you' && isExactNatalAspectDraft
+        ? setPackageSectionField(setPackageRecordField(currentDraft, 'body', next), field, next)
+        : setPackageSectionField(currentDraft, field, next));
+      else if (field === 'astroHint') updateNatalAspectHint(next);
       else if (calendarField) {
         const overview = currentDraft.sections?.calendarOverview && typeof currentDraft.sections.calendarOverview === "object"
           ? currentDraft.sections.calendarOverview as Record<string, unknown>
@@ -11009,6 +11004,9 @@ export function GeneratedContentAdminDashboard() {
         ? setPackageRecordField(nextDraft, "body", body)
         : nextDraft);
     };
+    const updateNatalAspectHint = (value: string) => setDraft(isExactNatalAspectDraft
+      ? setPackageRecordField(currentDraft, 'astroHint', value)
+      : invalidateContentStudioReview({ ...currentDraft, sections: { ...currentDraft.sections, astroHint: value } }));
     const navigateWheelTooltipSource = async (key: string) => {
       if (isLoading || key === currentDraft.contentKey || !key.startsWith(WHEEL_TOOLTIP_PREFIX)) return;
       const requestId = ++wheelTooltipSourceRequestRef.current, editorSession = editorSessionRef.current, hash = window.location.hash;
@@ -11333,7 +11331,7 @@ export function GeneratedContentAdminDashboard() {
               : isTemplateDraft
                 ? "Template purpose (optional)"
                 : "TL;DR / summary");
-    const bodyFieldLabel = isWheelTooltipDraft ? "Tooltip wording" : isCompleteEffortDraft ? "Complete interpretation" : isManualCalendarEventDraft ? "Event write-up" : isReferenceDraft ? "Source text" : isSkySummaryDraft ? "Summary wording" : lunarIdentity?.family === "Moon transition phrases" ? "Transition phrase" : lunarIdentity?.family === "Lunar ingresses" ? "Lunar ingress passage" : lunarIdentity?.family === "Season transitions" ? "Season transition passage" : lunarIdentity ? "Full lunar passage" : isYouOnlyNatalExactDraft
+    const bodyFieldLabel = isStandaloneNatalAspectDraft ? "You write-up" : isWheelTooltipDraft ? "Tooltip wording" : isCompleteEffortDraft ? "Complete interpretation" : isManualCalendarEventDraft ? "Event write-up" : isReferenceDraft ? "Source text" : isSkySummaryDraft ? "Summary wording" : lunarIdentity?.family === "Moon transition phrases" ? "Transition phrase" : lunarIdentity?.family === "Lunar ingresses" ? "Lunar ingress passage" : lunarIdentity?.family === "Season transitions" ? "Season transition passage" : lunarIdentity ? "Full lunar passage" : isYouOnlyNatalExactDraft
       ? "You view exact copy"
       : isVocabularyDraft && isPackageDraft
       ? vocabularyHasTheyVersion ? "You version" : "Variable value"
@@ -12388,12 +12386,12 @@ export function GeneratedContentAdminDashboard() {
               <StudioTextarea
                 data-sky-field="body_you"
                 aria-label={bodyYouLabel}
-                value={isExactTransitReturnDraft
+                value={isExactTransitReturnDraft || isExactNatalAspectDraft
                   ? (packageFieldString(currentDraft, "body_you") || packageFieldString(currentDraft, "body") || currentDraft.body)
                   : packageFieldString(currentDraft, "body_you")}
                 onChange={(event) => {
                   const value = event.target.value;
-                  setDraft(isExactTransitReturnDraft
+                  setDraft(isExactTransitReturnDraft || isExactNatalAspectDraft
                     ? setPackageSectionField(setPackageSectionField(currentDraft, "body", value), "body_you", value)
                     : setPackageSectionField(currentDraft, "body_you", value));
                 }}
@@ -12402,6 +12400,15 @@ export function GeneratedContentAdminDashboard() {
               {!fallbackEditorGuidance && <small className={fieldHintClassName}>{isExactTransitReturnDraft
                 ? "Used when someone reads this return in You."
                 : "Used when someone reads their own natal chart in You."}</small>}
+            </label>
+          )}
+          {(isExactNatalAspectDraft || isStandaloneNatalAspectDraft) && (
+            <label className="admin-review-copy-editor studio-surface">
+              <span>Astrology hint <em className={fieldHintClassName}>Optional</em></span>
+              <StudioTextarea aria-label="Astrology hint" data-sky-field="astroHint"
+                value={isExactNatalAspectDraft ? packageFieldString(currentDraft, 'astroHint') : String(currentDraft.sections?.astroHint ?? '')}
+                onChange={event => updateNatalAspectHint(event.target.value)} />
+              <small className={fieldHintClassName}>Shown above the You write-up.</small>
             </label>
           )}
           {isContinuousSkyPackage && !skyFallbackEditor && ([

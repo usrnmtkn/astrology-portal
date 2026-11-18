@@ -395,7 +395,7 @@ try {
     const versionKey = `tldrastro:fallbackArchitectureV3:dashboardBundleVersion${suffix}`;
     const valid = JSON.parse(storage.get(cacheKey)!);
     for (const invalid of [
-      JSON.stringify({ ...valid, schema: 'fallback-architecture-v3-dashboard-overlay-cache-v8' }),
+      JSON.stringify({ ...valid, schema: 'fallback-architecture-v3-dashboard-overlay-cache-v9' }),
       JSON.stringify({ ...valid, bundledPackageVersion: 'synthetic-obsolete-package' }),
       '{invalid-json'
     ]) {
@@ -416,7 +416,7 @@ try {
       const restored = qa.readCachedFallbackArchitectureV3Bundle(scope);
       assert(restored, `Rejecting an obsolete ${scope} cache must not invalidate its fresh pending replacement`);
       assert.equal(JSON.stringify(restored.bundle) === JSON.stringify(fresh), true, 'The cache must preserve the complete fresh bundle');
-      assert.equal(JSON.parse(storage.get(cacheKey)!).schema, 'fallback-architecture-v3-dashboard-overlay-cache-v9');
+      assert.equal(JSON.parse(storage.get(cacheKey)!).schema, 'fallback-architecture-v3-dashboard-overlay-cache-v10');
       if (scope === 'sky') assert.equal(storage.has('tldrastro:fallbackArchitectureV3:dashboardBundle'), false);
       await qa.loadFallbackArchitectureV3DashboardBundle(scope);
       assert.equal(queries.length, before + 1, 'A recovered cache must survive the next revision-validated read');

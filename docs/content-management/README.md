@@ -172,6 +172,29 @@ scripts/
 
 ## Content Studio access
 
+### Natal aspect writing
+
+**Natal Aspects** includes exact `fallback-hook/natal-aspect-lived/` sources and
+the six standalone `natal.aspect.sun.*.moon` write-ups. Either planet order finds
+the same entries. The cards show saved You, Friend and Astrology hint coverage;
+the editor exposes each exact audience even when its field is empty.
+
+**Astrology hint** edits the separate line above the You passage. Exact sources
+retain it in the package proposal; standalone Sun–Moon sources use their saved
+sections. Save draft, reopen and publication use the existing version checks.
+The public reader exposes this field only for these natal aspect families.
+
+The standalone Sun–Moon passage supplies You. An exact Friend source takes
+precedence over the legacy conversion for Friends. **Write Friend passage**
+creates that separate source when absent, without filling the You field.
+
+**Shared fallback sources** remains available alongside exact writing. It opens
+the pair passage, You/Friend template, aspect explanation, aspect wording and
+movement, and both planet/point meanings. These sources affect their other
+usages as well. An aspect without a composed resolver group does not advertise
+unused shared sources. Browsing and opening sources never creates or publishes
+content; the normal draft and owner publication actions remain separate.
+
 ### Sky reader preview
 
 **Reader date** is shared by the source panel, Published/Draft preview,
