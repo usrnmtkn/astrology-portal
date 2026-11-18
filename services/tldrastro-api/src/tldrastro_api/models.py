@@ -159,7 +159,7 @@ class EphemerisProvenance(BaseModel):
 
 
 class ChartCalculationProvenance(BaseModel):
-    schemaVersion: Literal["canonical-natal-v1"] = "canonical-natal-v1"
+    schemaVersion: Literal["canonical-natal-v2"] = "canonical-natal-v2"
     inputHash: str
     resultHash: str
     provenanceHash: str
