@@ -692,12 +692,16 @@ function YouUpdatesTab({
       {hasSavedCurrentCity && aspectRows.length > 0 && (
         <YouTransitGroup title="Short-term transits" label="Areas of your life" rows={aspectRows} />
       )}
-      {hasSavedCurrentCity && backgroundAspectRows.length > 0 ? (
-        <YouTransitGroup title="Long-term transits" label="Long-term transit cards" rows={backgroundAspectRows} />
+      {hasSavedCurrentCity && (backgroundAspectRows.length > 0 || otherWeeklyRows.length > 0) ? (
+        <div className="you-transit-flow">
+          {backgroundAspectRows.length > 0 ? (
+            <YouTransitGroup title="Long-term transits" label="Long-term transit cards" rows={backgroundAspectRows} />
+          ) : null}
+          {otherWeeklyRows.length > 0 ? <div className="updates-aspect-list you-transit-grid weekly-horoscope__transits" aria-label="Weekly transit cards">
+            {otherWeeklyRows.map(row => <LunationTransitCard key={row.reading.sourceUnits.join("-") || row.reading.headline} {...row} />)}
+          </div> : null}
+        </div>
       ) : null}
-      {hasSavedCurrentCity && otherWeeklyRows.length > 0 ? <div className="updates-aspect-list you-transit-grid weekly-horoscope__transits" aria-label="Weekly transit cards">
-        {otherWeeklyRows.map(row => <LunationTransitCard key={row.reading.sourceUnits.join("-") || row.reading.headline} {...row} />)}
-      </div> : null}
       {hasSavedCurrentCity ? <LunationTransitSection assembly={weeklyHoroscopeAssembly}>{lunationRow ? <LunationTransitCard {...lunationRow} /> : null}</LunationTransitSection> : null}
       {hasSavedCurrentCity && standaloneTransitRows.length > 0 && (
         <YouTransitGroup title="Planets moving through your houses" label="House transits" rows={standaloneTransitRows} />

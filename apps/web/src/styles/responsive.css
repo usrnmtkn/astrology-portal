@@ -145,10 +145,6 @@
   .friend-back-row {
     width: min(920px, calc(100vw - 32px));
   }
-
-  .synastry-placement-columns {
-    grid-template-columns: 1fr;
-  }
 }
 
 @media (min-width: 721px) and (max-width: 800px) {
@@ -173,11 +169,6 @@
 }
 
 @media (max-width: 560px) {
-  .friend-chart-page .composite-placements-section .friend-placement-row-compact .placement-table-row {
-    --friend-composite-row-template: minmax(0, 1fr);
-    --friend-composite-row-gap: var(--mobile-row-gap);
-    --friend-composite-row-padding: var(--mobile-card-padding) var(--mobile-page-gutter);
-  }
 
   .placement-table-row {
     grid-template-columns: minmax(0, 1fr);
@@ -901,47 +892,12 @@
 
   .auth-shell,
   .signup-grid,
-  .manual-chart-grid,
-  .synastry-placement-columns,
-  .synastry-placement-strip,
-  .friend-placement-table,
-  .friend-placement-column-compact .friend-placement-table {
+  .manual-chart-grid {
     grid-template-columns: 1fr;
   }
 
   .auth-card {
     border-radius: var(--radius);
-  }
-
-  .synastry-placement-row {
-    grid-template-columns: 62px 34px minmax(104px, 1fr);
-    grid-template-areas: "glyph sign meta";
-    align-items: center;
-    column-gap: var(--card-row-gap);
-    row-gap: var(--inline-gap);
-    padding: var(--card-row-padding-compact);
-  }
-
-  .synastry-placement-lead {
-    grid-area: glyph;
-    align-self: center;
-    padding-bottom: 0;
-  }
-
-  .synastry-placement-sign {
-    grid-area: sign;
-    align-self: center;
-  }
-
-  .synastry-placement-copy {
-    grid-area: sign;
-  }
-
-  .synastry-placement-meta {
-    grid-area: meta;
-    align-self: center;
-    width: min(100%, var(--synastry-placement-meta-width));
-    justify-self: end;
   }
 
 
@@ -1138,19 +1094,6 @@
 
   .relationship-detail-layout {
     gap: var(--stack-gap);
-  }
-
-  .friend-placement-row {
-    grid-template-columns: 36px minmax(0, 1fr);
-    grid-template-areas:
-      "symbol label"
-      "symbol meta"
-      "summary summary";
-  }
-
-  .friend-placement-meta {
-    justify-self: start;
-    white-space: normal;
   }
 
   .friend-aspect-row,

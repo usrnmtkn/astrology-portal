@@ -3,8 +3,6 @@
 .app-shell.mode-friends {
   --friends-page-rail: var(--ds-friends-route-friends-page-rail);
   --friends-tab-content-width: var(--friends-page-rail);
-  --friend-detail-copy-width: var(--ds-friends-route-friend-detail-copy-width);
-  --friend-detail-top-clearance: var(--ds-friends-route-friend-detail-top-clearance);
 }
 
 .app-shell.mode-friends .profile-layout > .detail-panel:has(.friends-page) {
@@ -183,19 +181,6 @@
   gap: calc(var(--space-4) + var(--space-1) / 2);
 }
 
-.compatibility-summary,
-.compatibility-glance,
-.compatibility-card,
-.compatibility-dynamics__group {
-  display: grid;
-  gap: calc(var(--space-2) + var(--space-1) / 2);
-  min-width: 0;
-  border: var(--border-width-thin) solid var(--card-border);
-  border-radius: var(--card-radius);
-  background: var(--card-bg);
-  padding: var(--friends-route-profile-padding);
-}
-
 .compatibility-card {
   padding-block: var(--space-6);
 }
@@ -214,14 +199,6 @@
   border-radius: var(--radius-pill);
   color: var(--accent);
   background: color-mix(in srgb, var(--accent-bg) 68%, transparent);
-}
-
-.compatibility-summary h3,
-.compatibility-card h3,
-.compatibility-dynamic-row h4 {
-  margin: 0;
-  color: var(--card-title-color);
-  line-height: var(--leading-h1);
 }
 
 .compatibility-summary h3 {
@@ -288,14 +265,6 @@
   height: 1em;
   object-fit: contain;
   filter: var(--filter-glyph-neutral);
-}
-
-.compatibility-glance__list,
-.compatibility-card-list,
-.compatibility-card__body,
-.compatibility-dynamics {
-  display: grid;
-  gap: calc(var(--space-3) + var(--space-1) / 2);
 }
 
 .compatibility-card-list__toggle {
@@ -427,29 +396,6 @@
   border-style: dashed;
 }
 
-.compatibility-dynamics__group {
-  padding: 0;
-  border: 0;
-  background: transparent;
-}
-
-.friend-compatibility-stage .compatibility-dynamic-row {
-  --aspect-row-glyph-gap: var(--ds-friends-route-aspect-row-glyph-gap);
-  --aspect-row-glyph-width: var(--ds-friends-route-aspect-row-glyph-width);
-}
-
-.compatibility-dynamics .reading-story-card.compatibility-dynamic-row {
-  align-items: center;
-}
-
-.compatibility-dynamics .reading-story-card .aspect-row-copy p {
-  text-align: center;
-}
-
-.compatibility-dynamics .reading-story-card .compatibility-dynamic-row__tag {
-  align-self: center;
-}
-
 .friend-compatibility-loading__card {
   overflow: hidden;
 }
@@ -490,14 +436,6 @@
   .friend-compatibility-loading__lines span {
     animation: none;
   }
-}
-
-.compatibility-dynamic-row__quality {
-  margin-top: calc(var(--space-1) / 2);
-}
-
-.compatibility-dynamic-row h4 {
-  font-size: var(--text-body);
 }
 
 .updates-aspect-row.friend-transit-row {

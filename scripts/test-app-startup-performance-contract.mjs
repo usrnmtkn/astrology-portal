@@ -441,8 +441,8 @@ assert.match(
 );
 assert.match(
   friendProfileChartRailSource,
-  /import \{ FriendNatalViewControl/u,
-  "The deferred profile chart rail must own its segmented control."
+  /import \{ ChartFullscreenButton \} from "\.\.\/\.\.\/components\/charts\/ChartFullscreenButton"/u,
+  "The deferred profile chart rail must own the chart fullscreen renderer."
 );
 assert.match(
   appSource,
@@ -639,8 +639,8 @@ assert.doesNotMatch(
 );
 assert.match(
   friendProfileChartRailSource,
-  /import \{ NatalChartDataTable \}/u,
-  "The deferred profile chart rail must own its natal table renderer."
+  /import \{ InteractiveZodiacWheel \} from "\.\.\/\.\.\/components\/charts\/LazyInteractiveZodiacWheel"/u,
+  "The deferred profile chart rail must keep the interactive natal wheel behind its lazy renderer."
 );
 assert.doesNotMatch(
   appSource,
@@ -694,8 +694,8 @@ assert.match(
 );
 assert.match(
   friendSynastryTabSource,
-  /import \{ SynastryPlacementsComparison \}/u,
-  "The deferred Synastry tab must own its placement comparison."
+  /import \{ CardReadMore \}[\s\S]*export function FriendSynastryTab[\s\S]*friend-profile-dynamics/u,
+  "The deferred Synastry tab must own its Dynamics cards and reading controls."
 );
 assert.match(
   manualChartsPanelSource,
@@ -834,7 +834,7 @@ assert.match(
 );
 assert.match(
   manualChartsPanelSource,
-  /if \(!friendProfileWork\.natal \|\| !selectedFriendReadyNatalChart\)/u,
+  /if \(!friendProfileWork\.natal \|\| !selectedChart \|\| !selectedFriendReadyNatalChart\)/u,
   "Friends natal row calculation must remain scoped to its active tab."
 );
 assert.match(
@@ -885,14 +885,16 @@ assert.match(
 );
 assert.doesNotMatch(
   friendsStylesSource,
-  /(?:^|\n)\.friend-placement-column\s*\{/u,
-  "Friends placement and aspect-row CSS must not remain in the eager Friends/profile stylesheet."
+  /(?:^|\n)\.friend-chart-page\.friend-profile-view \.friend-dynamic-card\s*\{/u,
+  "Friends Dynamics CSS must not remain in the eager Friends/profile stylesheet."
 );
 assert.match(
-  friendDetailStylesSource,
-  /(?:^|\n)\.friend-placement-column\s*\{/u,
-  "The lazy FriendDetail stylesheet must own Friends placement and aspect-row CSS."
+  fs.readFileSync(path.join(repoRoot, "apps/web/src/styles/friend-profile-refined.css"), "utf8"),
+  /(?:^|\n)\.friend-chart-page\.friend-profile-view \.friend-dynamic-card\s*\{/u,
+  "The refined Friend profile stylesheet must own its Dynamics cards."
 );
+assert.match(friendDetailSource, /import "\.\.\/\.\.\/styles\/friend-profile-refined\.css";/u,
+  "The refined Friend profile stylesheet must load through the deferred detail shell.");
 assert.doesNotMatch(
   friendsStylesSource,
   /(?:^|\n)\.add-chart-field,/u,

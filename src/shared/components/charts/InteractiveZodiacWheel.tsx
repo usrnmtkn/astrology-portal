@@ -20,6 +20,7 @@ type Props = {
   mode?: "sky" | "natal";
   birthTimeUnknown?: boolean;
   ownerName?: string;
+  showHouseSystemLabel?: boolean;
   pronouns?: PronounChoice;
   tooltipPreview?: { templates: WheelTooltipTemplates; house: number; source?: WheelTooltipName; disabled?: boolean;
     onHouseChange?: (house: number) => void; onSourcePick?: (source: WheelTooltipName, house: number) => void };
@@ -39,15 +40,15 @@ function keyboardPick<T extends Element>(event: KeyboardEvent<T>, pick: () => vo
   if (event.key === "Enter" || event.key === " ") { event.preventDefault(); event.stopPropagation(); pick(); }
 }
 
-export const InteractiveZodiacWheel = memo(function InteractiveZodiacWheel({ snapshot, mode = "sky", birthTimeUnknown = false, ownerName, pronouns, tooltipPreview }: Props) {
+export const InteractiveZodiacWheel = memo(function InteractiveZodiacWheel({ snapshot, mode = "sky", birthTimeUnknown = false, ownerName, pronouns, tooltipPreview, showHouseSystemLabel = true }: Props) {
   const facts = useMemo(() => zodiacWheelFacts(snapshot, mode, birthTimeUnknown), [snapshot, mode, birthTimeUnknown]);
   // A changed chart clears transient inspection. Natal chart identity does not
   // include the app's selected transit date.
   const identity = `${mode}:${ownerName ?? "you"}:${snapshot.generatedAt ?? ""}:${facts.ascendant}:${facts.angles.map(angle => `${angle.key}:${angle.longitude}`).join("|")}:${facts.planets.map(point => `${point.name}:${point.longitude}:${point.retrograde}`).join("|")}`;
-  return <WheelInteraction key={identity} facts={facts} mode={mode} ownerName={ownerName} pronouns={pronouns} tooltipPreview={tooltipPreview} />;
+  return <WheelInteraction key={identity} facts={facts} mode={mode} ownerName={ownerName} pronouns={pronouns} tooltipPreview={tooltipPreview} showHouseSystemLabel={showHouseSystemLabel} />;
 });
 
-function WheelInteraction({ facts, mode, ownerName, pronouns, tooltipPreview }: { facts: ZodiacWheelFacts; mode: "sky" | "natal"; ownerName?: string; pronouns?: PronounChoice; tooltipPreview?: Props["tooltipPreview"] }) {
+function WheelInteraction({ facts, mode, ownerName, pronouns, tooltipPreview, showHouseSystemLabel }: { showHouseSystemLabel: boolean; facts: ZodiacWheelFacts; mode: "sky" | "natal"; ownerName?: string; pronouns?: PronounChoice; tooltipPreview?: Props["tooltipPreview"] }) {
   const publishedTemplates = useWheelTooltipTemplates(!tooltipPreview);
   const templates = tooltipPreview?.templates ?? publishedTemplates;
   const previewHouse = tooltipPreview?.house;
@@ -238,7 +239,7 @@ function WheelInteraction({ facts, mode, ownerName, pronouns, tooltipPreview }: 
       <FloatingTooltipPortal anchor={hovered?.anchor ?? null} open={Boolean(tip) && !lordOpen} id={`${id}-tip`} className="interactive-wheel-tooltip"
         content={tip ? <><strong>{tip.title}</strong><span>{tip.line}</span></> : null} />
     </div>
-    {facts.hasHouses ? <span className="interactive-zodiac-wheel__caption">HOUSES: WHOLE SIGN</span> : null}
+    {facts.hasHouses && showHouseSystemLabel ? <span className="interactive-zodiac-wheel__caption">HOUSES: WHOLE SIGN</span> : null}
     {selected ? <WheelDetail selected={selected} facts={facts} mode={mode} lord={lord} pick={pick} clear={clear}
       onLord={lordCopy ? () => { clearTimeout(closeTimer.current); setLordOpen(value => !value); } : undefined} lordOpen={Boolean(lordCopy) && lordOpen} lordId={`${id}-lord`} /> : null}
   </div>;

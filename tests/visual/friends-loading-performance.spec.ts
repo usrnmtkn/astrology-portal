@@ -641,11 +641,14 @@ test.describe("Friends loading performance matrix", () => {
           prepared.delayedDeferredFallbackRequests(),
           "Compatibility must not download the unrelated Natal/Transit fallback package."
         ).toBe(0);
-        await expect(page.locator(".compatibility-card")).toHaveCount(7, {
+        await expect(page.getByRole("button", { name: "See all 7", exact: true })).toBeVisible({
           timeout: friendsLoadingPerformanceBudgets.slowNetworkRelationshipEnhancedMs + 5_000
         });
+        await expect(page.locator(".compatibility-card")).toHaveCount(6);
+        await page.getByRole("button", { name: "See all 7", exact: true }).click();
+        await expect(page.locator(".compatibility-card")).toHaveCount(7);
         await expect(
-          page.locator(".compatibility-dynamic-row .aspect-row-copy p").first()
+          page.locator(".compatibility-card").last().locator(".compatibility-card__preview p").first()
         ).toHaveText(/\S/u, {
           timeout: friendsLoadingPerformanceBudgets.slowNetworkRelationshipEnhancedMs + 5_000
         });

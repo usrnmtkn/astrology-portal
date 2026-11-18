@@ -7,7 +7,7 @@ import {emptyHoroscopeEdition,horoscopeEditionBody,horoscopeEditionKey} from '..
 
 for(const [width,theme,exhausted] of [[390,'light',false],[1440,'dark',false],[390,'light',true]] as const){
  test(`Seasonal ${exhausted?'quality_exhausted':'stages and saved review'} ${width} ${theme}`,async({page})=>{
-  test.setTimeout(120000);
+  test.setTimeout(exhausted?150000:120000);
   const child=fork(path.resolve('tests/helpers/sky-article-save-api.mts'),[],{env:{...process.env,HOROSCOPE_WRITER_FIXTURE:'1'},execArgv:['--import','tsx'],stdio:['ignore','pipe','pipe','ipc']});
   let sequence=0,stderr='';const pending=new Map<number,{resolve:(v:any)=>void;reject:(e:Error)=>void}>();
   child.stderr?.on('data',v=>stderr+=v);
@@ -37,7 +37,9 @@ for(const [width,theme,exhausted] of [[390,'light',false],[1440,'dark',false],[3
    await studio.getByLabel('I approve this writing plan for generation.').check();
    await expect(studio.getByText(/Up to 30 paid AI requests/)).toBeVisible();
    await studio.getByRole('button',{name:'Generate missing readings',exact:true}).click();
-   await expect(studio.getByRole('heading',{name:'Review each reading',exact:true})).toBeVisible({timeout:95000});
+   // The exhausted fixture completes 12 model stages; retain the same terminal
+   // assertion while allowing its captured 95-second CI path to settle and render.
+   await expect(studio.getByRole('heading',{name:'Review each reading',exact:true})).toBeVisible({timeout:exhausted?120000:95000});
    expect((await call({method:'writer-state'})).calls).toBe(exhausted?12:6);
    await studio.getByRole('button',{name:/^Taurus/}).click();
    await studio.getByText('Seasonal generation record',{exact:true}).click();

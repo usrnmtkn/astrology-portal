@@ -153,11 +153,12 @@ for (const viewport of [{ width: 360, height: 640 }, { width: 390, height: 844 }
       }
     } else if (name === 'Compare chart picker' || name === 'Full-screen chart') {
       await page.getByRole('button', { name: 'Open Fixture Friend' }).click();
-      const synastry=page.getByRole('tab', { name: 'Synastry', exact: true });
-      if(await synastry.isVisible())await synastry.click();
+      const tabName = name === 'Compare chart picker' ? 'Composite' : 'Synastry';
+      const chartTab=page.getByRole('tab', { name: tabName, exact: true });
+      if(await chartTab.isVisible())await chartTab.click();
       else {
         await page.getByRole('button', { name: /More, \d+ sections/ }).click();
-        await page.getByRole('menuitemradio', { name: /^Synastry/ }).click();
+        await page.getByRole('menuitemradio', { name: new RegExp(`^${tabName}`) }).click();
       }
       if (name === 'Full-screen chart') {
         await page.getByRole('button', { name: 'Full-screen chart', exact: true }).click();

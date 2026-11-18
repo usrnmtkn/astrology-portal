@@ -348,6 +348,7 @@ export type SkyWheelProps = {
   ascendantLongitude?: number;
   midheavenLongitude?: number;
   showHouses?: boolean;
+  showHouseSystemLabel?: boolean;
   houseSignLabelStyle?: HouseSignLabelStyle;
   variant?: Exclude<WheelVariant, "synastry">;
   aspectInspector?: boolean;
@@ -367,6 +368,7 @@ export const SkyWheel = memo(function SkyWheel({
   ascendantLongitude,
   midheavenLongitude,
   showHouses = false,
+  showHouseSystemLabel = true,
   houseSignLabelStyle = "text",
   variant = "zodiac",
   aspectInspector = false,
@@ -796,7 +798,7 @@ export const SkyWheel = memo(function SkyWheel({
 
     return "idle";
   }
-  const activeWheelViewBox = hasTransitOverlay ? "-76 -76 752 752" : handoffLayout ? "-4 -4 608 648" : wheelViewBox;
+  const activeWheelViewBox = hasTransitOverlay ? "-76 -76 752 752" : handoffLayout ? showHouseSystemLabel ? "-4 -4 608 648" : "-4 -4 608 608" : wheelViewBox;
 
   return (
     <>
@@ -1236,7 +1238,7 @@ export const SkyWheel = memo(function SkyWheel({
             );
           })}
         </g>
-        {!hasTransitOverlay ? (
+        {showHouseSystemLabel && !hasTransitOverlay ? (
           <text x={center} y={626} className="chart-house-system-label">
             Houses: Whole Sign
           </text>

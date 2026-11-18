@@ -1,0 +1,42 @@
+{
+  "schema": "lunation-reader-bundle-cost/v1",
+  "baselineRevision": "aea0156b3a3508941fb3bc6ceb146ef369448400",
+  "featureSourceRevision": "e39d82bc20fa224374f3d6eda0a6b409d91fc110",
+  "profile": "Independent npm-ci dependencies, unchanged lockfile and knowledge sources; native ARM64 Node 22.20.0; VITE_ENABLE_NATAL_ASPECT_PATTERNS=true and identical visual-smoke Supabase URL/anonymous placeholders. Each checkout used its normal generated build artifacts. No owner prose or live storage was changed.",
+  "control": {
+    "readerBootGzipBytes": 458222,
+    "webJavaScriptGzipBytes": 3798035,
+    "studioStartupGzipBytes": 245635,
+    "studioJavaScriptGzipBytes": 933524
+  },
+  "candidate": {
+    "readerBootGzipBytes": 458418,
+    "webJavaScriptGzipBytes": 3798802,
+    "studioStartupGzipBytes": 245761,
+    "studioJavaScriptGzipBytes": 933621
+  },
+  "positiveStartupCost": {
+    "readerBootGzipBytes": 196,
+    "studioStartupGzipBytes": 126
+  },
+  "allocation": {
+    "readerBootGzipBytes": 200,
+    "studioStartupGzipBytes": 128
+  },
+  "preservedLimits": "All other numeric caps, asset boundaries, source-payload checks, dependencies, CSS, publication controls and exact-head release gates.",
+  "retainedFailures": [
+    {
+      "scope": "Initial hosted Studio budget",
+      "job": "https://github.com/usrnmtkn/astrology-portal/actions/runs/44170648805/job/134352219304",
+      "startupGzipBytes": 245846,
+      "limit": 245770,
+      "overage": 76
+    },
+    {
+      "scope": "Initial hosted horoscope-reader (2)",
+      "job": "https://github.com/usrnmtkn/astrology-portal/actions/runs/44170648805/job/134352219293",
+      "result": "50 passed; Seasonal quality_exhausted 390 light timed out at its 95-second assertion boundary. The captured API returned the expected quality_exhausted result at that boundary; the unchanged test passed in a fresh local build. The 12-stage exhausted fixture now has a bounded 120-second terminal assertion and 150-second whole-test deadline. All terminal-state, exact call-count, private-candidate, persistence and unchanged-row assertions remain. Later required gates must still pass."
+    }
+  ],
+  "releaseAcceptance": "All four existing approved source bodies must render in their calculated matching New/Full Moon articles and remain complete after production reload. No paid generation or owner-content writes are part of verification."
+}

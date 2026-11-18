@@ -22,7 +22,7 @@ test.beforeAll(async () => {
     const positions = (values) => names.map((planet,index) => ({planet,longitude:values[index],sign:signs[Math.floor(values[index]/30)],degree:values[index]%30,glyph:planet,motion:index===2||index===3?'retrograde':'direct'}));
     const props = {positions:positions(kind==='sky'?sky:natal),aspects:[],ascendant:'Gemini',ascendantLongitude:kind==='sky'?300:71,midheavenLongitude:kind==='sky'?230:347,showHouses:true,aspectInspector:true};
     createRoot(document.getElementById('root')).render(kind==='synastry'
-      ? <SynastryWheel outerPositions={positions(natal)} innerPositions={positions(natal)} interAspects={[]} ascendant='Gemini' ascendantLongitude={71} midheavenLongitude={347} aspectInspector />
+      ? <SynastryWheel outerPositions={positions(natal)} innerPositions={positions(natal)} interAspects={[]} ascendant='Gemini' ascendantLongitude={71} midheavenLongitude={347} innerAscendant='Sagittarius' innerAscendantLongitude={251} innerMidheavenLongitude={167} aspectInspector />
       : kind==='composite' ? <CompositeWheel {...props} /> : <SkyWheel {...props} variant={kind==='sky'?'zodiac':'natal'} transitPositions={kind==='transit'?positions(transits):[]} />);
   ` }, bundle: true, write: false, platform: 'browser', format: 'iife', jsx: 'automatic',
     define: { 'process.env.NODE_ENV': '"production"', 'import.meta.env': '{"BASE_URL":"/"}' } });
@@ -79,12 +79,41 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (con
     await expect(svg).toBeVisible();
     await page.evaluate(() => document.fonts.ready);
     await expect(svg.locator('.planet-marker')).toHaveCount(kind==='synastry'||kind==='transit'?28:14);
+    if (kind === 'synastry') {
+      const outer = svg.locator('.synastry-outer-house-labels text'), inner = svg.locator('.synastry-inner-house-labels text');
+      await expect(outer).toHaveText(Array.from({length:12}, (_, index) => String(index + 1)));
+      await expect(inner).toHaveText(Array.from({length:12}, (_, index) => String(index + 1)));
+      const rings = await svg.locator('.synastry-house-labels').evaluateAll(groups => groups.map(group => [...group.querySelectorAll('text')].map(node => ({
+        x: Number(node.getAttribute('x')), y: Number(node.getAttribute('y')), font: getComputedStyle(node).font,
+        radius: Math.hypot(Number(node.getAttribute('x')) - 300, Number(node.getAttribute('y')) - 300)
+      }))));
+      expect(rings[0][0].x).toBeLessThan(300); expect(rings[0][0].y).toBeGreaterThan(300);
+      expect(rings[1][0].x).toBeGreaterThan(300); expect(rings[1][0].y).toBeLessThan(300);
+      for (const label of rings[0]) expect(label.radius).toBeCloseTo(110, 3);
+      for (const label of rings[1]) { expect(label.radius).toBeCloseTo(78, 3); expect(label.font).toBe(rings[0][0].font); }
+    }
     const geometry = await svg.evaluate(root => {
-      const nodes = [...root.querySelectorAll<SVGGraphicsElement>('.wheel-placement__glyph, .wheel-placement__degree, .zodiac-wheel__angle-badge')];
-      const boxes = nodes.map(node => ({ name: node.closest('[data-inspector-point-id]')?.getAttribute('data-inspector-point-id') ?? node.getAttribute('aria-label') ?? node.textContent,
-        kind: node.classList.contains('wheel-placement__glyph')?'glyph':node.classList.contains('wheel-placement__degree')?'degree':'angle', box: node.getBoundingClientRect().toJSON() }));
-      const overlaps = boxes.flatMap((a,index) => boxes.slice(index+1).flatMap(b =>
-        Math.min(a.box.right,b.box.right)-Math.max(a.box.left,b.box.left)>0.5 && Math.min(a.box.bottom,b.box.bottom)-Math.max(a.box.top,b.box.top)>0.5 ? [{a,b}] : []));
+      const nodes = [...root.querySelectorAll<SVGGraphicsElement>('.wheel-placement__glyph, .wheel-placement__degree, .zodiac-wheel__angle-badge, .synastry-house-labels text')];
+      const boxes = nodes.map(node => {
+        const rect = node.getBBox(), matrix = node.getScreenCTM()!;
+        return { name: node.closest('[data-inspector-point-id]')?.getAttribute('data-inspector-point-id') ?? node.getAttribute('aria-label') ?? node.textContent,
+          kind: node.classList.contains('wheel-placement__glyph')?'glyph':node.classList.contains('wheel-placement__degree')?'degree':node.matches('.synastry-house-labels text')?'house':'angle',
+          box: node.getBoundingClientRect().toJSON(),
+          corners: [[rect.x,rect.y],[rect.x+rect.width,rect.y],[rect.x+rect.width,rect.y+rect.height],[rect.x,rect.y+rect.height]].map(([x,y]) => new DOMPoint(x,y).matrixTransform(matrix)) };
+      });
+      function overlaps(a: typeof boxes[number], b: typeof boxes[number]) {
+        if (a.kind !== 'house' && b.kind !== 'house') return Math.min(a.box.right,b.box.right)-Math.max(a.box.left,b.box.left)>0.5 && Math.min(a.box.bottom,b.box.bottom)-Math.max(a.box.top,b.box.top)>0.5;
+        // House numbers rotate with the wheel. Test their transformed rectangles,
+        // rather than the empty corners of a screen-aligned bounding box.
+        return [a.corners,b.corners].every(corners => corners.every((point,index) => {
+          const next = corners[(index+1)%4], dx=next.x-point.x, dy=next.y-point.y, length=Math.hypot(dx,dy);
+          if (!length) return true;
+          const project = (polygon: DOMPoint[]) => polygon.map(p => (-dy*p.x+dx*p.y)/length);
+          const first=project(a.corners), second=project(b.corners);
+          return Math.min(Math.max(...first),Math.max(...second))-Math.max(Math.min(...first),Math.min(...second))>0.5;
+        }));
+      }
+      const collisions = boxes.flatMap((a,index) => boxes.slice(index+1).flatMap(b => overlaps(a,b) ? [{a,b}] : []));
       const ticks = [...root.querySelectorAll<SVGLineElement>('.wheel-placement__tick')];
       const tickOverlaps = ticks.flatMap(tick => {
         const stroke = tick.getBoundingClientRect();
@@ -109,7 +138,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (con
         const matrix = node.transform.baseVal.consolidate()!.matrix;
         return Math.hypot(matrix.e-300,matrix.f-300);
       });
-      return { overlaps, tickOverlaps, tickLengths, badgesAboveTicks, divider, radii };
+      return { overlaps: collisions, tickOverlaps, tickLengths, badgesAboveTicks, divider, radii };
     });
     expect(geometry.overlaps, 'Rendered glyph, degree and angle-label boxes must remain separate').toEqual([]);
     expect(geometry.tickOverlaps, 'Longitude strokes must clear all glyphs and degree labels').toEqual([]);

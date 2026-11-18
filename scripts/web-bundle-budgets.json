@@ -1,7 +1,7 @@
 {
   "appBootGzipBytes": 401490,
   "appChunkGzipBytes": 91358,
-  "readerBootGzipBytes": 460037,
+  "readerBootGzipBytes": 460237,
   "readerInitialCssGzipBytes": 59838,
   "largestJavaScriptGzipBytes": 520000,
   "friendsWorkspaceChunkGzipBytes": 16500,
@@ -132,8 +132,46 @@
             }
           }
         }
+      },
+      "mainIntegration20261118": {
+        "baseRevision": "cebeec35fc750e8f6161cf60d2a468bb1d5f68cd",
+        "previousHead": "13d196461cdb942357c51e80a124b0c56f6320c1",
+        "carriedAllocations": {
+          "appBootGzipBytes": {
+            "existingFeatureAllowance": 1490,
+            "acceptedMainLimit": 400000,
+            "combinedLimit": 401490
+          },
+          "readerBootGzipBytes": {
+            "existingFeatureAllowance": 1787,
+            "acceptedMainLimit": 458450,
+            "combinedLimit": 460237
+          },
+          "readerInitialCssGzipBytes": {
+            "existingFeatureAllowance": 320,
+            "acceptedMainLimit": 59518,
+            "combinedLimit": 59838
+          },
+          "totalCssGzipBytes": {
+            "existingFeatureAllowance": 128,
+            "acceptedMainLimit": 151966,
+            "combinedLimit": 152094
+          },
+          "totalJavaScriptGzipBytes": {
+            "existingFeatureAllowance": 3072,
+            "acceptedMainLimit": 3798969,
+            "combinedLimit": 3802041
+          },
+          "horoscopeReaderChunkGzipBytes": {
+            "existingFeatureAllowance": 41,
+            "acceptedMainLimit": 5800,
+            "combinedLimit": 5841
+          }
+        },
+        "reason": "Carry the existing ephemeris allowance exactly once onto accepted main after the coordinated release queue cleared. Preserve the complete accepted-main history and prior source-pinned feature measurements. This adds no new allowance; combined fresh builds and all required exact-head gates remain mandatory."
       }
     },
+    "lunationReaderDestinations20261117": {"baseRevision":"aea0156b3a3508941fb3bc6ceb146ef369448400","featureSourceRevision":"e39d82bc20fa224374f3d6eda0a6b409d91fc110","receipt":"docs/qa/lunation-reader-destinations-2026-11-17.json","control":{"readerBootGzipBytes":458222,"totalJavaScriptGzipBytes":3798035},"candidate":{"readerBootGzipBytes":458418,"totalJavaScriptGzipBytes":3798802},"allocation":{"readerBootGzipBytes":200},"reason":"Allocate the measured 196-byte reader startup cost of the requested phase-specific lunar article selection, preserving the current main headroom. Lunar calculations and hydration remain article-scoped. Aggregate JavaScript passes its unchanged ceiling. Every App, CSS, deferred/source payload, dependency and runtime guard remains enforced. Initial over-cap builds remain failures; exact-head release gates and production complete-copy/reload checks remain required."},
     "chartReportsDownloads20261116": {
         "baseRevision": "19539307040744df0d4df0903ae972da9e070179",
         "profile": {

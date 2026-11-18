@@ -29,6 +29,38 @@ assert(natal.browserSpecs.includes('tests/visual/natal-friend-publication.spec.t
 assert(!natal.browserSpecs.includes('tests/visual/report-library-ui.spec.ts'));
 const unknown=planFor(['new-unclassified-runtime.ts']);
 assert.equal(unknown.apiCommands.length,apiTestCommands(pkg).length);assert(unknown.reasons.length);
+const friendsUiFiles=[
+  'apps/web/src/features/friends/CompatibilityTab.tsx',
+  'apps/web/src/features/friends/FriendProfileChartRail.tsx',
+  'apps/web/src/features/friends/ManualChartsPanel.tsx',
+  'apps/web/src/styles/friends-detail.css',
+  'scripts/test-friend-placement-tables-render.mjs',
+  'tests/visual/client-facing-user-flows.spec.ts'
+];
+const friendsUi=planFor(friendsUiFiles);
+assert(friendsUi.apiCommands.length<5,'Friends presentation must not expand to the complete API catalog');
+assert(friendsUi.apiCommands.includes('node --import tsx scripts/test-composite-writeups-render.mjs'),'Retain the actual SSR consumer of App');
+assert.equal(friendsUi.postgres,false);assert.equal(friendsUi.weeklyPostgres,false);assert.equal(friendsUi.variables,false);
+for(const name of ['client-facing-user-flows','friends-loading-performance','friends-pair-forecast','connection-transit-separation','natal-friend-publication']) {
+  assert(friendsUi.browserSpecs.includes(`tests/visual/${name}.spec.ts`),`Missing Friends journey ${name}`);
+}
+for(const name of ['sky-live-clock','calendar-month-overview','horoscope-model-choice','studio-variable-crud','report-library-ui']) {
+  assert(!friendsUi.browserSpecs.includes(`tests/visual/${name}.spec.ts`),`Unrelated journey ${name}`);
+}
+assert(friendsUi.browserSpecs.length<unknown.browserSpecs.length/3,'Friends UI must stay surface-scoped');
+assert(!friendsUi.reasons.some(reason=>reason.startsWith('shared or unclassified')));
+const friendsStyle=planFor(['apps/web/src/styles/friends-detail.css']);
+assert.equal(friendsStyle.apiCommands.length,0);assert(friendsStyle.browserSpecs.includes('tests/visual/friends-pair-forecast.spec.ts'));
+assert(!friendsStyle.browserSpecs.includes('tests/visual/sky-live-clock.spec.ts'));
+const skyUi=planFor(['apps/web/src/features/sky/SkyDatePicker.tsx']);
+assert(skyUi.browserSpecs.includes('tests/visual/sky-live-clock.spec.ts'));
+assert(!skyUi.browserSpecs.includes('tests/visual/horoscope-model-choice.spec.ts'));
+const theme=planFor(['apps/web/src/styles/theme.css']);
+assert.equal(theme.apiCommands.length,0);assert.deepEqual(theme.browserSpecs,unknown.browserSpecs,'Shared theme retains all browser surfaces');
+const unmappedUi=planFor(['apps/web/src/components/NewUnmappedCard.tsx']);
+assert.equal(unmappedUi.apiCommands.length,0);assert.deepEqual(unmappedUi.browserSpecs,unknown.browserSpecs,'An unmapped UI component retains broad browser coverage');
+const globalUi=planFor(['apps/web/src/components/PageLoading.tsx']);
+assert.deepEqual(globalUi.browserSpecs,unknown.browserSpecs,'Shared App UI retains all browser surfaces');
 assert.throws(()=>revisionRange({PR_BASE_SHA:'bad',HEAD_SHA:head}));
 assert.throws(()=>validateTestPlan({...browser,head:'b'.repeat(40)},{head}));
 assert.throws(()=>validateTestPlan({...browser,apiCommands:['node scripts/not-registered.mjs'],apiShards:[3]},{commands:apiTestCommands(pkg)}));
@@ -42,7 +74,8 @@ for(const result of ['failure','cancelled','skipped'])assert.throws(()=>checkAff
 assert.throws(()=>checkAffectedApiGate('success','skipped',null));
 
 const directory=realpathSync(mkdtempSync(path.join(tmpdir(),'affected-ci-contract-')));
-const write=(name,text)=>{mkdirSync(path.dirname(path.join(directory,name)),{recursive:true});writeFileSync(path.join(directory,name),text);};
+const fixtureFiles=new Set();
+const write=(name,text)=>{fixtureFiles.add(name);mkdirSync(path.dirname(path.join(directory,name)),{recursive:true});writeFileSync(path.join(directory,name),text);};
 try {
   const output=path.join(directory,'scope-output.txt');
   const selector=fileURLToPath(new URL('./ci-affected-tests.mjs',import.meta.url));
@@ -64,6 +97,40 @@ try {
   assert(graph.reaches(['tests/test.mjs'],new Set(['apps/web/supabase/migrations/example.sql'])),'SQL dependency');
   assert(graph.reaches(['tests/sql-only.mts'],new Set(['apps/web/supabase/migrations/example.sql'])),'Literal migration catalog');
   assert(!graph.reaches(['tests/test.mjs'],new Set(['src/other.ts'])));
+
+  write('src/types-only.ts',"import type {Value} from './shared.js'; export {type Value as Other} from './shared.js';");
+  write('src/metadata.ts',"export const sources=[{path:'src/shared.ts'}];");
+  write('src/raw.ts',"import './shared.js';");
+  write('tests/text.mts',"import{readFileSync}from'node:fs';readFileSync('../src/raw.ts','utf8');");
+  write('apps/web/src/App.tsx',"import './features/friends/Card'; import './features/sky/Card';");
+  write('apps/web/src/features/friends/Card.tsx',"import './card.css'; export const Card=()=>null;");
+  write('apps/web/src/features/friends/card.css',"@import './palette.css';");
+  write('apps/web/src/features/friends/palette.css','');
+  write('apps/web/src/features/sky/Card.tsx','export const Card=()=>null;');
+  write('tests/visual/friends.spec.ts',"const route=`/#friends?chart=${'fixture'}`;");
+  write('tests/visual/sky.spec.ts',"import '../../apps/web/src/App'; const route='/#sky';");
+  write('tests/visual/admin.spec.ts',"import '../../apps/web/src/App'; const route='/admin/index.html';");
+  write('tests/visual/unknown-route.spec.ts',"import '../../apps/web/src/App';");
+  write('tests/visual/dynamic-route.spec.ts',"const route=`/#${name}`;");
+  write('tests/ssr.mts',"server.ssrLoadModule('/src/features/friends/Card.tsx');");
+  write('src/worker.ts',"import './shared.js';");
+  write('src/worker-loader.ts',"new Worker(new URL('./worker.ts',import.meta.url));");
+  const uiGraph=createDependencyGraph(directory,[...fixtureFiles]);
+  const friendCard=new Set(['apps/web/src/features/friends/Card.tsx']);
+  assert(!uiGraph.reaches(['src/types-only.ts'],new Set(['src/shared.ts'])),'Type-only imports and exports do not execute a module');
+  assert(!uiGraph.reaches(['src/metadata.ts'],new Set(['src/shared.ts'])),'Source path metadata is not an import');
+  assert(uiGraph.reaches(['tests/text.mts'],new Set(['src/raw.ts'])),'Text reads depend on the exact file');
+  assert(!uiGraph.reaches(['tests/text.mts'],new Set(['src/shared.ts'])),'Reading source text must not execute its imports');
+  assert(uiGraph.reaches(['src/worker-loader.ts'],new Set(['src/shared.ts'])),'Worker URL imports remain transitive');
+  assert(uiGraph.reaches(['tests/ssr.mts'],friendCard),'Resolve Vite SSR /src modules');
+  assert(!uiGraph.reaches(['tests/visual/friends.spec.ts'],friendCard),'Browser route evidence must not create API dependencies');
+  assert(uiGraph.reachesBrowser(['tests/visual/friends.spec.ts'],friendCard,true),'A route journey covers its composed UI');
+  assert(!uiGraph.reachesBrowser(['tests/visual/sky.spec.ts'],friendCard,true),'An App helper import must not render unrelated views');
+  assert(!uiGraph.reachesBrowser(['tests/visual/admin.spec.ts'],friendCard,true),'Studio navigation must not render the public App');
+  assert(uiGraph.reachesBrowser(['tests/visual/unknown-route.spec.ts'],friendCard,true),'Unknown App journeys retain broad coverage');
+  assert(uiGraph.reachesBrowser(['tests/visual/dynamic-route.spec.ts'],friendCard,true),'Dynamic route selection retains all possible surfaces');
+  assert(uiGraph.reachesBrowser(['tests/visual/friends.spec.ts'],new Set(['apps/web/src/features/friends/palette.css']),true),'Follow stylesheet imports');
+  for(const file of fixtureFiles)if(file.startsWith('tests/visual/')&&file.endsWith('.spec.ts'))rmSync(path.join(directory,file));
 
   const commands=['node scripts/a.mjs','node scripts/b.mjs'];
   write('package.json',JSON.stringify({type:'module',scripts:{'test:content-studio-api':commands.join(' && '),'qa:admin-bundle':''}}));
@@ -103,4 +170,4 @@ try {
   write('tests/visual/a.spec.ts',`import{test}from ${JSON.stringify(playwright)};test('failed affected case',()=>{throw new Error('Synthetic selected failure');});`);
   assert.notEqual(runAffectedPlaywright(['-c',path.join(directory,'playwright.config.ts')],{plan:selected,execute:(...args)=>spawnSync(args[0],args[1],{stdio:'pipe'})}),0,'Browser failure must propagate');
 } finally {rmSync(directory,{recursive:true,force:true});}
-console.log('PASS affected selection: exact browser-only scope; Natal dependencies; conservative unknown fallback; imports/reexports/SQL; stale/malformed/missing plans; required-gate failures; actual selected API/browser execution, sharded union and failure propagation.');
+console.log('PASS affected selection: Friends and Sky UI scope; shared theme/App UI and unknown fallbacks; runtime versus type/text/metadata dependencies; routes, CSS, SSR, workers and SQL; stale/malformed/missing plans; required-gate failures; actual selected API/browser execution, sharded union and failure propagation.');

@@ -220,7 +220,6 @@ import {
   shouldLoadEmptyHouseFallbackContent,
   shouldStartRelationshipFallbackEnhancement
 } from "./features/friends/friendsContentLoading";
-import type { CompatibilityDynamic } from "./features/friends/CompatibilityTab";
 import { usePersonalTiming, type PersonalTimingStatus } from "./features/you/usePersonalTiming";
 import { settingsRouteChangeEvent } from "./features/settings/settingsRouting";
 import type { LunarCalendarEvent, MatchingNewMoonFact } from "./services/ephemeris";
@@ -5483,14 +5482,20 @@ function currentSkyV4LunationDetailArticle({
   const selectedLunarSource = resolveLunationReaderSource(event, generatedContent, sky.location.timeZone);
   if(selectedLunarSource){readerParts=selectedLunarSource.body ? selectedLunarSource.body.split(/\n\s*\n/u) : [];resolution=selectedLunarSource.body?'approved-lunar-article':'facts-only';}
   const aspectSections = lunationAspectCandidates(sky.aspects)
-    .flatMap((aspect) => relatedSkyAspectSectionsForPlacement({
-      aspects: [aspect],
-      generatedAt,
-      generatedContent,
-      pointName: aspect.from,
-      positions: sky.positions,
-      timeZone: sky.location.timeZone
-    }))
+    .flatMap((aspect) => {
+      const exact = lunationArticleHoroscopeReader?.resolveLunationAspectReading(event, aspect, sky.positions, generatedContent);
+      if (exact) return exact.body ? [{ heading: skyAspectDisplayTitle(aspect), body: exact.body,
+        sourceKeys: [exact.contentKey], role: "aspect" as const, aspectType: aspect.type,
+        group: normalizedAspectToneBucket(aspect.type) }] : [];
+      return relatedSkyAspectSectionsForPlacement({
+        aspects: [aspect],
+        generatedAt,
+        generatedContent,
+        pointName: aspect.from,
+        positions: sky.positions,
+        timeZone: sky.location.timeZone
+      });
+    })
     .filter((section, index, all) => all.findIndex((candidate) => candidate.heading === section.heading) === index)
     .slice(0, 2);
 
@@ -9972,20 +9977,6 @@ function synastryContactSummary(
 }
 
 
-const compatibilityPlanets = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"] as const;
-
-
-function compatibilityDynamicHeading(aspect: string): CompatibilityDynamic["heading"] {
-  if (aspect === "trine" || aspect === "sextile") {
-    return "What flows";
-  }
-
-  if (aspect === "square" || aspect === "opposition") {
-    return "Challenges";
-  }
-
-  return "Mixed or charged dynamics";
-}
 
 
 function synastryDetailCopy(
@@ -18126,8 +18117,6 @@ export const friendsViewModelDependencies = {
   buildNatalTransitItems,
   natalTransitTargets,
   bondEffectFamily,
-  compatibilityDynamicHeading,
-  compatibilityPlanets,
   createNatalGeneratedCopyForOwnerConverter,
   currentSkyHouseActivations,
   dailyGlanceDriver,

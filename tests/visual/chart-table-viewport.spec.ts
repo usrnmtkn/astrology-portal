@@ -168,7 +168,7 @@ for (const viewport of [{width:320,height:568},{width:390,height:844},{width:844
      await expect(bigThree).toContainText('Moon');
      await expect(bigThree.locator('.placement-table-row__title').filter({hasText:/^Ascendant/})).toHaveCount(unknown ? 0 : 1);
     }
-    if(family==='You natal'||friendNatal) {
+    if(family==='You natal') {
      await page.getByRole('tab',{name:'Table',exact:true}).click();
      const table=page.locator('.natal-chart-data-table');
      await fits(page,table);
@@ -190,19 +190,13 @@ for (const viewport of [{width:320,height:568},{width:390,height:844},{width:844
      await fits(page,detail);
     }
     if(family==='Synastry'||family==='Composite') {
-     const placements=page.locator(family==='Synastry'?'.synastry-placement-columns:visible':'.friend-placement-table:visible');
-     await expect(placements).toHaveCount(1);
-     await fits(page,placements);
      if(family==='Synastry') {
-      const headings=placements.locator('.synastry-placement-column-header h3');
-      await expect(headings).toHaveCount(2);
-      await expect(headings.first()).toHaveText(friendName);
-      await expect(headings.last()).toHaveText('You');
-      const typography=(el:Element)=>{
-       const s=getComputedStyle(el);
-       return [s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing,s.margin,s.textTransform,s.textAlign];
-      };
-      expect(await headings.first().evaluate(typography)).toEqual(await headings.last().evaluate(typography));
+      await expect(page.locator('.synastry-placement-columns')).toHaveCount(0);
+      await fits(page,page.locator('.friend-profile-dynamics'));
+     } else {
+      const placements=page.locator('.natal-placement-sections');
+      await expect(placements).toBeVisible();
+      await fits(page,placements);
      }
      await page.getByRole('button',{name:'Full-screen chart',exact:true}).click();
      await fits(page,page.locator('.full-chart-panel'));
