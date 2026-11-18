@@ -18,8 +18,8 @@
   "_rationale": {
     "lunationReaderDestinations20261117": {"baseRevision":"aea0156b3a3508941fb3bc6ceb146ef369448400","featureSourceRevision":"e39d82bc20fa224374f3d6eda0a6b409d91fc110","receipt":"docs/qa/lunation-reader-destinations-2026-11-17.json","control":{"readerBootGzipBytes":458222,"totalJavaScriptGzipBytes":3798035},"candidate":{"readerBootGzipBytes":458418,"totalJavaScriptGzipBytes":3798802},"allocation":{"readerBootGzipBytes":200},"reason":"Allocate the measured 196-byte reader startup cost of the requested phase-specific lunar article selection, preserving the current main headroom. Lunar calculations and hydration remain article-scoped. Aggregate JavaScript passes its unchanged ceiling. Every App, CSS, deferred/source payload, dependency and runtime guard remains enforced. Initial over-cap builds remain failures; exact-head release gates and production complete-copy/reload checks remain required."},
     "lunationAspectReaders20261117": {
-      "baseRevision": "aea0156b3a3508941fb3bc6ceb146ef369448400",
-      "runtimeCandidateRevision": "60ea0fc17b9b4f6ede27cd90af24477413f3919c",
+      "baseRevision": "7ad8120d19943b343421e40f1f9717f90f53bf55",
+      "runtimeCandidateRevision": "208d09b60a61c4f51b64a3f2f15f3c5813280731",
       "profile": {
         "node": "v22.20.0",
         "arch": "arm64",
@@ -29,27 +29,27 @@
       "control": {
         "appBootGzipBytes": 398733,
         "readerBootGzipBytes": 458244,
-        "totalJavaScriptGzipBytes": 3798071,
+        "totalJavaScriptGzipBytes": 3798146,
         "readerInitialCssGzipBytes": 59511,
-        "totalCssGzipBytes": 151608
+        "totalCssGzipBytes": 151644
       },
       "candidate": {
-        "appBootGzipBytes": 399057,
-        "readerBootGzipBytes": 458568,
-        "totalJavaScriptGzipBytes": 3799934,
+        "appBootGzipBytes": 399051,
+        "readerBootGzipBytes": 458562,
+        "totalJavaScriptGzipBytes": 3799900,
         "readerInitialCssGzipBytes": 59511,
-        "totalCssGzipBytes": 151608
+        "totalCssGzipBytes": 151644
       },
       "delta": {
-        "appBootGzipBytes": 324,
-        "readerBootGzipBytes": 324,
-        "totalJavaScriptGzipBytes": 1863
+        "appBootGzipBytes": 318,
+        "readerBootGzipBytes": 318,
+        "totalJavaScriptGzipBytes": 1754
       },
       "allocation": {
         "readerBootGzipBytes": 458600,
         "totalJavaScriptGzipBytes": 3800000
       },
-      "reason": "Calculated lunar source identities and whole-passage loading add 324 bytes to reader boot and 1,863 bytes to aggregate JavaScript. Allocate only this measured feature cost; all other ceilings and deferred-source guards remain unchanged. Earlier over-cap measurements remain failures. This is a feature cost allocation, not a performance improvement."
+      "reason": "Calculated lunar source identities and whole-passage loading add 318 bytes to reader boot and 1,754 bytes to aggregate JavaScript. Allocate only this measured feature cost; all other ceilings and deferred-source guards remain unchanged. Earlier over-cap measurements remain failures. This is a feature cost allocation, not a performance improvement."
     },
     "chartReportsDownloads20261116": {
         "baseRevision": "19539307040744df0d4df0903ae972da9e070179",
