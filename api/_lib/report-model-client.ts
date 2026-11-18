@@ -46,7 +46,7 @@ export type ReportModelCallInput<T> = {
 export type ReportModelCall = <T>(input: ReportModelCallInput<T>) => Promise<ReportModelResult<T>>;
 
 
-function reportArchiveContext(input: ReportModelCallInput<unknown>) {
+function reportArchiveContext<T>(input: ReportModelCallInput<T>) {
   const kernel = input.productionKernel;
   return {provider: input.provider === 'claude' ? 'anthropic' : input.provider,
     role: kernel?.role ?? (/judge|critique|review|cold_read/.test(input.schemaName) ? 'REVIEWER' : 'WRITER'),

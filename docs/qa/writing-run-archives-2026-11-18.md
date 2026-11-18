@@ -35,7 +35,12 @@ Node process against arm64 dependencies; later runs used the correct architectur
 Missing protected reference prerequisites were provisioned locally. Existing
 provider fixtures were updated to inject archive storage explicitly, and the
 provider-gate source assertion now enumerates the archived Anthropic boundary.
-These corrections do not relax runtime checks or change model input.
+The first hosted preview on `448faae78ed2c79812a6295227b7d6a1fadf9b64`
+failed the strict server typecheck: the metadata helper accepted an `unknown`
+response type rather than preserving its caller's generic response type. The
+helper was corrected without changing emitted JavaScript, then checked with the
+full server TypeScript configuration. These corrections do not relax runtime
+checks or change model input.
 
 Hosted exact-head API/browser/privacy gates and production activation are separate
 release evidence. Local acceptance alone does not establish a live deployment.
