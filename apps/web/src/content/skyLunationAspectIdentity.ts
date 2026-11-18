@@ -1,1 +1,1 @@
-export { skyLunationAspectKey, skyLunationAspectKeys } from '../../../../src/shared/skyLunationAspectIdentity.js';
+export { skyLunationAspectKey, skyLunationAspectKeys, lunationAspectPublicationKeys } from '../../../../src/shared/skyLunationAspectIdentity.js';

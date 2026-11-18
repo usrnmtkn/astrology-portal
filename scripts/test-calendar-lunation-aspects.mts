@@ -102,6 +102,32 @@ test("Full Moon Key aspects prioritize orb over earlier exact dates", async () =
     const detailLoader = await vite.ssrLoadModule("/src/services/skyDetailContent.ts");
     const calendarReader = await vite.ssrLoadModule("/src/features/calendar/LunarCalendar.tsx");
     const calendarKeys = await vite.ssrLoadModule("/src/features/calendar/calendarContentKeys.ts");
+    for (const [kind, phase] of [['new-moon', 'new'], ['full-moon', 'full'], ['solar-eclipse', 'new'], ['lunar-eclipse', 'full']]) {
+      publications.installContentPublications([]);
+      const primary = `sky.lunation.${kind}.cancer.conjunction.mercury.cancer`;
+      const reusable = `lunation.${phase}.cancer.conjunction.mercury.cancer`;
+      const phaseBody = 'Complete synthetic phase-specific passage. The final sentence remains intact.';
+      const saved = {id:'synthetic-phase-live',contentKey:reusable,body:phaseBody,updatedAt:'2026-11-18T12:00:00Z'};
+      const phaseContent = new Map([[reusable,saved]]);
+      const context = {type:'aspect',title:'Moon conjunction Mercury',startsAt:'2026-01-01T12:00:00Z',dateKey:'2026-01-01',
+        planets:['Moon','Mercury'],aspect:'conjunction',fromSign:'Cancer',toSign:'Cancer',lunationAspectKey:primary};
+      publications.installContentPublications([{content_key:reusable,state:'live',revision:1,row_id:saved.id,row_updated_at:saved.updatedAt,updated_at:saved.updatedAt}]);
+      assert.deepEqual(identity.lunationAspectPublicationKeys(primary),[primary,reusable]);
+      assert(calendarKeys.calendarEventGeneratedContentKeys(context).includes(reusable),'Calendar requests the corresponding reusable phase passage');
+      assert.equal(reader.resolveCalendarLunationAspectReading(context,phaseContent)?.body,phaseBody);
+      assert(calendarReader.normalizeCalendarEventSurface(context,calendarReader.liveCalendarEventContent(phaseContent,context),
+        'January 1',null,null,null,phaseContent).sections.some(section=>section.body===phaseBody));
+      assert.equal(reader.resolveCalendarLunationAspectReading(context,new Map([[reusable,{...saved,updatedAt:'2000-01-01T00:00:00Z'}]]))?.body,'',
+        'A stale reusable publication cannot reveal older writing');
+      const specific={...saved,id:'synthetic-specific-live',contentKey:primary,body:'Complete synthetic event-specific passage.'};
+      phaseContent.set(primary,specific);
+      publications.installContentPublications([{content_key:primary,state:'live',revision:1,row_id:specific.id,row_updated_at:specific.updatedAt,updated_at:specific.updatedAt}]);
+      assert.equal(reader.resolveCalendarLunationAspectReading(context,phaseContent)?.body,specific.body,'The earlier event-specific reading retains precedence');
+      publications.installContentPublications([{content_key:primary,state:'retired',revision:2,row_id:null,row_updated_at:null,updated_at:specific.updatedAt}]);
+      assert.equal(reader.resolveCalendarLunationAspectReading(context,phaseContent)?.body,'','Retirement cannot resurrect the reusable passage underneath');
+    }
+    assert.deepEqual(identity.lunationAspectPublicationKeys('sky.aspect.moon.conjunction.mercury'),[],'Ordinary Moon contacts do not borrow phase copy');
+    publications.installContentPublications([]);
     const lunarAt = "2026-08-28T04:18:32.999Z";
     const lunarSky = await getAstrodienstSky(defaultLocation, new Date(lunarAt), { includeTransitWindows: true, transitWindowPlanets: [] });
     const events = await getLunarCalendarDayEvents(defaultLocation, new Date(lunarAt));

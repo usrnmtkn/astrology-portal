@@ -28,3 +28,13 @@ export function skyLunationAspectKeys(event: Event, sky: { aspects: Aspect[]; po
     return key ? [key] : [];
   }))];
 }
+
+/** Keep the event-specific source ahead of its reusable New/Full Moon passage. */
+export function lunationAspectPublicationKeys(key?: string | null) {
+  const parts = key?.split('.');
+  const kind = parts?.[2];
+  const phase = kind === 'new-moon' || kind === 'solar-eclipse' ? 'new'
+    : kind === 'full-moon' || kind === 'lunar-eclipse' ? 'full' : null;
+  return key && parts?.length === 7 && parts[0] === 'sky' && parts[1] === 'lunation' && phase
+    ? [key, `lunation.${phase}.${parts.slice(3).join('.')}`] : [];
+}

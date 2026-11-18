@@ -3,7 +3,7 @@ import type { SkySnapshot } from '../types';
 import { datedLunationContentKey } from './lunationArticleIdentity.js';
 import { resolveCmsSurfaceOverride, type CmsGeneratedContentMap } from './cmsSurfaceOverrides.js';
 import { publicationAllowsContent } from './contentPublicationState.js';
-import { skyLunationAspectKey } from './skyLunationAspectIdentity.js';
+import { skyLunationAspectKey, lunationAspectPublicationKeys } from './skyLunationAspectIdentity.js';
 type Event = Parameters<typeof datedLunationContentKey>[0];
 type Aspect = SkySnapshot['aspects'][number];
 
@@ -17,5 +17,9 @@ export function resolveSkyLunationAspectReading(event: Event, aspect: Aspect, po
 }
 
 export function resolveCalendarLunationAspectReading(event: LunarCalendarEvent, content: CmsGeneratedContentMap) {
-  return resolvePublishedReading(event.lunationAspectKey, content);
+  for (const key of lunationAspectPublicationKeys(event.lunationAspectKey)) {
+    const reading = resolvePublishedReading(key, content);
+    if (reading) return reading;
+  }
+  return null;
 }

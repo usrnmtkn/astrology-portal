@@ -430,8 +430,11 @@ uses its complete lunar passage in Calendar and dated Sky aspect readings.
 The contact keeps the signs at the lunation for source selection, including
 contacts that become exact across midnight or after a sign change; its
 independently calculated exact-time facts remain intact. Sun contacts use the
-exact general Sky sources, which dated lunar hydration explicitly requests. Publication holds and
-retirement cannot reveal older generic wording underneath a held exact source.
+exact general Sky sources, which dated lunar hydration explicitly requests.
+Calendar and dated Sky aspect readings request both the calculated event-specific
+key and its matching reusable `lunation.new` or `lunation.full` key. The
+event-specific publication retains precedence; publication holds, retirement and
+stale versions cannot reveal older phase writing underneath it.
 Studio's Live status checks the saved exact approval and the same publication
 and reader gates. `test-lunation-article-horoscopes.mts` covers source admission;
 the four destination cases in `calendar-lunation-preview.spec.ts` cover rendered
