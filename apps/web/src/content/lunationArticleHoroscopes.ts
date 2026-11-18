@@ -48,7 +48,7 @@ export function lunationArticleSnapshotKeys(sky: Pick<SkySnapshot, "moonEvent"> 
   return selected ? [...lunationArticleContentKeys(selected), ...(sky.aspects && sky.positions
     ? [...lunationAspectReaderKeys(selected, {aspects: sky.aspects, positions: sky.positions}),
       ...skyLunationAspectKeys(selected, { aspects: sky.aspects, positions: sky.positions }),
-      ...skySnapshotAspectContentKeys({ ...sky, aspects: sky.aspects.filter(aspect =>
+      ...skySnapshotAspectContentKeys({ ...sky, generatedAt: sky.generatedAt ?? selected.startsAt, aspects: sky.aspects.filter(aspect =>
         [aspect.from, aspect.to].some(point => point === 'Sun' || point === 'Moon')) } as SkySnapshot)] : [])] : [];
 }
 
