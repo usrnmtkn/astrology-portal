@@ -32,6 +32,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     await page.goto('/admin/content#sky-writeups?view=daily-summary&section=sun');
     await page.evaluate(theme => document.documentElement.setAttribute('data-theme', theme), theme);
     const studio = page.getByRole('region', { name: 'Daily Sky Summary editor', exact: true });
+    await studio.getByText('Sources and writing system', { exact: true }).click();
     await expect(studio.getByRole('article', { name: 'Sun in Libra', exact: true })).toContainText(standard);
     expect(scopes.some(prefixes => prefixes.includes('cms/sky-daily-summary/'))).toBe(true);
     await studio.getByLabel('Sun passage sign').selectOption('Libra');
@@ -42,7 +43,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     await entry.getByRole('button', { name: 'Edit wording', exact: true }).click();
     await expect(page.getByRole('button', { name: 'Insert Sun placement', exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Insert ruler name', exact: true })).toBeVisible();
-    await expect(page.getByLabel('Summary wording', { exact: true })).toHaveValue(retrograde);
+    await expect(page.getByRole('dialog', { name: 'Generated content editor' }).getByRole('textbox', { name: 'Summary wording', exact: true })).toHaveValue(retrograde);
     await expect(page.getByRole('button', { name: 'Save & publish', exact: true })).toBeVisible();
     await page.getByRole('dialog', { name: 'Generated content editor' }).getByRole('button', { name: 'Close', exact: true }).click();
     await studio.getByLabel('Sun passage sign').selectOption('Cancer');
@@ -52,6 +53,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     await expect(studio.getByLabel('Sun passage version').locator('option')).toHaveCount(1);
     await page.screenshot({ path: `test-results/sun-season-editor-${width}-${theme}.png` });
     await page.reload();
+    await studio.getByText('Sources and writing system', { exact: true }).click();
     await expect(studio.getByRole('article', { name: 'Sun in Libra', exact: true })).toContainText(standard);
   });
 }
