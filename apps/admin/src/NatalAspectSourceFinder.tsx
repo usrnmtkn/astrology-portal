@@ -17,6 +17,7 @@ import { natalAspectContentKeyPrefix, natalAspectDisplayTitle, natalAspectSource
 
 type PreviewRow = {
   id?: string | null;
+  inventory_only?: boolean;
   updated_at?: string | null;
   body: string | null;
   content_key: string;
@@ -163,7 +164,9 @@ export default function NatalAspectSourceFinder({
                       <h4>{title}</h4>
                       <ContentLiveStatusBadge row={row} />
                     </div>
-                    <p>You: {fields.body_you.trim() ? 'saved' : 'empty'}. Friend: {fields.body_they.trim() ? 'saved' : standalone ? 'automatic conversion' : 'empty'}. Astrology hint: {fields.astroHint.trim() ? 'saved' : 'empty'}.</p>
+                    {row.inventory_only && row.body == null
+                      ? <p>Open to inspect saved fields.</p>
+                      : <p>You: {fields.body_you.trim() ? 'saved' : 'empty'}. Friend: {fields.body_they.trim() ? 'saved' : standalone ? 'automatic conversion' : 'empty'}. Astrology hint: {fields.astroHint.trim() ? 'saved' : 'empty'}.</p>}
                     <p className="admin-natal-source-key"><span>Source key</span><code>{row.content_key}</code></p>
                     {preview && <blockquote>{preview}</blockquote>}
                   </div>
