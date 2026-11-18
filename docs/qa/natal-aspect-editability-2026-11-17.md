@@ -16,7 +16,7 @@ exact-head gates and production acceptance are recorded in PR #1507; the older
 runs below remain historical evidence rather than proof of this integrated head.
 
 The code/test fingerprint is
-`95a88ae595a318276ad05150e40a84d7c12a5207f0f992005e9086506738e6b3`:
+`ddd6e72ff33aee095e800591f701d65d91eb9fdecfbde894d732681f22767436`:
 SHA-256 of sorted modified/new code and test paths, each followed by NUL,
 complete file bytes, and NUL. Documentation is excluded. The checkout has its
 own `npm ci` dependencies and locally built knowledge package.
@@ -51,7 +51,7 @@ own `npm ci` dependencies and locally built knowledge package.
 | Other affected contracts | Natal placement/Friend and 144 retrograde modifier publication cases; reader privacy/projection of 3,996 admitted fixture rows; Studio inventory visibility; natal serving precedence; source finder; Sky cache upgrade and package cache contract. |
 | Types/builds | Admin and Web typechecks, canonical server typecheck; fresh Web and standalone Admin builds. |
 | Layout/design | CSS/token/design-system audits; title computed-style parity, no horizontal overflow, screenshots inspected. Shared styles/tokens retained. |
-| Bundles/privacy | Web and Admin bundle budgets pass without cap changes. Built Web assets pass the protected privacy policy scan. |
+| Bundles/privacy | Earlier-base Web/Admin builds passed their then-unchanged limits. The accepted-main integration allocates only the matched aggregate feature cost described below. Built Web assets pass the protected privacy policy scan. |
 
 Browser command:
 
@@ -148,3 +148,23 @@ filters those calculated aspects. Their 63 missing Friend fields are library
 coverage, not visible chart-reading assignments. The corrected local report
 separates them from the displayed-type writing queue. This change exposes saved
 library content without changing chart calculations, display filters or prose.
+
+## Accepted-main feature-cost measurement
+
+The integrated runtime candidate `aaaa2bf5f9cac65af963bc99c0e528b469988f15`
+passed all 19 focused browser cases, all three typechecks, targeted actual API
+contracts, Web budget/CSS/privacy checks and four rendered editor variants. The
+configured standalone Admin check then measured 934,065 aggregate gzip bytes,
+59 bytes above the prior 934,006 cap. That failed result remains retained. A
+local scratch simplification measured 934,105 and was not retained.
+
+Separate locked npm-ci builds of accepted main and the unchanged integrated
+runtime use the same public fixture inputs, ARM64 Node22.20.0 and zlib version.
+Main measures 844,015 raw / 245,756 gzip startup and 933,713 aggregate gzip; the
+candidate measures 843,692 / 245,662 startup and 934,065 aggregate. The final
+budget allocates the measured positive aggregate difference, 352 bytes, while
+preserving main's 293-byte aggregate headroom. Startup, largest chunk, memory,
+Web/CSS, dependency, source and deferred-boundary limits are unchanged. The
+receipt is `natal-aspect-studio-bundle-cost-2026-11-18.json`. This is an explicit
+feature-cost allocation, not a claim that earlier failed limits passed. Runtime
+code returns exactly to the previously checked integrated candidate.
