@@ -1,7 +1,7 @@
 {
   "appBootGzipBytes": 400000,
   "appChunkGzipBytes": 91358,
-  "readerBootGzipBytes": 458450,
+  "readerBootGzipBytes": 458900,
   "readerInitialCssGzipBytes": 59518,
   "largestJavaScriptGzipBytes": 520000,
   "friendsWorkspaceChunkGzipBytes": 16500,
@@ -14,8 +14,9 @@
   "relationshipFallbackChunkGzipBytes": 230000,
   "signupChunkGzipBytes": 4325,
   "totalCssGzipBytes": 151966,
-  "totalJavaScriptGzipBytes": 3798969,
+  "totalJavaScriptGzipBytes": 3805219,
   "_rationale": {
+    "planetaryEventHoroscopes20261118": "Matched independent npm-ci builds compare main767a98a5285ac9e917aadaab0712a7f20a8c493f and integrated43209747bbaeba5c00a69e42a7acbda3110e1381 using native ARM64 Node22.20.0/zlib1.3.1-470d3a2/gzip9, identical locks/CI/synthetic Supabase settings and own knowledge builds. Standard baseline/candidate App boot398999/399643, reader boot458188/458832 and aggregate JavaScript3798741/3804955 gzip bytes; enabled VITE_ENABLE_NATAL_ASPECT_PATTERNS=true gives399007/399648,458196/458837 and3798750/3804928. Initial CSS59189 and totalCSS151514 remain unchanged. All original strict failures are retained: reader382standard/387enabled over458450; aggregate5986/5959 over3798969. Allocate only450reader bytes to458900 and6250aggregate bytes to3805219, leaving63reader/264aggregate bytes at the worst measured profile. Keep App boot400000 and every App-chunk, CSS, individual/deferred chunk, memory, source-payload, dependency and runtime limit unchanged. Exact dated-event/all12-sign admission is required on the reader; Studio and generation remain deferred. Existing published Sky write-up selection and evergreen fallbacks are preserved. No owner prose or validation is removed; this records requested feature cost, not a performance improvement.",
     "lunationReaderDestinations20261117": {"baseRevision":"aea0156b3a3508941fb3bc6ceb146ef369448400","featureSourceRevision":"e39d82bc20fa224374f3d6eda0a6b409d91fc110","receipt":"docs/qa/lunation-reader-destinations-2026-11-17.json","control":{"readerBootGzipBytes":458222,"totalJavaScriptGzipBytes":3798035},"candidate":{"readerBootGzipBytes":458418,"totalJavaScriptGzipBytes":3798802},"allocation":{"readerBootGzipBytes":200},"reason":"Allocate the measured 196-byte reader startup cost of the requested phase-specific lunar article selection, preserving the current main headroom. Lunar calculations and hydration remain article-scoped. Aggregate JavaScript passes its unchanged ceiling. Every App, CSS, deferred/source payload, dependency and runtime guard remains enforced. Initial over-cap builds remain failures; exact-head release gates and production complete-copy/reload checks remain required."},
     "chartReportsDownloads20261116": {
         "baseRevision": "19539307040744df0d4df0903ae972da9e070179",

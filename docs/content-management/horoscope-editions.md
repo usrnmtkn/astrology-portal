@@ -552,6 +552,7 @@ responses, both conflict choices, and another race after choosing. Browser
 coverage uses desktop/mobile and both themes, without paid provider requests
 or mutations to owner content. Production readiness is verified separately
 against the deployed revision.
+
 ## Planetary event horoscopes
 
 Content Studio → Horoscopes → Planetary horoscopes creates twelve sign/rising-sign
@@ -595,8 +596,10 @@ No new database migration, grant or RLS policy is introduced for this family.
 Keys are `horoscope/planetary/{planet}/{sign}/{UTC-entry-date}`. Public projection
 includes the event and the twelve reader fields, excluding signatures, plans,
 direction, feedback, provider requests, raw responses and history. Horoscopes →
-Planets selects an eligible exact dated set before its reusable house-core
-source, matching the calculated visit bounds as well as planet and sign. Other
+Planets selects an eligible exact dated set before a matching published Sky
+write-up's sign passage and the reusable house-core source, matching the
+calculated visit bounds as well as planet and sign. Existing write-up publication
+and retirement checks remain in force. Other
 visits and years retain their own source selection. A published dated reading
 displays its full sign-visit dates; existing reusable readings retain their
 current timing behavior. The regular four-period edition inventory excludes
@@ -609,3 +612,9 @@ handlers, isolated storage and synthetic provider responses. Browser suites use
 fresh builds in desktop/mobile and light/dark variants. Passing fixture checks
 does not establish live provider prose quality, exact owner approval or a
 production deployment. Record executed results and the tested revision on the PR.
+
+The source-selection regression in `scripts/test-planetary-horoscope-sources.mts`
+keeps existing published write-ups available when a dated set is private,
+malformed, from another year or from another continuous visit. Matched bundle
+measurements and their bounded feature allowances are recorded in
+`docs/qa/planetary-horoscope-generation.md`; final release checks remain separate.
