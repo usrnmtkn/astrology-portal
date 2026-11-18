@@ -481,6 +481,18 @@ for (const width of [320, 390, 960, 1440]) for (const theme of ['light', 'dark']
   await expect(profile.locator('.compatibility-card__preview p').first()).toHaveCSS('font-size', '17px');
   await expect(profile.locator('.compatibility-card__action').first()).toContainText('Read Sun');
   await expect(profile.locator('.compatibility-card .compatibility-sign-label img')).toHaveCount(0);
+  const cardSurface = await profile.locator('.compatibility-card').first().evaluate(card => {
+    const probe = document.createElement('span');
+    probe.style.background = 'var(--card-bg)';
+    probe.style.boxShadow = 'var(--card-shadow)';
+    card.append(probe);
+    const style = getComputedStyle(probe);
+    const surface = {background: style.backgroundColor, shadow: style.boxShadow};
+    probe.remove();
+    return surface;
+  });
+  await expect(profile.locator('.compatibility-card').first()).toHaveCSS('background-color', cardSurface.background);
+  await expect(profile.locator('.compatibility-card').first()).toHaveCSS('box-shadow', cardSurface.shadow);
   const bodyBefore = await profile.locator('.compatibility-card p').allTextContents();
   await edit.click(); await expect(page.getByRole('dialog')).toBeVisible(); await page.keyboard.press('Escape'); await expect(edit).toBeFocused();
   for (const name of ['Compatibility', 'Transits', 'Natal', 'Synastry', 'Composite']) {
@@ -501,6 +513,21 @@ for (const width of [320, 390, 960, 1440]) for (const theme of ['light', 'dark']
     const topCopy = profile.locator(name === 'Compatibility' ? '.friend-profile-overview' : name === 'Natal' ? '.natal-big-three' : '.friend-profile-intro');
     await expect(topCopy).toBeVisible({timeout: 60_000});
     const copy = (await topCopy.boundingBox())!;
+    if (name === 'Transits' || name === 'Synastry' || name === 'Composite') {
+      const stackGap = await topCopy.evaluate(node => parseFloat(getComputedStyle(node).rowGap));
+      const children = await topCopy.locator(':scope > *').evaluateAll(nodes => nodes.map(node => {
+        const box = node.getBoundingClientRect();
+        return {x: box.x, y: box.y, width: box.width, height: box.height};
+      }));
+      for (const child of children) {
+        expect(Math.abs(child.x - copy.x), `${name} intro child starts at the copy column`).toBeLessThan(1);
+        expect(Math.abs(child.width - copy.width), `${name} intro child fills the copy column`).toBeLessThan(1);
+      }
+      expect(Math.abs(children[0].y - copy.y), `${name} intro has no empty grid row`).toBeLessThan(1);
+      for (let i = 1; i < children.length; i++) {
+        expect(children[i].y - children[i - 1].y - children[i - 1].height, `${name} intro uses the shared stack gap`).toBeCloseTo(stackGap, 0);
+      }
+    }
     if (width > 800) {
       expect(copy.x).toBeGreaterThanOrEqual(chart.x + chart.width);
       if (width === 1440) { expect(chart.width).toBe(640); expect(copy.width).toBe(600); expect(copy.x - chart.x - chart.width).toBe(64); }
