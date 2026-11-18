@@ -12,7 +12,7 @@ try{
     'src/shared/planetaryHoroscopes.ts','src/shared/planetaryHoroscopeIdentity.ts','src/shared/planetaryHoroscopeVisit.ts','src/shared/planetaryHoroscopeEditor.ts','apps/web/src/services/timezones.ts'],
     outbase:'.',outdir:emitted,platform:'node',format:'esm',bundle:false,logLevel:'silent'});
   writeFileSync(join(emitted,'package.json'),'{"type":"module"}');
-  for(const path of ['apps/web/src/content/horoscopeEditions.mjs','apps/web/src/content/editorialCopyBoundary.mjs']){
+  for(const path of ['apps/web/src/content/horoscopeEditions.mjs','apps/web/src/content/editorialCopyBoundary.mjs','src/shared/horoscopeWindow.mjs']){
     mkdirSync(dirname(join(emitted,path)),{recursive:true});copyFileSync(path,join(emitted,path));
   }
   const facts=await import(pathToFileURL(join(emitted,'api/_lib/planetary-horoscope-facts.js')).href);
