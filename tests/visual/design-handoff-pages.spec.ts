@@ -452,7 +452,7 @@ for(const width of [390,1440]) for(const theme of ['light','dark']) {
 }
 
 for (const width of [320, 390, 960, 1440]) for (const theme of ['light', 'dark']) {
- test(`friend profile layout across sections ${width} ${theme}`, async ({page}) => {
+ test(`friend profile layout across sections ${width} ${theme}`, async ({page}, testInfo) => {
   test.setTimeout(150_000);
   await page.setViewportSize({width, height: 1100}); await seed(page, theme); await authenticate(page);
   const friendName = width === 320 || width === 960 ? 'Fixture Friend With A Longer Display Name' : 'Fixture Friend';
@@ -569,6 +569,9 @@ for (const width of [320, 390, 960, 1440]) for (const theme of ['light', 'dark']
         await expect(profile.locator('.natal-big-three .placement-table-row__glyph').first()).toHaveCSS('border-radius', '16px');
       }
     }
+    await topCopy.screenshot({path: testInfo.outputPath(`friend-${name.toLowerCase()}-intro.png`)});
+    const storyCard = profile.locator(name === 'Compatibility' ? '.compatibility-card' : name === 'Transits' ? '.personal-transit-card' : name === 'Synastry' ? '.friend-dynamic-card' : '.natal-placement-card').first();
+    if (await storyCard.count()) await storyCard.screenshot({path: testInfo.outputPath(`friend-${name.toLowerCase()}-card.png`)});
     await page.evaluate(() => scrollTo(0, 0));
     await page.screenshot({path: `test-results/design-friend-refined-${name.toLowerCase()}-${width}-${theme}.png`, fullPage: width === 1440});
   }
