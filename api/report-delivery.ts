@@ -2,8 +2,8 @@ import { isReportDeleted } from "./_lib/report-library-deletion.js";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { requireReportUser, sendJson } from "./_lib/report-http.js";
 import { createSupabaseReportAdmin } from "./_lib/supabase-report-admin.js";
-import { buildReviewedReportDocument, resolveReviewedDeliveryBytes, resolveReviewedDeliveryDocument, reviewedReportDocumentHash, type ReviewedReportDocument } from "./_lib/report-review-document.ts";
-import { reportUnitIds } from "./_lib/report-unit-order.ts";
+import { buildReviewedReportDocument, resolveReviewedDeliveryBytes, resolveReviewedDeliveryDocument, reviewedReportDocumentHash, type ReviewedReportDocument } from "./_lib/report-review-document.js";
+import { reportUnitIds } from "./_lib/report-unit-order.js";
 import type { ReportDomain, ReportHorizon } from "./_lib/report-types.ts";
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {

@@ -1,5 +1,5 @@
 import type { ReportFactor, ReportGenerationPayload } from "./report-generation.ts";
-import { reportSeasonContract } from "./report-season-contract.ts";
+import { reportSeasonContract } from "./report-season-contract.js";
 
 type DateRange = { start: number; end: number };
 

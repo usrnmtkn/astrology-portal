@@ -1,8 +1,8 @@
 import { reportFulfillmentConfig } from "./report-fulfillment-config.js";
 import { createReportMailProvider, type ReportMailProvider } from "./report-mail.js";
 import type { SupabaseReportAdmin } from "./supabase-report-admin.ts";
-import { buildReviewedReportDocument, reviewedReportDocumentBytes, reviewedReportDocumentHash } from "./report-review-document.ts";
-import { reportUnitIds } from "./report-unit-order.ts";
+import { buildReviewedReportDocument, reviewedReportDocumentBytes, reviewedReportDocumentHash } from "./report-review-document.js";
+import { reportUnitIds } from "./report-unit-order.js";
 import type { ReportDomain, ReportHorizon } from "./report-types.ts";
 
 export type ReleasableReport = {

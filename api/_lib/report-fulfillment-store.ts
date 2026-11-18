@@ -1,6 +1,6 @@
 import { createSupabaseReportAdmin, type SupabaseReportAdmin } from "./supabase-report-admin.js";
 import type { ReportDomain, ReportHorizon } from "./report-types.ts";
-import { reportUnitDisplayOrder } from "./report-unit-order.ts";
+import { reportUnitDisplayOrder } from "./report-unit-order.js";
 
 export type FulfillmentJobRow = {
   id: string; report_id: string; entitlement_id: string; state: string; step: string; attempt: number;

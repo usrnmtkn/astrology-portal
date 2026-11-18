@@ -1,5 +1,5 @@
 import type { ReportDraft } from "./report-generation.ts";
-import { canonicalReportEvents, type CanonicalReportEvent } from "./report-events.ts";
+import { canonicalReportEvents, type CanonicalReportEvent } from "./report-events.js";
 
 export type ReportFactLockIssue = { code: "untraceable_date" | "untraceable_degree" | "untraceable_attribution" | "unresolved_event_tuple"; value: string; message: string };
 

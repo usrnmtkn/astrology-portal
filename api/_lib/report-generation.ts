@@ -13,8 +13,8 @@ import {
   REPORT_OWNER_REVIEW_EVIDENCE_PATH
 } from "./report-prompt-versions.js";
 import type { ReportDomain, ReportHorizon } from "./report-types.ts";
-import { reportSeasonContract } from "./report-season-contract.ts";
-import { canonicalReportEvents, type CanonicalReportEvent } from "./report-events.ts";
+import { reportSeasonContract } from "./report-season-contract.js";
+import { canonicalReportEvents, type CanonicalReportEvent } from "./report-events.js";
 
 export type { ReportDomain, ReportHorizon } from "./report-types.ts";
 
