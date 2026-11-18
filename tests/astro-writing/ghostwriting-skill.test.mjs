@@ -4,6 +4,10 @@ import { GHOSTWRITING_SKILL_INSTRUCTIONS, ghostwritingInstructionsForContext, wi
 import { callOpenAIResponses, governedInstructionsForRole, instructionsForRole,
   startStoredNativeWritingResponse } from '../../src/astro-writing/openAIResponses.cjs';
 import { reviseDraft } from '../../src/astro-writing/reviseDraft.mjs';
+import {withWritingRunStore} from '../../src/astro-writing/writingRunArchive.cjs';
+import {writingRunArchiveFixture} from '../helpers/writing-run-archive.mjs';
+
+await withWritingRunStore(writingRunArchiveFixture().store, async () => {
 
 test('dated ingress omits analytical craft assignments without changing other writers', () => {
   const context={surface:'sky',family:'sky-ingress-essay'};
@@ -80,4 +84,6 @@ test('the injected reviser receives the skill while retaining surgical revision 
   assert.equal(result.headline,'Protected headline.');
   assert.equal(result.body,'Synthetic corrected body.');
   assert.equal(result.ownerApproved,false);
+});
+
 });

@@ -75,7 +75,7 @@ export async function startHoroscopeResponse({config,role,request,instructions,c
   if(!apiKey)throw new AdminHttpError(503,'The selected writing model is not connected. No replacement model was used.');
   if(config.provider==='gemini'&&config.transport!=='checkpointed-stream/v1'){
     const response=await responses.startStoredNativeWritingResponse({provider:config.provider,apiKey,role,request,governedInstructions:instructions,
-      surface:'horoscopes',family:'horoscope',fetchImpl,signal:AbortSignal.timeout(25000)});
+      surface:'horoscopes',family:'horoscope',archiveContext:context,fetchImpl,signal:AbortSignal.timeout(25000)});
     return {response,payload:normalizeGeminiResult(await response.json())};
   }
   if(config.provider==='anthropic'||config.provider==='gemini'){
@@ -88,7 +88,7 @@ export async function startHoroscopeResponse({config,role,request,instructions,c
       let payload;
       try{
         const response=await responses.startStoredNativeWritingResponse({provider:config.provider,apiKey,role,request,governedInstructions:instructions,
-          surface:'horoscopes',family:'horoscope',fetchImpl,
+          surface:'horoscopes',family:'horoscope',archiveContext:context,fetchImpl,
           signal:AbortSignal.timeout(Math.max(1,Math.min(240000,checkpointContext.deadline-Date.now()-45000)))});
         payload=await (gemini?readGeminiStream:readClaudeStream)(response,id);
       }catch{payload=failed(id,gemini?'gemini_connection_interrupted':'claude_connection_interrupted');}
@@ -102,7 +102,7 @@ export async function startHoroscopeResponse({config,role,request,instructions,c
     background(work);
     return {response:jsonResponse({},202),payload:{id,status:'in_progress'}};
   }
-  return responses.startStoredWritingResponse({apiKey,role,request,governedInstructions:instructions,surface:'horoscopes',family:'horoscope',
+  return responses.startStoredWritingResponse({apiKey,role,request,governedInstructions:instructions,surface:'horoscopes',family:'horoscope',archiveContext:context,
     fetchImpl:(url:any,options:any)=>fetchImpl(url,{...options,signal:AbortSignal.timeout(25000)})});
 }
 

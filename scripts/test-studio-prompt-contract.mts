@@ -1,4 +1,8 @@
 import assert from 'node:assert/strict';
+import {withWritingRunStore} from '../src/astro-writing/writingRunArchive.cjs';
+import {writingRunArchiveFixture} from '../tests/helpers/writing-run-archive.mjs';
+
+await withWritingRunStore(writingRunArchiveFixture().store, async () => {
 
 const env = {
   NODE_ENV: 'test',
@@ -162,3 +166,5 @@ try {
 } finally {
   globalThis.fetch = originalFetch;
 }
+
+});

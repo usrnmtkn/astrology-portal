@@ -9,6 +9,10 @@ import { READER_RULES_JSON, READER_RULES_SHA256 } from "../src/astro-writing/per
 import semantics from "../src/astro-writing/transitNatalSemantics.cjs";
 import { retrieveApprovedPersonalWriting } from '../src/astro-writing/personalTransitApprovedWriting.mjs';
 import { MockAgent, getGlobalDispatcher, setGlobalDispatcher } from 'undici';
+import {withWritingRunStore} from '../src/astro-writing/writingRunArchive.cjs';
+import {writingRunArchiveFixture} from '../tests/helpers/writing-run-archive.mjs';
+
+await withWritingRunStore(writingRunArchiveFixture().store, async () => {
 
 const meaning = "Synthetic supplied meaning with an exact final sentence.";
 const env = { NODE_ENV: "test", CONTENT_GENERATION_SECRET: "synthetic-transit-secret",
@@ -339,3 +343,5 @@ try {
   }
 } finally { globalThis.fetch = originalFetch; setGlobalDispatcher(originalDispatcher); await blobAgent.close(); }
 console.log(`PASS Personal Transit actual-handler delivery: ${calls} mocked calls, private whole passages, separate meaning, same rules, exact audiences, source failures before spend, no writes.`);
+
+});

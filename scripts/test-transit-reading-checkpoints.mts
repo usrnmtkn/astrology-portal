@@ -11,6 +11,10 @@ import {
 import type { SupabaseReportAdmin } from '../api/_lib/supabase-report-admin.js';
 import type { ReportModelCallInput } from '../api/_lib/report-model-client.js';
 
+import {withWritingRunStore, WritingRunArchiveError} from '../src/astro-writing/writingRunArchive.cjs';
+import {writingRunArchiveFixture} from '../tests/helpers/writing-run-archive.mjs';
+
+await withWritingRunStore(writingRunArchiveFixture().store, async () => {
 function storage() {
   const rows: any[] = [];
   const admin = {
@@ -299,3 +303,19 @@ console.log('Post-provider save errors fail closed even when recording the failu
   }
 }
 console.log('Release policy: mid-invocation changes and cross-policy checkpoint replay stop before dispatch.');
+
+// The provider may have returned before the archive outcome write failed.
+// This must stop both You and Friends lifecycle attempts, not reset their budget.
+for (const family of ['you', 'friend'] as const) {
+  const {rows, admin}=storage();
+  const scope={admin,family,jobId:'archive-outcome-failure',attempt:1};
+  await assert.rejects(resume(scope,()=>step(request('writer'),async()=>{
+    throw new WritingRunArchiveError('after_dispatch');
+  })),TransitReadingCheckpointStopped);
+  assert.equal(rows[0].state,'failed');
+  await assert.rejects(resume(scope,()=>step(request('writer'),async()=>{
+    assert.fail('uncertain dispatch must not replay');
+  })),TransitReadingCheckpointStopped);
+}
+console.log('Archive outcome uncertainty stops You and Friends replay.');
+});
