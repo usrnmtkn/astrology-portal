@@ -12,6 +12,41 @@ import { watchBrowserErrors } from "./qaRuntimeGuards";
 const copy = ["sun-opposition-moon", "moon-square-pluto"].map(name =>
   JSON.parse(fs.readFileSync(`packages/astro-knowledge/data/transits/${name}.json`, "utf8")).readerCopy.body as string);
 
+test('Reusable Full Moon passage survives Calendar to Sky navigation and reload', async ({page}) => {
+  test.setTimeout(120_000);
+  const body = 'Synthetic reusable Full Moon passage. This whole reading belongs to the Moon in Pisces square Uranus in Gemini.\n\nThe complete approved final sentence survives a direct reload.';
+  const store = await studioApiStore([{id:'a0000000-0000-4000-8000-000000000086',
+    content_key:'lunation.full.pisces.square.uranus.gemini',surface:'sky',mode:'in_depth',status:'LIVE',lane:'serving',
+    review_state:null,target_date:null,flags:[],provider:'manual-admin',headline:null,summary:null,sections:null,
+    event_type:'fallback-hook',block_type:'fallback_hook',body,updated_at:'2026-11-18T12:00:00Z',source_snapshot:{}}]);
+  try {
+    await page.addInitScript(location => localStorage.setItem('tldrastro:selectedLocation',JSON.stringify(location)),defaultLocation);
+    await bundledPublications(page);
+    await page.route('**/api/sky-reader?**',route=>route.fulfill({status:503,json:{error:'Use calculated fixtures'}}));
+    await page.route('**/api/**',async route => {
+      const url=new URL(route.request().url());
+      if (url.pathname==='/api/calendar' || url.pathname==='/api/sky') {
+        const res={statusCode:200,body:'',setHeader(){},end(value:string){this.body=value;}};
+        await (url.pathname==='/api/calendar'?calendarHandler:skyHandler)({method:'GET',url:url.href} as IncomingMessage,res as unknown as ServerResponse);
+        return route.fulfill({status:res.statusCode,contentType:'application/json',body:res.body});
+      }
+      if (await routeStudioPublicReader(route,url,message=>store.call(message.method==='reader'
+        ? {method:'POST',url:'/api/content-reader',body:message.body}:message))) return;
+      await route.fallback();
+    });
+    const whole=(text:string)=>text.replace(/\s+/gu,' ').includes(body.replace(/\s+/gu,' '));
+    await page.goto('/?date=2028-09-04#calendar?view=day&date=2028-09-04');
+    const card=page.locator('.calendar-day-events .calendar-stoic-card').filter({hasText:/Moon squares Uranus/});
+    await expect(card).toBeVisible({timeout:60_000});
+    await expect.poll(async()=>whole(await card.innerText())).toBe(true);
+    await card.click();
+    const article=page.locator('.sky-detail-article');
+    await expect.poll(async()=>whole(await article.innerText())).toBe(true);
+    await page.reload();
+    await expect.poll(async()=>whole(await article.innerText()),{timeout:60_000}).toBe(true);
+  } finally {store.close();}
+});
+
 for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   test(`Calendar exact contacts and Full Moon orb ranking ${width} ${theme}`, async ({ page }) => {
     test.setTimeout(120_000);

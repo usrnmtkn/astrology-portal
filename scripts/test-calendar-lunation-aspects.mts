@@ -119,6 +119,12 @@ test("Full Moon Key aspects prioritize orb over earlier exact dates", async () =
         'January 1',null,null,null,phaseContent).sections.some(section=>section.body===phaseBody));
       assert.equal(reader.resolveCalendarLunationAspectReading(context,new Map([[reusable,{...saved,updatedAt:'2000-01-01T00:00:00Z'}]]))?.body,'',
         'A stale reusable publication cannot reveal older writing');
+      const phaseReader = await vite.ssrLoadModule('/src/content/lunationAspectReading.ts');
+      const phaseEvent = {startsAt:context.startsAt,phase:`${phase}-moon`,sign:'Cancer',title:`${phase === 'new' ? 'New' : 'Full'} Moon in Cancer`};
+      const contact = {from:'Moon',to:'Mercury',type:'conjunction',fromSign:'Cancer',toSign:'Cancer'};
+      assert.equal(phaseReader.resolveLunationAspectReading(phaseEvent,contact,[],phaseContent)?.body,phaseBody);
+      assert.equal(phaseReader.resolveLunationAspectReading(phaseEvent,contact,[],new Map([[reusable,{...saved,updatedAt:'2000-01-01T00:00:00Z'}]]))?.body,'',
+        'Dated lunar articles also reject stale reusable writing');
       const specific={...saved,id:'synthetic-specific-live',contentKey:primary,body:'Complete synthetic event-specific passage.'};
       phaseContent.set(primary,specific);
       publications.installContentPublications([{content_key:primary,state:'live',revision:1,row_id:specific.id,row_updated_at:specific.updatedAt,updated_at:specific.updatedAt}]);
