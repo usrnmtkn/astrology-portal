@@ -1,8 +1,21 @@
-import { test, expect, type Page } from "@playwright/test";
+import { test, expect, type Locator, type Page } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 import { prepareChartReport } from "../helpers/chart-report-fixture";
 
 test.describe.configure({ mode: "parallel" });
+
+async function houseGeometry(wheel: Locator) {
+  return wheel.locator('.synastry-house-labels text').evaluateAll(nodes => nodes.map(node =>
+    [node.textContent, node.getAttribute('x'), node.getAttribute('y'), node.getAttribute('transform')]));
+}
+
+async function exportedHouses(page: Page, svg: string) {
+  return page.evaluate(text => {
+    const wheel = new DOMParser().parseFromString(text, 'image/svg+xml').querySelector('svg svg');
+    return [...(wheel?.querySelectorAll('text') ?? [])].filter(node => /^(?:[1-9]|1[0-2])$/.test(node.textContent ?? ''))
+      .map(node => [node.textContent, node.getAttribute('x'), node.getAttribute('y'), node.getAttribute('transform')]);
+  }, svg);
+}
 
 async function openReport(page: Page, kind: string) {
   if (kind === "sky") {
@@ -86,6 +99,14 @@ for (const theme of ["light", "dark"]) test(`real downloads render as standalone
   test.setTimeout(120000);
   await prepareChartReport(page, theme, "Fixture Friend"); await openReport(page, "synastry");
   const report = page.locator(".full-chart");
+  const wheel = report.locator('.sky-wheel-synastry');
+  await expect(wheel.locator('.synastry-outer-house-labels text')).toHaveCount(12);
+  await expect(wheel.locator('.synastry-inner-house-labels text')).toHaveCount(12);
+  const houses = await houseGeometry(wheel);
+  expect(await houseGeometry(page.locator('.friend-detail-chart-rail .sky-wheel-synastry'))).toEqual(houses);
+  const outerAngle = Math.atan2(300 - Number(houses[0][2]), Number(houses[0][1]) - 300);
+  const innerAngle = Math.atan2(300 - Number(houses[12][2]), Number(houses[12][1]) - 300);
+  expect(Math.abs(Math.sin((outerAngle - innerAngle) / 2)), 'The calculated fixture charts have different rising signs').toBeGreaterThan(0.1);
   const glyphFilters = await report.locator(".full-chart__wheel svg image").evaluateAll(nodes => [...new Set(nodes.map(node => getComputedStyle(node).filter))]);
   await report.getByRole("button", { name: "Download", exact: true }).click();
   await report.getByLabel("Include names and chart date").uncheck();
@@ -102,6 +123,7 @@ for (const theme of ["light", "dark"]) test(`real downloads render as standalone
     expect(bytes.length).toBeGreaterThan(10000);
     if (format === "svg") {
       const svg = bytes.toString(); expect(svg).toContain("Created with TLDR Astro"); expect(svg).toContain("data:font");
+      expect(await exportedHouses(page, svg)).toEqual(houses);
       for (const filter of glyphFilters) expect(svg).toContain(`filter: ${filter}`);
       expect(svg).toContain("text-transform: uppercase");
       expect(svg).not.toContain("Fixture Friend"); expect(svg).not.toContain("Test Reader"); expect(svg).not.toMatch(/(?:href|src)="\//);
@@ -124,5 +146,18 @@ test("saved unknown-time natal chart stays reliable after reload", async ({ page
     await expect(report.locator(".full-chart__positions")).not.toContainText("Ascendant");
     await expect(report.locator(".full-chart__positions tbody td:last-child")).toHaveText(Array(await report.locator(".full-chart__positions tbody tr").count()).fill("—"));
     await report.getByRole("button", { name: "Close full-screen chart", exact: true }).click(); await page.reload();
+    await openReport(page, "synastry");
+    const synastry = page.locator('.full-chart');
+    await expect(synastry.locator('.synastry-outer-house-labels')).toHaveCount(0);
+    await expect(synastry.locator('.synastry-inner-house-labels text')).toHaveCount(12);
+    const houses = await houseGeometry(synastry.locator('.sky-wheel-synastry'));
+    expect(await houseGeometry(page.locator('.friend-detail-chart-rail .sky-wheel-synastry'))).toEqual(houses);
+    await synastry.getByRole('button', {name: 'Download', exact: true}).click();
+    await synastry.getByLabel('Download format', {exact: true}).selectOption('svg');
+    const pending = page.waitForEvent('download');
+    await synastry.getByRole('button', {name: 'Download SVG', exact: true}).click();
+    const file = await pending;
+    expect(await exportedHouses(page, await readFile((await file.path())!, 'utf8'))).toEqual(houses);
+    await synastry.getByRole('button', {name: 'Close full-screen chart', exact: true}).click();
   }
 });

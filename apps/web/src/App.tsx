@@ -219,7 +219,6 @@ import {
   shouldLoadEmptyHouseFallbackContent,
   shouldStartRelationshipFallbackEnhancement
 } from "./features/friends/friendsContentLoading";
-import type { CompatibilityDynamic } from "./features/friends/CompatibilityTab";
 import { usePersonalTiming, type PersonalTimingStatus } from "./features/you/usePersonalTiming";
 import { settingsRouteChangeEvent } from "./features/settings/settingsRouting";
 import type { LunarCalendarEvent, MatchingNewMoonFact } from "./services/ephemeris";
@@ -9970,20 +9969,6 @@ function synastryContactSummary(
 }
 
 
-const compatibilityPlanets = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"] as const;
-
-
-function compatibilityDynamicHeading(aspect: string): CompatibilityDynamic["heading"] {
-  if (aspect === "trine" || aspect === "sextile") {
-    return "What flows";
-  }
-
-  if (aspect === "square" || aspect === "opposition") {
-    return "Challenges";
-  }
-
-  return "Mixed or charged dynamics";
-}
 
 
 function synastryDetailCopy(
@@ -18100,8 +18085,6 @@ export const friendsViewModelDependencies = {
   buildNatalTransitItems,
   natalTransitTargets,
   bondEffectFamily,
-  compatibilityDynamicHeading,
-  compatibilityPlanets,
   createNatalGeneratedCopyForOwnerConverter,
   currentSkyHouseActivations,
   dailyGlanceDriver,

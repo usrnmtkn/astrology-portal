@@ -99,7 +99,7 @@ export function FriendNatalTab({
               && row.detailAvailable !== false
               && !pending;
 
-            const placement = <PlacementTableRow
+            const placement = <PlacementTableRow textGlyphs
                 asButton={canOpenDetail}
                 description={body}
                 dignity={dignitiesFor(row.label, row.sign, "they")}
@@ -118,14 +118,14 @@ export function FriendNatalTab({
         </div>
         </section>
         {hasNatalChart && <>
-          <NatalPlacementSections snapshot={birthTimeUnknown || isEventChart ? undefined : natalSky} items={visiblePlacementRows.map(row => ({ id: row.id, pointName: row.label, node: <PlacementTableRow
+          <NatalPlacementSections planetTitle="Planets" snapshot={birthTimeUnknown || isEventChart ? undefined : natalSky} items={visiblePlacementRows.map(row => ({ id: row.id, pointName: row.label, node: <PlacementTableRow textGlyphs
             asButton={row.detailAvailable !== false} degree={`${Math.floor(row.degree)}°`} description={row.description ?? friendPlacementDescription(row.label, row.sign)}
-            readMoreAppearance={["North Node", "South Node", "Chiron", "Lilith"].includes(row.label) ? "icon" : "text"}
+            readMoreAppearance={["North Node", "South Node", "Chiron", "Lilith", "Midheaven", "MC", "IC", "Imum Coeli"].includes(row.label) ? "icon" : "text"}
             dignity={dignitiesFor(row.label, row.sign, "they")} glyph={row.glyph} house={row.house} onClick={row.detailAvailable !== false ? () => onOpenPlacement(row) : undefined}
             pointName={row.label} retrograde={row.retrograde} sign={row.sign} title={placementTitleFromParts(row.label, row.sign, row.retrograde)} variant="friend" />
           }))} emptyHouses={visibleEmptyHouseRows.map(row => {
             const ruler = natalHouseCardRuler(natalSky, row.house);
-            return <PlacementTableRow key={`friend-empty-house-${row.house}`} ariaLabel={row.ariaLabel}
+            return <PlacementTableRow textGlyphs key={`friend-empty-house-${row.house}`} ariaLabel={row.ariaLabel}
               asButton={row.detailAvailable !== false} description={row.description} glyph={String(row.house)} glyphBadgePointName={ruler?.name}
               metadata={ruler?.metadata} house={row.house}
               onClick={row.detailAvailable !== false ? () => onOpenEmptyHouse(row.house) : undefined} title={row.title.replace(/^Empty\s+/u, "")} variant="friend" />;

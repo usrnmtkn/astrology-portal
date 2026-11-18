@@ -54,10 +54,6 @@ import {
   socialPlacementRows,
   type SocialPlacementRow
 } from "../../components/charts/PlacementRows";
-import {
-  completeNatalChartTableRows,
-  natalChartTableRowFromSocial
-} from "../../components/charts/natalChartTableRows";
 import { aspectGlyph, pointGlyph } from "../../components/charts/chartAssets";
 import type { InterChartAspectLine } from "../../components/charts/Wheels";
 import {
@@ -79,7 +75,6 @@ import {
 import {
   calculatedSynastryContacts,
   relationshipCompositeSky,
-  samePlanetExactAspect,
   selectDailyGlanceDriverPool,
   synastryWheelAspectLines,
   wholeSignHouseForSign,
@@ -130,9 +125,7 @@ import {
   cleanGeneratedSectionHeading
 } from "../../utils/articleText";
 import type { RelationshipChartFullscreenMode } from "./RelationshipChartFullscreen";
-import type { FriendNatalChartViewMode } from "./FriendNatalViewControl";
 import type {
-  CompatibilityDynamic,
   CompatibilityPlanetCard
 } from "./CompatibilityTab";
 import type { FriendCompositeAspectGroup } from "./FriendCompositeTab";
@@ -195,6 +188,8 @@ function FriendChartRailPlaceholder() {
     </div>
   );
 }
+
+const compatibilityPlanets = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"] as const;
 
 const FriendsWorkspaceShell = lazy(() =>
   import("./FriendsWorkspaceShell").then((module) => ({
@@ -322,8 +317,6 @@ export function ManualChartsPanel({
     buildNatalTransitItems,
     natalTransitTargets,
     bondEffectFamily,
-    compatibilityDynamicHeading,
-    compatibilityPlanets,
     createNatalGeneratedCopyForOwnerConverter,
     currentSkyHouseActivations,
     dailyGlanceDriver,
@@ -803,10 +796,7 @@ export function ManualChartsPanel({
         return [];
       }
 
-      const exactAspect = yourPosition ? samePlanetExactAspect(yourPosition, friendPosition) : null;
-      const hasExactAspect = Boolean(exactAspect);
       const comparisonLabel = comparisonIsSelf ? "You" : comparisonName;
-      const comparisonPossessive = relationshipComparisonPossessive(comparisonName, comparisonIsSelf);
       let rendered: ReturnType<typeof transitSynastryFallbackRendererV3.renderCompat>;
 
       try {
@@ -840,6 +830,7 @@ export function ManualChartsPanel({
         id: `compatibility-${normalizeContentIdPart(planet)}`,
         glyph: yourPosition?.glyph || pointGlyph(planet),
         planet,
+        headline: rendered.headline,
         comparisonLabel,
         youSign: yourSign,
         friendName: chart.displayName,
@@ -857,39 +848,8 @@ export function ManualChartsPanel({
           relationship,
           contentTrace
         },
-        exactAspectLabel: hasExactAspect && exactAspect
-          ? `${comparisonPossessive} ${planet} ${exactAspect.type} their ${planet} · orb ${precisePersonalOrb(exactAspect.orbValue)}`
-          : undefined,
         contentTrace
       }];
-    });
-  }
-
-  function compatibilityDynamicsFromContacts(
-    contacts: SynastryContact[],
-    friendName: string,
-    comparisonName: string,
-    comparisonIsSelf: boolean,
-    friendPronouns?: PronounChoice | null,
-    comparisonPronouns?: PronounChoice | null
-  ): CompatibilityDynamic[] {
-    void comparisonName;
-    void comparisonIsSelf;
-    void friendPronouns;
-    void comparisonPronouns;
-
-    return contacts.map((contact) => {
-      const rendered = renderReaderDirectedSynastryContact(contact, friendName);
-
-      return {
-        id: `compatibility-dynamic-${contact.id}`,
-        heading: compatibilityDynamicHeading(contact.aspect),
-        glyphs: `${contact.yourPoint.glyph} ${aspectGlyph(contact.aspect)} ${contact.friendPoint.glyph}`,
-        aspect: contact.aspect,
-        title: rendered?.headline ?? `${contact.yourPoint.name} ${contact.aspect} ${contact.friendPoint.name}`,
-        summary: rendered?.body ?? contact.summary,
-        meta: rendered?.tag ?? precisePersonalOrb(contact.orb)
-      };
     });
   }
 
@@ -1003,7 +963,6 @@ export function ManualChartsPanel({
   });
   const [friendsMainView, setFriendsMainView] = useState<FriendsMainView>(() => initialFriendsTab());
   const [friendProfileTab, setFriendProfileTab] = useState<FriendProfileTab>("compatibility");
-  const [friendNatalChartViewMode, setFriendNatalChartViewMode] = useState<FriendNatalChartViewMode>("circle");
   const [relationshipChartFullscreenMode, setRelationshipChartFullscreenMode] = useState<RelationshipChartFullscreenMode | null>(null);
   const [relationshipComparisonChartId, setRelationshipComparisonChartId] = useState("self");
   const [relationshipComparisonPickerOpen, setRelationshipComparisonPickerOpen] = useState(false);
@@ -1103,7 +1062,6 @@ export function ManualChartsPanel({
   const relationshipComparisonManualChart = relationshipComparisonChartId === "self"
     ? null
     : allFriendCharts.find((chart) => chart.id === relationshipComparisonChartId) ?? null;
-  const relationshipComparisonPronouns = relationshipComparisonManualChart?.pronouns ?? null;
   const selectedRelationshipContextType = relationshipComparisonIsSelf
     ? selectedChart?.relationshipType
     : "friend";
@@ -1177,8 +1135,6 @@ export function ManualChartsPanel({
   ), [friendProfileWork.synastry, selectedSynastryContacts]);
   const selectedSynastryViewGroups = useMemo<FriendSynastryAspectGroup[]>(() => (
     selectedSynastryAspectGroups.map((group) => ({
-      key: group.key,
-      label: group.label,
       contacts: group.aspects.map((contact) => {
         const rendered = renderReaderDirectedSynastryContact(contact, selectedChart?.displayName ?? "Friend");
 
@@ -1187,8 +1143,7 @@ export function ManualChartsPanel({
           aspect: contact.aspect,
           orb: contact.orb,
           title: rendered?.headline ?? `Your ${contact.yourPoint.name} ${contact.aspect} ${selectedChart?.displayName ?? "Friend"}'s ${contact.friendPoint.name}`,
-          subtitle: rendered?.tag ?? relationshipThemeTitle(contact.yourPoint.name, contact.friendPoint.name, contact.aspect),
-          description: rendered?.body ? textPreview(rendered.body) : "",
+          description: rendered?.body ?? "",
           yourPoint: contact.yourPoint,
           friendPoint: contact.friendPoint
         };
@@ -1236,26 +1191,6 @@ export function ManualChartsPanel({
     )
     && profileNatalCalculationStatus !== "error"
   );
-  const selectedCompatibilityDynamics = useMemo(() => (
-    friendProfileWork.compatibility
-      ? compatibilityDynamicsFromContacts(
-          selectedSynastryContacts,
-          selectedChart?.displayName ?? "Friend",
-          relationshipComparisonName,
-          relationshipComparisonIsSelf,
-          selectedChart?.pronouns,
-          relationshipComparisonPronouns
-        )
-      : []
-  ), [
-    friendProfileWork.compatibility,
-    relationshipComparisonIsSelf,
-    relationshipComparisonName,
-    relationshipComparisonPronouns,
-    selectedChart?.displayName,
-    selectedChart?.pronouns,
-    selectedSynastryContacts
-  ]);
   const selectedSynastryAspectLines = useMemo<InterChartAspectLine[]>(() => (
     (friendProfileWork.compatibility || friendProfileWork.synastry) && selectedChart && selectedFriendReadyNatalChart && !selectedChartIsEvent
       ? synastryWheelAspectLines(relationshipComparisonSky, selectedChart)
@@ -1852,16 +1787,6 @@ export function ManualChartsPanel({
       ? selectedFriendPlacementRows
       : selectedFriendPlacementRows.filter((row) => !isSocialBigThreeRow(row))
   ), [selectedChartIsEvent, selectedFriendPlacementRows]);
-  const selectedFriendNatalTableRows = useMemo(() => {
-    if (!friendProfileWork.natal || !selectedFriendReadyNatalChart) {
-      return [];
-    }
-
-    return completeNatalChartTableRows(
-      selectedFriendReadyNatalChart,
-      selectedFriendPlacementRows.map(natalChartTableRowFromSocial)
-    );
-  }, [friendProfileWork.natal, selectedFriendPlacementRows, selectedFriendReadyNatalChart]);
   const selectedFriendNatalAspectPatternItems = useMemo(() => (
     showFriendNatalAspectPatterns && (friendProfileWork.natal || friendProfileWork.transits) && selectedChart
       ? natalAspectPatternReaderItemsForOwner(
@@ -3014,16 +2939,12 @@ export function ManualChartsPanel({
                 currentSkyPositions={currentSky?.positions ?? []}
                 houseSignLabelStyle={houseSignLabelStyle}
                 natalSky={selectedFriendReadyNatalChart}
-                natalTableRows={selectedFriendNatalTableRows}
-                natalViewMode={friendNatalChartViewMode}
                 onComparisonSelect={(id) => {
                   setRelationshipComparisonChartId(id);
                   setRelationshipComparisonPickerOpen(false);
                 }}
                 onComparisonToggle={() => setRelationshipComparisonPickerOpen((current) => !current)}
-                onNatalViewModeChange={setFriendNatalChartViewMode}
                 onOpenFullscreen={setRelationshipChartFullscreenMode}
-                outerInitials={profileInitials(selectedChart.displayName, selectedChart.displayName)}
                 relationshipComparisonSky={relationshipComparisonSky}
                 synastryAspects={selectedSynastryAspectLines}
                 transitAspects={selectedFriendTransitAspectLines}
@@ -3076,7 +2997,6 @@ export function ManualChartsPanel({
               <CompatibilityTab
                 cards={selectedCompatibilityCards}
                 daily={selectedPairDaily}
-                dynamics={selectedCompatibilityDynamics}
                 friendName={selectedChart.displayName}
                 onOpenCard={openFriendCompatibilityCardDetail}
               />
@@ -3139,17 +3059,15 @@ export function ManualChartsPanel({
               contactGroups={selectedSynastryViewGroups}
               explainer={`Where ${possessiveLabel(selectedChart.displayName)} planets meet ${relationshipComparisonIsSelf ? "yours" : `${relationshipComparisonPossessive(relationshipComparisonName, relationshipComparisonIsSelf)} planets`} and what happens when they do. Why some things come easily between you and others take more work.`}
               friendName={selectedChart.displayName}
-              innerIsSelf={relationshipComparisonIsSelf}
-              innerName={relationshipComparisonName}
-              innerSky={relationshipComparisonSky}
               onOpenContact={openFriendSynastryContactDetail}
-              outerSky={selectedFriendReadyNatalChart}
             />
           )}
 
           {friendProfileTab === "composite" && (
             <FriendCompositeTab
               aspectGroups={selectedCompositeViewGroups}
+              compositeSky={selectedCompositeSky}
+              housesReliable={selectedFriendReadyNatalChart?.birthTimeKnown === true && relationshipComparisonSky?.birthTimeKnown === true}
               compositeAvailable={Boolean(selectedCompositeSky)}
               placementRows={selectedCompositePlacementRows}
               onPlacementClick={openCompositePlacementDetail}

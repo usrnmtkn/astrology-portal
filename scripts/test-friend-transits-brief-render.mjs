@@ -139,8 +139,8 @@ try {
     "The safe post-revert reader hierarchy must keep daily guidance ahead of relationship activations."
   );
   assert.ok(
-    populatedHtml.indexOf("Between you two") < populatedHtml.indexOf("Mars trine Moon"),
-    "The safe post-revert hierarchy must not restore PR #568's personal-transit-first reorder."
+    populatedHtml.indexOf("Mars trine Moon") < populatedHtml.indexOf("Between you two"),
+    "The approved Friend Profile handoff (11) places personal transit sections before additional relationship context."
   );
   assert.ok(
     populatedHtml.indexOf("Mars trine Moon") < populatedHtml.indexOf("Where it lands"),

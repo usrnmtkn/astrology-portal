@@ -387,7 +387,7 @@ assert.match(
 );
 assert.match(
   friendTransitsSource,
-  /\{!isLoading && daily\?\.forecast \?/u,
+  /\{!isLoading && daily \? <div className="friend-profile-intro">\s*\{daily\.forecast \? <FriendProfileForecast/u,
   "Friends must not show the daily forecast as a finished page while transit cards are still loading."
 );
 
