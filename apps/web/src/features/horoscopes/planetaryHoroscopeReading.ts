@@ -41,10 +41,10 @@ export function datedPlanetaryPassage(position:PlanetPosition,sign:string,dated:
 }
 
 export function planetaryHoroscopeReading(position:PlanetPosition,sign:string,generatedAt:string,rows:LiveGeneratedContent[],dated:GeneratedContentRow[]=[],timeZone='UTC'): {body:string;window:ReturnType<typeof planetaryHoroscopeWindow>;headline?:string} {
-  const passage=datedPlanetaryPassage(position,sign,dated,generatedAt,timeZone);
-  if(passage) {
+  const datedPassage=datedPlanetaryPassage(position,sign,dated,generatedAt,timeZone);
+  if(datedPassage) {
     const event=planetaryEventFromPosition(position,generatedAt,timeZone)!;
-    return {body:isReaderFacingCopy(passage.body)?passage.body:'',headline:passage.headline,window:{start:new Date(event.startsAt),end:new Date(event.endsAt)}};
+    return {body:isReaderFacingCopy(datedPassage.body)?datedPassage.body:'',headline:datedPassage.headline,window:{start:new Date(event.startsAt),end:new Date(event.endsAt)}};
   }
   const house=planetaryHouse(position,sign);
   const candidates=rows.filter(row=>{
