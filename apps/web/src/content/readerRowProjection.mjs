@@ -154,6 +154,12 @@ export function projectReaderRow(row, options = {}) {
   }
   const rawRecord = row.sections?.packageRecord;
   const publicRecord = result.sections?.packageRecord;
+  if (row.content_key.startsWith('fallback-hook/natal-aspect-lived/') && publicRecord && typeof rawRecord?.astroHint === 'string') {
+    publicRecord.astroHint = rawRecord.astroHint;
+  }
+  if (row.content_key.startsWith('natal.aspect.') && result.sections && typeof row.sections?.astroHint === 'string') {
+    result.sections.astroHint = row.sections.astroHint;
+  }
   if (publicRecord) {
     // A stored/client flag is never approval proof. Only the server verifies
     // the exact complete copy before requesting this derived transport field.

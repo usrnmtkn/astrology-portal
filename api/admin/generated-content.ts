@@ -295,7 +295,11 @@ function isSampleOnlyRow(surface?: GeneratedContentSurface, contentKey?: string,
     && isRecord(metadata?.sourceSnapshot) && metadata.sourceSnapshot.contentSystem === "editorial-library";
   const reusableFrictionFlow = surface === "relationship" && Boolean(contentKey && libs().frictionFlowField(contentKey))
     && isRecord(metadata?.sourceSnapshot) && metadata.sourceSnapshot.contentSystem === "cms-surface-override";
-  return Boolean(surface && personalizedSampleSurfaces.has(surface)) && !reusableComposite && !reusableNatal && !reusableFrictionFlow;
+  const reusableSunMoon = (surface === 'you' || surface === 'natal')
+    && /^natal\.aspect\.sun\.(?:conjunction|sextile|square|trine|opposition|quincunx)\.moon$/u.test(contentKey ?? '')
+    && isRecord(metadata?.sourceSnapshot) && metadata.sourceSnapshot.contentType === 'authored-natal-aspect'
+    && metadata.sourceSnapshot.canonicalKey === contentKey;
+  return Boolean(surface && personalizedSampleSurfaces.has(surface)) && !reusableComposite && !reusableNatal && !reusableFrictionFlow && !reusableSunMoon;
 }
 
 function normalizedGeneratedContentBlockType(blockType: unknown, surface?: GeneratedContentSurface, mode?: GeneratedContentWriteBody["mode"]) {
@@ -610,6 +614,7 @@ function setPackageValueAt(record: Record<string, unknown>, path: string, value:
 }
 
 function isEditablePackageCopyPath(path: string, packageRecord?: Record<string, unknown>) {
+  if (path === 'astroHint' && String(packageRecord?.contentKey ?? '').startsWith('fallback-hook/natal-aspect-lived/')) return true;
   if (libs().calendarAspectRetrogradeOptions(String(packageRecord?.contentKey ?? "")).some(option => option.field === path)) return true;
   if (libs().isSkyEvergreenSource(packageRecord) && (path === "ingress" || path.startsWith("ingress."))) return true;
   if (libs().isSkyEvergreenSource(packageRecord) && libs().skyEvergreenEditableFields(packageRecord).some((field: { path: string }) => field.path === path)) return true;

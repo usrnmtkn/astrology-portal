@@ -5,18 +5,12 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
-  natalAspectComposedSources,
-  natalAspectComposedStatusRow,
-  natalAspectContentKey,
-  natalAspectContentKeyPrefix,
-  natalAspectDisplayTitle,
-  natalAspectMatchesSelection,
-  natalAspectReaderCandidateKeys,
-  natalAspectResolverDependencyKeys,
-  natalAspectSelectionOptions,
-  natalAspectSourceDraft,
-  natalAspectTheyNameVariable,
-  parseNatalAspectContentKey
+  natalAspectComposedSources, natalAspectSourceFields, natalAspectComposedStatusRow,
+  natalAspectMatchesSelection, natalAspectSelectionOptions, parseNatalAspectContentKey
+} from "../apps/admin/src/natalAspectFinderSources.ts";
+import {
+  natalAspectDisplayTitle, natalAspectSourceDraft, natalAspectContentKey, natalAspectContentKeyPrefix, natalAspectReaderCandidateKeys,
+  natalAspectResolverDependencyKeys, natalAspectTheyNameVariable
 } from "../apps/admin/src/natalAspectSources.ts";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -96,8 +90,7 @@ assert.match(finderSource, />Edit source</u, "Every matching exact natal aspect 
 assert.match(finderSource, /Write \{selectedTitle\}/u, "A missing exact aspect must offer a contextual writing action.");
 assert.match(finderSource, /onCreateSource\(natalAspectSourceDraft\(\{ first, aspect, second \}\)\)/u, "The contextual action must preserve the selected exact pair.");
 assert.doesNotMatch(finderSource, /No exact passage exists/u, "The finder must not tell the owner that live composed natal aspect writing does not exist.");
-assert.match(finderSource, /composed natal aspect writing/u, "A missing exact passage must explain that You currently uses composed natal aspect writing.");
-assert.match(finderSource, /Live composed sources/u, "A missing exact passage must surface the live composed sources.");
+assert.match(finderSource, /Shared fallback sources/u, "Exact passages must retain access to the shared fallback sources.");
 assert.match(dashboardSource, /natalAspectResolverDependencyKeys/u, "Natal Aspects must fetch the exact and composed keys the You page actually reads.");
 assert.match(finderSource, /natalAspectComposedStatusRow/u, "Composed natal sources must badge the displayed saved revision, or the package when no saved revision exists.");
 assert.match(fs.readFileSync(path.join(repoRoot, "apps/admin/src/NatalPlacementSourceFinder.tsx"), "utf8"), /studioServingStatusRow/u, "Natal Chart source cards must preserve the displayed saved revision's identity.");
@@ -128,5 +121,15 @@ assert.ok(sunMercuryComposed.some((source) => source.candidateKeys.includes("fal
 const sunSouthNodeComposed = natalAspectComposedSources({ first: "sun", aspect: "square", second: "south-node" });
 assert.ok(sunSouthNodeComposed.some((source) => source.candidateKeys.includes("fallback-hook/aspect-pair/sun/south-node/hard")));
 assert.ok(natalAspectResolverDependencyKeys({ first: "sun", aspect: "conjunction", second: "mercury" }).includes("fallback-template/natal.aspect"));
+assert.deepEqual(parseNatalAspectContentKey('natal.aspect.sun.opposition.moon'), {first:'sun',aspect:'opposition',second:'moon'});
+assert.deepEqual(parseNatalAspectContentKey('natal.aspect.sun.square.north_node'), {first:'sun',aspect:'square',second:'north-node'});
+assert.ok(natalAspectMatchesSelection({content_key:'natal.aspect.sun.opposition.moon'}, {first:'moon',aspect:'opposition',second:'sun'}));
+assert.deepEqual(natalAspectSourceFields({body:'Original You',sections:{packageRecord:{body:'Original You',body_they:'Original Friend',astroHint:'Original hint'},packageDraft:{astroHint:''}}}),
+  {body_you:'Original You',body_they:'Original Friend',astroHint:''});
+for (const key of ['fallback-hook/aspect-type/opposition','fallback-vocab/aspect-adj/opposition','fallback-vocab/aspect-motion/opposition',
+  'fallback-vocab/planet-core/lilith','fallback-vocab/planet-core/mercury']) {
+  assert.ok(natalAspectResolverDependencyKeys({first:'lilith',aspect:'opposition',second:'mercury'}).includes(key),key);
+}
+assert.deepEqual(natalAspectComposedSources({first:'lilith',aspect:'quincunx',second:'mercury'}),[], 'Quincunx has no shared group; do not advertise unused sources.');
 
 console.log(`Admin Natal Aspects workspace passed: ${catalogRows.length} exact pair-specific passages are discoverable and editable.`);
