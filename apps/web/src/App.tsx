@@ -5482,17 +5482,20 @@ function currentSkyV4LunationDetailArticle({
   const selectedLunarSource = resolveLunationReaderSource(event, generatedContent, sky.location.timeZone);
   if(selectedLunarSource){readerParts=selectedLunarSource.body ? selectedLunarSource.body.split(/\n\s*\n/u) : [];resolution=selectedLunarSource.body?'approved-lunar-article':'facts-only';}
   const aspectCandidates = lunationAspectCandidates(sky.aspects)
-    .map(aspect => ({ aspect, lunar: lunationArticleHoroscopeReader?.resolveSkyLunationAspectReading(event, aspect, sky.positions, generatedContent) }))
+    .map(aspect => ({ aspect, lunar: lunationArticleHoroscopeReader?.resolveSkyLunationAspectReading(event, aspect, sky.positions, generatedContent)
+      ?? lunationArticleHoroscopeReader?.resolveLunationAspectReading(event, aspect, sky.positions, generatedContent) }))
     .filter((entry, index, all) => !entry.lunar || all.findIndex(other => other.lunar?.contentKey === entry.lunar?.contentKey) === index)
     .flatMap(({ aspect, lunar }) => {
       if (lunar) {
         if (!lunar.body) return [];
+        const isLunar = lunar.contentKey.startsWith('sky.lunation.');
         const section: SkyDetailSection = {
           heading: `${aspect.fromMotion ? skyBodyLabel(aspect.from, aspect.fromMotion) : skyAspectMotionName(aspect.from, sky.positions)} ${titleCase(aspect.type)} ${aspect.toMotion ? skyBodyLabel(aspect.to, aspect.toMotion) : skyAspectMotionName(aspect.to, sky.positions)}`,
-          body: `${skyPlacementAspectExactDate(aspect, generatedAt, sky.positions)}\n\n${lunar.body}`,
+          body: isLunar ? `${skyPlacementAspectExactDate(aspect, generatedAt, sky.positions)}\n\n${lunar.body}` : lunar.body,
+          sourceKeys: [lunar.contentKey],
           role: 'aspect', aspectType: aspect.type, group: normalizedAspectToneBucket(aspect.type)
         };
-        return [{ aspect, isLunar: Boolean(lunar), section }];
+        return [{ aspect, isLunar, section }];
       }
       return relatedSkyAspectSectionsForPlacement({
         aspects: [aspect],
