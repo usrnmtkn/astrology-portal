@@ -17,17 +17,20 @@ const row: any = { id, updated_at: version, content_key: 'cms/test/exact', surfa
   sections: { sections: [{ heading: 'Fixture', body: text, privateNotes: privateText }],
     packageOriginalRecord: { body: privateText }, packageDraft: { body: privateText },
     dashboardEditHistory: [{ body: privateText }], arbitraryFutureField: privateText },
-  source_snapshot: { contentType: 'manual', editorialImport: { text: privateText, sourceText: 'A long-term legacy is part of this example.' },
-    previousGuideRevision: { sourceSnapshot: { reviewStatus: 'superseded', sourceText: privateText } },
-    previousFullRulesVersion: { source_snapshot: { sourceType: 'legacy', sourceText: privateText } }, internalNotes: privateText },
+  source_snapshot: { contentType: 'manual', editorialImport: { text: privateText }, internalNotes: privateText },
   facts: { privateBirthRecord: privateText }, reviewer_notes: privateText };
 const initial = structuredClone(row);
-assert.equal(readerRowIsEligible({ ...row, sections: {} }), true, 'Historical prose and review records cannot classify the current approved version as obsolete');
+const historyRow = { ...row, content_key: 'cms/natal-insight/you/home-belonging', surface: 'natal',
+  source_snapshot: { ...row.source_snapshot, editorialImport: { text: privateText, sourceText: 'A long-term legacy is part of this example.' },
+    previousGuideRevision: { sourceSnapshot: { reviewStatus: 'superseded', sourceText: privateText } },
+    previousFullRulesVersion: { source_snapshot: { sourceType: 'legacy', sourceText: privateText } } } };
+assert.equal(readerRowIsEligible({ ...historyRow, sections: {} }), true, 'Historical natal prose and review records cannot classify the current approved version as obsolete');
+assert.equal(readerRowIsEligible({ ...historyRow, content_key: row.content_key, sections: {} }), false, 'Other content families retain their existing metadata policy');
 for (const source_snapshot of [
-  { ...row.source_snapshot, sourceType: 'legacy' },
-  { ...row.source_snapshot, review_status: 'needs_review' },
-  { ...row.source_snapshot, content_role: 'source_material' }
-]) assert.equal(readerRowIsEligible({ ...row, sections: {}, source_snapshot }), false, 'Active serving controls still exclude unavailable content');
+  { ...historyRow.source_snapshot, sourceType: 'legacy' },
+  { ...historyRow.source_snapshot, review_status: 'needs_review' },
+  { ...historyRow.source_snapshot, content_role: 'source_material' }
+]) assert.equal(readerRowIsEligible({ ...historyRow, sections: {}, source_snapshot }), false, 'Active serving controls still exclude unavailable content');
 let stored = [row];
 let ledger: any[] = [{ content_key: publicationLedgerKey, state: 'live', revision: 1, row_id: null, row_updated_at: null, updated_at: version },
   { content_key: row.content_key, state: 'live', revision: 1, row_id: id, row_updated_at: version, updated_at: version }];
@@ -52,6 +55,11 @@ async function request(query: unknown = {}, method = 'POST') {
   await handler(req, res); return { ...res, headers };
 }
 try {
+  stored = [historyRow]; ledger[1].content_key = historyRow.content_key;
+  const historyResult = await request({ keys: [historyRow.content_key] });
+  assert.equal(historyResult.value.rows[0].body, text);
+  assert.equal(historyResult.body.includes(privateText), false);
+  stored = [row]; ledger[1].content_key = row.content_key;
   const result = await request({ keys: [row.content_key] });
   assert.equal(result.statusCode, 200);
   assert.equal(result.value.rows[0].body, text);
