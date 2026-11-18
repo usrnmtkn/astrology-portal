@@ -27,6 +27,8 @@ contract uses the Manhattan borough centroid, latitude `40.7831`, longitude
 - Solar Return Midheaven: `12°46' Cancer`
 
 The implementation constants live in
-`services/tldrastro-api/src/tldrastro_api/services/solar_return.py`; the
-calculation-backed regression lives in
-`services/tldrastro-api/tests/test_report_colophon_contract.py`.
+`services/tldrastro-api/src/tldrastro_api/services/solar_return.py`. The public
+regression in `services/tldrastro-api/tests/test_report_colophon_contract.py`
+pins the solver and every rendered position for a synthetic Swiss calculation.
+The owner benchmark is verified through protected QA inputs and is not copied
+into Git.

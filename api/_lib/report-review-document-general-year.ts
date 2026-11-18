@@ -1,15 +1,15 @@
-import { buildCustomerReportColophon, reportGlyphLine } from "./report-colophon.ts";
+import { buildCustomerReportColophon, reportGlyphLine } from "./report-colophon.js";
 import {
   assertGeneralYearUnitOrder, chartEarnedDomainEvidence, composeDomainAttribution,
   composeSeasonAttribution, composeSeasonKeyDates, composeYearThemeAttribution,
   isSeasonUnitId, type ReportReaderProfile
-} from "./report-structure.ts";
+} from "./report-structure.js";
 import type { BuildReviewedReportDocumentInput } from "./report-review-document.ts";
 import type { ReviewedReportDocument, ReviewedUnit } from "./report-review-document.ts";
-import { reportSeasonContracts } from "./report-season-contract.ts";
-import { reportUnitIds } from "./report-unit-order.ts";
-import { canonicalReportEvents } from "./report-events.ts";
-import { REPORT_KEY_DATE_CATEGORIES } from "./report-generation.ts";
+import { reportSeasonContracts } from "./report-season-contract.js";
+import { reportUnitIds } from "./report-unit-order.js";
+import { canonicalReportEvents } from "./report-events.js";
+import { REPORT_KEY_DATE_CATEGORIES } from "./report-generation.js";
 
 function paragraphs(value: string | undefined) { return (value ?? "").split(/\n\s*\n/gu).map((entry) => entry.trim()).filter(Boolean); }
 

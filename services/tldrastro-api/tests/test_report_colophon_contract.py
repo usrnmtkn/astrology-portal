@@ -1,5 +1,4 @@
 import json
-import sys
 from pathlib import Path
 
 from fastapi.testclient import TestClient
@@ -14,36 +13,31 @@ from tldrastro_api.services.solar_return import (
 
 
 client = TestClient(app)
-TESTS_DIR = Path(__file__).parent
-REPO_ROOT = TESTS_DIR.parents[2]
 CALCULATION_INPUT = json.loads(
-    (TESTS_DIR / "fixtures" / "marie_report_2026.json").read_text()
-)
-FROZEN_REPORT_FACTS = json.loads(
-    (REPO_ROOT / "scripts" / "fixtures" / "marie-report-frozen-facts.json").read_text()
+    (Path(__file__).parent / "fixtures" / "synthetic_report_2026.json").read_text()
 )
 
 EXPECTED_NATAL_COLOPHON_FACTS = {
-    "Sun": ("Aquarius", 29, 25, 9, False),
-    "Moon": ("Scorpio", 12, 47, 6, False),
-    "Mercury": ("Pisces", 7, 4, 10, False),
-    "Venus": ("Capricorn", 14, 57, 8, False),
-    "Mars": ("Aquarius", 22, 46, 9, False),
-    "Jupiter": ("Leo", 0, 57, 3, True),
-    "Saturn": ("Virgo", 11, 25, 4, True),
-    "Uranus": ("Scorpio", 20, 59, 6, False),
-    "Neptune": ("Sagittarius", 20, 12, 7, False),
-    "Pluto": ("Libra", 19, 0, 5, True),
+    "Sun": ("Capricorn", 11, 2, 10, False),
+    "Moon": ("Pisces", 6, 5, 12, False),
+    "Mercury": ("Capricorn", 25, 36, 10, True),
+    "Venus": ("Aquarius", 6, 12, 11, True),
+    "Mars": ("Sagittarius", 10, 9, 9, False),
+    "Jupiter": ("Cancer", 5, 7, 4, True),
+    "Saturn": ("Capricorn", 15, 41, 10, False),
+    "Uranus": ("Capricorn", 5, 48, 10, False),
+    "Neptune": ("Capricorn", 12, 3, 10, False),
+    "Pluto": ("Scorpio", 17, 6, 8, False),
 }
 EXPECTED_NATAL_ANGLES = {
-    "Ascendant": ("Gemini", 11, 9, 1),
-    "Midheaven": ("Aquarius", 16, 36, 9),
+    "Ascendant": ("Aries", 20, 40, 1),
+    "Midheaven": ("Capricorn", 11, 6, 10),
 }
 EXPECTED_PROVENANCE = {
-    "schemaVersion": "canonical-natal-v1",
-    "inputHash": "fb05352ef71f1ef7f7e2dac411cb0a6c1cfaf111041006e5c74e00344be5f533",
-    "resultHash": "010b50926e4b53c1e9a011e3a0fce994b6ff15ab372dc0d38a4983683e3ac51b",
-    "provenanceHash": "0f32a2b01ba5688d0adff9b98da7a59105edd1e9b9d3b41ba266132aa0bfc5ed",
+    "schemaVersion": "canonical-natal-v2",
+    "inputHash": "7b87743a43b044a39423999af5427fc435b939e41096a33f1fccc4feecb27f77",
+    "resultHash": "a6849716003afe171049473a4912f4133d4b2145ee223b5301fa913fe3d75731",
+    "provenanceHash": "1f96fb4a3183d2f8c1e2749d05c9af8a08d565d999940f72c03ac38659573944",
 }
 
 
@@ -80,39 +74,14 @@ def test_canonical_report_path_pins_every_customer_colophon_position(
     assert response.status_code == 200, response.text
     body = response.json()
     assert_known_ephemeris_profile(body["natal"]["metadata"])
-
     calculated_positions = {
         position["point"]: position for position in body["natal"]["positions"]
     }
     for point, expected in EXPECTED_NATAL_COLOPHON_FACTS.items():
         assert _position_tuple(calculated_positions[point]) == expected
-
     for point, expected in EXPECTED_NATAL_ANGLES.items():
         assert _angle_tuple(body["natal"]["angles"][point]) == expected
-
-    pluto = calculated_positions["Pluto"]
-    assert round(pluto["speed"], 5) == -0.01539
-    calculated_provenance = body["natal"]["metadata"]["chartProvenance"]
-    assert calculated_provenance["inputHash"] == EXPECTED_PROVENANCE["inputHash"]
-    # The frozen report records the production/API-CI Linux provenance. Swiss
-    # house-cusp floating-point output can differ below the displayed precision
-    # on macOS, while every customer-facing placement remains byte-identical.
-    if sys.platform.startswith("linux"):
-        assert calculated_provenance == EXPECTED_PROVENANCE
-
-    frozen_natal = FROZEN_REPORT_FACTS["natal"]
-    frozen_positions = {
-        position["point"]: position for position in frozen_natal["positions"]
-    }
-    for point in EXPECTED_NATAL_COLOPHON_FACTS:
-        assert _position_tuple(frozen_positions[point]) == _position_tuple(
-            calculated_positions[point]
-        )
-    for point in EXPECTED_NATAL_ANGLES:
-        assert _angle_tuple(frozen_natal["angles"][point]) == _angle_tuple(
-            body["natal"]["angles"][point]
-        )
-    assert frozen_natal["metadata"]["chartProvenance"] == EXPECTED_PROVENANCE
+    assert body["natal"]["metadata"]["chartProvenance"] == EXPECTED_PROVENANCE
 
 
 def test_solar_return_solve_and_location_contract_are_pinned():
@@ -120,32 +89,28 @@ def test_solar_return_solve_and_location_contract_are_pinned():
     assert SOLAR_RETURN_BRACKET_STEP_DAYS == 0.125
     assert SOLAR_RETURN_CONVERGENCE_TOLERANCE_DEGREES == 0.0001
     assert SOLAR_RETURN_MAX_BISECTIONS == 64
-
     response = client.post(
         "/timing/solar-return",
         json={
             "natalSubject": CALCULATION_INPUT["natalSubject"],
-            "targetDate": "2026-02-18",
+            "targetDate": "2026-01-01",
             "returnLocation": CALCULATION_INPUT["returnLocation"],
         },
     )
     assert response.status_code == 200, response.text
     body = response.json()
-    assert body["returnMoment"] == "2026-02-18T01:59:11Z"
-    assert body["location"]["latitude"] == 40.7831
-    assert body["location"]["longitude"] == -73.9712
+    assert body["returnMoment"] == "2026-01-01T10:47:24Z"
+    assert body["location"]["latitude"] == 40.712749
+    assert body["location"]["longitude"] == -74.005994
     assert _angle_tuple(body["chart"]["angles"]["Ascendant"]) == (
-        "Libra", 11, 0, 1
+        "Sagittarius",
+        18,
+        35,
+        1,
     )
     assert _angle_tuple(body["chart"]["angles"]["Midheaven"]) == (
-        "Cancer", 12, 46, 10
+        "Libra",
+        9,
+        44,
+        11,
     )
-
-    frozen_solar_return = FROZEN_REPORT_FACTS["solarReturn"]
-    assert frozen_solar_return["returnMoment"] == body["returnMoment"]
-    assert _angle_tuple(
-        frozen_solar_return["chart"]["angles"]["Ascendant"]
-    ) == _angle_tuple(body["chart"]["angles"]["Ascendant"])
-    assert _angle_tuple(
-        frozen_solar_return["chart"]["angles"]["Midheaven"]
-    ) == _angle_tuple(body["chart"]["angles"]["Midheaven"])

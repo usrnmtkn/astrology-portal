@@ -1,8 +1,8 @@
-import { canonicalReportEvents, type CanonicalReportEvent } from "./report-events.ts";
-import { reportKeyDateEventManifest } from "./report-key-dates.ts";
-import { REPORT_KEY_DATE_CATEGORIES, reportFactors, type ReportDraft, type ReportKeyDateCategory } from "./report-generation.ts";
-import { reportSeasonContracts, type ReportSeasonUnitId } from "./report-season-contract.ts";
-import { reportUnitIds } from "./report-unit-order.ts";
+import { canonicalReportEvents, type CanonicalReportEvent } from "./report-events.js";
+import { reportKeyDateEventManifest } from "./report-key-dates.js";
+import { REPORT_KEY_DATE_CATEGORIES, reportFactors, type ReportDraft, type ReportKeyDateCategory } from "./report-generation.js";
+import { reportSeasonContracts, type ReportSeasonUnitId } from "./report-season-contract.js";
+import { reportUnitIds } from "./report-unit-order.js";
 
 type FactRecord = Record<string, unknown>;
 export type ReportReaderProfile = { handle: string; displayName: string };

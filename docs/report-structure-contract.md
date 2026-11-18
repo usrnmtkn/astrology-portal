@@ -2,8 +2,9 @@
 
 Status: implementation contract, owner benchmark and rulings through 2026-08-15.
 
-The authoritative structural benchmark is
-`artifacts/owner-author-year-ahead-2026-FINAL.md`. General 12-month reports use
+The authoritative structural benchmark is the protected
+`private:report/general-2026` owner document. It is loaded through the governed
+private-document store and is never copied into Git or web assets. General 12-month reports use
 the nine persisted units declared by `reportUnitIds("general", "12_months")`.
 The rendered chapter order must byte-for-byte match that declaration. Key
 dates are data owned by their season and are not a standalone unit. Money is
@@ -33,3 +34,9 @@ parentheticals as every other dated clause. Writers do not author these lines.
 
 The facts engine and facts hash remain stored as internal review metadata.
 They are not customer-facing colophon copy.
+
+The governed doctrine record currently named `eclipse-on-midheaven-house-10`
+is a legacy identifier. Resolution correctly matches the Midheaven point and
+canonicalizes that angle to report house 10; the identifier itself must not be
+read as fresh calculation evidence or renamed without a separately governed
+doctrine migration.
