@@ -604,6 +604,10 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
       <h2 ref={heading} tabIndex={-1}>{isPublished&&step==='publish'?'Your horoscopes are published':stepTitles[stepIndex]}</h2>
       <p>{step==='setup'?'Create daily or weekly sign readings, a monthly overview for everyone, or a zodiac-season introduction with twelve sign readings.':step==='generate'?'Check the writing plan, then let AI write the drafts using your saved instructions.':step==='edit'?'Read one passage at a time. Make any changes, then continue to the next reading.':isPublished?'This edition is ready to read in the app.':'Review the complete edition below. Publishing makes the complete edition available in the app.'}</p>
     </header>
+    <div className="admin-toolbar-actions">
+      <a className="admin-source-action" href="#sky-writeups">Planetary horoscopes</a>
+      <p className="admin-field-hint">Write sign readings for a planet in a sign, direct or retrograde, in Sky Write-ups.</p>
+    </div>
     {step!=='setup'&&draft&&<div className="admin-horoscope-summary"><span>{horoscopeSignLabel(draft.window.period)} · {horoscopeWindowLabel(draft.window)}</span><span>{draft.window.timeZone.replaceAll('_',' ')} · {complete}/{total} readings ready{dirty?' · Unsaved changes':''}</span></div>}
     {visibleError&&(typeof visibleError==='string'?<p role="alert">{visibleError}{needsSignIn&&<> <a href={studioSignInHref('/admin/content#horoscopes'+(saved?.id?'?edition='+encodeURIComponent(saved.id):''))}>Sign in to Content Studio</a></>}</p>:step==='generate'&&<details className="admin-workspace-details"><AdminDisclosureSummary>Previous attempt</AdminDisclosureSummary><p>{visibleError.previous}</p></details>)}{message&&<p role="status">{message}</p>}
     {saved&&step!=='setup'&&<div className="admin-horoscope-actions">
