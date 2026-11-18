@@ -8257,7 +8257,7 @@ function renderReaderDirectedSynastryContact(
     });
     const body = fullDetailReaderFacingCopy(rendered.parts) ?? "";
 
-    if (!body || !isReaderFacingCopy(body)) {
+    if (!isReaderFacingCopy(body)) {
       return null;
     }
 
