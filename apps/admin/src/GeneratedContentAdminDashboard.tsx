@@ -6953,6 +6953,12 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
+  function natalInsightEditorParams(contentKey: string) {
+    const params = new URLSearchParams({ category: "Natal Chart", view: "deeper-insights" });
+    if (contentKey.startsWith("cms/natal-insight/complete/")) params.set("reading", contentKey);
+    return params;
+  }
+
   async function openCmsStarter(
     surfaceItem: WritingSurfaceMapItem,
     starter: NonNullable<WritingSurfaceAdminAccess["cmsStarters"]>[number]
@@ -6974,7 +6980,7 @@ export function GeneratedContentAdminDashboard() {
       const existing = result.rows.find(row => row.status !== "ARCHIVED") ?? result.rows[0];
       if (existing) {
         if (!await openRow(existing)) return;
-        navigateAdminPage("content", new URLSearchParams({ category: "Natal Chart", view: "deeper-insights" }), { keepEditorOpen: true });
+        navigateAdminPage("content", natalInsightEditorParams(starter.contentKey), { keepEditorOpen: true });
         setMessage("Opened the saved section wording. Save draft keeps your edits; Save & publish updates the app.");
       } else {
         createCmsStarter(surfaceItem, starter);
@@ -6991,7 +6997,7 @@ export function GeneratedContentAdminDashboard() {
     starter: NonNullable<WritingSurfaceAdminAccess["cmsStarters"]>[number]
   ) {
     const params = starter.contentKey.startsWith("cms/natal-insight/")
-      ? new URLSearchParams({ category: "Natal Chart", view: "deeper-insights" }) : undefined;
+      ? natalInsightEditorParams(starter.contentKey) : undefined;
     if (!navigateAdminPage("content", params, { keepEditorOpen: true })) return;
     setSelectedRowId(null);
     setEditorSourceRow(null);
