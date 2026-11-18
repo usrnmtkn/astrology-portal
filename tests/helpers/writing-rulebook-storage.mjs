@@ -26,6 +26,8 @@ export async function startRulebookStorage(options={}) {
     before_text:'{"headline":"Synthetic unchanged heading","body":"Synthetic original passage."}',
     after_text:'{"headline":"Synthetic unchanged heading","body":"Synthetic corrected passage."}',
     reason:'Synthetic passage-specific correction. Preserve unchanged fields.',updated_at:'2026-11-18T12:00:00.000Z',
+    source_row_id:'93000000-0000-4000-8000-000000000001',created_at:'2026-11-18T11:00:00.000Z',
+    before_version:'2026-11-18T10:00:00.000Z',after_version:'2026-11-18T11:00:00.000Z',
   }],failProfiles:false,failFeedback:false,...options};
   const server=http.createServer(async(req,res)=>{
     const url=new URL(req.url,'http://localhost');requests.push({method:req.method,path:url.pathname});
