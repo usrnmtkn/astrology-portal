@@ -21,7 +21,6 @@ import { handleStudioVariables, StudioVariableError, snapshotStudioVariables, as
 import { handleStudioWritingProfiles } from "../_lib/studio-writing-profiles.js";
 import { prepareHoroscopeBrief, assertHoroscopeRow, horoscopePublicationIssues } from "../_lib/horoscope-editions.js";
 import { validateHoroscopeWindow } from '../../src/shared/horoscopeWindow.mjs';
-import {horoscopeCanonicalJson} from '../../apps/web/src/content/horoscopeEditions.mjs';
 import { AdminHttpError, readPlatformRequestBody } from "../_lib/admin-http.js";
 import { mergeGeneratedInterpretationSections } from "../_lib/generated-interpretation-sections.js";
 import { approveNatalAspectStudioCopy, approveStudioPackageWording } from "../_lib/content-studio-approval.js";
@@ -2809,7 +2808,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
   if(existing.content_key.startsWith('horoscope/planetary/')){
     if(existing.source_snapshot?.planetaryGeneration?.active)throw new GeneratedContentRequestError('Retrieve or explicitly release the saved planetary writing request before editing or publishing.',409);
     if(['contentKey','surface','mode','eventType','targetDate'].some(key=>(body as Record<string,unknown>)[key]!==undefined)
-      ||body.facts!==undefined&&horoscopeCanonicalJson(body.facts)!==horoscopeCanonicalJson(existing.facts))throw new GeneratedContentRequestError('A planetary horoscope set keeps its calculated event identity.',409);
+      ||body.facts!==undefined&&!isDeepStrictEqual(body.facts,existing.facts))throw new GeneratedContentRequestError('A planetary horoscope set keeps its calculated event identity.',409);
   }
   if (existing.content_key.startsWith("studio-lunation/")) throw new GeneratedContentRequestError("Manage dated drafts in Calendar Write-ups → New & Full Moons & Eclipses.");
   if(existing.content_key.startsWith('studio-planetary-writing/'))throw new GeneratedContentRequestError('Private planetary writing records are retained by the planetary horoscope workspace.',409);

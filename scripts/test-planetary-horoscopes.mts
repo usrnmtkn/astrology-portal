@@ -46,6 +46,11 @@ try{
   const inventory=await invoke('GET');assert.equal(inventory.payload.rows[0].inventory_only,true);
   assert(!JSON.stringify(inventory.payload).includes('planetaryGeneration'));
   assert.equal((await invoke('GET',undefined,'/api/admin/generated-content?horoscopeEditions=true&editionInventory=true')).payload.rows.length,0,'Period editions must exclude planetary sets.');
+  const reorderedFacts={planetaryEvent:Object.fromEntries(Object.entries(row.facts.planetaryEvent).reverse())};
+  const sameEvent=await patch(row,{facts:reorderedFacts});assert.equal(sameEvent.status,200,JSON.stringify(sameEvent));row=sameEvent.payload.rows[0];
+  const changedFacts=structuredClone(row.facts);changedFacts.planetaryEvent.event.endsAt=new Date(Date.parse(event.endsAt)+1000).toISOString();
+  assert.equal((await patch(row,{facts:changedFacts})).status,409,'A planetary edit cannot change its calculated visit.');
+  assert.deepEqual(store.rows.get(row.id)!.facts,row.facts,'Rejected identity edits leave the saved event unchanged.');
   const before=structuredClone(row);
   await invoke('feedback-enabled',true);assert.equal((await action(row,'prepare')).status,503);assert.equal(feedbackCalls.length,1);assert.equal(providerCalls.length,0);await invoke('feedback-enabled',false);
   assert.equal((await action(row,'generate',{approvedPlanHash:'unreviewed'})).status,409);assert.equal(providerCalls.length,0);
