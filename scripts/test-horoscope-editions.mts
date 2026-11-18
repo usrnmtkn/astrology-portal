@@ -97,8 +97,12 @@ const payload=()=>({contentKey:horoscopeEditionKey(edition.window),surface:'sky'
 let saved=await store.invoke('POST',payload());
 assert.equal(saved.status,200,JSON.stringify(saved.payload));
 let row=saved.payload.rows[0];
+const planetaryInventoryId='synthetic-planetary-inventory-only';
+store.rows.set(planetaryInventoryId,{...structuredClone(row),id:planetaryInventoryId,content_key:'horoscope/planetary/mercury/scorpio/2026-10-01'});
 const inventory=await store.invoke('GET',undefined,'/api/admin/generated-content?horoscopeEditions=true&editionInventory=true&horoscopeEditor=true');
-assert.equal(inventory.status,200);
+assert.equal(inventory.status,200,JSON.stringify(inventory.payload));
+assert.deepEqual(inventory.payload.rows.map((item:any)=>item.id),[row.id],'Period inventory excludes dated planetary sets in storage.');
+store.rows.delete(planetaryInventoryId);
 assert.equal(inventory.payload.rows[0].inventory_only,true);
 assert.equal(inventory.payload.rows[0].source_snapshot,undefined,'The compact editor must preserve the inventory-only row contract');
 const versionUrl=`/api/admin/generated-content?horoscopeEditions=true&editionVersion=true&id=${row.id}`;
