@@ -1,7 +1,7 @@
 {
   "appBootGzipBytes": 400000,
   "appChunkGzipBytes": 91358,
-  "readerBootGzipBytes": 458700,
+  "readerBootGzipBytes": 459100,
   "readerInitialCssGzipBytes": 59518,
   "largestJavaScriptGzipBytes": 520000,
   "friendsWorkspaceChunkGzipBytes": 16500,
@@ -14,12 +14,12 @@
   "relationshipFallbackChunkGzipBytes": 230000,
   "signupChunkGzipBytes": 4325,
   "totalCssGzipBytes": 151966,
-  "totalJavaScriptGzipBytes": 3800250,
+  "totalJavaScriptGzipBytes": 3801000,
   "_rationale": {
     "lunationReaderDestinations20261117": {"baseRevision":"aea0156b3a3508941fb3bc6ceb146ef369448400","featureSourceRevision":"e39d82bc20fa224374f3d6eda0a6b409d91fc110","receipt":"docs/qa/lunation-reader-destinations-2026-11-17.json","control":{"readerBootGzipBytes":458222,"totalJavaScriptGzipBytes":3798035},"candidate":{"readerBootGzipBytes":458418,"totalJavaScriptGzipBytes":3798802},"allocation":{"readerBootGzipBytes":200},"reason":"Allocate the measured 196-byte reader startup cost of the requested phase-specific lunar article selection, preserving the current main headroom. Lunar calculations and hydration remain article-scoped. Aggregate JavaScript passes its unchanged ceiling. Every App, CSS, deferred/source payload, dependency and runtime guard remains enforced. Initial over-cap builds remain failures; exact-head release gates and production complete-copy/reload checks remain required."},
     "lunationAspectReaders20261117": {
-      "baseRevision": "2757d7a72f18b6854bbc18bdade2714cdca48c93",
-      "runtimeCandidateRevision": "7d198f2b5d2a1340da6a2877013ebba6d7808cda",
+      "baseRevision": "5af47261880e4495ed42ff35e2f311ad7f7962eb",
+      "runtimeCandidateRevision": "ae7efc738",
       "profile": {
         "node": "v22.20.0",
         "arch": "arm64",
@@ -27,30 +27,32 @@
         "buildEnvironment": "VITE_ENABLE_NATAL_ASPECT_PATTERNS=true; VITE_SUPABASE_URL=https://visual-smoke.supabase.test; VITE_SUPABASE_ANON_KEY=visual-smoke-placeholder; VITE_SUPABASE_PUBLISHABLE_KEY=empty; separate npm ci installs"
       },
       "control": {
-        "appBootGzipBytes": 399004,
-        "readerBootGzipBytes": 458193,
-        "totalJavaScriptGzipBytes": 3798234,
+        "appBootGzipBytes": 399017,
+        "readerBootGzipBytes": 458206,
+        "totalJavaScriptGzipBytes": 3798819,
         "readerInitialCssGzipBytes": 59189,
-        "totalCssGzipBytes": 151481
+        "totalCssGzipBytes": 151524
       },
       "candidate": {
-        "appBootGzipBytes": 399438,
-        "readerBootGzipBytes": 458627,
-        "totalJavaScriptGzipBytes": 3800083,
+        "appBootGzipBytes": 399847,
+        "readerBootGzipBytes": 459036,
+        "totalJavaScriptGzipBytes": 3800853,
         "readerInitialCssGzipBytes": 59189,
-        "totalCssGzipBytes": 151481
+        "totalCssGzipBytes": 151524
       },
       "delta": {
-        "appBootGzipBytes": 434,
-        "readerBootGzipBytes": 434,
-        "totalJavaScriptGzipBytes": 1849
+        "appBootGzipBytes": 830,
+        "readerBootGzipBytes": 830,
+        "totalJavaScriptGzipBytes": 2034,
+        "readerInitialCssGzipBytes": 0,
+        "totalCssGzipBytes": 0
       },
       "allocation": {
-        "readerBootGzipBytes": 458700,
-        "totalJavaScriptGzipBytes": 3800250
+        "readerBootGzipBytes": 459100,
+        "totalJavaScriptGzipBytes": 3801000
       },
-      "reason": "Calculated lunar source identities, whole-passage loading and the approved additional row add 434 bytes to reader boot and 1,849 bytes to aggregate JavaScript against current main. Existing headroom covers part of the cost; allocate the remainder within these bounded ceilings. All other ceilings and deferred-source guards remain unchanged. Earlier over-cap measurements remain failures. This records feature cost, not a performance improvement.",
-      "preservedFailures": "The pre-integration candidate exceeded reader boot by 79 bytes. The integrated runtime before event-time fallback exceeded reader boot by 38 bytes and aggregate JavaScript by 140 bytes; the final runtime exceeded the previous allocations by 27 and 83 bytes. These remain recorded failures. The refreshed allocation requires the final normal budget gate and exact-head CI."
+      "reason": "Fresh matched separate npm-ci builds on accepted main include the calculated lunar identities, exact-source hydration and reusable phase-specific Calendar bridge. Reader boot grows 830 gzip bytes and aggregate JavaScript grows 2,034 bytes. Allocate the measured correctness cost with 64 reader-boot bytes and 147 aggregate bytes headroom; preserve all other numeric ceilings and deferred-source guards. Startup CSS is unchanged. This records feature cost, not a performance improvement.",
+      "preservedFailures": "The pre-integration candidate exceeded reader boot by 79 bytes. The integrated runtime before event-time fallback exceeded reader boot by 38 bytes and aggregate JavaScript by 140 bytes; the final runtime exceeded the previous allocations by 27 and 83 bytes. These remain recorded failures. The refreshed allocation requires the final normal budget gate and exact-head CI. After integrating accepted main and reusable phase lookup, the matched runtime exceeds the previous reader allowance by 336 bytes and aggregate allowance by 603 bytes; both remain failures. The final normal budget check and exact-head hosted gates remain mandatory."
     },
     "chartReportsDownloads20261116": {
         "baseRevision": "19539307040744df0d4df0903ae972da9e070179",
