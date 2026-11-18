@@ -552,3 +552,60 @@ responses, both conflict choices, and another race after choosing. Browser
 coverage uses desktop/mobile and both themes, without paid provider requests
 or mutations to owner content. Production readiness is verified separately
 against the deployed revision.
+## Planetary event horoscopes
+
+Content Studio → Horoscopes → Planetary horoscopes creates twelve sign/rising-sign
+readings for a calculated planet-in-sign visit. Choose Mercury through Pluto and
+a date during the visit. The Swiss calculation determines the sign, entry, exit
+and each audience's whole-sign house. Separate return visits keep separate sets.
+Sun seasons and dated Moon readings retain their existing workflows.
+
+Finding an event and reviewing its writing plan make no provider request. Open
+creates an empty private draft, or opens the saved set and any pending revision.
+Review writing plan saves the direction and binds calculated facts, complete
+eligible owner forecasts, governed placement/house meaning, current correction
+evidence, private feedback versions and provider configuration to a plan hash.
+This path neither reads nor updates Daily, Weekly, Monthly or Seasonal profiles.
+
+Generate 12 planetary horoscopes requires the owner's explicit action on that
+saved plan. It reserves one request before dispatching a stored background writer
+response. Reload retrieves that response; polling never regenerates. A response
+is checkpointed in full before parsing or validation. Complete structured drafts
+remain editable even when prose/fact findings need correction. Malformed,
+incomplete or wrongly assigned sets retain their original response privately
+without replacing saved readings. An uncertain dispatch requires an explicit
+acknowledgment that it may have been billed before releasing its reservation.
+Existing writing cannot be replaced by generation. The private writing record
+can be downloaded from the saved event for recovery and review.
+
+Save retains all twelve full bodies and headlines. Publish approves the complete
+saved wording, requires current versions, signed facts, completeness, clean reader
+fields and current fact checks. Before any LIVE write, the complete authoring
+snapshot is retained in an immutable ARCHIVED/reference `studio-planetary-writing/`
+record and verified by hash. The serving row keeps only its private-record
+reference and exact publication proof, so even a direct LIVE-row read contains
+no prompt, feedback, raw response or draft history. The authenticated workspace
+resolves that reference for the private writing-record download. Generic editing,
+publication and deletion cannot change those retained private records.
+Editing a LIVE set creates a private
+`horoscope-edition-revision`; the existing version-checked publication transaction
+keeps the published set available until its replacement is explicitly published.
+No new database migration, grant or RLS policy is introduced for this family.
+
+Keys are `horoscope/planetary/{planet}/{sign}/{UTC-entry-date}`. Public projection
+includes the event and the twelve reader fields, excluding signatures, plans,
+direction, feedback, provider requests, raw responses and history. Horoscopes →
+Planets selects an eligible exact dated set before its reusable house-core
+source, matching the calculated visit bounds as well as planet and sign. Other
+visits and years retain their own source selection. A published dated reading
+displays its full sign-visit dates; existing reusable readings retain their
+current timing behavior. The regular four-period edition inventory excludes
+these event sets.
+
+Verification is in `scripts/test-planetary-horoscopes.mts`,
+`tests/visual/planetary-horoscope-writing.spec.ts` and
+`tests/visual/dated-planetary-horoscopes.spec.ts`. The API suite uses the actual
+handlers, isolated storage and synthetic provider responses. Browser suites use
+fresh builds in desktop/mobile and light/dark variants. Passing fixture checks
+does not establish live provider prose quality, exact owner approval or a
+production deployment. Record executed results and the tested revision on the PR.

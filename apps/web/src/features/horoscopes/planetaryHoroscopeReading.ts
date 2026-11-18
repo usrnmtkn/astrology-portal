@@ -8,6 +8,9 @@ import {skyIngressEssayReaderSection} from '../../content/skyIngressEssayReader'
 import {contentPublication} from '../../content/contentPublicationState';
 import type {LiveGeneratedContent} from '../../services/generatedContent';
 import {assertCompiledSkyArticleEdition} from '../../content/skyArticleTemplateCompiler';
+import {planetaryEventKey,planetaryReaderReadings} from '../../../../../src/shared/planetaryHoroscopeIdentity';
+import {planetaryEventFromPosition,planetaryEventMatches} from '../../../../../src/shared/planetaryHoroscopeVisit';
+import type {GeneratedContentRow} from '../../services/generatedContent';
 
 export const planetarySlug=(value:string)=>value.toLowerCase().replaceAll(' ','-');
 export const planetaryHouse=(position:PlanetPosition,sign:string)=>(HOROSCOPE_SIGNS.indexOf(position.sign.toLowerCase())-HOROSCOPE_SIGNS.indexOf(sign.toLowerCase())+12)%12+1;
@@ -30,7 +33,19 @@ export function planetaryHoroscopeWindow(position:PlanetPosition,generatedAt:str
   return Number.isFinite(start)&&Number.isFinite(end)&&start<end?{start:new Date(start),end:new Date(end)}:null;
 }
 
-export function planetaryHoroscopeReading(position:PlanetPosition,sign:string,generatedAt:string,rows:LiveGeneratedContent[]) {
+export function datedPlanetaryPassage(position:PlanetPosition,sign:string,dated:GeneratedContentRow[],generatedAt:string,timeZone='UTC') {
+  const event=planetaryEventFromPosition(position,generatedAt,timeZone);
+  const row=event&&dated.find(row=>row.content_key===planetaryEventKey(event));
+  const readings=row&&planetaryReaderReadings(row);
+  return readings&&planetaryEventMatches((row as any).facts.planetaryEvent.event,event!)?readings.passages.find(p=>p.sign===sign.toLowerCase())??null:null;
+}
+
+export function planetaryHoroscopeReading(position:PlanetPosition,sign:string,generatedAt:string,rows:LiveGeneratedContent[],dated:GeneratedContentRow[]=[],timeZone='UTC'): {body:string;window:ReturnType<typeof planetaryHoroscopeWindow>;headline?:string} {
+  const passage=datedPlanetaryPassage(position,sign,dated,generatedAt,timeZone);
+  if(passage) {
+    const event=planetaryEventFromPosition(position,generatedAt,timeZone)!;
+    return {body:isReaderFacingCopy(passage.body)?passage.body:'',headline:passage.headline,window:{start:new Date(event.startsAt),end:new Date(event.endsAt)}};
+  }
   const house=planetaryHouse(position,sign);
   const candidates=rows.filter(row=>{
     try {
