@@ -491,6 +491,7 @@ for (const width of [320, 390, 960, 1440]) for (const theme of ['light', 'dark']
     probe.remove();
     return surface;
   });
+  expect(cardSurface.background, 'The shared card surface must be visible').not.toBe('rgba(0, 0, 0, 0)');
   await expect(profile.locator('.compatibility-card').first()).toHaveCSS('background-color', cardSurface.background);
   await expect(profile.locator('.compatibility-card').first()).toHaveCSS('box-shadow', cardSurface.shadow);
   const bodyBefore = await profile.locator('.compatibility-card p').allTextContents();
