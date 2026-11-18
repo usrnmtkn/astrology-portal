@@ -1,5 +1,7 @@
 import { NatalPlacementSections } from "../../components/NatalPlacementSections";
 import { NatalChartReadings } from "../../components/NatalChartReadings";
+import type { NatalInsightId } from "../../content/natalInsightCatalog";
+import type { CmsGeneratedContentMap } from "../../content/cmsSurfaceOverrides";
 import type { NatalAspectPatternReaderItem } from "../../services/natalAspectPatterns";
 import type { SocialPlacementRow } from "../../components/charts/PlacementRows";
 import type { NatalAspectPatternsSectionStatus } from "../you/NatalAspectPatternsSection";
@@ -12,6 +14,7 @@ import {
 import { NatalPatternsInsights } from "../you/NatalPatternsInsights";
 import { PageLoading } from "../../components/PageLoading";
 import { natalHouseCardRuler } from "../../services/natalHouseCards";
+import { NatalInsightsSection } from "../../components/charts/NatalInsightsSection";
 
 export type FriendNatalEmptyHouseRow = {
   house: number;
@@ -28,12 +31,14 @@ export function FriendNatalTab({
   birthTimeUnknown,
   emptyHouseRows,
   friendName,
+  generatedContent,
   hasNatalChart,
   isEventChart,
   isNatalChartRepairing,
   onOpenEmptyHouse,
   onOpenPattern,
   onOpenPlacement,
+  onOpenInsight,
   patternItems,
   patternStatus,
   patternTitle,
@@ -46,12 +51,14 @@ export function FriendNatalTab({
   birthTimeUnknown: boolean;
   emptyHouseRows: FriendNatalEmptyHouseRow[];
   friendName: string;
+  generatedContent?: CmsGeneratedContentMap | null;
   hasNatalChart: boolean;
   isEventChart: boolean;
   isNatalChartRepairing: boolean;
   onOpenEmptyHouse: (house: number) => void;
   onOpenPattern: (item: NatalAspectPatternReaderItem, nestedItems: NatalAspectPatternReaderItem[]) => void;
   onOpenPlacement: (row: SocialPlacementRow) => void;
+  onOpenInsight: (topic: NatalInsightId) => void;
   patternItems: NatalAspectPatternReaderItem[];
   patternStatus?: NatalAspectPatternsSectionStatus;
   patternTitle: string;
@@ -130,6 +137,7 @@ export function FriendNatalTab({
               metadata={ruler?.metadata} house={row.house}
               onClick={row.detailAvailable !== false ? () => onOpenEmptyHouse(row.house) : undefined} title={row.title.replace(/^Empty\s+/u, "")} variant="friend" />;
           })} />
+          {!isEventChart && <NatalInsightsSection audience="friend" birthTimeKnown={!birthTimeUnknown} generatedContent={generatedContent} ownerName={friendName} onOpenTopic={onOpenInsight} />}
           <NatalPatternsInsights snapshot={natalSky} audience="they" ownerName={friendName} chartId={chartId} disabled={isEventChart || birthTimeUnknown} items={patternItems} status={patternStatus} onOpenPattern={onOpenPattern}/>
         </>}
       </div>

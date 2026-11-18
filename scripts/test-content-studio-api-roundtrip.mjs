@@ -434,6 +434,44 @@ for (const sign of ["libra", "aries"]) {
 }
 row = beforeBank;
 
+// Complete combination readings use the real CRUD, publication and reader boundary.
+for (const audience of ["you", "they"]) {
+  const key = `cms/natal-insight/complete/v1/${audience}/home-belonging/house-4-libra/venus-leo/house-2`;
+  const body = `### Libra on the 4th house\n\n**${audience === "they" ? "{{ownerName}}" : "You"} have a complete fixture opening.** Saved as a whole reading.\n\nComplete ${audience} fixture ending.`;
+  const created = await invokeApi("POST", "/api/admin/generated-content", {
+    contentKey: key, surface: "natal", mode: "article", eventType: "natal-insight-complete", status: "DRAFT", lane: "serving",
+    reviewState: "EDITORIAL_REVIEW_REQUIRED", body,
+    sourceSnapshot: { contentSystem: "cms-surface-override", contentType: "mustache-template", allowedSlots: [] }
+  });
+  assert.equal(created.status, 200, JSON.stringify(created.payload));
+  assert.equal((await loadLiveGeneratedContentForKeys([key], { requireFresh: true })).size, 0);
+  assert.equal((await invokeApi("GET", `/api/admin/generated-content?contentKey=${encodeURIComponent(key)}&status=all`)).payload.rows[0].body, body);
+  const deniedSlot = await invokeApi("PATCH", "/api/admin/generated-content", {
+    id: row.id, expectedUpdatedAt: row.updated_at, status: "LIVE", lane: "serving", reviewState: null,
+    body: `${body} {{privateBirthDate}}`, sourceSnapshot: { ...row.source_snapshot, allowedSlots: ["privateBirthDate"] }
+  });
+  assert.equal(deniedSlot.status, 400, JSON.stringify(deniedSlot.payload));
+  const firstVersion = row.updated_at;
+  const revised = body + "\n\nEdited complete fixture ending.";
+  const saved = await invokeApi("PATCH", "/api/admin/generated-content", { id: row.id, expectedUpdatedAt: firstVersion, body: revised, status: "DRAFT" });
+  assert.equal(saved.status, 200, JSON.stringify(saved.payload));
+  assert.equal((await invokeApi("PATCH", "/api/admin/generated-content", { id: row.id, expectedUpdatedAt: firstVersion, body: "Stale fixture." })).status, 409);
+  assert.equal(row.body, revised);
+  const published = await invokeApi("PATCH", "/api/admin/generated-content", { id: row.id, expectedUpdatedAt: row.updated_at, status: "LIVE", lane: "serving", reviewState: null });
+  assert.equal(published.status, 200, JSON.stringify(published.payload));
+  assert.equal((await loadLiveGeneratedContentForKeys([key], { requireFresh: true })).get(key)?.body, revised);
+  const other = key.replace(`/${audience}/`, audience === "you" ? "/they/" : "/you/");
+  assert.equal((await loadLiveGeneratedContentForKeys([other], { requireFresh: true })).size, 0);
+}
+for (const invalidKey of [
+  "cms/natal-insight/complete/v1/you/home-belonging/house-4-libra/venus-leo/house-3",
+  "cms/natal-insight/complete/v1/you/home-belonging/person-private-fingerprint"
+]) {
+  const denied = await invokeApi("POST", "/api/admin/generated-content", { contentKey: invalidKey, surface: "natal", mode: "article", eventType: "natal-insight-complete", status: "LIVE", lane: "serving", body: "Invalid shared fixture." });
+  assert.notEqual(denied.status, 200, JSON.stringify(denied.payload));
+}
+row = beforeBank;
+
 // An unsaved Studio summary starts with the legacy UI mode "card". Exercise
 // creation as well as editing; patching a pre-existing fixture missed this.
 const createdSummary = await invokeApi("POST", "/api/admin/generated-content", {

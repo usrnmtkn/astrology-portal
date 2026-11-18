@@ -17,6 +17,10 @@ import { useNatalReadingRoute } from "../../hooks/useNatalReadingRoute";
 import { NatalInsightPage } from "../../components/NatalInsightPage";
 import { NatalSectPage } from "../../components/NatalSectPage";
 import { PortalVisibility } from "../../components/portalVisibility";
+import { DeferredNatalInsightReading as NatalInsightReading } from "../../components/charts/DeferredNatalInsightReading";
+import { natalInsightTopics, type NatalInsightId } from "../../content/natalInsightCatalog";
+import { natalInsightTitle } from "../../content/natalInsightTitle";
+import { natalInsightBirthTimeKnown } from "../../services/natalInsightNavigation";
 import { transitArticleDescription } from "../../services/transitArticleDescription";
 import { connectionTransitContext } from "../../services/connectionTransitContext";
 import { ConnectionTransitDisclosure } from "./ConnectionTransitDisclosure";
@@ -2091,6 +2095,23 @@ export function ManualChartsPanel({
       sections: detailSections
     });
   };
+  const openFriendNatalInsight = (id: NatalInsightId) => {
+    if (!selectedChart || !selectedFriendReadyNatalChart) return;
+    openFriendDetail({
+      routePath: friendDetailRoutePath(selectedChart.id, "natal", `natal-insight-${id}`),
+      natalReading: true,
+      glyph: "", kicker: "", title: natalInsightTitle(id, "friend", natalGeneratedContent, selectedChart.displayName, natalInsightBirthTimeKnown(selectedFriendReadyNatalChart, !selectedChart.birthTimeUnknown)),
+      meta: "", plainBody: true, suppressTldr: true,
+      body: [<NatalInsightReading key={`${selectedChart.id}/${id}`} topic={id} sky={selectedFriendReadyNatalChart}
+        birthTimeKnown={!selectedChart.birthTimeUnknown} subjectId={selectedChart.id} ownerName={selectedChart.displayName} audience="friend" />]
+    });
+  };
+  useEffect(() => {
+    const route = friendsRouteStateFromUrl();
+    if (route?.chartId !== selectedChart?.id || route?.view !== "natal") return;
+    const topic = natalInsightTopics.find(item => route.detail === `natal-insight-${item.id}`);
+    if (topic) openFriendNatalInsight(topic.id);
+  }, [selectedChart?.id, selectedFriendReadyNatalChart]);
   const openFriendNatalPlacementDetail = (row: SocialPlacementRow) => {
     if (!selectedChart || !selectedFriendReadyNatalChart) {
       return;
@@ -3017,8 +3038,9 @@ export function ManualChartsPanel({
             <FriendNatalTab
               chartId={selectedChart.id}
               natalSky={selectedFriendReadyNatalChart}
+              generatedContent={friendGeneratedContent}
               bigThreeRows={selectedFriendBigThreeDisplayRows}
-              birthTimeUnknown={selectedChart.birthTimeUnknown}
+              birthTimeUnknown={!natalInsightBirthTimeKnown(selectedFriendReadyNatalChart, !selectedChart.birthTimeUnknown)}
               emptyHouseRows={selectedFriendEmptyHouseViewRows}
               friendName={selectedChart.displayName}
               hasNatalChart={Boolean(selectedFriendReadyNatalChart)}
@@ -3027,6 +3049,7 @@ export function ManualChartsPanel({
               onOpenEmptyHouse={openFriendEmptyHouseDetail}
               onOpenPattern={openFriendNatalAspectPatternDetail}
               onOpenPlacement={openFriendNatalPlacementDetail}
+              onOpenInsight={openFriendNatalInsight}
               patternItems={selectedFriendNatalAspectPatternItems}
               patternStatus={selectedFriendNatalAspectPatternStatus}
               patternTitle={`Patterns in ${possessiveLabel(selectedChart.displayName)} chart`}

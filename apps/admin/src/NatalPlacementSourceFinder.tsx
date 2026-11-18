@@ -1,6 +1,6 @@
 import { isPendingPackageRevision } from "./generatedContentClient";
 import { isNatalRetrogradeModifierKey } from '../../web/src/content/natalRetrogradeModifier.js';
-import { useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { StudioButton, StudioTabs } from "./StudioControls";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import ContentLiveStatusBadge from "./ContentLiveStatus";
@@ -29,6 +29,8 @@ import {
 import { MetricCard } from "./studio-ds/patterns";
 import { Grid, Stack, Text } from "./studio-ds/primitives";
 import { metricGrid } from "./studio-ds/recipes";
+import type { NatalInsightSourceProps } from "./NatalInsightSourceFinder";
+const NatalInsightSourceFinder = lazy(() => import("./NatalInsightSourceFinder"));
 
 type PreviewRow = {
   event_type?: string | null;
@@ -48,7 +50,10 @@ function editableSource(rows: PreviewRow[], key: string) {
   return candidates.find(isPendingPackageRevision) ?? candidates.find(row => row.status !== "ARCHIVED") ?? candidates[0];
 }
 
-type Props = {
+type Props = NatalInsightSourceProps & {
+  view: NatalChartWritingView;
+  onViewChange: (view: NatalChartWritingView) => void;
+
   house: NatalPlacementHouse | "";
   isLoading: boolean;
   onCreateOverride: (contentKey: string, label: string, body: string) => void;
@@ -64,12 +69,7 @@ type Props = {
   sign: NatalPlacementSign | "";
 };
 
-type NatalChartWritingView = "placements" | "empty-houses" | "rulership" | "day-night";
-
-function savedNatalWritingView(): NatalChartWritingView {
-  const value = new URLSearchParams(window.location.hash.split("?")[1] ?? "").get("natalView");
-  return value === "empty-houses" || value === "rulership" || value === "day-night" ? value : "placements";
-}
+export type NatalChartWritingView = "placements" | "empty-houses" | "rulership" | "day-night" | "deeper-insights";
 
 type EmptyHouseSourceGroup = {
   id: string;
@@ -131,8 +131,7 @@ function emptyHouseSourceScope(key: string) {
   return "Reusable empty-house source writing.";
 }
 
-export default function NatalPlacementSourceFinder({ house, isLoading, motion, onCreateOverride, onDirtyChange, onSaveSource, onOpenSource, onOpenEmptyHouseCompositions, onSelectionChange, planet, rows, secret, sign }: Props) {
-  const [view, setView] = useState<NatalChartWritingView>(savedNatalWritingView);
+export default function NatalPlacementSourceFinder({ house, isLoading, motion, onCreateOverride, onDirtyChange, onSaveSource, onOpenSource, onOpenEmptyHouseCompositions, onSelectionChange, planet, rows, secret, sign, view, onViewChange, insightSurfaces, insightAccess, onOpenInsight }: Props) {
   const finder = useRef<HTMLElement>(null);
   useEffect(() => {
     const list = finder.current?.querySelector<HTMLElement>('[role="tablist"]');
@@ -150,13 +149,6 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
     observer.observe(list); observer.observe(selected);
     return () => observer.disconnect();
   }, [view, isLoading]);
-  function changeView(next: NatalChartWritingView) {
-    setView(next);
-    const params = new URLSearchParams(window.location.hash.split("?")[1] ?? "");
-    params.set("natalView", next);
-    params.delete("natalPassage");
-    window.history.replaceState(null, "", `#exact-content?${params}`);
-  }
   const [emptyHouse, setEmptyHouse] = useState(1);
   const [emptyHouseSign, setEmptyHouseSign] = useState("aries");
   const [emptyHouseRulerHouse, setEmptyHouseRulerHouse] = useState(2);
@@ -268,15 +260,16 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
       <StudioTabs
         label="Natal Chart writing areas"
         value={view}
-        onValueChange={changeView}
+        onValueChange={onViewChange}
         tabs={[
           { value: "placements", label: "Planet placements" },
           { value: "empty-houses", label: "Empty houses" },
           { value: "rulership", label: "Rulership" },
-          { value: "day-night", label: "Day & night" }
+          { value: "day-night", label: "Day & night" },
+          { value: "deeper-insights", label: "Deeper insights" }
         ] as const}
       >
-        {view === "placements" ? <>
+        {view === "deeper-insights" ? <Suspense fallback={<Text role="status" size="body">Loading deeper insights…</Text>}><NatalInsightSourceFinder secret={secret} insightSurfaces={insightSurfaces} insightAccess={insightAccess} onOpenInsight={onOpenInsight} rows={rows} isLoading={isLoading} onOpenSource={onOpenSource} /></Suspense> : view === "placements" ? <>
           {fullSelectionComplete && (
             <div className="admin-natal-placement-finder-heading">
               <StudioButton type="button" onClick={() => openContextualReaderHref(readerHref)}
