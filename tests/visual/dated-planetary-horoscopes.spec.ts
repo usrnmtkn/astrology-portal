@@ -45,6 +45,11 @@ for(const width of [390,1440])for(const theme of ['light','dark'])test(`Dated pl
     });expect(headingContract.actual).toEqual(headingContract.expected);
     const dates=new Intl.DateTimeFormat('en-US',{month:'long',day:'numeric',year:'numeric',timeZone:'America/New_York'}).formatRange(new Date(row.facts.planetaryEvent.event.startsAt),new Date(row.facts.planetaryEvent.event.endsAt));
     await expect(article.locator('.horoscope-date')).toHaveText(dates);
+    await page.evaluate(()=>window.scrollTo({top:0,behavior:'instant'}));
+    await expect.poll(()=>page.evaluate(()=>window.scrollY)).toBe(0);
+    const header=await page.locator('.topbar').boundingBox(),periods=await page.getByRole('group',{name:'Horoscope period',exact:true}).boundingBox();
+    expect(header).not.toBeNull();expect(periods).not.toBeNull();
+    expect(header!.y+header!.height,'Header stays above the horoscope controls').toBeLessThanOrEqual(periods!.y);
     await page.screenshot({path:`test-results/dated-planetary-horoscopes-${width}-${theme}.png`,fullPage:true});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
     await page.getByRole('button',{name:'All planets',exact:true}).click();const card=page.getByRole('link',{name:/^Mercury .*Scorpio .*Read horoscope/});await expect(card.locator('.planet-placement-row__description')).toContainText('Your synthetic pisces opening remains complete.');
     // Another year's placement cannot acquire the published 2026 wording.
