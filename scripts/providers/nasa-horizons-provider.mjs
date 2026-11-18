@@ -231,12 +231,18 @@ async function main() {
       const first = ids[index];
       const second = ids[nextIndex];
       const separation = angularDistance(positions[first].longitude, positions[second].longitude);
-      const nextSeparation = angularDistance(laterPositions[first].longitude, laterPositions[second].longitude);
       const aspect = bestAspect(separation);
 
       if (!aspect || aspect.orb > 5) continue;
 
-      const nextOrb = Math.abs(nextSeparation - aspect.exact);
+      // Compare signed error with relative motion at the starting point. Endpoint
+      // absolute orbs can grow after crossing exact during the six-hour sample.
+      const signedSeparation = signedDeltaDegrees(positions[first].longitude, positions[second].longitude);
+      const orientedExact = signedSeparation < 0 ? -aspect.exact : aspect.exact;
+      const signedError = signedDeltaDegrees(signedSeparation, orientedExact);
+      const relativeMotion = signedDeltaDegrees(laterPositions[first].longitude, positions[first].longitude)
+        - signedDeltaDegrees(laterPositions[second].longitude, positions[second].longitude);
+      const orbDirection = signedError * relativeMotion;
 
       facts.push({
         id: `horizons.aspect.${first}.${aspect.type}.${second}.${date.toISOString()}`,
@@ -247,7 +253,7 @@ async function main() {
         aspectType: aspect.type,
         exactAngularSeparation: Number(separation.toFixed(6)),
         orb: Number(aspect.orb.toFixed(6)),
-        applyingSeparating: nextOrb < aspect.orb ? "applying" : nextOrb > aspect.orb ? "separating" : "exact",
+        applyingSeparating: orbDirection < 0 ? "applying" : orbDirection > 0 ? "separating" : "exact",
         role: "current-sky",
         targetRole: "current-sky"
       });
