@@ -17,7 +17,7 @@ Raw longitude, speed, declination, aspect orb, and other sub-display floating-po
 
 ## Project Author benchmark
 
-- Civil input: 1990-01-01, 11:20 AM, America/New_York (16:20 UTC; EST, UTC-05:00).
+- Civil input: governed private birth date, 11:20 AM, America/New_York. The birth date is not copied into Git fixtures.
 - Place input: Manhattan borough centroid, `40.7831, -73.9712`.
 - Settings: tropical zodiac, whole-sign houses, standard aspect profile.
 - Engine: pinned `pyswisseph`/Swiss Ephemeris with Swiss data and no Moshier fallback.
