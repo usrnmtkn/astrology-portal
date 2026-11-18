@@ -1,3 +1,5 @@
+import forecastProse from './forecastProseDevelopment.cjs';
+const {FORECAST_PROSE_DEVELOPMENT}=forecastProse;
 import {renderApprovedVoiceStyleReference} from './approvedVoiceStyle.mjs';
 import {HOROSCOPE_ENDING_GUIDANCE} from './horoscopeEndingGuidance.mjs';
 
@@ -18,7 +20,7 @@ const scope={
 
 export function horoscopeProseInstructions(period) {
   if(!usesRefinedHoroscopeProse(period))throw new Error('Choose Weekly, Monthly or Seasonal prose instructions.');
-  return [`${period.toUpperCase()} HOROSCOPE`,authority,facts,scope[period],timing,check,HOROSCOPE_ENDING_GUIDANCE,output].join('\n\n');
+  return [`${period.toUpperCase()} HOROSCOPE`,authority,facts,scope[period],timing,check,FORECAST_PROSE_DEVELOPMENT,HOROSCOPE_ENDING_GUIDANCE,output].join('\n\n');
 }
 
 // Consolidate repeated app authority while retaining every complete source

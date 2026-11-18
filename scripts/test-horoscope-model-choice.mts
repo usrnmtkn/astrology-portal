@@ -1,3 +1,5 @@
+import forecastProse from '../src/astro-writing/forecastProseDevelopment.cjs';
+const {FORECAST_PROSE_DEVELOPMENT}=forecastProse;
 import assert from 'node:assert/strict';
 import {decodeWeeklyHistoryRow} from '../api/_lib/horoscope-history-storage';
 import {applyCheckpointFixture} from '../tests/helpers/horoscope-checkpoint-fixture.mts';
@@ -108,6 +110,9 @@ for(const period of ['daily','weekly','monthly','seasonal'])for(const choice of 
     assert.equal(input,captured.input,'Native transport preserves the complete Seasonal request');
     assert.equal(instructions,captured.instructions,'Native transport preserves Seasonal instructions');
   }else assert((input+instructions).includes('CONTENT STUDIO WRITING INSTRUCTIONS')); 
+  assert(instructions.includes(FORECAST_PROSE_DEVELOPMENT),`${period}/${choice} receives the same prose-development boundary`);
+  for(const label of ['OWNER-APPROVED WRITING PLAN','GOVERNED RETRIEVAL ANCHOR','FORECAST COVERAGE','current-approved-argument-and-close'])assert(!input.includes(label),`${period}/${choice}: ${label} is internal planning, not prose input`);
+  assert(!instructions.includes('specific situation, direct consequence, useful next move'));
   assert(input.includes('OWNER'),'Owner evidence reaches the actual native provider request');
   assert.equal(request.model,config.model);
   const calls=writerFixture.calls;await action(id,'prepare');assert.equal(writerFixture.calls,calls,'Preparing/reopening never calls a model');
