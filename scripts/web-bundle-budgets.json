@@ -14,8 +14,9 @@
   "relationshipFallbackChunkGzipBytes": 230000,
   "signupChunkGzipBytes": 4325,
   "totalCssGzipBytes": 151966,
-  "totalJavaScriptGzipBytes": 3798969,
+  "totalJavaScriptGzipBytes": 3802373,
   "_rationale": {
+    "allWritingRulesReference20261118": {"baseRevision":"767a98a5285ac9e917aadaab0712a7f20a8c493f","featureSourceRevision":"4e2f78a90f53ed6f85204d0793fa9fd72d17e8a2","receipt":"docs/qa/all-writing-rules-reference-bundle-cost-2026-11-18.json","allocation":{"totalJavaScriptGzipBytes":3404,"memoryGraphCssGzipBytes":67},"reason":"Measured cost of the owner-requested complete reference renderer, read-only live guidance sections and independent retry states. Rule text and private records remain API-only. Preserve all startup, largest-chunk, deferred-boundary, dependency, source-payload, other CSS and privacy limits. Retain the original over-cap failures; this allocation does not claim a performance improvement."},
     "lunationReaderDestinations20261117": {"baseRevision":"aea0156b3a3508941fb3bc6ceb146ef369448400","featureSourceRevision":"e39d82bc20fa224374f3d6eda0a6b409d91fc110","receipt":"docs/qa/lunation-reader-destinations-2026-11-17.json","control":{"readerBootGzipBytes":458222,"totalJavaScriptGzipBytes":3798035},"candidate":{"readerBootGzipBytes":458418,"totalJavaScriptGzipBytes":3798802},"allocation":{"readerBootGzipBytes":200},"reason":"Allocate the measured 196-byte reader startup cost of the requested phase-specific lunar article selection, preserving the current main headroom. Lunar calculations and hydration remain article-scoped. Aggregate JavaScript passes its unchanged ceiling. Every App, CSS, deferred/source payload, dependency and runtime guard remains enforced. Initial over-cap builds remain failures; exact-head release gates and production complete-copy/reload checks remain required."},
     "chartReportsDownloads20261116": {
         "baseRevision": "19539307040744df0d4df0903ae972da9e070179",
@@ -444,7 +445,7 @@
     "lunationTransitLayout20261112": "Matched isolated npm-ci builds of main 988c17cf7dccad62c01180fd4273bd5c2caebe60 and PR #1460 use identical locked dependencies, Node v22.20.0 arm64, gzip level 9, and the same synthetic reader build inputs. Moving the shared lunation UI and its new stylesheet entirely into the deferred You/Friends pages preserves all startup caps; the shared reader stylesheet remains byte-identical at 38599 gzip bytes. Aggregate JavaScript measures 3771671 to 3775865 (+4194), aggregate CSS 148033 to 148197 (+164), and the existing HoroscopeReader chunk 5678 to 5759 (+81) from shared module extraction/import overhead. Allocate only 4500 aggregate JavaScript bytes, 200 aggregate CSS bytes and 100 HoroscopeReader bytes for this requested feature, with rounding headroom. All other numeric limits, startup boundaries, source guards, assertions and dependencies remain unchanged. Preserve the original failed budget results: initial reader CSS +1428 over limit before deferral, then aggregate JS +3458, CSS +143 and HoroscopeReader +48 over the previous ceilings after deferral. This is a measured UI feature cost, not a performance-improvement claim. The final comparison includes restored existing non-lunar weekly cards: hiding the lunar section must not suppress Solar Return or other weekly personal-transit readings."
   },
   "memoryGraphJavaScriptGzipBytes": 64000,
-  "memoryGraphCssGzipBytes": 33142,
+  "memoryGraphCssGzipBytes": 33209,
   "horoscopeReaderChunkGzipBytes": 5800,
   "horoscopeEditorChunkGzipBytes": 16400,
   "studioCsvChunkGzipBytes": 8200
