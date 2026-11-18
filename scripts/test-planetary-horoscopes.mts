@@ -17,11 +17,11 @@ mkdirSync('test-results',{recursive:true});
 const directory=mkdtempSync(join(process.cwd(),'test-results/planetary-reader-test-'));
 try{
   const bundle=join(directory,'reader.mjs');
-  await build({stdin:{contents:"export {planetaryHoroscopeBody} from './apps/web/src/features/horoscopes/usePlanetaryHoroscopeSources';",resolveDir:process.cwd(),loader:'ts'},
+  await build({stdin:{contents:"export {planetaryHoroscopeReading} from './apps/web/src/features/horoscopes/planetaryHoroscopeReading';",resolveDir:process.cwd(),loader:'ts'},
     bundle:true,format:'esm',platform:'node',outfile:bundle,external:['react'],
     banner:{js:"import {createRequire} from 'node:module'; const require=createRequire(import.meta.url);"},
     loader:{'.css':'empty'},define:{'import.meta.env':'{}'},logLevel:'silent'});
-  const {planetaryHoroscopeBody}=await import(pathToFileURL(bundle).href);
+  const {planetaryHoroscopeReading}=await import(pathToFileURL(bundle).href);
   assert.equal((await invoke('GET',undefined,'/api/admin/planetary-horoscope-writing','wrong-secret')).status,401);
   assert.equal((await invoke('POST',{action:'generate',id:'missing',expectedUpdatedAt:'missing'})).status,404);
   assert.equal(providerCalls.length,0);
@@ -87,7 +87,7 @@ try{
   assert.equal((await invoke('POST',{contentKey:row.content_key,surface:'sky',mode:'article',eventType:'planetary-horoscopes',status:'DRAFT',lane:'reference',headline:row.headline,body:row.body,sections:row.sections,facts:row.facts},'/api/admin/generated-content')).status,409,'A duplicate POST cannot overwrite a published set.');
   assert.equal(store.rows.get(row.id)!.body,row.body);
   const position={planet:'Mercury',sign:'Scorpio',transitStart:event.startsAt,transitEnd:event.endsAt};
-  for(const sign of HOROSCOPE_SIGNS)assert.equal(planetaryHoroscopeBody(position as any,sign,[publicRow],event.referenceInstant,event.timeZone),syntheticReadings(event).find(p=>p.sign===sign)!.body);
+  for(const sign of HOROSCOPE_SIGNS)assert.equal(planetaryHoroscopeReading(position as any,sign,event.referenceInstant,[],[publicRow],event.timeZone).body,syntheticReadings(event).find(p=>p.sign===sign)!.body);
   const revised=structuredClone(row.sections.planetaryHoroscopes);revised.passages[0].body+=' Your revised final sentence stays complete.';
   const fork=await patch(row,{status:'DRAFT',body:planetaryReadingsBody(revised),sections:{planetaryHoroscopes:revised}});assert.equal(fork.status,200,JSON.stringify(fork));
   const revision=fork.payload.rows[0];assert.notEqual(revision.id,row.id);assert.equal(revision.event_type,'horoscope-edition-revision');assert.equal((await reader(row)).payload.rows[0].body,row.body);
