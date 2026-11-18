@@ -9,6 +9,12 @@ A customer's stated birth city resolves to the municipal centroid. A named borou
 
 Cached Ascendant or Midheaven longitudes are not calculation inputs. A report always recomputes angles from the canonical birth input. A cached result may be reused only as a complete result whose provenance hash matches the canonical path.
 
+## Platform-stable provenance
+
+Natal calculation provenance uses the versioned `canonical-natal-v2` projection. The input hash covers the resolved civil time, governed coordinates and their source, chart settings, house system, and pinned Swiss engine identity. The result hash covers the semantic values delivered to report construction: placements and angles at displayed arcminute precision, arcminute house cusps, aspect identities and conditions, chart ruler, and sect.
+
+Raw longitude, speed, declination, aspect orb, and other sub-display floating-point values remain available in the calculation response for diagnostics, but are deliberately outside the provenance hash. This makes the hash portable across supported macOS and Linux builds when their customer-facing result is identical. A displayed arcminute or other semantic-result change still changes the hash. The synthetic Swiss contract pins one expected hash for local macOS verification and Linux CI.
+
 ## Project Author benchmark
 
 - Civil input: 1990-01-01, 11:20 AM, America/New_York (16:20 UTC; EST, UTC-05:00).
