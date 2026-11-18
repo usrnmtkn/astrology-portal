@@ -5481,22 +5481,33 @@ function currentSkyV4LunationDetailArticle({
   }
   const selectedLunarSource = resolveLunationReaderSource(event, generatedContent, sky.location.timeZone);
   if(selectedLunarSource){readerParts=selectedLunarSource.body ? selectedLunarSource.body.split(/\n\s*\n/u) : [];resolution=selectedLunarSource.body?'approved-lunar-article':'facts-only';}
+  const lunarSections = new Set<SkyDetailSection>();
   const aspectSections = lunationAspectCandidates(sky.aspects)
     .map(aspect => ({ aspect, lunar: lunationArticleHoroscopeReader?.resolveSkyLunationAspectReading(event, aspect, sky.positions, generatedContent) }))
-    .sort((a, b) => Number(Boolean(b.lunar)) - Number(Boolean(a.lunar)))
     .filter((entry, index, all) => !entry.lunar || all.findIndex(other => other.lunar?.contentKey === entry.lunar?.contentKey) === index)
-    .flatMap(({ aspect, lunar }) => lunar ? lunar.body ? [{ heading: `${aspect.fromMotion ? skyBodyLabel(aspect.from, aspect.fromMotion) : skyAspectMotionName(aspect.from, sky.positions)} ${titleCase(aspect.type)} ${aspect.toMotion ? skyBodyLabel(aspect.to, aspect.toMotion) : skyAspectMotionName(aspect.to, sky.positions)}`,
-      body: `${skyPlacementAspectExactDate(aspect, generatedAt, sky.positions)}\n\n${lunar.body}`,
-      role: 'aspect' as const, aspectType: aspect.type, group: normalizedAspectToneBucket(aspect.type) }] : [] : relatedSkyAspectSectionsForPlacement({
+    .flatMap(({ aspect, lunar }) => {
+      if (lunar) {
+        if (!lunar.body) return [];
+        const section: SkyDetailSection = {
+          heading: `${aspect.fromMotion ? skyBodyLabel(aspect.from, aspect.fromMotion) : skyAspectMotionName(aspect.from, sky.positions)} ${titleCase(aspect.type)} ${aspect.toMotion ? skyBodyLabel(aspect.to, aspect.toMotion) : skyAspectMotionName(aspect.to, sky.positions)}`,
+          body: `${skyPlacementAspectExactDate(aspect, generatedAt, sky.positions)}\n\n${lunar.body}`,
+          role: 'aspect', aspectType: aspect.type, group: normalizedAspectToneBucket(aspect.type)
+        };
+        lunarSections.add(section);
+        return [section];
+      }
+      return relatedSkyAspectSectionsForPlacement({
       aspects: [aspect],
       generatedAt,
       generatedContent,
       pointName: aspect.from,
       positions: sky.positions,
       timeZone: sky.location.timeZone
-    }))
+      });
+    })
     .filter((section, index, all) => all.findIndex((candidate) => candidate.heading === section.heading) === index)
-    .slice(0, 2);
+    // Preserve both calculated leads; approved lunar contacts add their own rows.
+    .filter((section, index) => index < 2 || lunarSections.has(section));
 
   return {
     routePath: `sky/lunation/${event.startsAt.slice(0,10)}/${normalizeContentIdPart(event.sign ?? "event")}`,

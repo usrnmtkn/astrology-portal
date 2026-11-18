@@ -126,15 +126,16 @@ test("Full Moon Key aspects prioritize orb over earlier exact dates", async () =
     const keys = reader.lunationArticleSnapshotKeys(lunarSky, eclipse);
     assert(keys.includes(key));
     assert(keys.includes('sky.aspect.sun.opposition.moon'), 'Dated lunar hydration includes exact general aspect publications');
+    assert(keys.includes('sky.aspect.sun.conjunction.mercury'), 'Both original Sun aspect sources are requested');
     assert(calendarKeys.calendarEventGeneratedContentKeys(contact).includes(key));
     const loaded = await detailLoader.loadSkyDetailContent(lunarSky, new Map([[key, {...row, updatedAt: '2000-01-01T00:00:00Z'}]]), keys, async requested => {
       assert(requested.includes(key), 'Cold/reload hydration replaces stale versions');
       return content;
     }, []);
     const lunarArticle = app.currentSkyV4LunationDetailArticle({event: eclipse, sky: lunarSky, generatedContent: loaded});
-    assert.equal(lunarArticle.sections.length, 2, 'The existing two-section layout stays intact');
-    assert.equal(lunarArticle.sections[0].heading, 'Moon Square Uranus');
-    assert(lunarArticle.sections[0].body.endsWith(body), 'The contextual passage outranks generic contacts and stays whole');
+    assert.deepEqual(lunarArticle.sections.map(section => section.heading), ['Sun Opposition Moon', 'Sun Conjunction Mercury', 'Moon Square Uranus'],
+      'Preserve the two calculated leads and append the approved lunar contact');
+    assert(lunarArticle.sections[2].body.endsWith(body), 'The additional lunar passage stays whole');
     assert.equal(calendarReader.normalizeCalendarEventSurface(contact, row, 'August 28', null, null, null, loaded).sections[0].body, body);
     await assert.rejects(detailLoader.loadSkyDetailContent(lunarSky, new Map(), keys, async () => new Map(), []), /current article publication/);
     assert.equal(reader.resolveSkyLunationAspectReading(eclipse, lunarSky.aspects.find(a => a.from === 'Moon' && a.to === 'Uranus'), lunarSky.positions,

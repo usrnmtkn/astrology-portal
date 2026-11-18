@@ -76,11 +76,12 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   });
 }
 
-for (const [width, theme] of [[1440, 'light'], [390, 'dark']] as const) {
+for (const [width, theme] of [[1440, 'light'], [1440, 'dark'], [390, 'light'], [390, 'dark']] as const) {
   test(`Published eclipse contact and fresh general aspect survive both reader routes ${width} ${theme}`, async ({page}) => {
     test.setTimeout(150_000);
     const lunarBody = 'Synthetic eclipse contact opening. The calculated contact belongs to this lunar event.\n\nThe full approved lunar final sentence remains visible.';
     const generalBody = 'Synthetic revised general aspect opening. This complete owner revision replaces the older bundled interpretation.\n\nThe approved general final sentence remains visible.';
+    const mercuryBody = 'Synthetic approved Sun Mercury opening. This separate exact source replaces its generic conjunction reading.\n\nThe approved Mercury final sentence remains visible.';
     const newMoonBody = 'Synthetic Capricorn New Moon contact opening. The Moon reaches its exact Venus conjunction after entering Aquarius.\n\nThe full approved out-of-sign final sentence remains visible.';
     const base = {surface:'sky', mode:'in_depth', status:'LIVE', lane:'serving', review_state:null,
       target_date:null, flags:[], provider:'manual-admin', headline:null, summary:null, sections:null, updated_at:'2026-11-17T12:00:00Z'};
@@ -91,7 +92,10 @@ for (const [width, theme] of [[1440, 'light'], [390, 'dark']] as const) {
         event_type:'lunation-aspect', block_type:'fallback_hook', body:newMoonBody, source_snapshot:{review_status:'approved', content_role:'full_copy'}},
       {...base, id:'a0000000-0000-4000-8000-000000000082', content_key:'sky.aspect.sun.opposition.moon',
         event_type:'sky-aspect-owner-approved-exact', block_type:'fallback_hook', body:generalBody,
-        source_snapshot:{contentStudioExactAspect:true, review_status:'approved', exactSkyAspectIdentity:{a:'sun',aspect:'opposition',b:'moon'}}}
+        source_snapshot:{contentStudioExactAspect:true, review_status:'approved', exactSkyAspectIdentity:{a:'sun',aspect:'opposition',b:'moon'}}},
+      {...base, id:'a0000000-0000-4000-8000-000000000084', content_key:'sky.aspect.sun.conjunction.mercury',
+        event_type:'sky-aspect-owner-approved-exact', block_type:'fallback_hook', body:mercuryBody,
+        source_snapshot:{contentStudioExactAspect:true, review_status:'approved', exactSkyAspectIdentity:{a:'sun',aspect:'conjunction',b:'mercury'}}}
     ]);
     try {
       await page.setViewportSize({width, height:1000});
@@ -120,7 +124,8 @@ for (const [width, theme] of [[1440, 'light'], [390, 'dark']] as const) {
         await expect(related).toContainText('Moon Square Uranus',{timeout:60_000});
         await expect.poll(async()=>whole(await related.innerText(),lunarBody)).toBe(true);
         await expect.poll(async()=>whole(await related.innerText(),generalBody)).toBe(true);
-        await expect(page.locator('.article-related-aspects__copy h4')).toHaveCount(2);
+        await expect.poll(async()=>whole(await related.innerText(),mercuryBody)).toBe(true);
+        await expect(page.locator('.article-related-aspects__copy h4')).toHaveText(['Sun Opposition Moon','Sun Conjunction Mercury','Moon Square Uranus']);
       };
       await page.goto('/?date=2026-08-28#sky/lunation/2026-08-28/pisces');
       await verifyLunar();
