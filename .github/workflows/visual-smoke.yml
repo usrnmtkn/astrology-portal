@@ -66,13 +66,17 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.61.0-noble@sha256:57b65fdc9ceabe0ef613124c7bbe2babcf9362c4d85e382fe3b03604e84b428a
+      volumes:
+        - /usr/share/fonts:/usr/share/fonts/runner:ro
     defaults:
       run:
         shell: bash
     timeout-minutes: 15
     env:
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
       VITE_SUPABASE_URL: https://visual-smoke.supabase.test
       VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
+      VITE_SUPABASE_PUBLISHABLE_KEY: ""
     steps:
       - uses: actions/checkout@v6
       - name: Verify exact container checkout
@@ -82,8 +86,17 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Validate the pinned browser environment before browser fan-out
+        run: node scripts/ci-validate-playwright-image.mjs
       - name: Check Web build and bundle limits before browser fan-out
         run: npm run build && npm run qa:bundle
+      - name: Check native server imports before browser fan-out
+        run: npm run typecheck:server && npm run test:production-health
+      - name: Check authenticated reader startup build and bundle limits
+        env:
+          VITE_ENABLE_NATAL_ASPECT_PATTERNS: "true"
+          VITE_SUPABASE_PUBLISHABLE_KEY: ""
+        run: npm run build:web && npm run qa:bundle
       - name: Check Studio build and bundle limits before browser fan-out
         run: npm run build:admin && node scripts/check-admin-bundle-budgets.mjs
 

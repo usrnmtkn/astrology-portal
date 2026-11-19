@@ -5,9 +5,10 @@ variable `RELEASE_ACTIVE_PR` identifies that candidate by its numeric PR number.
 Main checks remain enabled. Missing admission holds PRs before expensive runner
 jobs; the three required aggregate/privacy checks fail closed with `RELEASE_HELD`.
 This is a scheduling hold, not a tested application failure or a passing gate.
-An admitted browser run first builds Web and Studio under the pinned runner
-profile and checks both existing bundle limits. Selected browser jobs start
-only after that preflight succeeds; their existing checks remain intact.
+An admitted browser run first validates the pinned browser environment, native
+server imports, and Web, authenticated reader startup and Studio build budgets.
+Selected browser jobs start only after that preflight succeeds; their existing
+checks remain intact.
 
 When the owner has authorized release coordination, slot assignment, code merge,
 main deployment and automatic production acceptance use that recorded authority.
@@ -71,7 +72,9 @@ Keep the scope affected; this rule does not require a routine complete-suite run
 - **Build budgets:** build every affected hosted profile, including ordinary Web,
   authentication startup and standalone Studio where applicable, with the pinned
   CI toolchain and locked dependencies. Check the actual output against existing
-  bundle limits. Even a two-byte excess is a failure; a budget change needs its
+  bundle limits using their recorded build profiles. Keep fixture-specific
+  functional profiles separate from those measurement inputs. Even a two-byte
+  excess in the applicable profile is a failure; a budget change needs its
   existing measured-cost approval rather than an automatic cap increase.
 - **Runner and preview readiness:** validate the selected Playwright image and
   browser setup, then start a fresh preview from this checkout's build. Verify the
@@ -100,6 +103,8 @@ Manual dispatch in these PR-validation workflows is limited to main. Candidate
 validation uses pull-request runs; dispatch-only checks do not replace the
 pull-request checks required by branch protection. Other manual publication and
 calibration workflows retain their existing scopes and authorization rules.
+The legacy Personal Transit source archive is now an explicit manual dispatch
+on its original feature branch, rather than an automatic job on every push.
 
 Run `node scripts/test-ci-release-admission.mjs` and
 `ruby scripts/test-ci-workflow-syntax.rb` after changing admission or workflow

@@ -36,6 +36,9 @@ const aggregateNames=new Set(['content-studio-api','browser-release-gate','proje
 let protectedRoots=0;
 for(const [file,workflow] of Object.entries(workflows)) {
   const triggers=workflow.on ?? workflow.true;
+  if(triggers && Object.hasOwn(triggers,'push') && !Object.hasOwn(triggers,'pull_request')) {
+    assert.deepEqual(triggers.push?.branches,['main'],`${file}: automatic feature pushes must use PR admission instead of bypassing the queue`);
+  }
   if(!triggers || !Object.hasOwn(triggers,'pull_request')) continue;
   for(const [name,job] of Object.entries(workflow.jobs)) {
     if(aggregateNames.has(name)) {
@@ -51,6 +54,9 @@ for(const [file,workflow] of Object.entries(workflows)) {
   assert(String(workflow.concurrency?.group).includes('github.event.pull_request.number'),`${file}: cancellation must be scoped to one PR`);
   assert(String(workflow.concurrency?.group).includes('github.event_name'),`${file}: dispatch must not cancel push checks`);
 }
+const archive=workflows['.github/workflows/personal-transit-writer-verify.yml'];
+assert(Object.hasOwn(archive.on ?? archive.true,'workflow_dispatch'),'Legacy source snapshots remain available on explicit dispatch');
+assert.equal(archive.jobs['source-snapshot'].if,"${{ github.ref_type == 'branch' && github.ref == 'refs/heads/feat/personal-transit-ai-writer-20260917' }}",'Manual archival must preserve its original branch scope');
 for(const [file,name] of [['.github/workflows/content-studio-api.yml','content-studio-api'],['.github/workflows/visual-smoke.yml','browser-release-gate']]) {
   assert.equal(workflows[file].jobs[name].if,'${{ !cancelled() }}','required aggregate must inspect skipped or failed dependencies');
 }
