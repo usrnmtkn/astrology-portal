@@ -1,3 +1,6 @@
+import { observeEphemerisHealth } from "./ephemerisHealth";
+import { isVerifiedSkySnapshot } from "./verifiedSkyCache";
+import { ASTROLOGY_CALCULATION_CONTRACT } from "./astrologyFacts";
 import type { LocationInput, SkySnapshot } from "../types.js";
 import type { RetrogradeHistory } from "./retrogradeHistory.js";
 import type { CalendarSkyEventSnapshot } from "./ephemeris.js";
@@ -53,23 +56,32 @@ function workerForSkyCalculations() {
     name: "tldrastro-sky-calculation"
   });
 
+  const failWorker = (error: Error) => {
+    if (skyWorker !== worker) return;
+    observeEphemerisHealth("worker", false);
+    worker.terminate();
+    skyWorker = null;
+    rejectPendingCalculations(error);
+  };
+  worker.addEventListener("messageerror", () => failWorker(new Error("The astronomy worker returned an unreadable response.")));
   worker.addEventListener("message", (event: MessageEvent<SkyCalculationResponse>) => {
+    if (skyWorker !== worker) return;
     const response = event.data;
+    if (!response || !Number.isInteger(response.id) || typeof response.ok !== "boolean") {
+      failWorker(new Error("The astronomy worker returned an invalid response."));
+      return;
+    }
     const pending = pendingCalculations.get(response.id);
     if (!pending) return;
 
     pendingCalculations.delete(response.id);
     clearTimeout(pending.timeout);
+    observeEphemerisHealth("worker", response.ok);
     if (response.ok === true) pending.resolve(response.value);
     else pending.reject(new Error(response.error));
   });
 
-  worker.addEventListener("error", (event) => {
-    if (skyWorker !== worker) return;
-    rejectPendingCalculations(new Error(event.message || "The sky calculation worker stopped unexpectedly."));
-    worker.terminate();
-    if (skyWorker === worker) skyWorker = null;
-  });
+  worker.addEventListener("error", event => failWorker(new Error(event.message || "The sky calculation worker stopped unexpectedly.")));
 
   skyWorker = worker;
   return worker;
@@ -87,17 +99,19 @@ function requestCalculation<T>(message: Record<string, unknown>): Promise<T> {
     const timeout = setTimeout(() => {
       // A hung worker or missing asset must not leave every later route queued
       // forever. A retry creates a new worker with the original ephemeris inputs.
+      observeEphemerisHealth("worker", false);
       skyWorker?.terminate();
       skyWorker = null;
       rejectPendingCalculations(new Error("Astronomy calculation timed out. Please retry."));
-    }, 120_000);
+    }, message.kind === "sky" || message.kind === "preload" ? 30_000 : 120_000);
     pendingCalculations.set(id, { resolve: (value) => resolve(value as T), reject, timeout });
     try {
       workerForSkyCalculations().postMessage({ id, ...message });
     } catch (error) {
-      clearTimeout(timeout);
-      pendingCalculations.delete(id);
-      reject(error);
+      observeEphemerisHealth("worker", false);
+      skyWorker?.terminate();
+      skyWorker = null;
+      rejectPendingCalculations(error instanceof Error ? error : new Error("Astronomy calculation could not start."));
     }
   });
 }
@@ -107,12 +121,19 @@ export function getAstrodienstSkyOffMainThread(
   date: Date,
   options: SkyCalculationOptions = {}
 ): Promise<SkySnapshot> {
-  if (typeof Worker === "undefined") {
-    return loadEphemerisForNonBrowserRuntime().then(({ getAstrodienstSky }) => (
-      getAstrodienstSky(location, date, options)
-    ));
-  }
-  return requestCalculation({ kind: "sky", location, date: date.toISOString(), options });
+  const calculation = typeof Worker === "undefined"
+    ? loadEphemerisForNonBrowserRuntime().then(({ getAstrodienstSky }) => getAstrodienstSky(location, date, options))
+    : requestCalculation<SkySnapshot>({ kind: "sky", location, date: date.toISOString(), options });
+  return calculation.then(sky => {
+    if (!isVerifiedSkySnapshot(sky) || sky.generatedAt !== date.toISOString() || sky.positions.length !== 14
+      || sky.location.latitude !== location.latitude || sky.location.longitude !== location.longitude
+      || sky.location.timeZone !== (location.timeZone || "UTC")
+      || sky.calculationProvenance?.nodeType !== ASTROLOGY_CALCULATION_CONTRACT.nodeType) {
+      observeEphemerisHealth("worker", false);
+      throw new Error("The astronomy calculation could not verify the requested facts.");
+    }
+    return sky;
+  });
 }
 
 export function getLunarCalendarRangeEventsOffMainThread(

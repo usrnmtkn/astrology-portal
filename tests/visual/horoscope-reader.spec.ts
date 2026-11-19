@@ -220,7 +220,9 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await page.reload();await expect(page.getByRole('article')).toContainText('Your fixture pisces complete ending.');
    await expect(page.locator('.horoscope-reading-date')).toContainText('September 21');
    await page.clock.setFixedTime(new Date('2026-09-24T16:00:00Z'));
+   await page.route('**/api/health?scope=ephemeris',route=>route.fulfill({status:503,json:{error:'Synthetic readiness unavailable'}}));
    await page.goto('/#horoscopes?period=weekly&sign=aries');
+   await expect(page.locator('[data-ephemeris-status="degraded"]')).toBeVisible();
    await expect(page.getByRole('heading',{name:'Horoscopes',exact:true})).toBeVisible();
    await expect(page.getByRole('article',{name:'Aries horoscope'})).toContainText('Your fixture aries complete ending.');
    await expect(page.getByText('PRIVATE OUTLINE fixture')).toHaveCount(0);
@@ -232,7 +234,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    for(const sign of HOROSCOPE_SIGNS){await page.getByRole('group',{name:'Zodiac signs',exact:true}).getByRole('button').nth(HOROSCOPE_SIGNS.indexOf(sign)).click();await expect(page.getByRole('article')).toContainText(`You can read the ${sign} fixture opening.`);await expect(page.getByRole('article')).toContainText(`Your fixture ${sign} complete ending.`);}
    await page.reload();await expect(page.getByRole('button',{name:'Pisces & Pisces Rising',exact:true})).toHaveAttribute('aria-pressed','true');
    await page.getByRole('button',{name:'Daily',exact:true}).click();
-   await expect(page.getByRole('status')).toContainText('daily horoscopes haven’t been published');
+   await expect(page.locator('.horoscope-page').getByRole('status')).toContainText('daily horoscopes haven’t been published');
    await page.goBack();await expect(page.getByRole('button',{name:'Weekly',exact:true})).toHaveAttribute('aria-pressed','true');await expect(page.getByRole('article')).toContainText('Your fixture pisces complete ending.');
    await expect(page.getByText('Loading your horoscope…')).toHaveCount(0);
    await page.mouse.move(0,0);
@@ -252,11 +254,11 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await page.reload();await expect(page.getByRole('article')).toContainText('Your fixture pisces complete ending.');
    // Only an explicit archive withdraws the published edition; draft saves keep it live.
    const archived=await call({method:'PATCH',body:{id:live.id,expectedUpdatedAt:live.updated_at,status:'ARCHIVED'}});expect(archived.status).toBe(200);
-   await page.reload();await expect(page.getByRole('status')).toContainText('weekly horoscopes haven’t been published');
+   await page.reload();await expect(page.locator('.horoscope-page').getByRole('status')).toContainText('weekly horoscopes haven’t been published');
    await expect(page.locator('.horoscope-page :is(h1,h2,h3,h4,h5,h6)')).toHaveText(['Horoscopes','No weekly reading yet']);
    await page.evaluate(()=>new Promise<void>(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve()))));
    await page.screenshot({path:`test-results/horoscope-empty-${width}-${theme}.png`,animations:'disabled'});
-   await page.getByRole('button',{name:'Seasonal',exact:true}).click();await expect(page.getByRole('status')).toContainText('seasonal horoscopes haven’t been published');
+   await page.getByRole('button',{name:'Seasonal',exact:true}).click();await expect(page.locator('.horoscope-page').getByRole('status')).toContainText('seasonal horoscopes haven’t been published');
    for(const period of ['daily','seasonal'] as const){
     // The fixed UTC instant is already September 25 in Tokyo.
     const facts=await call({method:'GET',url:`/api/admin/generated-content?horoscopeBrief=true&period=${period}&date=2026-09-25&timeZone=Asia/Tokyo`});
@@ -272,7 +274,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    }
    await page.locator('.horoscope-location summary').click();
    await page.getByLabel('Horoscope time zone',{exact:true}).selectOption('Pacific/Honolulu');
-   await expect(page.getByRole('status')).toContainText('Pacific/Honolulu');
+   await expect(page.locator('.horoscope-page').getByRole('status')).toContainText('Pacific/Honolulu');
    await page.reload();await expect(page.locator('.horoscope-location summary')).toContainText('Pacific/Honolulu');
    await page.locator('.horoscope-location summary').click();await page.getByLabel('Horoscope time zone',{exact:true}).selectOption('Asia/Tokyo');
    await expect(page.getByRole('article')).toContainText('Fixture seasonal complete ending.');

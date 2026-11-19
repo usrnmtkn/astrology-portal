@@ -1,4 +1,9 @@
 {
+  "git": {
+    "deploymentEnabled": {
+      "codex/ephemeris-health-20261116": false
+    }
+  },
   "installCommand": "npm install --include=optional",
   "devCommand": "npm run dev -w @tldr/web -- --port $PORT",
   "buildCommand": "node scripts/vercel-prebuild.mjs && npm run build",

@@ -3,6 +3,7 @@ import { compiledReaderFixture, compiledReaderRow, legacyIngressReaderFixture } 
 import { skyArticlePublicationStore } from '../helpers/sky-article-publication-store.mts';
 import { emptyLastKnownGoodSnapshot } from '../helpers/bundled-publications';
 import { installSyntheticNetworkGuard } from '../helpers/synthetic-network-guard';
+import { healthyEphemerisProbe } from '../helpers/ephemeris-health';
 
 for (const legacy of [false, true]) for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const) {
   test(`${legacy ? 'legacy Overview' : 'saved-template'} actual publication reaches complete Sky and standalone readers ${width} ${theme}`, async ({ page, context, baseURL }) => {
@@ -34,6 +35,7 @@ for (const legacy of [false, true]) for (const width of [390, 1440]) for (const 
         localStorage.setItem('tldrastro:selectedLocation', JSON.stringify({ label: 'New York', latitude: 40.7, longitude: -74, timeZone: 'America/New_York' }));
       }, theme);
       await emptyLastKnownGoodSnapshot(page);
+      await healthyEphemerisProbe(page);
       await context.route('**/api/**', async route => {
         const request = route.request();
         const message = `Unexpected synthetic reader API: ${request.method()} ${new URL(request.url()).pathname}`;

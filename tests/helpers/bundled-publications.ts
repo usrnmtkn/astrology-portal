@@ -1,4 +1,5 @@
 import type { Page } from '@playwright/test';
+import { healthyEphemerisProbe } from './ephemeris-health';
 import { readerResponse } from './reader-response';
 import { publicationLedgerTag } from '../../apps/web/src/services/publicationLedgerTransport';
 
@@ -17,6 +18,7 @@ export async function emptyLastKnownGoodSnapshot(page: Page) {
 /** These typography/calculation fixtures select the bundled corpus. Resolve an
  * explicitly empty remote plane; DNS failure is not proof of no publication. */
 export async function bundledPublications(page: Page) {
+  await healthyEphemerisProbe(page);
   await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse([]) }));
   await page.route('**/rest/v1/**', route => route.fulfill({ json: [] }));
   await emptyLastKnownGoodSnapshot(page);

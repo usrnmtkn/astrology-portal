@@ -1,3 +1,4 @@
+import { observeEphemerisHealth } from "./ephemerisHealth";
 import { isInitialSkyReaderHash } from "./initialSkyRoute.mjs";
 import { getInitialLocation, getInitialTransitDate, skyDateTimeFromInput } from "./skySelection";
 import { liveSkyReference } from "./skyClock";
@@ -61,7 +62,13 @@ export function getSkyFromApi(location: LocationInput, date: Date, complete: boo
       }
       return sky;
     }, { timeoutMs: primedTransport ? Math.max(1, 8_000 - (performance.now() - primedTransport.startedAt)) : 8_000,
-      cancelOnNavigation: true }).finally(() => pending.delete(key));
+      cancelOnNavigation: true }).then(sky => {
+      observeEphemerisHealth("sky-api", true);
+      return sky;
+    }, error => {
+      if (!isCancelled(error)) observeEphemerisHealth("sky-api", false);
+      throw error;
+    }).finally(() => pending.delete(key));
     pending.set(key, request);
     if (detail === "placements") trackInitialSkyReaderRequest(request);
   }

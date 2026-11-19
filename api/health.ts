@@ -1,9 +1,5 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
-import {
-  calculationApiBaseUrl,
-  describeCalculationApiFailure,
-  readCalculationApiResponse
-} from "./_lib/calculation-api.js";
+import { checkCalculationReadiness, ephemerisHealthReport } from "./_lib/ephemeris-health.js";
 import { getLunarCalendarWeek } from "../apps/web/src/services/ephemeris.js";
 import type { LocationInput } from "../apps/web/src/types.js";
 
@@ -21,7 +17,6 @@ const healthLocation: LocationInput = {
   timeZone: "America/New_York"
 };
 
-const skyCalculationApiTimeoutMs = 2_500;
 const expectedExactAspectStudioRows = 439;
 const expectedNodePoleStudioRows = 60;
 
@@ -155,53 +150,7 @@ async function checkContentStudioExactAspects(): Promise<DependencyResult> {
   }
 }
 
-/**
- * Current sky, report, and relationship facts all come from the calculation
- * service, and until now an outage there was invisible until an owner action
- * failed. This reports the service without gating the overall status, so an
- * upstream outage stays visible without failing deployments that do not
- * depend on it.
- */
-async function checkSkyCalculationApi(): Promise<DependencyResult> {
-  const startedAt = performance.now();
-  const target = `${calculationApiBaseUrl()}/health`;
-
-  try {
-    const response = await fetch(target, {
-      cache: "no-store",
-      signal: AbortSignal.timeout(skyCalculationApiTimeoutMs)
-    });
-    const { body, payload } = await readCalculationApiResponse(response);
-
-    if (!response.ok) {
-      return {
-        ok: false,
-        elapsedMs: elapsedSince(startedAt),
-        error: describeCalculationApiFailure({
-          target,
-          status: response.status,
-          statusText: response.statusText,
-          body,
-          payload
-        })
-      };
-    }
-
-    return {
-      ok: true,
-      elapsedMs: elapsedSince(startedAt),
-      detail: { host: new URL(target).host }
-    };
-  } catch (error) {
-    return {
-      ok: false,
-      elapsedMs: elapsedSince(startedAt),
-      error: error instanceof Error
-        ? `${new URL(target).host} did not answer within ${skyCalculationApiTimeoutMs}ms (${error.message}).`
-        : "Sky calculation service check failed."
-    };
-  }
-}
+const checkSkyCalculationApi = checkCalculationReadiness;
 
 function sendJson(res: ServerResponse, status: number, body: unknown) {
   res.statusCode = status;
@@ -217,6 +166,12 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       status: "method_not_allowed",
       timestamp: new Date().toISOString()
     });
+    return;
+  }
+
+  if (new URL(req.url ?? "/api/health", "http://localhost").searchParams.get("scope") === "ephemeris") {
+    const report = await ephemerisHealthReport();
+    sendJson(res, report.ok ? 200 : 503, report);
     return;
   }
 

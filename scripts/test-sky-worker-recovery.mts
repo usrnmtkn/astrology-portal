@@ -1,9 +1,10 @@
 import assert from "node:assert/strict";
 
 // The clock and worker are explicit transport fixtures. Astronomy remains in
-// the real worker; this verifies failure recovery without waiting two minutes.
+// the real worker; this verifies foreground and detail recovery without real waits.
 const original = { Worker: globalThis.Worker, setTimeout: globalThis.setTimeout, clearTimeout: globalThis.clearTimeout };
 const timers = new Map<number, () => void>();
+const deadlines: number[] = [];
 let nextTimer = 0;
 class WorkerFixture {
   static instances: WorkerFixture[] = [];
@@ -19,7 +20,7 @@ class WorkerFixture {
 try {
   globalThis.Worker = WorkerFixture as any;
   globalThis.setTimeout = ((callback: () => void, delay: number) => {
-    assert.equal(delay, 120_000);
+    deadlines.push(delay);
     timers.set(++nextTimer, callback);
     return nextTimer;
   }) as any;
@@ -29,6 +30,7 @@ try {
   const second = client.preloadSwissEphemerisOffMainThread();
   const firstRejected = assert.rejects(first, /timed out/);
   const secondRejected = assert.rejects(second, /timed out/);
+  assert.deepEqual(deadlines, [30_000, 30_000], "Foreground preload attempts must have the bounded 30-second deadline.");
   const oldWorker = WorkerFixture.instances[0];
   [...timers.values()][0]();
   await Promise.all([firstRejected, secondRejected]);
@@ -51,7 +53,14 @@ try {
   recoveredWorker.emit("message", { data: { id: recoveredWorker.messages[0].id, ok: true, value: undefined } });
   await recovered;
   assert.equal(timers.size, 0);
-  console.log("PASS: hung and failed workers release all requests; retry creates a healthy worker; late errors cannot cancel it.");
+  const detail = client.getRetrogradeHistoryOffMainThread("mercury", "virgo", new Date("2026-11-01T12:00:00Z"));
+  const detailRejected = assert.rejects(detail, /timed out/);
+  assert.equal(deadlines.at(-1), 120_000, "Expensive detail searches retain their two-minute deadline.");
+  [...timers.values()][0]();
+  await detailRejected;
+  assert.equal(timers.size, 0);
+  assert.equal(recoveredWorker.terminated, true);
+  console.log("PASS: foreground/detail deadlines remain 30/120 seconds; hung and failed workers release all requests; retries create fresh workers; late errors cannot cancel them.");
 } finally {
   Object.assign(globalThis, original);
 }

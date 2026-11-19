@@ -18,7 +18,7 @@ Status: implemented locally.
 
 Status: implemented.
 
-- The `Ephemeris integrity` GitHub Actions workflow runs daily and can also be
+- The `Ephemeris integrity` GitHub Actions workflow runs weekly and can also be
   started manually.
 - It uses the existing NASA/JPL Horizons adapter sequentially, respecting the
   service's one-request-at-a-time fair-use requirement.
@@ -32,7 +32,7 @@ Status: implemented.
 - The latest result and a dated comment history are persisted in the
   `NASA/JPL ephemeris integrity status` GitHub monitor issue, outside the
   90-day artifact window.
-- Pull requests run the `nasa-jpl-freshness` release gate. It requires the
+- The manual `nasa-jpl-freshness` release gate requires the
   newest completed main-branch comparison to have passed within 36 hours.
 - Failures reopen the persistent monitor issue, assign the configured alert
   recipients, and mention them in the failure update. The repository owner is
@@ -47,9 +47,9 @@ Status: implemented.
 1. Evaluate a local JPL DE440/SPICE engine only if runtime redundancy becomes a
    product requirement.
 
-The `nasa-jpl-freshness` check is now required by the protected `main` branch,
-so production releases cannot merge behind a failed or stale independent
-comparison.
+The manual comparison freshness check is distinct from the three required
+exact-head API, browser, and privacy CI gates. Do not treat a healthy runtime
+probe or green unrelated CI as independent NASA/JPL verification.
 
 ## Phase 3: Last-known-verified current-sky cache
 
@@ -65,3 +65,9 @@ Status: implemented locally.
   from this fallback.
 - The reader sees a cache notice while a live refresh is in progress and a
   stronger notice if live calculation fails.
+
+## Runtime outage detection
+
+See [the availability and incident contract](qa/ephemeris-availability.md) for
+scoped engine readiness, app warnings, bounded worker recovery, and GitHub
+incident transitions. This is separate from independent accuracy verification.
