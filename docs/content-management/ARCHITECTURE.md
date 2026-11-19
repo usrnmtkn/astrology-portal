@@ -421,9 +421,20 @@ Lunation articles additionally request `lunation.{new|full}.{moonSign}.{aspect}.
 from their calculated event-time snapshot. A published matching passage supplies
 the complete aspect section before ordinary Sky aspect copy. These keys are not
 requested by ordinary Moon transits or quarter-Moon articles. Both direct lunar
-routes and Calendar event navigation hydrate the same keys. Existing calculated
-aspect ordering and the two-section limit remain in place. Publication holds and
-retirement cannot reveal older generic wording underneath a held exact source.
+routes and Calendar event navigation hydrate the same keys. The two calculated lead
+aspects retain their order. A published `sky.lunation.{phase-or-eclipse}.{moonSign}.{aspect}.{planet}.{planetSign}`
+source takes precedence over the phase-only source and may add one lunar row,
+preferring a planet not already represented by the leads. The owner approved
+this additional row for the Sky reader repair. Every matching Moon contact also
+uses its complete lunar passage in Calendar and dated Sky aspect readings.
+The contact keeps the signs at the lunation for source selection, including
+contacts that become exact across midnight or after a sign change; its
+independently calculated exact-time facts remain intact. Sun contacts use the
+exact general Sky sources, which dated lunar hydration explicitly requests.
+Calendar and dated Sky aspect readings request both the calculated event-specific
+key and its matching reusable `lunation.new` or `lunation.full` key. The
+event-specific publication retains precedence; publication holds, retirement and
+stale versions cannot reveal older phase writing underneath it.
 Studio's Live status checks the saved exact approval and the same publication
 and reader gates. `test-lunation-article-horoscopes.mts` covers source admission;
 the four destination cases in `calendar-lunation-preview.spec.ts` cover rendered

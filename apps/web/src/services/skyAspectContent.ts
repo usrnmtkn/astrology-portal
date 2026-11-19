@@ -52,11 +52,9 @@ function canonicalCollectiveSkyPoint(value: string) {
       : point;
 }
 
-function canonicalContentStudioExactSkyPoint(value: string) {
+export function canonicalContentStudioExactSkyPoint(value: string) {
   const point = slugContentPart(value);
-  if (point === "north-node" || point === "true-node") return "north-node";
-  if (point === "south-node") return "south-node";
-  return point === "black-moon-lilith" ? "lilith" : point;
+  return point === "true-node" ? "north-node" : point === "black-moon-lilith" ? "lilith" : point;
 }
 
 type ResolveSkyAspectContentOptions = {
@@ -157,10 +155,10 @@ function normalizedContentStudioExactSkyAspectFacts({
   const secondIndex = contentStudioExactBodyOrder.indexOf(normalizedSecond);
 
   if (
-    (firstIsNode && secondIsNode)
+    // Equal indices cover self-contacts and node-only pairs (both -1).
+    firstIndex === secondIndex
     || (!firstIsNode && firstIndex < 0)
     || (!secondIsNode && secondIndex < 0)
-    || normalizedFirst === normalizedSecond
     || !["conjunction", "sextile", "square", "trine", "quincunx", "opposition"].includes(normalizedAspect)
   ) {
     return null;
@@ -174,7 +172,7 @@ function normalizedContentStudioExactSkyAspectFacts({
   // Published exact-aspect Content Studio rows have always put the node first.
   // Preserve that key shape so North Node rows do not migrate, while keeping
   // North and South Node as distinct editable identities.
-  if (secondIsNode || (!firstIsNode && !secondIsNode && firstIndex > secondIndex)) {
+  if (secondIsNode || (!firstIsNode && firstIndex > secondIndex)) {
     [a, b, signA, signB] = [normalizedSecond, normalizedFirst, normalizedSecondSign, normalizedFirstSign];
   }
 

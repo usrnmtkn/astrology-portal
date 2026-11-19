@@ -1,4 +1,5 @@
 import type { LocationInput, PlanetPosition, SkySnapshot, SolarDaylight } from "../types.js";
+import { skyLunationAspectKey } from '../../../../src/shared/skyLunationAspectIdentity.js';
 import { remainingSkyMinutes } from "./skyClock.js";
 import { SOLAR_HORIZON_VERSION } from "../../../../src/shared/solarHorizon.js";
 import {
@@ -160,6 +161,8 @@ export type LunarCalendarEvent = {
   cazimi?: boolean;
   cazimiOrb?: number;
   eclipseType?: LunarCalendarEclipseType;
+  /** Source identity for a Moon contact active at the calculated lunation. */
+  lunationAspectKey?: string;
 };
 
 export type MatchingNewMoonFact = {
@@ -1636,23 +1639,12 @@ function findIngresses(
   timeZone: string,
   onlyPlanet?: string
 ): LunarCalendarEvent[] {
-  const planetIds = [
-    swe.SE_SUN,
-    swe.SE_MERCURY,
-    swe.SE_VENUS,
-    swe.SE_MARS,
-    swe.SE_JUPITER,
-    swe.SE_SATURN,
-    swe.SE_URANUS,
-    swe.SE_NEPTUNE,
-    swe.SE_PLUTO
-  ];
-  const calendarPlanets = planets.filter(([planet]) => planet !== "Moon").slice(0, planetIds.length);
+  // Moon ingresses are searched separately; this list ends with Chiron.
+  const calendarPlanets = skyPointBodies(swe).slice(0, 11).filter(([planet]) => planet !== "Moon");
   const events: LunarCalendarEvent[] = [];
 
-  calendarPlanets.forEach(([planet, glyph], index) => {
+  calendarPlanets.forEach(([planet, glyph, planetId]) => {
     if (onlyPlanet && planet !== onlyPlanet) return;
-    const planetId = planetIds[index];
     const stepMs = planet === "Moon" ? 3 * 60 * 60_000 : 12 * 60 * 60_000;
     let previousDate = start;
     let previousSign = exactPlanetSign(swe, planetId, previousDate);
@@ -1803,23 +1795,22 @@ function residencyStationsFor(
   return stations.sort((left, right) => left.occursAt.localeCompare(right.occursAt));
 }
 
+function skyPointBodies(swe: SwissEphInstance) {
+  return planets.map(([planet, glyph]) => [planet, glyph, skyPointPlanetId(swe, planet)!] as const);
+}
+
+function calendarMotionBodies(swe: SwissEphInstance) {
+  // Both motion searches use the canonical point list and Swiss ID mapping.
+  return skyPointBodies(swe).slice(2, -1);
+}
+
 function findStations(
   swe: SwissEphInstance,
   start: Date,
   end: Date,
   timeZone: string
 ): LunarCalendarEvent[] {
-  const stationBodies = [
-    ["Mercury", "☿", swe.SE_MERCURY],
-    ["Venus", "♀", swe.SE_VENUS],
-    ["Mars", "♂", swe.SE_MARS],
-    ["Jupiter", "♃", swe.SE_JUPITER],
-    ["Saturn", "♄", swe.SE_SATURN],
-    ["Uranus", "♅", swe.SE_URANUS],
-    ["Neptune", "♆", swe.SE_NEPTUNE],
-    ["Pluto", "♇", swe.SE_PLUTO],
-    ["Lilith", "⚸", SE_TRUE_BLACK_MOON_LILITH]
-  ] as const;
+  const stationBodies = calendarMotionBodies(swe);
   const events: LunarCalendarEvent[] = [];
   const stepMs = 12 * 60 * 60_000;
 
@@ -1873,17 +1864,7 @@ function findActiveRetrogrades(
   displayEnd: Date,
   timeZone: string
 ): LunarCalendarEvent[] {
-  const retrogradeBodies = [
-    ["Mercury", "☿", swe.SE_MERCURY],
-    ["Venus", "♀", swe.SE_VENUS],
-    ["Mars", "♂", swe.SE_MARS],
-    ["Jupiter", "♃", swe.SE_JUPITER],
-    ["Saturn", "♄", swe.SE_SATURN],
-    ["Uranus", "♅", swe.SE_URANUS],
-    ["Neptune", "♆", swe.SE_NEPTUNE],
-    ["Pluto", "♇", swe.SE_PLUTO],
-    ["Lilith", "⚸", SE_TRUE_BLACK_MOON_LILITH]
-  ] as const;
+  const retrogradeBodies = calendarMotionBodies(swe);
 
   const events: LunarCalendarEvent[] = [];
   const directStationCache = new Map<string, Date | null>();
@@ -2961,28 +2942,12 @@ function findSkyAspects(
   timeZone: string
 ): LunarCalendarEvent[] {
   const distanceAt = aspectCrossingDistanceAt;
-  const planetIds = [
-    swe.SE_SUN,
-    swe.SE_MOON,
-    swe.SE_MERCURY,
-    swe.SE_VENUS,
-    swe.SE_MARS,
-    swe.SE_JUPITER,
-    swe.SE_SATURN,
-    swe.SE_URANUS,
-    swe.SE_NEPTUNE,
-    swe.SE_PLUTO,
-    SE_TRUE_BLACK_MOON_LILITH
-  ];
-  const calendarPlanets = [...planets.slice(0, 10), planets[11]];
+  const calendarPlanets = skyPointBodies(swe);
   const events: LunarCalendarEvent[] = [];
   const stepMs = 12 * 60 * 60_000;
 
-  calendarPlanets.forEach(([firstPlanet, firstGlyph], firstIndex) => {
-    calendarPlanets.slice(firstIndex + 1).forEach(([secondPlanet, secondGlyph], offsetIndex) => {
-      const secondIndex = firstIndex + offsetIndex + 1;
-      const firstPlanetId = planetIds[firstIndex];
-      const secondPlanetId = planetIds[secondIndex];
+  calendarPlanets.forEach(([firstPlanet, firstGlyph, firstPlanetId], firstIndex) => {
+    calendarPlanets.slice(firstIndex + 1).forEach(([secondPlanet, secondGlyph, secondPlanetId]) => {
 
       calendarAspectDefinitions.forEach(([aspect, degrees]) => {
         let previousDate = start;
@@ -3029,27 +2994,12 @@ function findSkyAspects(
 }
 
 function activeSkyAspectsForDay(swe: SwissEphInstance, date: Date): LunarCalendarActiveAspect[] {
-  const planetIds = [
-    swe.SE_SUN,
-    swe.SE_MOON,
-    swe.SE_MERCURY,
-    swe.SE_VENUS,
-    swe.SE_MARS,
-    swe.SE_JUPITER,
-    swe.SE_SATURN,
-    swe.SE_URANUS,
-    swe.SE_NEPTUNE,
-    swe.SE_PLUTO
-  ];
-  const calendarPlanets = planets.slice(0, planetIds.length);
+  const calendarPlanets = skyPointBodies(swe).slice(0, 10);
   const comparisonDate = new Date(date.getTime() + 60 * 60_000);
   const activeAspects: LunarCalendarActiveAspect[] = [];
 
-  calendarPlanets.forEach(([firstPlanet], firstIndex) => {
-    calendarPlanets.slice(firstIndex + 1).forEach(([secondPlanet], offsetIndex) => {
-      const secondIndex = firstIndex + offsetIndex + 1;
-      const firstPlanetId = planetIds[firstIndex];
-      const secondPlanetId = planetIds[secondIndex];
+  calendarPlanets.forEach(([firstPlanet, , firstPlanetId], firstIndex) => {
+    calendarPlanets.slice(firstIndex + 1).forEach(([secondPlanet, , secondPlanetId]) => {
 
       calendarAspectDefinitions.forEach(([aspectType, degrees]) => {
         const currentDistance = aspectDistanceAt(swe, firstPlanetId, secondPlanetId, date, degrees);
@@ -3118,9 +3068,10 @@ function lunarCalendarEvents(
   swe: SwissEphInstance, gridStart: Date, gridEnd: Date, displayStart: Date,
   timeZone: string, cycleEvents: LunarCalendarEvent[]
 ): LunarCalendarEvent[] {
-  const eventStart = new Date(gridStart.getTime() - 2 * 86_400_000);
-  const eventEnd = new Date(gridEnd.getTime() + 2 * 86_400_000);
-  return [
+  const eventPaddingMs = 2 * 86_400_000;
+  const eventStart = new Date(gridStart.getTime() - eventPaddingMs);
+  const eventEnd = new Date(gridEnd.getTime() + eventPaddingMs);
+  const events = [
     ...findLunations(swe, eventStart, eventEnd, timeZone),
     ...cycleEvents.filter((event) => event.type === "ingress" && event.planet === "Moon"
       && Date.parse(event.startsAt) >= eventStart.getTime()
@@ -3130,6 +3081,32 @@ function lunarCalendarEvents(
     ...findActiveRetrogrades(swe, displayStart, gridEnd, timeZone),
     ...findSkyAspects(swe, eventStart, eventEnd, timeZone)
   ].sort((first, second) => new Date(first.startsAt).getTime() - new Date(second.startsAt).getTime());
+  return withLunationAspectKeys(swe, events);
+}
+
+function withLunationAspectKeys(swe: SwissEphInstance, events: LunarCalendarEvent[]) {
+  const eventPaddingMs = 2 * 86_400_000;
+  for (const lunar of events.filter(event => event.type === 'lunation' && event.primary)) {
+    const instant = new Date(lunar.startsAt);
+    const active = activeSkyAspectsForDay(swe, instant);
+    for (const contact of active.filter(contact => contact.planetA === 'Moon' || contact.planetB === 'Moon')) {
+      const distance = (event: LunarCalendarEvent) => Math.abs(Date.parse(event.startsAt) - +instant);
+      const event = events.filter(event => event.type === 'aspect' && event.aspect === contact.aspectType
+        && event.planets?.[0] === contact.planetA && event.planets?.[1] === contact.planetB)
+        .sort((a, b) => distance(a) - distance(b))[0];
+      // Keep the physical contact across civil-day boundaries, without borrowing
+      // another month's occurrence when this padded feed lacks the nearest one.
+      if (!event?.planets || distance(event) > eventPaddingMs) continue;
+      const [first, second] = event.planets;
+      const firstId = planets.findIndex(([name]) => name === first);
+      const secondId = planets.findIndex(([name]) => name === second);
+      // The first ten entries share Swiss's Sun-through-Pluto numbering.
+      if (firstId < 0 || firstId > 9 || secondId < 0 || secondId > 9) continue;
+      event.lunationAspectKey = skyLunationAspectKey(lunar, { from:first, to:second, type:event.aspect!,
+        fromSign:exactPlanetSign(swe, firstId, instant), toSign:exactPlanetSign(swe, secondId, instant) }) ?? undefined;
+    }
+  }
+  return events;
 }
 
 /** Sky needs the selected day's exact week-feed events, without seven days of
@@ -3401,13 +3378,15 @@ export async function getCalendarSubscriptionEvents(year: number): Promise<Lunar
   const swe = await getSwissEph();
   const start = new Date(Date.UTC(year, 0, 1));
   const end = new Date(Date.UTC(year + 1, 0, 1));
-  return [
-    ...findLunations(swe, start, end, "UTC"),
+  const contextStart = new Date(start.getTime() - 2 * 86_400_000);
+  const contextEnd = new Date(end.getTime() + 2 * 86_400_000);
+  return withLunationAspectKeys(swe, [
+    ...findLunations(swe, contextStart, contextEnd, "UTC"),
     ...findMoonIngresses(swe, start, end, "UTC"),
     ...findIngresses(swe, start, end, "UTC"),
     ...findStations(swe, start, end, "UTC"),
-    ...findSkyAspects(swe, start, end, "UTC")
-  ].filter(event => event.startsAt >= start.toISOString() && event.startsAt < end.toISOString())
+    ...findSkyAspects(swe, contextStart, contextEnd, "UTC")
+  ]).filter(event => event.startsAt >= start.toISOString() && event.startsAt < end.toISOString())
     .sort((a, b) => a.startsAt.localeCompare(b.startsAt));
 }
 
@@ -3661,25 +3640,11 @@ export type SkyPlacementTransitFacts = {
 
 function placementPlanet(swe: SwissEphInstance, requestedPlanet: string) {
   const key = requestedPlanet.trim().toLowerCase().replace(/[_\s]+/gu, "-");
-  const supported = [
-    ["sun", "Sun", swe.SE_SUN],
-    ["moon", "Moon", swe.SE_MOON],
-    ["mercury", "Mercury", swe.SE_MERCURY],
-    ["venus", "Venus", swe.SE_VENUS],
-    ["mars", "Mars", swe.SE_MARS],
-    ["jupiter", "Jupiter", swe.SE_JUPITER],
-    ["saturn", "Saturn", swe.SE_SATURN],
-    ["uranus", "Uranus", swe.SE_URANUS],
-    ["neptune", "Neptune", swe.SE_NEPTUNE],
-    ["pluto", "Pluto", swe.SE_PLUTO],
-    ["chiron", "Chiron", SE_CHIRON],
-    ["lilith", "Lilith", SE_TRUE_BLACK_MOON_LILITH],
-    ["north-node", "North Node", swe.SE_TRUE_NODE],
-    ["south-node", "South Node", swe.SE_TRUE_NODE]
-  ] as const;
-  const match = supported.find(([slug]) => slug === key);
-  if (!match) throw new Error(`Unsupported Sky Placement planet '${requestedPlanet}'.`);
-  return { planet: match[1], planetId: match[2], longitudeOffset: match[0] === "south-node" ? 180 : 0 };
+  const planet = key === "south-node" ? "South Node"
+    : planets.find(([name]) => name.toLowerCase().replaceAll(" ", "-") === key)?.[0];
+  const planetId = skyPointPlanetId(swe, planet === "South Node" ? "North Node" : planet ?? "");
+  if (!planet || planetId === null) throw new Error(`Unsupported Sky Placement planet '${requestedPlanet}'.`);
+  return { planet, planetId, longitudeOffset: key === "south-node" ? 180 : 0 };
 }
 
 function placementSign(requestedSign: string) {
@@ -4011,24 +3976,9 @@ export async function getAstrodienstSky(
   const midheavenLongitude = normalizeDegrees(houses.ascmc[1]);
   const ascendant = signNameForLongitude(ascendantLongitude);
   const midheaven = signNameForLongitude(midheavenLongitude);
-  const planetIds = [
-    swe.SE_SUN,
-    swe.SE_MOON,
-    swe.SE_MERCURY,
-    swe.SE_VENUS,
-    swe.SE_MARS,
-    swe.SE_JUPITER,
-    swe.SE_SATURN,
-    swe.SE_URANUS,
-    swe.SE_NEPTUNE,
-    swe.SE_PLUTO,
-    SE_CHIRON,
-    SE_TRUE_BLACK_MOON_LILITH,
-    swe.SE_TRUE_NODE
-  ];
   const returnedEphemerisFlags = new Set<number>();
-  const positions: CalculatedPlanet[] = planets.map(([planet, glyph], index) => {
-    const calculation = calculateSwissUt(swe, jd, planetIds[index], flags);
+  const positions: CalculatedPlanet[] = skyPointBodies(swe).map(([planet, glyph, planetId]) => {
+    const calculation = calculateSwissUt(swe, jd, planetId, flags);
     returnedEphemerisFlags.add(calculation.returnedFlags);
     const result = calculation.values;
     const longitude = normalizeDegrees(result[0]);
@@ -4038,16 +3988,16 @@ export async function getAstrodienstSky(
     const includePositionWindows = options.includeTransitWindows
       && (!options.transitWindowPlanets || options.transitWindowPlanets.includes(planet));
     const transitWindow = includePositionWindows
-      ? signResidencyWindowFor(swe, planet, planetIds[index], date, sign)
+      ? signResidencyWindowFor(swe, planet, planetId, date, sign)
       : {};
     const residencyStations = includePositionWindows && transitWindow.residencyPasses
-      ? residencyStationsFor(swe, planet, planetIds[index], transitWindow.residencyPasses)
+      ? residencyStationsFor(swe, planet, planetId, transitWindow.residencyPasses)
       : undefined;
     const structuralTransitFacts = includePositionWindows && !(options.deferPlacementHistory && options.includeAspectTiming === false)
-      ? skyPlacementStructuralTransitFacts(swe, planet, planetIds[index], sign, transitWindow, date)
+      ? skyPlacementStructuralTransitFacts(swe, planet, planetId, sign, transitWindow, date)
       : {};
     const retrogradeWindow = includePositionWindows
-      ? retrogradeCycleFactsFor(swe, planet, planetIds[index], date, motion)
+      ? retrogradeCycleFactsFor(swe, planet, planetId, date, motion)
       : {};
 
     return {
