@@ -2,8 +2,9 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
-import { build } from "esbuild";
+import { fileURLToPath, pathToFileURL } from "node:url";
+import { spawnSync } from "node:child_process";
+import { build, transform } from "esbuild";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const apiLibRoot = path.join(repoRoot, "api", "_lib");
@@ -33,6 +34,19 @@ assert.deepEqual(
 
 const buildRoot = fs.mkdtempSync(path.join(os.tmpdir(), "tldrastro-production-health-"));
 const bundledHealthPath = path.join(buildRoot, "health.mjs");
+
+// Bundling resolves extensionless imports that native production ESM rejects.
+fs.writeFileSync(path.join(buildRoot, "package.json"), JSON.stringify({ type: "module" }));
+for (const module of ["verifiedSkyCache", "astrologyFacts"]) {
+  const source = fs.readFileSync(path.join(repoRoot, "apps/web/src/services", `${module}.ts`), "utf8");
+  const emitted = await transform(source, { loader: "ts", format: "esm", target: "node22" });
+  fs.writeFileSync(path.join(buildRoot, `${module}.js`), emitted.code);
+}
+const nativeImport = spawnSync(process.execPath, [
+  "--input-type=module", "--eval",
+  `await import(${JSON.stringify(pathToFileURL(path.join(buildRoot, "verifiedSkyCache.js")).href)});`
+], { encoding: "utf8" });
+assert.equal(nativeImport.status, 0, `Production health cache must import in native ESM: ${nativeImport.stderr}`);
 
 const buildResult = await build({
   entryPoints: [path.join(repoRoot, "api", "health.ts")],
