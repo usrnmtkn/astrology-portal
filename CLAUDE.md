@@ -2,9 +2,11 @@
 
 ## Release queue
 
-For PR submission, CI waits, merging or deployment, follow
-[`docs/qa/release-queue.md`](docs/qa/release-queue.md). One coordinator assigns the
-active PR and advances releases through automatic production acceptance.
+Before pushing a new or replacement CI candidate, complete the mandatory scoped
+preflight in [`docs/qa/release-queue.md`](docs/qa/release-queue.md), including for
+test-only changes. Follow the same runbook for CI waits, merging and deployment.
+One coordinator assigns the active PR and advances releases through automatic
+production acceptance.
 Reuse recorded release authorization instead of asking the human to reconfirm
 an operational slot, merge or deployment within that scope.
 
