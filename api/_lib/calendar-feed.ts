@@ -19,7 +19,7 @@ async function yearFacts(year: number) {
   if (!value) {
     value = getCalendarSubscriptionEvents(year); factCache.set(year, value);
     void value.catch(() => factCache.delete(year));
-    if (factCache.size > 3) factCache.delete(factCache.keys().next().value!);
+    if (factCache.size > 4) factCache.delete(factCache.keys().next().value!);
   }
   return value;
 }
@@ -78,15 +78,20 @@ async function publishedCopy(events: LunarCalendarEvent[]) {
   }
   return { rows, publications };
 }
-const factsModified = "2026-09-22T00:00:00Z";
+const factsModified = "2026-11-18T00:05:00Z";
 export async function buildCalendarFeedEntries(options: CalendarSubscriptionOptions, origin: string, now = new Date(), onlyId?: string): Promise<FeedEntry[]> {
-  const year = now.getUTCFullYear();
-  const years = onlyId?.startsWith("event-") ? [] : onlyId ? [year - 1, year, year + 1] : [year, year + 1];
+  const year = Number(calendarLocalDateKey(now.toISOString(), options.timeZone).slice(0, 4));
+  const firstDate = `${year}-01-01`, untilDate = `${year + 2}-01-01`;
+  const start = zonedDateTimeToUtc(firstDate, "12:00 AM", options.timeZone);
+  const end = zonedDateTimeToUtc(untilDate, "12:00 AM", options.timeZone);
+  const firstUTCYear = start.getUTCFullYear(), lastUTCYear = new Date(end.getTime() - 1).getUTCFullYear();
+  const years = onlyId?.startsWith("event-") ? [] : onlyId ? [year - 1, year, year + 1]
+    : Array.from({ length: lastUTCYear - firstUTCYear + 1 }, (_, index) => firstUTCYear + index);
   const allFacts = (await Promise.all(years.map(yearFacts))).flat()
     .map(event => ({ ...event, dateKey: calendarLocalDateKey(event.startsAt, options.timeZone) }));
   const facts = allFacts.filter(event => {
     if (onlyId && event.id !== onlyId) return false;
-    if (event.type === "lunation" && !event.primary) return false;
+    if (!onlyId && (event.dateKey < firstDate || event.dateKey >= untilDate)) return false;
     const category = eventFeedCategory(event);
     return options.include.includes(category) || options.include.includes("key") && isHandoffKeyEvent(event, event.dateKey);
   });
@@ -105,7 +110,7 @@ export async function buildCalendarFeedEntries(options: CalendarSubscriptionOpti
     return { modified, sequence: Math.max(1, Math.floor((Date.parse(modified) - Date.UTC(2020, 0, 1)) / 1000)) };
   };
   const entries: FeedEntry[] = facts.map(event => {
-    const text = selectCalendarFeedCopy(contentKeys(event), event.dateKey, copy.rows, copy.publications);
+    const text = event.type === "aspect" ? null : selectCalendarFeedCopy(contentKeys(event), event.dateKey, copy.rows, copy.publications);
     return { readingId: event.id, uid: `astro-${createHash("sha256").update(event.id).digest("hex")}@tldrastro`, title: event.title,
       description: text?.body ?? reader.eventBody(event, options.timeZone, allFacts), start: event.startsAt, end: event.endsAt && event.endsAt > event.startsAt ? event.endsAt : new Date(Date.parse(event.startsAt) + 60000).toISOString(),
       allDay: false, category: eventFeedCategory(event), url: calendarReadingUrl(origin, event.dateKey, event.id, options.timeZone),

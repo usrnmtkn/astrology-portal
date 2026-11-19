@@ -1,16 +1,10 @@
-import { isContentRetired, contentPublication, publicationRestoresBaseline } from "./contentPublicationState";
-import {
-  generatedContentParagraphs,
-  renderGeneratedContentTemplate,
-  type LiveGeneratedContent
-} from "../services/generatedContent";
-import type { TemplateSlotValues } from "../services/templateInterpolation";
 import { skyDebilityFields } from "./skyDebilityCatalog";
 import { skyDebilityInterpretationKey } from "./skyDebilityInterpretation";
 import type { SkyDebilityDisplayPosition } from "./skyDebilityPresentation";
 import { emptyHouseCmsKeys } from "./emptyHouseRulership.js";
 
-export type CmsGeneratedContentMap = ReadonlyMap<string, LiveGeneratedContent>;
+export { resolveCmsSurfaceOverride } from "./cmsSurfaceOverrideRendering.js";
+export type { CmsGeneratedContentMap, CmsSurfaceOverride } from "./cmsSurfaceOverrideRendering.js";
 
 function keyPart(value: string | number | null | undefined) {
   return String(value ?? "")
@@ -50,45 +44,3 @@ export const cmsSurfaceKeys = {
     `cms/weekly-horoscope/${keyPart(kind)}`
   ]
 } as const;
-
-export type CmsSurfaceOverride = {
-  body: string;
-  contentKey: string;
-  headline: string | null;
-  sourceKeys: string[];
-  retired?: boolean;
-  unavailable?: boolean;
-};
-
-/**
- * Resolves a reviewed dashboard row without changing the local fallback.
- * Callers pass keys from most-specific to least-specific. The reader loader
- * has already rejected every row that is not LIVE, serving, and review-clear.
- */
-export function resolveCmsSurfaceOverride(
-  generatedContent: CmsGeneratedContentMap | null | undefined,
-  contentKeys: readonly string[],
-  slots: TemplateSlotValues = {}
-): CmsSurfaceOverride | null {
-  for (const contentKey of contentKeys) {
-    const publication = contentPublication(contentKey);
-    if (publication && publicationRestoresBaseline(publication)) continue;
-    const retired = isContentRetired(contentKey);
-    const rendered = retired ? null : renderGeneratedContentTemplate(generatedContent?.get(contentKey), slots);
-    if (!rendered && publication) {
-      return { body: "", headline: null, contentKey, sourceKeys: [contentKey], retired, unavailable: true };
-    }
-    if (!rendered) continue;
-    const body = generatedContentParagraphs(rendered).join("\n\n").trim();
-    if (!body) continue;
-
-    return {
-      body,
-      contentKey: rendered.contentKey,
-      headline: rendered.headline?.trim() || null,
-      sourceKeys: ["generated_interpretations", rendered.contentKey]
-    };
-  }
-
-  return null;
-}

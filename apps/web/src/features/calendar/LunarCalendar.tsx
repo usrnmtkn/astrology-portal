@@ -198,9 +198,9 @@ const viewModeOptions: Array<{ value: LunarCalendarViewMode; label: string }> = 
   { value: "month", label: "Month" }
 ];
 
-// v15 uses native eclipse classification alongside the complete exact events.
-// Earlier cached calendars can retain incorrect eclipse labels.
-const calendarStorageVersion = "v16";
+// v17 combines lunation context with the complete Chiron and node events.
+// Earlier cached calendars can omit events or retain older source identities.
+const calendarStorageVersion = "v17";
 const calendarStorageTtlMs = 12 * 60 * 60_000;
 const enableLunarArcContent = String(import.meta.env.VITE_ENABLE_LUNAR_ARC_CONTENT ?? "true").toLowerCase() !== "false";
 const enableCalendarApi = import.meta.env.PROD
@@ -911,22 +911,10 @@ export function liveCalendarEventContent(
   }
 
   for (const contentKey of calendarEventGeneratedContentKeys(event)) {
-    const content = fallbackArchitectureV3AuthoredContentForKey(contentKey);
-
-    if (content && contentMatchesCalendarEventFacts(event, content)) {
-      return content;
-    }
-  }
-
-  if (!generatedContent) {
-    return null;
-  }
-
-  for (const contentKey of calendarEventGeneratedContentKeys(event)) {
-    const content = generatedContent.get(contentKey);
-
-    if (content && contentMatchesCalendarEventFacts(event, content)) {
-      return content;
+    // Retain exact-event key precedence, with a published revision ahead of
+    // the approved bundle for that same identity.
+    for (const content of [generatedContent?.get(contentKey), fallbackArchitectureV3AuthoredContentForKey(contentKey)]) {
+      if (content && contentMatchesCalendarEventFacts(event, content)) return content;
     }
   }
 
@@ -1223,7 +1211,7 @@ export function normalizeCalendarEventSurface(
       ? [generatedContentParagraphs(content).join("\n\n").trim()]
       : generatedContentParagraphs(content))
   ]);
-  const generatedDescriptionFitsDateContext = dateLine === "Today"
+  const generatedDescriptionFitsDateContext = wholeEventWriteup || dateLine === "Today"
     || weeklyEventDescriptionFitsDateContext(generatedDescription ?? "");
 
   if (event.type === "aspect" && event.planets && event.aspect) {
@@ -2410,7 +2398,7 @@ export function LunarCalendar({
     ].filter((contentKey) => (
       // Signed-off Studio exact revisions can supersede their bundled baseline.
       // Keep requesting these keys even when local approved prose is available.
-      contentKey.startsWith("sky.aspect.") || contentKey.startsWith("authored/sky-lunation-macro/") || !fallbackArchitectureV3AuthoredContentForKey(contentKey)
+      /^sky\.(aspect|station|retrograde)\./u.test(contentKey) || contentKey.startsWith("authored/sky-lunation-macro/") || contentKey.startsWith("authored/station/") || !fallbackArchitectureV3AuthoredContentForKey(contentKey)
     ));
     const firstDate = visibleDays[0]?.dateKey ?? selectedDateKey;
     const lastDate = visibleDays.at(-1)?.dateKey ?? selectedDateKey;

@@ -3,13 +3,16 @@ import { readFileSync } from "node:fs";
 import { calendarSubscriptionFixture } from "../tests/helpers/calendar-subscription-fixture.js";
 import { escapeCalendarText, foldCalendarLine, serializeCalendarFeed, selectCalendarFeedCopy } from "../api/_lib/calendar-feed.js";
 import { getCalendarSubscriptionEvents, getLunarCalendarMonth } from "../apps/web/src/services/ephemeris.js";
-import { calendarSubscriptionUrls } from "../apps/web/src/features/calendar/calendarSubscription.js";
+import { calendarSubscriptionUrls, calendarFeedCategories } from "../apps/web/src/features/calendar/calendarSubscription.js";
 import { calendarLocalDateKey } from "../apps/web/src/features/calendar/calendarPhaseLabel.js";
-import { calendarSkyV4LunationContentKey } from "../apps/web/src/features/calendar/calendarContentKeys.js";
+import { calendarSkyV4LunationContentKey, calendarEventGeneratedContentKeys } from "../apps/web/src/features/calendar/calendarContentKeys.js";
 import { verifyCalendarFeedRuntimeImports } from "../tests/helpers/calendar-feed-runtime.mts";
-import { calendarFeedExcerpt, calendarFeedDescription, calendarReadingUrl } from "../apps/web/src/features/calendar/calendarFeedPreview.js";
+import { calendarFeedDescription, calendarReadingUrl } from "../apps/web/src/features/calendar/calendarFeedPreview.js";
 import { calendarFeedCopyReader } from "../api/_lib/calendar-feed-copy.js";
 import { skyPlacementSourceRecords } from "../api/_lib/sky-placement-sources.js";
+import { verifyCalendar2027Coverage } from "../tests/helpers/calendar-2027-coverage.mts";
+import { isHandoffKeyEvent } from "../apps/web/src/features/calendar/calendarHandoff.js";
+import { verifyCalendar2027ApprovedReadings } from "../tests/helpers/calendar-2027-approved-copy.js";
 
 verifyCalendarFeedRuntimeImports();
 const fixture = await calendarSubscriptionFixture();
@@ -17,9 +20,8 @@ const options = { include: ["key"], reminder: "At the time", timeZone: "America/
 const owner = { authorization: "Bearer fixture-owner" };
 try {
   const previewBody = "First sentence.\n\nThe second includes 12.5 degrees. Third sentence! Fourth sentence stays in the app.";
-  assert.equal(calendarFeedExcerpt(previewBody), "First sentence.\n\nThe second includes 12.5 degrees. Third sentence!");
-  assert.equal(calendarFeedExcerpt("**First sentence.** Second sentence."), "First sentence. Second sentence.");
-  assert.equal(calendarFeedExcerpt("# Event title\n\nFirst sentence. Second sentence. Third sentence. Fourth sentence."), "First sentence. Second sentence. Third sentence.");
+  assert.equal(calendarFeedDescription(previewBody, ""), previewBody);
+  assert.equal(calendarFeedDescription("# Event title\n\n**First sentence.** Complete final sentence.", ""), "# Event title\n\n**First sentence.** Complete final sentence.");
   const readingPath = (id: string, date = "2026-09-21", timeZone = "America/New_York") => `/api/calendar-reading?${new URLSearchParams({ id, date, timeZone })}`;
   assert.equal((await fixture.invoke(readingPath("week-2026-09-21"), "POST")).status, 405);
   assert.equal((await fixture.invoke(readingPath("week-2026-09-21", "2026-02-30"))).status, 400);
@@ -76,7 +78,7 @@ try {
   const updated = await fixture.invoke(path, "GET", undefined, { "if-none-match": first.headers.etag });
   assert.equal(updated.status, 200); assert.notEqual(updated.headers.etag, first.headers.etag); assert(updated.body.includes(changed.title)); assert.equal(updated.body.split(`UID:${uid}`).length, 2); assert(updated.body.includes("SEQUENCE:3"));
   assert((await fixture.invoke(`/feed/${second.token}.ics`)).body.includes(changed.title), "Existing subscriptions receive additions and edits");
-  assert(!updated.body.includes("Fourth sentence stays"), "Subscriptions have the requested opening sentences only");
+  assert(updated.body.replace(/\r\n /gu, "").includes(escapeCalendarText(previewBody)), "Subscriptions preserve the complete published reading");
   const revisedReading = (await fixture.invoke(readingPath(`event-${saved.id}`, "2026-10-04"))).json().reading;
   assert.equal(revisedReading.body, previewBody, "The same event link retains the complete published body after edits");
   assert.equal(revisedReading.url, eventLink);
@@ -148,7 +150,7 @@ try {
   const moonPath = `/feed/${moonSub.token}.ics`;
   const moonFeed = (await fixture.invoke(moonPath)).body.replace(/\r\n /gu, "");
   assert(moonFeed.includes("DESCRIPTION:Published opening. Complete published ending."), "Published Calendar copy uses the subscriber's local event date");
-  assert(!moonFeed.includes("Quarter Moon"));
+  assert(moonFeed.includes("First Quarter Moon") && moonFeed.includes("Last Quarter Moon"));
   assert(moonFeed.includes(`?date=${localDate}#calendar?view=day&date=${localDate}&event=${encodeURIComponent(moon.id)}`));
   const exactMoonReading = await fixture.invoke(readingPath(moon.id, localDate));
   assert.equal(exactMoonReading.status, 200); assert.equal(exactMoonReading.json().reading.id, moon.id);
@@ -190,5 +192,75 @@ try {
     const equivalent = calculated.find(item => item.type === "lunation" && item.title === fullMoon.title && item.dateKey === fullMoon.dateKey)!;
     assert(equivalent); assert(Math.abs(Date.parse(equivalent.startsAt) - Date.parse(fullMoon.startsAt)) < 60000);
   }
+  const events2027 = await verifyCalendar2027Coverage();
+  const keyFeed = (await fixture.invoke(`/feed/${second.token}.ics`)).body.replace(/\r\n /gu, "");
+  for (const event of events2027.filter(event => isHandoffKeyEvent(event))) {
+    assert(keyFeed.includes(`event=${encodeURIComponent(event.id)}`), `${event.title}: existing key subscriptions receive 2027 highlights`);
+  }
+  const allSub = (await fixture.invoke("/api/calendar-subscriptions", "POST", { ...options, include: [...calendarFeedCategories] })).json().subscription;
+  const allFeed = await fixture.invoke(`/feed/${allSub.token}.ics`);
+  assert.equal(allFeed.status, 200);
+  const allEntries = allFeed.body.replace(/\r\n /gu, "").split("BEGIN:VEVENT");
+  for (const event of events2027) {
+    assert.equal(allEntries.filter(entry => entry.includes(`event=${encodeURIComponent(event.id)}`)).length, 1, `${event.title}: every calculated event is exported once when all categories are chosen`);
+  }
+  const lunar = events2027.find(event => event.lunationAspectKey === "sky.lunation.full-moon.libra.trine.uranus.gemini");
+  assert(lunar, "The calculated 2027 Full Moon contact retains its lunation source identity");
+  const lunarCalendar = await getLunarCalendarMonth({ label: "UTC", latitude: 0, longitude: 0, timeZone: "UTC" }, new Date(lunar.startsAt), { detail: "full" });
+  assert(lunarCalendar.events.some(event => event.lunationAspectKey === lunar.lunationAspectKey
+    && Math.abs(Date.parse(event.startsAt) - Date.parse(lunar.startsAt)) < 60_001), "Calendar and annual export attach the same lunar source to the physical contact");
+  const lunarKey = "lunation.full.libra.trine.uranus.gemini";
+  const lunarBody = "Synthetic reusable Full Moon opening.\n\nSecond complete paragraph.\n\nThird complete paragraph.\n\nThe full approved final sentence remains in the Calendar link and subscription.";
+  const lunarRowId = "af2f1000-0000-4000-8000-000000000005";
+  await fixture.db.query("insert into generated_interpretations(id,content_key,status,lane,body,updated_at,source_snapshot) values($1,$2,'LIVE','serving',$3,now(),$4)", [lunarRowId, lunarKey, lunarBody, JSON.stringify({ review_status: "approved", content_role: "full_copy" })]);
+  await fixture.db.query("insert into content_publications(content_key,state,revision,row_id,row_updated_at,updated_at) select content_key,'live',1,id,updated_at,updated_at from generated_interpretations where id=$1", [lunarRowId]);
+  const lunarReadingPath = readingPath(lunar.id, calendarLocalDateKey(lunar.startsAt, options.timeZone));
+  assert.equal((await fixture.invoke(lunarReadingPath)).json().reading.body, lunarBody, "The linked reading preserves the entire lunation-specific source");
+  const lunarFeed = (await fixture.invoke(`/feed/${allSub.token}.ics`)).body.replace(/\r\n /gu, "");
+  const lunarEntry = lunarFeed.split("BEGIN:VEVENT").find(entry => entry.includes(`event=${encodeURIComponent(lunar.id)}`));
+  assert(lunarEntry?.includes(`DESCRIPTION:${escapeCalendarText(lunarBody)}`), "The actual ICS uses the complete Calendar lunation-specific reading");
+  await fixture.db.query("update content_publications set state='retired',revision=revision+1 where content_key=$1", [lunarKey]);
+  assert.equal((await fixture.invoke(lunarReadingPath)).json().reading.body, "", "A request-scoped retirement cannot revive generic or older lunar copy");
+  const events2028 = await getCalendarSubscriptionEvents(2028);
+  const newYearMoon = events2028.find(event => event.title === "Moon conjunction Lilith" && event.startsAt.startsWith("2028-01-01"))!;
+  assert(newYearMoon && Math.abs(Date.parse(newYearMoon.startsAt) - Date.parse("2028-01-01T03:52:00Z")) <= 2000);
+  assert.equal(calendarLocalDateKey(newYearMoon.startsAt, options.timeZone), "2027-12-31");
+  const lateEastern = events2028.filter(event => calendarLocalDateKey(event.startsAt, options.timeZone) === "2027-12-31");
+  assert(lateEastern.length > 0, "Exercise a 2027 local event whose exact UTC instant falls in 2028");
+  for (const event of lateEastern) assert(allEntries.some(entry => entry.includes(`event=${encodeURIComponent(event.id)}`)), "Late December 31 events are not cut off at UTC New Year");
+  const tokyoSub = (await fixture.invoke("/api/calendar-subscriptions", "POST", { ...options, include: [...calendarFeedCategories], timeZone: "Asia/Tokyo" })).json().subscription;
+  const tokyoFeed = (await fixture.invoke(`/feed/${tokyoSub.token}.ics`)).body.replace(/\r\n /gu, "");
+  const earlyTokyo = (await getCalendarSubscriptionEvents(2025)).filter(event => calendarLocalDateKey(event.startsAt, "Asia/Tokyo") === "2026-01-01");
+  assert(earlyTokyo.some(event => event.title === "Moon trine Pluto" && Math.abs(Date.parse(event.startsAt) - Date.parse("2025-12-31T17:34:39Z")) <= 2000));
+  assert(earlyTokyo.length > 0, "Exercise January 1 events whose UTC instants fall in the preceding year");
+  for (const event of earlyTokyo) assert(tokyoFeed.includes(`event=${encodeURIComponent(event.id)}`));
+  const outsideTokyo = events2027.filter(event => calendarLocalDateKey(event.startsAt, "Asia/Tokyo") === "2028-01-01");
+  assert(outsideTokyo.some(event => event.title === "Mercury square Saturn" && Math.abs(Date.parse(event.startsAt) - Date.parse("2027-12-31T15:59:26Z")) <= 2000));
+  assert(outsideTokyo.length > 0);
+  for (const event of outsideTokyo) assert(!tokyoFeed.includes(`event=${encodeURIComponent(event.id)}`), "The feed ends at the subscriber's local New Year");
+  const quarters = events2027.filter(event => /Quarter Moon/u.test(event.title));
+  assert.equal(quarters.length, 24);
+  for (const event of [quarters[0], quarters.find(event => /Last Quarter/u.test(event.title))!]) {
+    assert.equal(calendarSkyV4LunationContentKey(event), null, "Quarter moons cannot select a Full Moon article");
+    const reading = await fixture.invoke(readingPath(event.id, calendarLocalDateKey(event.startsAt, options.timeZone)));
+    assert.equal(reading.status, 200);
+    assert(reading.json().reading.body, `${event.title}: approved quarter-phase reading is available`);
+    const entry = allEntries.find(part => part.includes(`event=${encodeURIComponent(event.id)}`))!;
+    assert(entry.includes(`DESCRIPTION:${escapeCalendarText(reading.json().reading.body)}`), "The entire quarter reading reaches the ICS description");
+  }
+  const quarter = quarters[0], quarterDate = calendarLocalDateKey(quarter.startsAt, options.timeZone);
+  const quarterKey = calendarEventGeneratedContentKeys(quarter).find(key => key.startsWith("authored/lunar-journal/"))!;
+  const quarterBody = "Published quarter opening.\n\nSecond complete paragraph.\n\nThird complete paragraph.\n\nComplete fourth paragraph and final sentence.";
+  const quarterRowId = "af2f1000-0000-4000-8000-000000000004";
+  await fixture.db.query("insert into generated_interpretations(id,content_key,target_date,status,lane,body,updated_at,source_snapshot) values($1,$2,$3,'LIVE','serving',$4,now(),$5)", [quarterRowId, quarterKey, quarterDate, quarterBody, JSON.stringify({ review_status: "approved", content_role: "full_copy" })]);
+  await fixture.db.query("insert into content_publications(content_key,state,revision,row_id,row_updated_at,updated_at) select content_key,'live',1,id,updated_at,updated_at from generated_interpretations where id=$1", [quarterRowId]);
+  const quarterReading = await fixture.invoke(readingPath(quarter.id, quarterDate));
+  assert.equal(quarterReading.json().reading.body, quarterBody);
+  const quarterFeed = (await fixture.invoke(`/feed/${allSub.token}.ics`)).body.replace(/\r\n /gu, "");
+  assert(quarterFeed.includes(`DESCRIPTION:${escapeCalendarText(quarterBody)}`), "Existing feeds receive a complete published quarter reading without truncation");
+  const phaseKey = "fallback-hook/moon-phase/first-quarter";
+  const retiredPhase = new Map([[phaseKey, { content_key: phaseKey, state: "retired", revision: 1 } as any]]);
+  assert.equal(calendarFeedCopyReader(retiredPhase).eventBody(quarter, options.timeZone, events2027), "", "Retired quarter copy cannot reappear through a bundled fallback");
   console.log("PASS calendar subscriptions: actual handlers + PostgreSQL migration, unique URLs, auth/RLS, draft/publish/edit/cancel, same-URL refresh, ETag, reminders, full text, UTF-8 folding, provider links and calculation parity");
 } finally { await fixture.close(); }
+await verifyCalendar2027ApprovedReadings();
