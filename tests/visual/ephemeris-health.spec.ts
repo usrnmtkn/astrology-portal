@@ -104,6 +104,33 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
     expect(layout.typography).toMatchObject({ size: '15px', weight: '400', leading: '22.5px', tracking: 'normal' });
     expect(layout.typography.family).toContain('sans-serif');
     await info.attach('warning-layout', { body: JSON.stringify(layout), contentType: 'application/json' });
+    await page.locator('.sky-header-date-button').click();
+    const dateDialog = page.getByRole('dialog', { name: 'Date and location', exact: true });
+    await dateDialog.getByRole('tab', { name: 'Date', exact: true }).click();
+    await page.setViewportSize({ width, height: 390 });
+    const days = dateDialog.locator('.date-picker-grid button');
+    const expectReachableDates = async () => {
+      await expect.poll(async () => dateDialog.locator('.header-date-content').evaluate(element => element.clientHeight))
+        .toBeGreaterThanOrEqual((await days.first().boundingBox())!.height);
+      for (const day of [days.first(), days.last()]) {
+        await day.scrollIntoViewIfNeeded();
+        expect(await day.evaluate(element => {
+          const box = element.getBoundingClientRect();
+          const hit = document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2);
+          return hit === element || Boolean(hit && element.contains(hit));
+        }), 'Date controls stay reachable as warning availability changes').toBe(true);
+      }
+    };
+    await expectReachableDates();
+    await page.screenshot({ path: info.outputPath(`ephemeris-date-dialog-${width}-${theme}.png`) });
+    ready = true;
+    await page.evaluate(() => window.dispatchEvent(new Event('online')));
+    await expect(warning).toHaveCount(0);
+    await expectReachableDates();
+    await page.keyboard.press('Escape');
+    await expect(dateDialog).toBeHidden();
+    ready = false;
+    await page.setViewportSize({ width, height: 1000 });
     await page.reload();
     await expect(warning).toBeVisible({ timeout: 60_000 });
     await expectWarningAboveNavigation(page);

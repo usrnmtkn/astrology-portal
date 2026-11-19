@@ -44,3 +44,6 @@
  .header-date-modal .modal-overlay { background: var(--modal-overlay-bg); }
  .modal-panel.header-date-panel { top: auto; right: 0; bottom: 0; width: 100%; max-height: var(--dialog-max-height); border-radius: var(--sheet-radius) var(--sheet-radius) 0 0; padding: var(--space-3) var(--space-6) var(--space-7); }
 }
+@media (min-width: 801px) and (max-height: 500px) {
+ .modal-panel.header-date-panel { top: var(--space-4); max-height: var(--dialog-frame-max-height); }
+}
