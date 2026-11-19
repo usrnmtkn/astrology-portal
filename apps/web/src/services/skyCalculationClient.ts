@@ -48,14 +48,6 @@ function rejectPendingCalculations(error: Error) {
   pendingCalculations.clear();
 }
 
-function failSkyWorker(error: Error, worker = skyWorker) {
-  if (skyWorker !== worker) return;
-  observeEphemerisHealth("worker", false);
-  worker?.terminate();
-  skyWorker = null;
-  rejectPendingCalculations(error);
-}
-
 function workerForSkyCalculations() {
   if (skyWorker) return skyWorker;
 
@@ -64,7 +56,13 @@ function workerForSkyCalculations() {
     name: "tldrastro-sky-calculation"
   });
 
-  const failWorker = (error: Error) => failSkyWorker(error, worker);
+  const failWorker = (error: Error) => {
+    if (skyWorker !== worker) return;
+    observeEphemerisHealth("worker", false);
+    worker.terminate();
+    skyWorker = null;
+    rejectPendingCalculations(error);
+  };
   worker.addEventListener("messageerror", () => failWorker(new Error("The astronomy worker returned an unreadable response.")));
   worker.addEventListener("message", (event: MessageEvent<SkyCalculationResponse>) => {
     if (skyWorker !== worker) return;
@@ -101,13 +99,19 @@ function requestCalculation<T>(message: Record<string, unknown>): Promise<T> {
     const timeout = setTimeout(() => {
       // A hung worker or missing asset must not leave every later route queued
       // forever. A retry creates a new worker with the original ephemeris inputs.
-      failSkyWorker(new Error("Astronomy calculation timed out. Please retry."));
+      observeEphemerisHealth("worker", false);
+      skyWorker?.terminate();
+      skyWorker = null;
+      rejectPendingCalculations(new Error("Astronomy calculation timed out. Please retry."));
     }, message.kind === "sky" || message.kind === "preload" ? 30_000 : 120_000);
     pendingCalculations.set(id, { resolve: (value) => resolve(value as T), reject, timeout });
     try {
       workerForSkyCalculations().postMessage({ id, ...message });
     } catch (error) {
-      failSkyWorker(error instanceof Error ? error : new Error("Astronomy calculation could not start."));
+      observeEphemerisHealth("worker", false);
+      skyWorker?.terminate();
+      skyWorker = null;
+      rejectPendingCalculations(error instanceof Error ? error : new Error("Astronomy calculation could not start."));
     }
   });
 }
