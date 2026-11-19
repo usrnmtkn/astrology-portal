@@ -55,12 +55,12 @@ assert.match(
 );
 assert.match(
   manualChartsSource,
-  /function chartIdentityFromInput\(input: ManualChartInput\)/,
-  "Friends chart CRUD must have a typed identity helper for input payloads."
+  /function chartIdentity\(chart: Pick<ManualChart,/,
+  "Friends chart CRUD must keep chart identity structurally typed for both stored charts and input payloads."
 );
 assert.match(
   manualChartsSource,
-  /const existingChart = localManualChartOwnerIds\(userId\)[\s\S]*\.find\(\(chart\) => chartIdentity\(chart\) === chartIdentityFromInput\(normalizedInput\)\);/,
+  /const existingChart = localManualChartOwnerIds\(userId\)[\s\S]*\.find\(\(chart\) => chartIdentity\(chart\) === chartIdentity\(normalizedInput\)\);/,
   "Creating a local Friends chart must reuse an exact existing chart across current and legacy owner keys."
 );
 assert.match(
@@ -80,7 +80,7 @@ assert.match(
 );
 assert.match(
   manualChartsSource,
-  /const existingRemoteChart = \(await listRemoteManualCharts\(userId\)\)[\s\S]*\.find\(\(chart\) => chartIdentity\(chart\) === chartIdentityFromInput\(input\)\);/,
+  /const existingRemoteChart = \(await listRemoteManualCharts\(userId\)\)[\s\S]*\.find\(\(chart\) => chartIdentity\(chart\) === chartIdentity\(input\)\);/,
   "Creating a remote Friends chart must reuse an exact existing chart instead of adding a duplicate row."
 );
 assert.match(
@@ -90,7 +90,7 @@ assert.match(
 );
 assert.match(
   manualChartsSource,
-  /const updatedIdentity = chartIdentityFromInput\(normalizedInput\);/,
+  /const updatedIdentity = chartIdentity\(normalizedInput\);/,
   "Updating a local Friends chart must know its new identity so hidden new duplicates can be removed."
 );
 assert.match(

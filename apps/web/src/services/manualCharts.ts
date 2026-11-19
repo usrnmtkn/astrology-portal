@@ -296,17 +296,6 @@ function chartIdentity(chart: Pick<ManualChart, "chartType" | "displayName" | "b
   ].join("|");
 }
 
-function chartIdentityFromInput(input: ManualChartInput) {
-  return chartIdentity({
-    chartType: input.chartType,
-    displayName: input.displayName,
-    birthDate: input.birthDate,
-    birthTime: input.birthTime,
-    birthTimeUnknown: input.birthTimeUnknown,
-    birthPlace: input.birthPlace
-  });
-}
-
 function dedupeManualCharts(charts: ManualChart[]) {
   const seen = new Set<string>();
   const dedupedCharts: ManualChart[] = [];
@@ -368,15 +357,13 @@ function clearLocalManualCharts(userId: string) {
 
 function createLocalManualChart(userId: string, input: ManualChartInput): ManualChart {
   const now = new Date().toISOString();
-  const chartType = input.chartType;
   const normalizedInput = {
     ...input,
-    chartType,
-    relationshipType: chartType === "event" ? null : normalizeRelationshipContextKey(input.relationshipType)
+    relationshipType: input.chartType === "event" ? null : normalizeRelationshipContextKey(input.relationshipType)
   };
   const existingChart = localManualChartOwnerIds(userId)
     .flatMap((ownerId) => readLocalManualCharts(ownerId))
-    .find((chart) => chartIdentity(chart) === chartIdentityFromInput(normalizedInput));
+    .find((chart) => chartIdentity(chart) === chartIdentity(normalizedInput));
 
   if (existingChart) {
     return existingChart;
@@ -458,13 +445,11 @@ function updateLocalManualChart(userId: string, chartId: string, input: ManualCh
   const existingChart = foundChart?.chart ?? charts.find((chart) => chart.id === chartId);
   const existingIdentity = existingChart ? chartIdentity(existingChart) : null;
   const updatedAt = new Date().toISOString();
-  const chartType = input.chartType;
   const normalizedInput = {
     ...input,
-    chartType,
-    relationshipType: chartType === "event" ? null : normalizeRelationshipContextKey(input.relationshipType)
+    relationshipType: input.chartType === "event" ? null : normalizeRelationshipContextKey(input.relationshipType)
   };
-  const updatedIdentity = chartIdentityFromInput(normalizedInput);
+  const updatedIdentity = chartIdentity(normalizedInput);
   const updatedChart: ManualChart = {
     ...existingChart,
     ...normalizedInput,
@@ -703,7 +688,7 @@ async function insertRemoteManualChart(userId: string, input: ManualChartInput):
   }
   const remoteClient = client;
   const existingRemoteChart = (await listRemoteManualCharts(userId))
-    .find((chart) => chartIdentity(chart) === chartIdentityFromInput(input));
+    .find((chart) => chartIdentity(chart) === chartIdentity(input));
 
   if (existingRemoteChart) {
     return existingRemoteChart;
