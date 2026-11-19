@@ -15,11 +15,12 @@ permissions:
   actions: read
 
 concurrency:
-  group: browser-suite-coverage-${{ github.event.pull_request.number || github.ref }}
+  group: browser-suite-coverage-${{ github.event.pull_request.number || github.ref }}-${{ github.event_name }}
   cancel-in-progress: true
 
 jobs:
   browser-suite-coverage:
+    if: ${{ (github.ref_type == 'branch' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && vars.RELEASE_ACTIVE_PR != '' && format('{0}', github.event.pull_request.number) == vars.RELEASE_ACTIVE_PR) }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -27,6 +28,8 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: 22
+      - name: Verify fail-closed release admission before browser selection
+        run: node scripts/test-ci-release-admission.mjs
       - name: Verify every browser suite is run by an enabled workflow
         env:
           GITHUB_TOKEN: ${{ github.token }}

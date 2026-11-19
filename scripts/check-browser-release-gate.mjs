@@ -6,6 +6,7 @@ export function checkBrowserReleaseGate(needs,plan=JSON.parse(needs.scope?.outpu
   assert.equal(needs.scope?.result, 'success', 'Browser scope must succeed');
   assert(Object.keys(needs).length > 1, 'Browser gate must include its test jobs');
   validateTestPlan(plan);
+  assert.equal(needs['build-preflight']?.result,plan.browserJobs.length?'success':'skipped','Selected browser work requires a passing build and bundle preflight');
   for(const job of plan.browserJobs)assert.equal(needs[job]?.result,'success',`${job}: selected browser job must succeed`);
   for (const [job, value] of Object.entries(needs)) {
     assert(['success', 'skipped'].includes(value.result), `${job}: ${value.result}`);

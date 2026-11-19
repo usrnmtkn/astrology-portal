@@ -11,10 +11,15 @@ on:
 permissions:
   contents: read
 
-# Keep runs independent so a newer check-in cannot cancel earlier API QA.
+# Completed evidence stays recorded; superseded PR revisions yield their runners.
+
+concurrency:
+  group: content-studio-api-${{ github.event.pull_request.number || github.sha }}-${{ github.event_name }}
+  cancel-in-progress: true
 
 jobs:
   scope:
+    if: ${{ (github.ref_type == 'branch' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && vars.RELEASE_ACTIVE_PR != '' && format('{0}', github.event.pull_request.number) == vars.RELEASE_ACTIVE_PR) }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     outputs:
@@ -32,7 +37,7 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Verify selection and required-gate contracts
-        run: ruby scripts/test-ci-workflow-syntax.rb && node scripts/test-ci-affected-tests.mjs && node scripts/test-content-studio-api-shards.mjs
+        run: ruby scripts/test-ci-workflow-syntax.rb && node scripts/test-ci-release-admission.mjs && node scripts/test-ci-affected-tests.mjs && node scripts/test-content-studio-api-shards.mjs
       - id: scope
         name: Select affected API contracts
         env:
@@ -127,6 +132,10 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: 22
+      - name: Require the coordinator release slot
+        env:
+          RELEASE_ACTIVE_PR: ${{ vars.RELEASE_ACTIVE_PR }}
+        run: node scripts/ci-release-admission.mjs
       - name: Require every selected API shard and database check to pass
         env:
           CI_AFFECTED_TEST_PLAN: ${{ needs.scope.outputs.test_plan }}
