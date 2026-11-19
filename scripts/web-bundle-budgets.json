@@ -1,7 +1,7 @@
 {
-  "appBootGzipBytes": 401721,
-  "appChunkGzipBytes": 91571,
-  "readerBootGzipBytes": 461485,
+  "appBootGzipBytes": 401787,
+  "appChunkGzipBytes": 91642,
+  "readerBootGzipBytes": 461551,
   "readerInitialCssGzipBytes": 60205,
   "largestJavaScriptGzipBytes": 520000,
   "friendsWorkspaceChunkGzipBytes": 16500,
@@ -14,8 +14,9 @@
   "relationshipFallbackChunkGzipBytes": 230000,
   "signupChunkGzipBytes": 4325,
   "totalCssGzipBytes": 152525,
-  "totalJavaScriptGzipBytes": 3804645,
+  "totalJavaScriptGzipBytes": 3804725,
   "_rationale": {
+    "astronomyWarningScrollPosition20261119": {"receipt":"docs/qa/astronomy-warning-banner-bundle-cost-2026-11-19.json","runtimeCandidateRevision":"e3d0d944b8e1758c7ed24def4dcedf4f6dd2d66d","baseRevision":"786a6ad10017c1c3f62618e9960276c9191f2cc7","combinedFeatureCost":{"appBootGzipBytes":297,"appChunkGzipBytes":284,"readerBootGzipBytes":664,"readerInitialCssGzipBytes":367,"totalCssGzipBytes":431,"totalJavaScriptGzipBytes":384,"memoryGraphCssGzipBytes":32},"newLimits":{"appBootGzipBytes":401787,"appChunkGzipBytes":91642,"readerBootGzipBytes":461551,"readerInitialCssGzipBytes":60205,"totalCssGzipBytes":152525,"totalJavaScriptGzipBytes":3804725,"memoryGraphCssGzipBytes":33174},"reason":"Retain historical allocations exactly once, increasing only where the maximum measured positive paired final feature delta exceeds it. Preserve accepted-main headroom. Original numeric overages remain failures; source/lazy boundaries and all other guards remain unchanged."},
     "astronomyWarningOverlayRepair20261119": {
       "runtimeCandidateRevision": "37b664cc1fe5f2fd61a8a403819f62e40f2bd990",
       "evidence": "docs/qa/astronomy-warning-banner-bundle-cost-2026-11-19.json",

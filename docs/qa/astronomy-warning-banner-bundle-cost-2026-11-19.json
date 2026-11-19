@@ -292,5 +292,110 @@
       "totalJavaScriptGzipBytes": 3804645,
       "memoryGraphCssGzipBytes": 33174
     }
+  },
+  "scrollPositionRepair": {
+    "runtimeCandidateRevision": "e3d0d944b8e1758c7ed24def4dcedf4f6dd2d66d",
+    "integratedBaseRevision": "786a6ad10017c1c3f62618e9960276c9191f2cc7",
+    "failedHead": "8e7e39b20a84436d25a27f2b1de0661fc067e200",
+    "failedJob": "https://github.com/usrnmtkn/astrology-portal/actions/runs/44594585981/job/135810185497",
+    "preservedFailure": "Both Saturn live-calculation-refresh journeys failed, including retry, while 101 sibling cases passed. The first paragraph moved 184px on mobile and 82px on desktop when the warning appeared; these equal the warning height.",
+    "change": "Adjust document scroll instantly by the measured notice-height difference while already scrolled, including resize and recovery. Keep top-of-page behavior. Existing strict article stability assertions remain unchanged.",
+    "verification": "Twelve focused journeys passed without retries: four light/dark warning journeys with new appearance/recovery reading-position assertions, invalid facts and retained expiry, four date/control overlays and the two previously failed Saturn refresh cases. CSS/token audit passed. Complete affected specs and final exact-head gates remain required.",
+    "controlReused": "The new main commit changes release workflows, policy and server memory packaging only. Web/Admin runtime sources, dependencies, knowledge source inputs and measurement environment are unchanged; paired controls remain valid.",
+    "profiles": {
+      "enabled": {
+        "candidate": {
+          "memoryGraphJavaScriptGzipBytes": 46028,
+          "memoryGraphCssGzipBytes": 33154,
+          "appBootGzipBytes": 401654,
+          "appChunkGzipBytes": 91461,
+          "readerBootGzipBytes": 461507,
+          "readerInitialCssGzipBytes": 59853,
+          "largestJavaScriptGzipBytes": 350686,
+          "friendsWorkspaceChunkGzipBytes": 10132,
+          "skyDetailChunkGzipBytes": 6892,
+          "reportRouteChunkGzipBytes": 3179,
+          "horoscopeReaderChunkGzipBytes": 5808,
+          "horoscopeEditorChunkGzipBytes": 15988,
+          "studioCsvChunkGzipBytes": 8106,
+          "skyPlacementFallbackChunkGzipBytes": 127245,
+          "lunationBookFallbackChunkGzipBytes": 210198,
+          "transitFallbackChunkGzipBytes": 350686,
+          "calendarFallbackChunkGzipBytes": 8970,
+          "relationshipFallbackChunkGzipBytes": 192466,
+          "signupChunkGzipBytes": 4268,
+          "totalCssGzipBytes": 152252,
+          "totalJavaScriptGzipBytes": 3804487
+        },
+        "delta": {
+          "appBootGzipBytes": 266,
+          "appChunkGzipBytes": 272,
+          "readerBootGzipBytes": 633,
+          "readerInitialCssGzipBytes": 367,
+          "totalCssGzipBytes": 431,
+          "totalJavaScriptGzipBytes": 220,
+          "memoryGraphCssGzipBytes": 32
+        },
+        "existingLimitFailures": [
+          "readerBootGzipBytes: 461,507 bytes exceeds 461,485 bytes by 22 bytes"
+        ]
+      },
+      "standard": {
+        "candidate": {
+          "memoryGraphJavaScriptGzipBytes": 46028,
+          "memoryGraphCssGzipBytes": 33154,
+          "appBootGzipBytes": 401669,
+          "appChunkGzipBytes": 91466,
+          "readerBootGzipBytes": 461522,
+          "readerInitialCssGzipBytes": 59853,
+          "largestJavaScriptGzipBytes": 350686,
+          "friendsWorkspaceChunkGzipBytes": 10132,
+          "skyDetailChunkGzipBytes": 6894,
+          "reportRouteChunkGzipBytes": 3185,
+          "horoscopeReaderChunkGzipBytes": 5818,
+          "horoscopeEditorChunkGzipBytes": 15988,
+          "studioCsvChunkGzipBytes": 8106,
+          "skyPlacementFallbackChunkGzipBytes": 127245,
+          "lunationBookFallbackChunkGzipBytes": 210198,
+          "transitFallbackChunkGzipBytes": 350686,
+          "calendarFallbackChunkGzipBytes": 8970,
+          "relationshipFallbackChunkGzipBytes": 192466,
+          "signupChunkGzipBytes": 4271,
+          "totalCssGzipBytes": 152252,
+          "totalJavaScriptGzipBytes": 3804608
+        },
+        "delta": {
+          "appBootGzipBytes": 297,
+          "appChunkGzipBytes": 284,
+          "readerBootGzipBytes": 664,
+          "readerInitialCssGzipBytes": 367,
+          "totalCssGzipBytes": 431,
+          "totalJavaScriptGzipBytes": 384,
+          "memoryGraphCssGzipBytes": 32
+        },
+        "existingLimitFailures": [
+          "readerBootGzipBytes: 461,522 bytes exceeds 461,485 bytes by 37 bytes"
+        ]
+      }
+    },
+    "combinedFeatureCost": {
+      "appBootGzipBytes": 297,
+      "appChunkGzipBytes": 284,
+      "readerBootGzipBytes": 664,
+      "readerInitialCssGzipBytes": 367,
+      "totalCssGzipBytes": 431,
+      "totalJavaScriptGzipBytes": 384,
+      "memoryGraphCssGzipBytes": 32
+    },
+    "newLimits": {
+      "appBootGzipBytes": 401787,
+      "appChunkGzipBytes": 91642,
+      "readerBootGzipBytes": 461551,
+      "readerInitialCssGzipBytes": 60205,
+      "totalCssGzipBytes": 152525,
+      "totalJavaScriptGzipBytes": 3804725,
+      "memoryGraphCssGzipBytes": 33174
+    },
+    "reason": "Retain historical allocations exactly once, increasing only where the maximum measured positive paired final feature delta exceeds it. Preserve accepted-main headroom. Original numeric overages remain failures; source/lazy boundaries and all other guards remain unchanged."
   }
 }
