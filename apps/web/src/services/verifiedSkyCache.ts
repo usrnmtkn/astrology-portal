@@ -4,7 +4,7 @@ import {
   MOSHIER_EPHEMERIS_FLAG,
   SWISS_EPHEMERIS_FLAG,
   validateAstrologyFacts
-} from "./astrologyFacts";
+} from "./astrologyFacts.js";
 
 export const VERIFIED_SKY_CACHE_SCHEMA = "tldrastro-verified-sky-v2";
 export const VERIFIED_SKY_CACHE_PREFIX = "tldrastro:verifiedSky:v2";
