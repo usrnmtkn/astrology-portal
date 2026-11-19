@@ -94,11 +94,7 @@ export function manualChartNeedsNatalRepair(chart: ManualChart) {
 }
 
 export function manualChartHasReliableBirthTime(chart: ManualChart) {
-  if (typeof chart.natalChart?.birthTimeKnown === "boolean") {
-    return chart.natalChart.birthTimeKnown;
-  }
-
-  return !chart.birthTimeUnknown && Boolean(chart.birthTime);
+  return chart.natalChart?.birthTimeKnown ?? (!chart.birthTimeUnknown && Boolean(chart.birthTime));
 }
 
 export function manualChartNeedsBirthTime(chart: ManualChart) {
@@ -121,9 +117,9 @@ type ManualChartRow = {
   birth_latitude: number;
   birth_longitude: number;
   birth_timezone: string | null;
-  birth_coordinate_provider?: string | null;
-  birth_coordinate_source_id?: string | null;
-  birth_coordinate_resolution?: "municipal_centroid" | "borough_centroid" | "legacy_unprovenanced" | null;
+  birth_coordinate_provider: string;
+  birth_coordinate_source_id: string;
+  birth_coordinate_resolution: "municipal_centroid" | "borough_centroid" | "legacy_unprovenanced";
   natal_chart: SkySnapshot | null;
   notes: string | null;
   created_at: string;
@@ -170,23 +166,17 @@ function natalChartWithPronouns(natalChart: SkySnapshot | null | undefined, pron
 }
 
 function isMissingManualChartPronounsColumn(error: unknown) {
-  if (!error || typeof error !== "object") {
-    return false;
-  }
-
-  const maybeError = error as { code?: unknown; message?: unknown };
-  const message = typeof maybeError.message === "string" ? maybeError.message : "";
+  const { code, message } = error as { code?: string; message: string };
 
   return (
-    (maybeError.code === "42703" && message.includes("manual_charts") && message.includes("pronouns")) ||
-    (maybeError.code === "PGRST204" && message.includes("pronouns") && message.includes("manual_charts"))
+    message.includes("manual_charts") &&
+    message.includes("pronouns") &&
+    (code === "42703" || code === "PGRST204")
   );
 }
 
 function rowToManualChart(row: ManualChartRow): ManualChart {
   const chartType = row.relationship_type === "event" ? "event" : "person";
-  const lastSyncedAt = row.last_synced_at ?? row.updated_at ?? row.created_at;
-  const birthTimeKnown = !row.birth_time_unknown && Boolean(row.birth_time);
 
   return {
     id: row.id,
@@ -208,26 +198,27 @@ function rowToManualChart(row: ManualChartRow): ManualChart {
       longitude: row.birth_longitude,
       timeZone: row.birth_timezone ?? undefined,
       coordinateSource: {
-        provider: row.birth_coordinate_provider ?? "legacy",
-        sourceId: row.birth_coordinate_source_id ?? "unrecorded",
-        resolution: row.birth_coordinate_resolution ?? "legacy_unprovenanced"
+        provider: row.birth_coordinate_provider,
+        sourceId: row.birth_coordinate_source_id,
+        resolution: row.birth_coordinate_resolution
       }
     },
-    natalChart: natalSnapshotWithBirthTimeReliability(row.natal_chart, birthTimeKnown),
+    natalChart: natalSnapshotWithBirthTimeReliability(
+      row.natal_chart,
+      !row.birth_time_unknown && Boolean(row.birth_time)
+    ),
     notes: row.notes,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     syncStatus: "synced",
     syncError: null,
-    lastSyncedAt
+    lastSyncedAt: row.last_synced_at ?? row.updated_at
   };
 }
 
 function normalizeLocalManualChart(chart: LocalManualChartRecord): ManualChart {
   const chartType = chart.chartType ?? (chart.relationshipType === "event" ? "event" : "person");
-  const birthTimeKnown = typeof chart.natalChart?.birthTimeKnown === "boolean"
-    ? chart.natalChart.birthTimeKnown
-    : !chart.birthTimeUnknown && Boolean(chart.birthTime);
+  const birthTimeKnown = chart.natalChart?.birthTimeKnown ?? (!chart.birthTimeUnknown && Boolean(chart.birthTime));
 
   return {
     ...chart,
@@ -245,6 +236,8 @@ function inputToRow(userId: string, input: ManualChartInput, options: { omitPron
   const pronouns = normalizePronounChoice(input.pronouns);
   const birthTime = input.birthTimeUnknown ? null : normalizeBirthTime(input.birthTime);
   const birthTimeKnown = !input.birthTimeUnknown && Boolean(birthTime);
+  const { birthLocation } = input;
+  const { coordinateSource } = birthLocation;
   const row = {
     owner_user_id: userId,
     display_name: input.displayName,
@@ -259,12 +252,12 @@ function inputToRow(userId: string, input: ManualChartInput, options: { omitPron
     birth_time: birthTime,
     birth_time_unknown: input.birthTimeUnknown,
     birth_place: input.birthPlace,
-    birth_latitude: input.birthLocation.latitude,
-    birth_longitude: input.birthLocation.longitude,
-    birth_timezone: input.birthLocation.timeZone ?? null,
-    birth_coordinate_provider: input.birthLocation.coordinateSource?.provider ?? "legacy",
-    birth_coordinate_source_id: input.birthLocation.coordinateSource?.sourceId ?? "unrecorded",
-    birth_coordinate_resolution: input.birthLocation.coordinateSource?.resolution ?? "legacy_unprovenanced",
+    birth_latitude: birthLocation.latitude,
+    birth_longitude: birthLocation.longitude,
+    birth_timezone: birthLocation.timeZone ?? null,
+    birth_coordinate_provider: coordinateSource?.provider,
+    birth_coordinate_source_id: coordinateSource?.sourceId,
+    birth_coordinate_resolution: coordinateSource?.resolution,
     natal_chart: natalChartWithPronouns(
       natalSnapshotWithBirthTimeReliability(input.natalChart, birthTimeKnown),
       pronouns
@@ -305,7 +298,7 @@ function chartIdentity(chart: Pick<ManualChart, "chartType" | "displayName" | "b
 
 function chartIdentityFromInput(input: ManualChartInput) {
   return chartIdentity({
-    chartType: input.chartType ?? "person",
+    chartType: input.chartType,
     displayName: input.displayName,
     birthDate: input.birthDate,
     birthTime: input.birthTime,
@@ -375,7 +368,7 @@ function clearLocalManualCharts(userId: string) {
 
 function createLocalManualChart(userId: string, input: ManualChartInput): ManualChart {
   const now = new Date().toISOString();
-  const chartType = input.chartType ?? "person";
+  const chartType = input.chartType;
   const normalizedInput = {
     ...input,
     chartType,
@@ -465,7 +458,7 @@ function updateLocalManualChart(userId: string, chartId: string, input: ManualCh
   const existingChart = foundChart?.chart ?? charts.find((chart) => chart.id === chartId);
   const existingIdentity = existingChart ? chartIdentity(existingChart) : null;
   const updatedAt = new Date().toISOString();
-  const chartType = input.chartType ?? "person";
+  const chartType = input.chartType;
   const normalizedInput = {
     ...input,
     chartType,

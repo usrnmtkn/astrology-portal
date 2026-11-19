@@ -129,14 +129,16 @@ export async function searchCities(query: string): Promise<CitySuggestion[]> {
   const data = (await response.json()) as MapboxResponse;
 
   const suggestions = await Promise.all((data.features ?? []).map(async (feature): Promise<CitySuggestion | null> => {
-    const longitude = feature.properties?.coordinates?.longitude ?? feature.geometry?.coordinates?.[0];
-    const latitude = feature.properties?.coordinates?.latitude ?? feature.geometry?.coordinates?.[1];
+    const { properties, geometry } = feature;
+    const longitude = properties?.coordinates?.longitude ?? geometry?.coordinates?.[0];
+    const latitude = properties?.coordinates?.latitude ?? geometry?.coordinates?.[1];
 
     if (typeof latitude !== "number" || typeof longitude !== "number") {
       return null;
     }
     const label = formatSuggestionLabel(feature);
     const region = regionForFeature(feature);
+    const sourceId = properties?.mapbox_id ?? feature.id;
 
     const timeZone = await timeZoneForCoordinates({
       label,
@@ -146,7 +148,7 @@ export async function searchCities(query: string): Promise<CitySuggestion[]> {
     });
 
     return {
-      id: feature.id ?? feature.properties?.mapbox_id ?? `${latitude}-${longitude}`,
+      id: sourceId ?? `${latitude}-${longitude}`,
       label,
       region,
       latitude,
@@ -154,8 +156,8 @@ export async function searchCities(query: string): Promise<CitySuggestion[]> {
       timeZone: timeZone ?? undefined,
       coordinateSource: {
         provider: "mapbox",
-        sourceId: feature.properties?.mapbox_id ?? feature.id,
-        resolution: (feature.feature_type ?? feature.properties?.feature_type) === "locality"
+        sourceId,
+        resolution: (feature.feature_type ?? properties?.feature_type) === "locality"
           ? "borough_centroid"
           : "municipal_centroid"
       }

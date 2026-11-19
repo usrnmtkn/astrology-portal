@@ -13,6 +13,14 @@ where birth_coordinate_provider is null
    or birth_coordinate_source_id is null
    or birth_coordinate_resolution is null;
 
+alter table public.manual_charts
+  alter column birth_coordinate_provider set default 'legacy',
+  alter column birth_coordinate_provider set not null,
+  alter column birth_coordinate_source_id set default 'unrecorded',
+  alter column birth_coordinate_source_id set not null,
+  alter column birth_coordinate_resolution set default 'legacy_unprovenanced',
+  alter column birth_coordinate_resolution set not null;
+
 alter table public.user_generated_interpretations
   add column if not exists display_order integer;
 

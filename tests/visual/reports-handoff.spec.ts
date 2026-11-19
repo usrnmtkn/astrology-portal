@@ -121,10 +121,16 @@ for(const width of [390,1440])for(const theme of ['light','dark'])test(`Reports 
  await expectReadableTheme(page,'.report-state-card p, .report-action');await page.screenshot({path:`test-results/reports-signed-out-${width}-${theme}.png`});
 });
 
-const delivery={id:'33333333-3333-4333-8333-333333333333',reportDomain:'personal',reportHorizon:'year',periodStart:'2026-10-26',periodEnd:'2027-10-26',factsEngine:'Verified fixture engine',factsHash:'private-fixture-facts-hash',deliveredAt:stamp,units:[
- {content_key:'fixture:chapter',headline:'A delivered chapter',timing:null,summary:'The complete chapter summary.',body:'The complete chapter opening.\n\nThe complete chapter ending.',sections:[{heading:'A delivered section',body:'The complete section ending.'}]},
- {content_key:'fixture:overview',headline:'A delivered report',timing:'The complete overview timing.',summary:'The complete cover summary.',body:'The complete overview opening.\n\nThe complete overview ending.',sections:[]}
-]};
+const delivery={id:'33333333-3333-4333-8333-333333333333',reportDomain:'personal',reportHorizon:'year',periodStart:'2026-10-26',periodEnd:'2027-10-26',factsEngine:'Verified fixture engine',factsHash:'private-fixture-facts-hash',deliveredAt:stamp,reviewDocumentHash:'fixture-review-document-hash',legacyReviewArtifact:false,document:{
+ id:'33333333-3333-4333-8333-333333333333',reportType:'report' as const,
+ cover:{kicker:'Personal report',title:'A delivered report',subtitle:'The complete cover summary.',meta:['2026-10-26','2027-10-26']},
+ chapters:[
+  {id:'overview',kicker:'Overview',title:'A delivered report',paragraphs:['The complete overview opening.','The complete overview ending.']},
+  {id:'chapter',kicker:'Personal',title:'A delivered chapter',paragraphs:['The complete chapter summary.','The complete chapter opening.','The complete chapter ending.']},
+  {id:'chapter-section',kicker:'Year',title:'A delivered section',paragraphs:['The complete section ending.']}
+ ],
+ keyDates:[],colophon:{factsEngine:'Verified fixture engine',generatedAt:stamp,entries:[{label:'Facts hash',value:'private-fixture-facts-hash'}]}
+}};
 async function articleHarness(){
  const result=await build({stdin:{resolveDir:process.cwd(),loader:'tsx',contents:`import React from 'react';import{createRoot}from'react-dom/client';import{ReportArticle}from'./apps/web/src/components/reports/ReportArticle';const report={id:'key-date-fixture',reportType:'report',cover:{kicker:'Personal report',title:'Key dates fixture'},chapters:[{id:'chapter',kicker:'Chapter',title:'Complete chapter',paragraphs:['Complete chapter opening.','Complete chapter ending.'],attribution:{kind:'transit_to_natal',transitingBody:'Venus',natalBody:'Mars',aspect:'trine'}}],keyDates:[1,2,3].map(i=>({id:'date-'+i,date:'October '+i+', 2026',title:'Date '+i,paragraphs:['Complete key date opening.','Complete key date ending.']})),colophon:{factsEngine:'Fixture engine',entries:[{label:'Facts hash',value:'private-fixture-hash'}]}};createRoot(document.getElementById('root')).render(<ReportArticle report={report}/>);`},bundle:true,write:false,format:'esm',jsx:'automatic',loader:{'.css':'empty'},define:{'import.meta.env':JSON.stringify({DEV:false,MODE:'test'})}});
  const manifest=JSON.parse(readFileSync(`${process.env.PLAYWRIGHT_DIST_ROOT??'apps/web/dist'}/.vite/manifest.json`,'utf8'));
