@@ -65,6 +65,17 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
     await expectWarningAboveNavigation(page);
     await page.evaluate(() => window.scrollTo(0, 400));
     await expectWarningAboveNavigation(page);
+    await page.evaluate(() => document.fonts.ready);
+    const reading = page.getByLabel('Daily sky summary');
+    const readingTop = (await reading.boundingBox())!.y;
+    ready = true;
+    await page.evaluate(() => window.dispatchEvent(new Event('online')));
+    await expect(warning).toHaveCount(0);
+    await expect.poll(async () => Math.abs((await reading.boundingBox())!.y - readingTop)).toBeLessThan(2);
+    ready = false;
+    await page.evaluate(() => window.dispatchEvent(new Event('online')));
+    await expect(warning).toBeVisible();
+    await expect.poll(async () => Math.abs((await reading.boundingBox())!.y - readingTop)).toBeLessThan(2);
     await page.evaluate(() => window.scrollTo(0, 0));
     await expect(warning).toHaveCSS('background-color', theme === 'light' ? 'rgb(251, 236, 200)' : 'rgb(59, 49, 30)');
     await expect(warning).toHaveCSS('color', theme === 'light' ? 'rgb(122, 79, 0)' : 'rgb(245, 215, 143)');

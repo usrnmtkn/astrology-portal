@@ -24,13 +24,21 @@ export function EphemerisStatus({ retainedAt, timeZone }: { retainedAt?: string;
     const element = statusRef.current;
     if (!degraded || !element) return;
     const root = document.documentElement;
-    const updateHeight = () => root.style.setProperty("--app-notice-height", `${element.getBoundingClientRect().height}px`);
+    const setHeight = (height: number) => {
+      const previous = Number.parseFloat(root.style.getPropertyValue("--app-notice-height")) || 0;
+      if (height === previous) return;
+      const scrollTop = window.scrollY;
+      if (height) root.style.setProperty("--app-notice-height", `${height}px`);
+      else root.style.removeProperty("--app-notice-height");
+      if (scrollTop > 0) window.scrollTo({ top: Math.max(0, scrollTop + height - previous), behavior: "instant" });
+    };
+    const updateHeight = () => setHeight(element.getBoundingClientRect().height);
     updateHeight();
     const observer = new ResizeObserver(updateHeight);
     observer.observe(element);
     return () => {
       observer.disconnect();
-      root.style.removeProperty("--app-notice-height");
+      setHeight(0);
     };
   }, [degraded]);
   if (!degraded) return null;
