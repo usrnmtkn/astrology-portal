@@ -1,5 +1,5 @@
 import { useId, useState, type ReactNode } from "react";
-import { Expand, X } from "lucide-react";
+import { Maximize2, X } from "lucide-react";
 import { ModalPortal } from "../ModalPortal";
 import { FullChartView } from "./LazyFullChartView";
 import type { ChartReportSource } from "../../services/chartReport";
@@ -9,7 +9,7 @@ export function ChartFullscreenButton({ children, title, report }: { children: R
   const titleId = useId();
   const triggerId = `${titleId}-open`;
   return <>
-    <button id={triggerId} type="button" className="natal-chart-expand" aria-label={`Open full ${title.toLowerCase()}`} onClick={() => setOpen(true)}><Expand size={18} aria-hidden="true" /></button>
+    <button id={triggerId} type="button" className="natal-chart-expand" aria-label={`Open full ${title.toLowerCase()}`} onClick={() => setOpen(true)}><Maximize2 size={24} aria-hidden="true" /></button>
     {open && <ModalPortal className="chart-fullscreen-modal-root" panelClassName={report ? "full-chart-panel" : "chart-fullscreen-panel"} titleId={titleId} restoreFocusId={triggerId} onClose={() => setOpen(false)} closeOnBackdrop>
       {report ? <FullChartView source={report} titleId={titleId} onClose={() => setOpen(false)}>{children}</FullChartView> : <div className="chart-fullscreen-overlay">
         <header className="chart-fullscreen-header"><h2 className="chart-fullscreen-title" id={titleId}>{title}</h2><button className="chart-fullscreen-close" type="button" aria-label="Close full-screen chart" onClick={() => setOpen(false)}><X size={18} aria-hidden="true" /></button></header>
