@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import { createServer } from "vite";
 import { chartBirthTimeIsKnown } from "../apps/web/src/services/chartProfile.ts";
 import {
   natalSnapshotBirthTimeIsKnown,
@@ -247,11 +248,53 @@ assert.equal(inferredUnknownTimeBrief.daily?.forecast?.moonContext.topic, null);
 // TypeScript build below validates their actual module graph under the Vite environment.
 const manualCharts = fs.readFileSync("apps/web/src/services/manualCharts.ts", "utf8");
 assert.match(manualCharts, /export function manualChartHasReliableBirthTime\(chart: ManualChart\)/u);
-assert.match(manualCharts, /typeof chart\.natalChart\?\.birthTimeKnown === "boolean"/u);
-assert.match(manualCharts, /return chart\.natalChart\.birthTimeKnown/u);
-assert.match(manualCharts, /natalSnapshotWithBirthTimeReliability\(row\.natal_chart, birthTimeKnown\)/u);
-assert.match(manualCharts, /natalSnapshotWithBirthTimeReliability\(input\.natalChart, birthTimeKnown\)/u);
+assert.match(
+  manualCharts,
+  /natalSnapshotWithBirthTimeReliability\(\s*row\.natal_chart,\s*!row\.birth_time_unknown && Boolean\(row\.birth_time\)\s*\)/u
+);
+assert.match(
+  manualCharts,
+  /natalSnapshotWithBirthTimeReliability\(input\.natalChart, birthTimeKnown\)/u
+);
 assert.match(manualCharts, /manualChartNeedsBirthTime\(chart: ManualChart\)[\s\S]*!manualChartHasReliableBirthTime\(chart\)/u);
+
+const webRuntime = await createServer({
+  root: "./apps/web",
+  appType: "custom",
+  logLevel: "silent",
+  server: { middlewareMode: true, hmr: false },
+  optimizeDeps: { noDiscovery: true }
+});
+try {
+  const runtime = await webRuntime.ssrLoadModule("/src/services/manualCharts.ts");
+  const hasReliableBirthTime = runtime.manualChartHasReliableBirthTime as (chart: {
+    birthTime: string | null;
+    birthTimeUnknown: boolean;
+    natalChart?: { birthTimeKnown?: boolean } | null;
+  }) => boolean;
+  assert.equal(
+    hasReliableBirthTime({ birthTime: "10:00", birthTimeUnknown: false, natalChart: { birthTimeKnown: false } }),
+    false,
+    "Explicit snapshot uncertainty must not fall through to a stored birth time."
+  );
+  assert.equal(
+    hasReliableBirthTime({ birthTime: null, birthTimeUnknown: true, natalChart: { birthTimeKnown: true } }),
+    true,
+    "Explicit snapshot reliability remains authoritative."
+  );
+  assert.equal(
+    hasReliableBirthTime({ birthTime: "10:00", birthTimeUnknown: false, natalChart: {} }),
+    true,
+    "Legacy snapshots infer reliability from a present known birth time."
+  );
+  assert.equal(
+    hasReliableBirthTime({ birthTime: "10:00", birthTimeUnknown: true, natalChart: {} }),
+    false,
+    "Legacy snapshots respect the stored unknown-time flag."
+  );
+} finally {
+  await webRuntime.close();
+}
 
 const socialFriends = fs.readFileSync("apps/web/src/services/socialFriends.ts", "utf8");
 assert.match(socialFriends, /natalSnapshotBirthTimeIsKnown\(friend\.natalChart\)/u);
