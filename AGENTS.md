@@ -61,6 +61,14 @@ or commit without the owner's request.
 
 ## Validation scope and reuse
 
+Before pushing a new or replacement CI candidate, complete the mandatory scoped
+preflight in [`docs/qa/release-queue.md`](docs/qa/release-queue.md), including for
+test-only changes. Follow the same runbook for CI waits, merging and deployment.
+One coordinator assigns the active PR and advances releases through automatic
+production acceptance.
+Reuse recorded release authorization instead of asking the human to reconfirm
+an operational slot, merge or deployment within that scope.
+
 - Default to targeted checks for the changed behavior and its affected consumers.
 - Reuse valid passing results when the relevant source, dependencies,
   configuration and test environment are unchanged and the required revision

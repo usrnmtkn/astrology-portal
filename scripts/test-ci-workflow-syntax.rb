@@ -67,8 +67,15 @@ files.each do |file|
     overlay_command = 'tests/visual/overlay-viewport.spec.ts'
     raise 'Overlay checks must run independently of reader shards' if reader.fetch('steps').any? { |step| step.fetch('run', '').include?(overlay_command) }
     raise 'Overlay job must execute its full viewport suite' unless overlays.fetch('steps').any? { |step| step.fetch('run', '').include?(overlay_command) && step['run'].include?('--shard=${{ matrix.shard }}/3') }
-    (jobs.keys - ['scope','browser-release-gate']).each do |name|
+    preflight = jobs.fetch('build-preflight')
+    raise 'Browser preflight must wait for source selection' unless preflight.fetch('needs') == 'scope'
+    raise 'Browser preflight must keep both existing bundle guards' unless preflight.fetch('steps').any? { |step| step['run'] == 'npm run build && npm run qa:bundle' } && preflight.fetch('steps').any? { |step| step['run'] == 'npm run build:admin && node scripts/check-admin-bundle-budgets.mjs' }
+    raise 'Browser preflight must verify native server startup' unless preflight.fetch('steps').any? { |step| step['run'] == 'npm run typecheck:server && npm run test:production-health' }
+    raise 'Browser preflight must check the recorded authenticated reader budget profile' unless preflight.fetch('steps').any? { |step| step['run'] == 'npm run build:web && npm run qa:bundle' && step.fetch('env', {})['VITE_ENABLE_NATAL_ASPECT_PATTERNS'] == 'true' && step.fetch('env', {})['VITE_SUPABASE_PUBLISHABLE_KEY'] == '' }
+    raise 'Browser preflight must use the qualified browser environment' unless preflight.fetch('steps').any? { |step| step['run'] == 'node scripts/ci-validate-playwright-image.mjs' } && preflight.fetch('container').fetch('image') == admin.fetch('container').fetch('image') && preflight.fetch('container').fetch('volumes').include?('/usr/share/fonts:/usr/share/fonts/runner:ro') && preflight.fetch('env')['PLAYWRIGHT_BROWSERS_PATH'] == '/ms-playwright'
+    (jobs.keys - ['scope','build-preflight','browser-release-gate']).each do |name|
       job=jobs.fetch(name)
+      raise "#{name}: browser fan-out bypasses the build preflight" unless job.fetch('needs') == ['scope','build-preflight']
       raise "#{name}: affected selector missing" unless job.fetch('if') == "needs.scope.outputs.#{name.tr('-', '_')} == 'true'"
       raise "#{name}: revision-bound plan missing" unless job.fetch('env', {})['CI_AFFECTED_TEST_PLAN'] == '${{ needs.scope.outputs.test_plan }}'
       raise "#{name}: browser command bypasses affected selection" if job.fetch('steps').any? { |step| step.fetch('run', '').include?('npx playwright test') }

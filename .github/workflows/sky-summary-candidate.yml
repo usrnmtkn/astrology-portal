@@ -20,11 +20,12 @@ permissions:
   contents: read
 
 concurrency:
-  group: sky-summary-browser-${{ github.event.pull_request.number || github.ref }}
+  group: sky-summary-browser-${{ github.event.pull_request.number || github.ref }}-${{ github.event_name }}
   cancel-in-progress: true
 
 jobs:
   summary-browser:
+    if: ${{ (github.ref_type == 'branch' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && vars.RELEASE_ACTIVE_PR != '' && format('{0}', github.event.pull_request.number) == vars.RELEASE_ACTIVE_PR) }}
     # Azure mirror dependency stalls consumed the browser-job deadline:
     # https://github.com/usrnmtkn/astrology-portal/actions/runs/42109877466
     # https://github.com/usrnmtkn/astrology-portal/actions/runs/42119649830

@@ -61,8 +61,13 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: calendar-aspect-content-studio-${{ github.event.pull_request.number || github.sha }}-${{ github.event_name }}
+  cancel-in-progress: true
+
 jobs:
   calendar-aspect-content-studio:
+    if: ${{ (github.ref_type == 'branch' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && vars.RELEASE_ACTIVE_PR != '' && format('{0}', github.event.pull_request.number) == vars.RELEASE_ACTIVE_PR) }}
     name: calendar-aspect-content-studio
     runs-on: ubuntu-latest
     timeout-minutes: 10

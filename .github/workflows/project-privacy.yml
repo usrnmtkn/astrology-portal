@@ -7,7 +7,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: project-privacy-${{ github.event.pull_request.number || github.ref }}
+  group: project-privacy-${{ github.event.pull_request.number || github.ref }}-${{ github.event_name }}
   cancel-in-progress: true
 jobs:
   project-privacy:
@@ -18,6 +18,10 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: 22
+      - name: Require the coordinator release slot
+        env:
+          RELEASE_ACTIVE_PR: ${{ vars.RELEASE_ACTIVE_PR }}
+        run: node scripts/ci-release-admission.mjs
       - name: Check tracked files without logging personal values
         env:
           PROJECT_PRIVACY_POLICY: ${{ secrets.PROJECT_PRIVACY_POLICY }}
