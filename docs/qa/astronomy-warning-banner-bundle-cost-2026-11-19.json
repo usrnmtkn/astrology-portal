@@ -193,5 +193,104 @@
     "totalJavaScriptGzipBytes": 3804645,
     "memoryGraphCssGzipBytes": 33174
   },
-  "reason": "Allocate the maximum positive paired feature cost across the two matching profiles, preserving each accepted-main control headroom. This pays for the approved amber warning, refresh icon and measured navigation clearance; it is not a performance improvement. Other numeric limits, source/lazy boundaries, dependencies, privacy and runtime checks are unchanged. Original failures are retained; final exact-head CI remains required."
+  "reason": "Allocate the maximum positive paired feature cost across the two matching profiles, preserving each accepted-main control headroom. This pays for the approved amber warning, refresh icon and measured navigation clearance; it is not a performance improvement. Other numeric limits, source/lazy boundaries, dependencies, privacy and runtime checks are unchanged. Original failures are retained; final exact-head CI remains required.",
+  "overlayViewportRepair": {
+    "runtimeCandidateRevision": "37b664cc1fe5f2fd61a8a403819f62e40f2bd990",
+    "failedHead": "223cbc1a63da1d1b3ab33ff8daa7665d86c1b0d7",
+    "failedJob": "https://github.com/usrnmtkn/astrology-portal/actions/runs/44586315522/job/135781523836",
+    "preservedFailure": "Three Date picker overlay cases failed, and one Sky controls case passed only on retry. The 390px-high desktop viewport left no usable calendar scroll area after warning clearance.",
+    "change": "At short desktop heights the existing date dialog uses viewport insets and the shared dialog height limit, including when the warning appears or recovers. Calendar scrolling, existing actions and mobile sheets remain.",
+    "verification": "Ten focused browser cases passed without retries, including the failed/flaky overlay journeys and warning-present to warning-recovered transitions with the date dialog open. Fresh screenshots inspected in both themes and viewport sizes. CSS/token audit passed. Final exact-head hosted checks remain required.",
+    "controlReused": "Accepted main, installed locks, toolchain and generated knowledge inputs are unchanged from the independent controls above.",
+    "profiles": {
+      "enabled": {
+        "candidate": {
+          "memoryGraphJavaScriptGzipBytes": 46028,
+          "memoryGraphCssGzipBytes": 33154,
+          "appBootGzipBytes": 401586,
+          "appChunkGzipBytes": 91393,
+          "readerBootGzipBytes": 461439,
+          "readerInitialCssGzipBytes": 59853,
+          "largestJavaScriptGzipBytes": 350686,
+          "friendsWorkspaceChunkGzipBytes": 10131,
+          "skyDetailChunkGzipBytes": 6893,
+          "reportRouteChunkGzipBytes": 3181,
+          "horoscopeReaderChunkGzipBytes": 5814,
+          "horoscopeEditorChunkGzipBytes": 15988,
+          "studioCsvChunkGzipBytes": 8106,
+          "skyPlacementFallbackChunkGzipBytes": 127245,
+          "lunationBookFallbackChunkGzipBytes": 210198,
+          "transitFallbackChunkGzipBytes": 350686,
+          "calendarFallbackChunkGzipBytes": 8970,
+          "relationshipFallbackChunkGzipBytes": 192466,
+          "signupChunkGzipBytes": 4270,
+          "totalCssGzipBytes": 152252,
+          "totalJavaScriptGzipBytes": 3804430
+        },
+        "delta": {
+          "appBootGzipBytes": 198,
+          "appChunkGzipBytes": 204,
+          "readerBootGzipBytes": 565,
+          "readerInitialCssGzipBytes": 367,
+          "totalCssGzipBytes": 431,
+          "totalJavaScriptGzipBytes": 163,
+          "memoryGraphCssGzipBytes": 32
+        },
+        "existingLimitFailures": []
+      },
+      "standard": {
+        "candidate": {
+          "memoryGraphJavaScriptGzipBytes": 46028,
+          "memoryGraphCssGzipBytes": 33154,
+          "appBootGzipBytes": 401587,
+          "appChunkGzipBytes": 91391,
+          "readerBootGzipBytes": 461440,
+          "readerInitialCssGzipBytes": 59853,
+          "largestJavaScriptGzipBytes": 350686,
+          "friendsWorkspaceChunkGzipBytes": 10133,
+          "skyDetailChunkGzipBytes": 6891,
+          "reportRouteChunkGzipBytes": 3186,
+          "horoscopeReaderChunkGzipBytes": 5817,
+          "horoscopeEditorChunkGzipBytes": 15988,
+          "studioCsvChunkGzipBytes": 8106,
+          "skyPlacementFallbackChunkGzipBytes": 127245,
+          "lunationBookFallbackChunkGzipBytes": 210198,
+          "transitFallbackChunkGzipBytes": 350686,
+          "calendarFallbackChunkGzipBytes": 8970,
+          "relationshipFallbackChunkGzipBytes": 192466,
+          "signupChunkGzipBytes": 4269,
+          "totalCssGzipBytes": 152252,
+          "totalJavaScriptGzipBytes": 3804494
+        },
+        "delta": {
+          "appBootGzipBytes": 215,
+          "appChunkGzipBytes": 209,
+          "readerBootGzipBytes": 582,
+          "readerInitialCssGzipBytes": 367,
+          "totalCssGzipBytes": 431,
+          "totalJavaScriptGzipBytes": 270,
+          "memoryGraphCssGzipBytes": 32
+        },
+        "existingLimitFailures": []
+      }
+    },
+    "combinedFeatureCost": {
+      "appBootGzipBytes": 231,
+      "appChunkGzipBytes": 213,
+      "readerBootGzipBytes": 598,
+      "readerInitialCssGzipBytes": 367,
+      "totalCssGzipBytes": 431,
+      "totalJavaScriptGzipBytes": 304,
+      "memoryGraphCssGzipBytes": 32
+    },
+    "newLimits": {
+      "appBootGzipBytes": 401721,
+      "appChunkGzipBytes": 91571,
+      "readerBootGzipBytes": 461485,
+      "readerInitialCssGzipBytes": 60205,
+      "totalCssGzipBytes": 152525,
+      "totalJavaScriptGzipBytes": 3804645,
+      "memoryGraphCssGzipBytes": 33174
+    }
+  }
 }

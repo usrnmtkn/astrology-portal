@@ -13,9 +13,17 @@
   "calendarFallbackChunkGzipBytes": 10000,
   "relationshipFallbackChunkGzipBytes": 230000,
   "signupChunkGzipBytes": 4325,
-  "totalCssGzipBytes": 152493,
+  "totalCssGzipBytes": 152525,
   "totalJavaScriptGzipBytes": 3804645,
   "_rationale": {
+    "astronomyWarningOverlayRepair20261119": {
+      "runtimeCandidateRevision": "37b664cc1fe5f2fd61a8a403819f62e40f2bd990",
+      "evidence": "docs/qa/astronomy-warning-banner-bundle-cost-2026-11-19.json",
+      "additionalAllocation": {
+        "totalCssGzipBytes": 32
+      },
+      "reason": "Carry the existing warning allowance once, retaining its complete earlier measurements. Re-measure the overlay repair in both matching profiles against the unchanged independent main controls. Add only the additional 32-byte aggregate CSS feature cost; preserve prior control headroom and every other numeric/source/runtime guard. The original failed CI job remains recorded."
+    },
     "astronomyWarningBanner20261119": {
       "baseRevision": "7b0ce3b2de90946ee95a6af8c41a8a2d4aa4631f",
       "runtimeCandidateRevision": "ee97bf4f121ee7cb9359789a5de465d6bf1324e9",
