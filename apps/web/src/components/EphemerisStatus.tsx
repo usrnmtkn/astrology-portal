@@ -1,8 +1,10 @@
-import { useEffect, useSyncExternalStore } from "react";
+import { useEffect, useLayoutEffect, useRef, useSyncExternalStore } from "react";
+import { RefreshCw, TriangleAlert } from "lucide-react";
 import { readEphemerisHealth, refreshEphemerisHealth, subscribeEphemerisHealth } from "../services/ephemerisHealth";
 import "../styles/ephemeris-status.css";
 
 export function EphemerisStatus({ retainedAt, timeZone }: { retainedAt?: string; timeZone?: string }) {
+  const statusRef = useRef<HTMLElement>(null);
   const health = useSyncExternalStore(subscribeEphemerisHealth, readEphemerisHealth, readEphemerisHealth);
   useEffect(() => {
     const check = () => { if (document.visibilityState !== "hidden") void refreshEphemerisHealth(); };
@@ -18,14 +20,28 @@ export function EphemerisStatus({ retainedAt, timeZone }: { retainedAt?: string;
     };
   }, []);
   const degraded = Boolean(retainedAt) || health.service?.ok === false || health.worker?.ok === false;
+  useLayoutEffect(() => {
+    const element = statusRef.current;
+    if (!degraded || !element) return;
+    const root = document.documentElement;
+    const updateHeight = () => root.style.setProperty("--app-notice-height", `${element.getBoundingClientRect().height}px`);
+    updateHeight();
+    const observer = new ResizeObserver(updateHeight);
+    observer.observe(element);
+    return () => {
+      observer.disconnect();
+      root.style.removeProperty("--app-notice-height");
+    };
+  }, [degraded]);
   if (!degraded) return null;
-  return <aside className="ephemeris-status" role="status" aria-live="polite" data-ephemeris-status="degraded">
+  return <aside ref={statusRef} className="ephemeris-status" role="status" aria-live="polite" aria-label="Astronomy service warning" data-ephemeris-status="degraded">
+    <TriangleAlert className="ephemeris-status__icon" aria-hidden="true" focusable="false" />
     <p>{retainedAt
-      ? <>Live calculations are temporarily unavailable. Showing the last verified calculation from {new Date(retainedAt).toLocaleString([], { timeZone: timeZone || "UTC", timeZoneName: "short" })}.</>
-      : "Some astronomy calculations are temporarily unavailable. Affected readings may need another try."}</p>
-    <button type="button" className="load-error__retry" onClick={() => {
+      ? <><strong>Live calculations are temporarily unavailable.</strong> Showing the last verified calculation from {new Date(retainedAt).toLocaleString([], { timeZone: timeZone || "UTC", timeZoneName: "short" })}.</>
+      : <><strong>Some astronomy calculations are temporarily unavailable.</strong> Affected readings may need another try.</>}</p>
+    <button type="button" className="ephemeris-status__retry" aria-label="Check again" title="Check again" onClick={() => {
       void refreshEphemerisHealth();
       window.dispatchEvent(new Event("tldr:ephemeris-retry"));
-    }}>Check again</button>
+    }}><RefreshCw className="ephemeris-status__refresh-icon" aria-hidden="true" focusable="false" /></button>
   </aside>;
 }

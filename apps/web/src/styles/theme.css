@@ -558,7 +558,7 @@
   --feedback-action-bg: var(--color-brand);
   --feedback-action-fg: var(--color-white);
   --feedback-action-hover: #003a35;
-  --feedback-sheet-min-height: calc(100svh - var(--top-control-top) - var(--top-control-height) - var(--page-nav-gap) - var(--space-10));
+  --feedback-sheet-min-height: calc(100svh - var(--app-notice-height) - var(--top-control-top) - var(--top-control-height) - var(--page-nav-gap) - var(--space-10));
   --feedback-spinner-track: rgba(255,255,255,.35);
   --type-section-heading-size: 22px;
   --type-row-title-size: 18px;
@@ -1394,9 +1394,11 @@
   --page-max: var(--container-page);
   --page-narrow: var(--container-narrow);
   --page-gutter: clamp(var(--sp-3), 5vw, 80px);
+  /* Measured viewport-level notice space shared by navigation and route content. */
+  --app-notice-height: 0px;
   /* Every route begins below the floating header with the same clear space. */
   --page-nav-gap: calc(var(--space-10) + var(--space-4));
-  --page-top: calc(env(safe-area-inset-top, 0px) + var(--top-control-top) + var(--top-control-height) + var(--page-nav-gap));
+  --page-top: calc(env(safe-area-inset-top, 0px) + var(--app-notice-height) + var(--top-control-top) + var(--top-control-height) + var(--page-nav-gap));
   --page-bottom: clamp(64px, 8vw, 96px);
   --page-content-width: min(var(--page-max), calc(100vw - var(--page-gutter) * 2));
   --page-narrow-width: min(var(--page-narrow), calc(100vw - var(--page-gutter) * 2));
@@ -1411,7 +1413,7 @@
   --tablet-nav-reserved-width: 112px;
   --mobile-menu-width: 260px;
   /* Header popovers leave room for the controls, safe area, and bottom gutter. */
-  --header-popover-max-height: max(0px, calc(100dvh - var(--top-control-top) - var(--top-control-height) - var(--space-8) - env(safe-area-inset-top, 0px)));
+  --header-popover-max-height: max(0px, calc(100dvh - var(--app-notice-height) - var(--top-control-top) - var(--top-control-height) - var(--space-8) - env(safe-area-inset-top, 0px)));
   --tablet-chart-max: 680px;
   --tablet-chart-edge: 48px;
   --tablet-friend-page-max: var(--container-form);
@@ -1469,7 +1471,7 @@
   --lunar-grid-aside-padding: clamp(var(--space-6), 3vw, 40px);
   --mobile-top-safe-padding: calc(env(safe-area-inset-top, 0px) + var(--top-control-top)) var(--mobile-control-inset) 0;
   /* Article navigation shares the top row; reserve one Back button beside the brand. */
-  --mobile-article-back-top: calc(env(safe-area-inset-top, 0px) + var(--top-control-top));
+  --mobile-article-back-top: calc(env(safe-area-inset-top, 0px) + var(--app-notice-height) + var(--top-control-top));
   --mobile-article-brand-offset: calc(var(--top-icon-button-size) + var(--top-control-gap));
   --mobile-chart-top-padding: var(--page-top);
   --mobile-route-padding: var(--page-top) var(--mobile-page-gutter) calc(var(--mobile-page-gutter) + 88px + env(safe-area-inset-bottom, 0px));
@@ -1582,7 +1584,7 @@
   :root {
     --dialog-surface: var(--surface-sheet);
     --top-control-top: var(--space-4);
-    --article-back-top: var(--space-4);
+    --article-back-top: calc(var(--app-notice-height) + var(--space-4));
   }
 }
 

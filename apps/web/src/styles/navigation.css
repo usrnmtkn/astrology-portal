@@ -31,7 +31,7 @@
 
 .topbar {
   position: fixed;
-  top: 0;
+  top: var(--app-notice-height);
   left: 0;
   right: 0;
   z-index: var(--z-topbar);

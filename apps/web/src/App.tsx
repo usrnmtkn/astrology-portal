@@ -14593,6 +14593,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
 
   return (
     <main onClick={selectedSkyDetail ? navigateSkyArticle : undefined} className={`app-shell theme-${theme} mode-${selectedSkyDetail ? "detail" : mode} ${sunriseOrbEnabled ? "sunrise-orb-enabled" : "sunrise-orb-disabled"} ${dyslexiaFriendlyFont ? "dyslexia-font-enabled" : "dyslexia-font-disabled"} `}>
+      {!isSignupMode && <EphemerisStatus retainedAt={skyStatus === "stale" && !sky?.cacheState ? sky?.generatedAt : undefined} timeZone={sky?.location.timeZone} />}
       {(authDialogIntent || isSignupMode) && <ModalPortal onClose={closeAuthentication} closeOnBackdrop titleId="auth-flow-title" className="auth-flow-modal" panelClassName="auth-dialog">
         <Suspense fallback={<PageLoading message="Loading sign-in…" />}>{renderSignupView("dialog")}</Suspense>
       </ModalPortal>}
@@ -14845,7 +14846,6 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
         </header>
       )}
 
-      {!isSignupMode && <EphemerisStatus retainedAt={skyStatus === "stale" && !sky?.cacheState ? sky?.generatedAt : undefined} timeZone={sky?.location.timeZone} />}
       <PageLoadBoundary resetKey={`${mode}:${skyDetailRoutePath ?? ""}`}>
       <Suspense fallback={<PageLoading message={mode === "calendar" ? "Loading calendar…" : mode === "friends" ? "Loading Friends…" : mode === "profile" ? "Loading your profile…" : "Loading page…"} />}>
       {routeIssue ? <ReaderUnavailable kind={routeIssue} /> : skyDetailRoutePath && skyDetailUnavailableRoute === skyDetailRoutePath ? <ReaderUnavailable kind="sky-event" /> : selectedSkyDetail && !connectionDetail && (!/^sky\/(?:placement|retrograde)\//u.test(skyDetailRoutePath ?? "")
