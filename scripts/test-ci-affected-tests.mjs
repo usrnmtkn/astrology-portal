@@ -25,8 +25,11 @@ assert(browserWorkflow.browserSpecs.length>0,'Browser workflow topology cannot p
 const styling=planFor(['apps/admin/src/studio-system.css']);
 assert.equal(styling.apiCommands.length,0);assert(styling.browserJobs.length>1);
 const budgetChecker=planFor(['scripts/check-admin-bundle-budgets.mjs']);
-assert.equal(budgetChecker.apiCommands.length,0);
+assert(!budgetChecker.apiCommands.some(command=>/test-calendar-daily-writing|test-horoscope-monthly/u.test(command)),'Budget changes retain their own API consumers without unrelated writers');
 assert.deepEqual(budgetChecker.browserJobs,['visual-smoke'],'A budget checker change must execute the build preflight without unrelated browser journeys');
+const buildProfiles=planFor(['scripts/release-build-preflight.mjs']);
+assert(buildProfiles.apiCommands.some(command=>command.includes('test-release-build-preflight')),'The canonical launcher retains its profile-parity regression');
+assert.deepEqual(buildProfiles.browserJobs,['visual-smoke']);
 const natal=planFor(['src/shared/natalSectPlacement.ts','api/admin/natal-placement-preview.ts']);
 assert(natal.apiCommands.some(command=>command.includes('test-natal-editorial-library')));
 assert(natal.apiCommands.some(command=>command.includes('test-admin-natal-placement-preview-api')));

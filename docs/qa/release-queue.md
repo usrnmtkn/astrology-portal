@@ -109,9 +109,11 @@ Keep the scope affected; this rule does not require a routine complete-suite run
   update an obsolete expectation only after verifying the intended behavior.
 - **Build budgets:** build every affected hosted profile, including ordinary Web,
   authentication startup and standalone Studio where applicable, with the pinned
-  CI toolchain and locked dependencies. Check the actual output against existing
-  bundle limits using their recorded build profiles. Keep fixture-specific
-  functional profiles separate from those measurement inputs. Even a two-byte
+  CI toolchain and locked dependencies. Run `npm run qa:release-builds` for the
+  canonical hosted measurement profiles. Its regression checks parity with the
+  shared CI preflight and prevents inherited browser-fixture keys or flags from
+  substituting a smaller build. A browser flow's build is functional evidence;
+  measure budgets through the canonical command. Even a two-byte
   excess in the applicable profile is a failure; a budget change needs its
   existing measured-cost approval rather than an automatic cap increase.
 - **Runner and preview readiness:** validate the selected Playwright image and

@@ -1,4 +1,4 @@
-import forecastProse from './forecastProseDevelopment.cjs';
+import forecastProse from './forecastProsePolicy.cjs';
 const {FORECAST_PROSE_DEVELOPMENT}=forecastProse;
 import {renderApprovedVoiceStyleReference} from './approvedVoiceStyle.mjs';
 import {HOROSCOPE_ENDING_GUIDANCE} from './horoscopeEndingGuidance.mjs';

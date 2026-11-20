@@ -10,7 +10,7 @@ import {apiTestCommands,validateTestPlan} from './ci-test-plan.mjs';
 
 const nonRuntime = /^(?:docs\/|README(?:\.[^/]+)?$|LICENSE(?:\.[^/]+)?$|AGENTS\.md$|CLAUDE\.md$)/u;
 const infrastructure = /^(?:\.github\/workflows\/|scripts\/(?:ci-|test-ci-|check-affected-api-gate|check-browser-release-gate|test-browser-release-gate|test-browser-suite-coverage|test-content-studio-api-shards|run-content-studio-api-shard|run-affected-playwright|balanced-browser-tests|test-browser-balance)|config\/.*(?:durations|timings).*\.json$)/u;
-const budget = /^scripts\/(?:(?:web|admin)-bundle-budgets\.json|check-(?:web|admin)-bundle-budgets\.mjs)$/u;
+const budget = /^scripts\/(?:(?:web|admin)-bundle-budgets\.json|check-(?:web|admin)-bundle-budgets\.mjs|release-build-preflight\.mjs)$/u;
 const webUi = /^apps\/web\/src\/(?:(?:features|components|routes)\/.*\.(?:[jt]sx|css)|styles\/.*\.css)$/u;
 // Browser journeys load UI through routes rather than importing its components.
 // Include every source in that surface, including children passed by App.tsx.
@@ -192,7 +192,11 @@ export function createAffectedPlan({root=process.cwd(),files,head,base,previousP
       continue;
     }
     if(nonRuntime.test(file)||infrastructure.test(file))continue;
-    if(budget.test(file)){build=true;continue;}
+    if(budget.test(file)){
+      build=true;
+      for(const command of commands)if(graph.reaches(commandSources(command,pkg.scripts),new Set([file])))api.add(command);
+      continue;
+    }
     if(file.startsWith('tests/visual/')) {if(runnableSpecs.has(file))selected.add(file);continue;}
     if(file==='package.json') {
       assert(previousPackage,'Package changes require the base package manifest');

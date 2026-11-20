@@ -1,5 +1,5 @@
 "use strict";
-const { FORECAST_PROSE_DEVELOPMENT } = require('./forecastProseDevelopment.cjs');
+const { FORECAST_PROSE_DEVELOPMENT } = require('./forecastProsePolicy.cjs');
 const { RHETORICAL_WRITER_POLICY } = require("./rhetoricalPatterns.cjs");
 
 // Lunar output constraint, renewed by the owner on 2026-10-07. Source passages
