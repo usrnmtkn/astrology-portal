@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict';
+import forecastProse from '../src/astro-writing/forecastProseDevelopment.cjs';
+const {FORECAST_PROSE_DEVELOPMENT,forecastWriterEvidence}=forecastProse;
 import {rows,invoke,providerFixture} from '../tests/helpers/lunation-writing-api.mts';
 import {lunationArticleEvents} from '../api/_lib/lunation-article-facts';
 import {lunarSavedWritingTarget,resolveLunarSavedWriting} from '../src/astro-writing/lunationSavedWriting.mjs';
@@ -35,6 +37,8 @@ assert.equal(plan.savedWriting.references[0].body,source.sections.packageDraft.b
 assert.notEqual(plan.planHash,oldHash);
 result=await act('generate',{approvedPlanHash:plan.planHash});assert.equal(result.status,202,JSON.stringify(result.payload));row=result.payload.rows[0];
 let prompt=providerFixture.requests.at(-1).input;
+assert(providerFixture.requests.at(-1).instructions.includes(FORECAST_PROSE_DEVELOPMENT));
+for(const label of ['OWNER-REVIEWED ARGUMENT','SEMANTIC COVERAGE','GOVERNED MEANING','current-approved-argument-and-close'])assert(!prompt.includes(label),label);
 assert(prompt.includes(JSON.stringify(source.sections.packageDraft.body)));
 assert(prompt.includes(JSON.stringify(season.body)));
 assert(prompt.includes('On **October 10th, 2026**, '));
@@ -61,6 +65,9 @@ assert.equal(plan.savedWriting.references[0].body,fullSource.body,'Evergreen tim
 assert.equal(plan.savedWriting.references[1].contentKey,seasonKey);
 result=await act('generate',{approvedPlanHash:plan.planHash});assert.equal(result.status,202,JSON.stringify(result.payload));
 prompt=providerFixture.requests.at(-1).input;
+assert(!prompt.includes("Witness it honestly and let something culminate or release. Don't start over"),'A knowledge drafting command cannot enter the actual writer request.');
+assert(!prompt.includes('phase_action'));
+assert(!providerFixture.requests.at(-1).instructions.includes('specific situation, direct consequence, useful next move'));
 assert(prompt.includes(JSON.stringify(rows.get('saved-writing-full-moon-aries').body)));
 assert(prompt.includes(JSON.stringify(season.body)));assert(!prompt.includes(JSON.stringify(original.body)));
 
@@ -76,4 +83,10 @@ assert.throws(()=>resolveLunarSavedWriting(target,[{...base,sections:{packageDra
 assert.equal(resolveLunarSavedWriting(target,[{...base,status:'ARCHIVED'}]).missingLunation,true);
 assert.equal(resolveLunarSavedWriting(target,[{...season,status:'ARCHIVED'}],[{contentKey:seasonKey,body:'Older original'}]).references.length,0);
 assert.equal(lunarSavedWritingTarget({kind:'full-moon',sign:'aries'}).sunSign,'libra');
+const protectedText='Complete owner opening. phase_action is literal owner text.\n\nComplete owner ending.';
+const evidence={sharedEvidencePacket:{roles:{register:[{role:'register',id:'owner',sourceKind:'owner-corpus-passage',text:protectedText}],meaning:[{role:'meaning',sourceKind:'reviewed-doctrine',text:'Synthetic drafting command.'}],argument:[]},entries:[{role:'register',id:'owner',sourceKind:'owner-corpus-passage',text:protectedText},{role:'meaning',sourceKind:'reviewed-doctrine',text:'Synthetic drafting command.'}],supportingArgumentCandidates:[]}};
+const originalEvidence=structuredClone(evidence),projected=forecastWriterEvidence(evidence,{lunar:true});
+assert.equal(projected.sharedEvidencePacket.roles.register[0].text,protectedText);
+assert.equal(projected.sharedEvidencePacket.roles.meaning.length,0);
+assert.deepEqual(evidence,originalEvidence,'Prose projection never modifies the retrieval packet.');
 console.log('PASS saved lunar writing: exact New/Full Moon and Sun-season references reach actual provider requests; source edits invalidate plans; outage/empty/archive fail safely; original text and dispatched source snapshots survive polling; no billed calls.');

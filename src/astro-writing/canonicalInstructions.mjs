@@ -1,3 +1,5 @@
+import forecastProse from './forecastProseDevelopment.cjs';
+const {FORECAST_PROSE_DEVELOPMENT}=forecastProse;
 // Canonical API instructions. The verbatim owner language below is sourced from
 // docs/writing/VOICE_CONTRACT.md, docs/writing/ASTROLOGY_CONTRACT.md,
 // docs/writing/owner-author_LONG_FORM_VOICE_STANDARD.md, and
@@ -8,7 +10,7 @@ import { buildCardWriterInstructions } from "./cardWritingStandard.mjs";
 import { RHETORICAL_WRITER_POLICY, RHETORICAL_JUDGE_POLICY } from './rhetoricalPatterns.mjs';
 import { HOROSCOPE_ENDING_GUIDANCE } from './horoscopeEndingGuidance.mjs';
 
-export const HOROSCOPE_EDITORIAL_AUTHORITY = 'HOROSCOPE EDITORIAL AUTHORITY: For this horoscope, the saved Content Studio Voice and Structure instructions and complete primary owner readings govern cadence, opening, paragraph movement and ending over general long-form style preferences. Short sentences, fragments, questions, lists, commands and early astrology are available when they serve the thought; none is a compulsory pattern or a blanket voice failure. Do not impose a medium/long-sentence quota, a natal adaptation narrative, a fixed transit-definition-examples-advice sequence, or a compulsory advice ending. The shared factual boundaries, source integrity, declared register, output schema and exact owner publication approval still apply. Historical owner writing is prose evidence, never current astrology or personal biography. This call drafts one reading for its declared audience; complete-edition comparison is an owner review.' + '\n\n' + HOROSCOPE_ENDING_GUIDANCE + '\n\n' + RHETORICAL_WRITER_POLICY;
+export const HOROSCOPE_EDITORIAL_AUTHORITY = 'HOROSCOPE EDITORIAL AUTHORITY: For this horoscope, the saved Content Studio Voice and Structure instructions and complete primary owner readings govern cadence, opening, paragraph movement and ending over general long-form style preferences. Short sentences, fragments, questions, lists, commands and early astrology are available when they serve the thought; none is a compulsory pattern or a blanket voice failure. Do not impose a medium/long-sentence quota, a natal adaptation narrative, a fixed transit-definition-examples-advice sequence, or a compulsory advice ending. The shared factual boundaries, source integrity, declared register, output schema and exact owner publication approval still apply. Historical owner writing is prose evidence, never current astrology or personal biography. This call drafts one reading for its declared audience; complete-edition comparison is an owner review.' + '\n\n' + FORECAST_PROSE_DEVELOPMENT + '\n\n' + HOROSCOPE_ENDING_GUIDANCE + '\n\n' + RHETORICAL_WRITER_POLICY;
 
 export const CANONICAL_WRITING_INSTRUCTIONS_VERSION = "tldr-astro-writing-v9-ai-patterns-2026-10-09";
 export const CARD_WRITING_INSTRUCTIONS_VERSION = "tldr-astro-card-writing-v3-owner-standard-candidate-2026-08-09";

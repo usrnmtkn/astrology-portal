@@ -1,5 +1,31 @@
 # Content Studio prompt review
 
+## Lunar and horoscope prose development — November 18, 2026
+
+Lunar preparation retains the complete meaning plan, argument and coverage for
+review, validation and hashed provenance. The prose request receives editorial
+direction and factual boundaries instead of that generated paragraph scaffold.
+Compact lunar phase/sign drafting commands are excluded from prose evidence;
+the complete matching saved reading, other complete owner references, matrix
+meanings and verified chart remain available. The automatic dated argument no
+longer turns the phase-action source into its proposed response or ending.
+
+Daily and older Weekly horoscope requests likewise exclude retrieval anchors,
+coverage labels and generated argument/close evidence. Monthly prose receives
+the reviewed scope alongside its existing private synthesis. Seasonal retains
+its existing selected development plan. Weekly V3 retains its saved-brief path.
+All four horoscope authorities and the lunar authority share a prose-development
+boundary: meaning notes are not sentences to paraphrase, another contact must
+add meaning, and advice is conditional. The shared effective-rule renderer also
+qualifies its legacy next-move direction for these forecasts, so a later rule
+cannot reinstate mandatory advice. Fresh horoscope plans bind this version.
+
+Complete saved profiles, owner passages, corrections, calculated facts, schemas,
+model settings, call counts and publication approval remain governed by their
+existing contracts. Intercepted actual-handler/provider tests check delivery
+and preservation; only the owner judges the resulting prose. A private paid
+sample is a separate authorized action, never publication or wording approval.
+
 ## Weekly from complete samples — November 15, 2026
 
 An explicitly saved `WEEKLY PROMPT V3` profile uses one short authority layer

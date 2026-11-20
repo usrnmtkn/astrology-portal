@@ -1,7 +1,9 @@
+import forecastProse from './forecastProseDevelopment.cjs';
+const {forecastWriterScope,forecastWriterEvidence}=forecastProse;
 import {resolveStudioWritingProfile} from './studioWritingProfileReceipt.mjs';
 import { LUNATION_ARGUMENT_GUIDANCE, LUNATION_REQUIRED_VOCABULARY } from './lunationEditorialConstraints.mjs';
 import {lunarSavedWritingInput} from './lunationSavedWriting.mjs';
-export const LUNATION_ARTICLE_PROTOCOL_VERSION = 'lunation-article/2026-10-09-saved-writing';
+export const LUNATION_ARTICLE_PROTOCOL_VERSION = 'lunation-article/2026-11-18-prose-development';
 export const LUNATION_ARTICLE_SCHEMA = Object.freeze({type:'object',additionalProperties:false,required:['headline','body'],properties:{headline:{type:'string'},body:{type:'string'}}});
 export const lunationArticleGuidance = `${LUNATION_ARGUMENT_GUIDANCE}
 ${LUNATION_REQUIRED_VOCABULARY}
@@ -30,17 +32,16 @@ export function lunationArticleOpeningDate(event) {
 
 export function buildLunationArticleInput({plan,context,task,target,engineFacts,argumentOutline,spine,writingProfile,familyContext}) {
   const openingDate = lunationArticleOpeningDate(engineFacts.event);
+  context=forecastWriterEvidence(context,{lunar:true});
   return [
     `LUNATION WRITING PROTOCOL ${LUNATION_ARTICLE_PROTOCOL_VERSION}\n${lunationArticleGuidance}`,
     ...(writingProfile ? [`CONTENT STUDIO WRITING GUIDANCE\n${resolveStudioWritingProfile(writingProfile).prompt}\nGuidance does not override calculated facts, evidence licensing or owner approval.`] : []),
     `TASK\n${task}`, `RENDER TARGET\n${JSON.stringify(target)}`,
     `VERIFIED EVENT-TIME FACTS\n${JSON.stringify(engineFacts)}`,
-    `DATED ARTICLE OPENING\nBegin the first body sentence with "On **${openingDate}**, " and name ${engineFacts.event.title} in that sentence. This date is calculated from ${engineFacts.event.startsAt} in ${engineFacts.event.timeZone}; do not replace it with the UTC calendar date or a date from an example. The body includes this date even when it also appears in the editor header. Then explain the actual phase and signs before moving into human implications.`,
+    `DATED ARTICLE OPENING\nBegin the first body sentence with "On **${openingDate}**, " and name ${engineFacts.event.title} in that sentence. This date is calculated from ${engineFacts.event.startsAt} in ${engineFacts.event.timeZone}; do not replace it with the UTC calendar date or a date from an example. The body includes this date even when it also appears in the editor header. Develop the phase and signs through what they mean for this event and the reader; the date opening does not require a separate phase definition, ruler lecture or paragraph for each contact.`,
     'This is a dated collective article. Do not import dates, transits or houses from historical voice examples. Do not predict a personal event or claim a natal placement. The supplied contacts are a selected set; absence does not prove that no other contact exists. Do not invent an end date or duration for a lunation, future stations, ingresses or return dates.',
     ...lunarSavedWritingInput(familyContext?.savedLunarWriting),
-    `GOVERNED MEANING\n${JSON.stringify(plan)}`,
-    `OWNER-REVIEWED ARGUMENT\n${JSON.stringify(argumentOutline)}`,
-    `SEMANTIC COVERAGE\n${JSON.stringify(spine)}`,
+    `REVIEWED EDITORIAL SCOPE\n${JSON.stringify(forecastWriterScope(argumentOutline))}`,
     `SHARED EVIDENCE\n${JSON.stringify(context.sharedEvidencePacket)}`,
     `ELIGIBLE OWNER LUNATION PASSAGES\n${JSON.stringify(context.sameFamilyExamples)}`,
     `REGISTER REFERENCE\n${JSON.stringify(context.registerGoldExamples)}`,
