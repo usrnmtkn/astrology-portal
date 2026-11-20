@@ -7,6 +7,11 @@ export type LocationInput = {
   latitude: number;
   longitude: number;
   timeZone?: string;
+  coordinateSource?: {
+    provider: string;
+    sourceId: string;
+    resolution: "municipal_centroid" | "borough_centroid" | "legacy_unprovenanced";
+  };
 };
 
 export type PlanetPosition = {

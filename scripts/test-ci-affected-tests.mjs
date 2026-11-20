@@ -161,7 +161,7 @@ try {
   const balanced=new URL('./balanced-browser-tests.mjs',import.meta.url).href;
   const cli=fileURLToPath(new URL('../node_modules/@playwright/test/cli.js',import.meta.url));
   const balancedPlan={...selected,head:fixtureHead};
-  for(const shard of ['1/6','6/6']) {
+  for(const shard of ['1/7','7/7']) {
     const code=`import{main}from ${JSON.stringify(balanced)};process.exitCode=main(['--config','playwright.studio-admin-flows.config.ts',${JSON.stringify(shard)}],{cli:${JSON.stringify(cli)}});`;
     const result=spawnSync(process.execPath,['--input-type=module','-e',code],{cwd:directory,env:{PATH:process.env.PATH,CI_AFFECTED_TEST_PLAN:JSON.stringify(balancedPlan)},encoding:'utf8'});
     assert.equal(result.status,0,result.stderr);
