@@ -21,7 +21,41 @@ queued. They do not solicit a new priority vote merely because CI is waiting.
 The coordinator preserves the recorded order unless the human independently
 reprioritizes or a concrete release blocker requires advancing another ready PR.
 
-1. The coordinator records the queue and keeps other candidates frozen.
+## Release size and turnaround
+
+Owner direction, 2026-11-20, in
+`thread:01a1efe7-84fd-7623-8559-23a770f86ad8`: reduce release delay and make this
+rule durable. The release unit is a tested candidate containing compatible ready
+fixes. A separate PR does not require a separate production release.
+
+- Group compatible ready PRs before expensive validation. Keep source review
+  history and scoped approvals, name the included PRs, and assign one integration
+  owner. Separate a change only for a recorded dependency, source conflict,
+  approval boundary or release risk; a blocked change must not hold ready fixes.
+- Build the candidate on current main, resolve integration and fixture issues,
+  run the affected preflight, then freeze once. Run the required exact-head
+  gates and one main deployment for that candidate. Preserve explicit holds,
+  unpublished drafts, protected prose and the normal production acceptance.
+- For a simple ready fix, plan one affected validation cycle and one rollout.
+  If the plan is expected to exceed 30 minutes, identify the mandatory gate,
+  runner queue or dependency that requires it and give a source-based estimate.
+  Remove unnecessary work before submission. This is a diagnosis threshold,
+  never permission to skip a gate or invent a guaranteed completion time.
+- Use affected checks and reuse passing evidence for unchanged relevant inputs
+  where revision policy permits. Record the affected-plan or named gate that
+  requires a complete suite. A status request, elapsed wait, or test-only commit
+  does not itself require restarting successful work.
+- Record the wait's deadline before yielding. If a job waits for a runner for
+  ten minutes, or exceeds its configured execution deadline by five minutes,
+  wake once for an authoritative status/log check and scoped recovery. Report
+  the concrete blocker and next milestone once; continue without waiting for
+  the human to request status. Keep one observer and remain quiet otherwise.
+
+This supersedes a routine one-PR/one-release drain. Required checks, execution
+timeouts, branch protection, editorial authority and privacy remain in force.
+
+1. The coordinator records the next compatible candidate and keeps other
+   candidates frozen.
 2. After the preceding main deployment passes its affected production acceptance
    and required main workflows finish successfully, set `RELEASE_ACTIVE_PR`
    with `gh variable set RELEASE_ACTIVE_PR --repo usrnmtkn/astrology-portal
@@ -30,8 +64,8 @@ reprioritizes or a concrete release blocker requires advancing another ready PR.
    The variable is scheduling state, not a secret or content approval.
 3. The admitted owner updates once onto current main, regenerates affected
    artifacts, completes the scoped preflight below, then freezes the final head
-   before pushing. Existing unmerged source work remains with its implementation
-   owner.
+   before pushing. Source owners supply bounded handoffs; the assigned integration
+   owner completes a combined candidate.
 4. Required API, browser and privacy checks must pass on that exact head. Reuse
    local evidence only for unchanged relevant inputs when repository gates allow
    it. A new push cancels unfinished checks for the superseded PR revision;
@@ -98,7 +132,11 @@ gate must still pass on that exact head. Local preflight and the hosted build
 preflight do not replace those gates or deployed production acceptance.
 
 If a frozen, already-pushed head becomes admitted without any source update,
-rerun its original pull-request workflow runs once after setting the variable.
+rerun its original pull-request workflows in full once after setting the actual
+PR number. A failed-jobs-only rerun leaves the previously skipped scope planner
+skipped and cannot validate the candidate. Reserve failed-job reruns for an
+isolated failure after the planner and prerequisites completed, with unchanged
+relevant inputs and repository policy permitting reuse. Preserve the first result.
 Manual dispatch in these PR-validation workflows is limited to main. Candidate
 validation uses pull-request runs; dispatch-only checks do not replace the
 pull-request checks required by branch protection. Other manual publication and

@@ -5,8 +5,10 @@
 Before pushing a new or replacement CI candidate, complete the mandatory scoped
 preflight in [`docs/qa/release-queue.md`](docs/qa/release-queue.md), including for
 test-only changes. Follow the same runbook for CI waits, merging and deployment.
-One coordinator assigns the active PR and advances releases through automatic
-production acceptance.
+One coordinator groups compatible ready fixes into one tested release candidate
+and advances it through automatic production acceptance. Apply the runbook's
+turnaround and bounded-wait rules; a separate PR does not require a separate
+production release.
 Reuse recorded release authorization instead of asking the human to reconfirm
 an operational slot, merge or deployment within that scope.
 
@@ -338,9 +340,10 @@ copy and generated-artifact integrity — with a queue and an invariant instead
 of a stop.
 
 1. **Queue, don't halt.** Open PRs in scope do not block branching or
-   development. They establish merge order: scope PRs merge one at a time,
-   oldest-ready-first unless the owner reorders. Immediately before merging,
-   rebase onto current main and regenerate all generated artifacts.
+   development. Release candidates merge one at a time, oldest-ready-first
+   unless the owner reorders. Group compatible ready scope PRs under the release
+   runbook, preserving review history and approval scope. Immediately before
+   merging, integrate onto current main and regenerate all generated artifacts.
 
 2. **Overlap is judged on source files only.** `dist/tldr-content.js`, the
    bundled manifests, and `content-book.html` are generated — never merge them

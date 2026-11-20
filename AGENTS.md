@@ -64,8 +64,10 @@ or commit without the owner's request.
 Before pushing a new or replacement CI candidate, complete the mandatory scoped
 preflight in [`docs/qa/release-queue.md`](docs/qa/release-queue.md), including for
 test-only changes. Follow the same runbook for CI waits, merging and deployment.
-One coordinator assigns the active PR and advances releases through automatic
-production acceptance.
+One coordinator groups compatible ready fixes into one tested release candidate
+and advances it through automatic production acceptance. Apply the runbook's
+turnaround and bounded-wait rules; a separate PR does not require a separate
+production release.
 Reuse recorded release authorization instead of asking the human to reconfirm
 an operational slot, merge or deployment within that scope.
 
@@ -336,7 +338,7 @@ automatic prose approval.
 
 Open PRs touching `apps/web/src/content/fallbackArchitectureV3/**` or `packages/astro-knowledge/**` do NOT block branching or development. Queue, don't halt:
 
-1. Scope PRs merge one at a time, oldest-ready-first unless the owner reorders. Immediately before merging, rebase onto current main and regenerate all generated artifacts.
+1. Release candidates merge one at a time, oldest-ready-first unless the owner reorders. Group compatible ready scope PRs under the release runbook; preserve their review history and approval scope. Immediately before merging, integrate onto current main and regenerate all generated artifacts.
 2. Overlap is judged on SOURCE files only. `dist/tldr-content.js`, bundled manifests, and `content-book.html` are generated - never merge them across branches; the merging PR regenerates them from its sources. A conflict exists only when two PRs edit the same source content.
 3. Every scope PR must leave all `review_status: approved` rows byte-identical, unless the PR description quotes the owner's explicit approval for the specific change. Diff the approved rows before merging to verify. Violations are a hard stop.
 4. Stop-and-report is reserved for: (a) a source-file conflict with another open PR that rebasing cannot resolve, (b) any change to approved copy without quoted owner approval, (c) CI failures not on the known pre-existing list. Everything else proceeds through the queue.
