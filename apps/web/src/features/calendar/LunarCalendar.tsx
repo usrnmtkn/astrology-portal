@@ -75,9 +75,9 @@ import {
 } from "../../content/readerSafety";
 import { cmsSurfaceKeys, resolveCmsSurfaceOverride } from "../../content/cmsSurfaceOverrides";
 import { slugContentPart } from "../../services/generatedContentKeys";
-import { contentPublication, isContentRetired, publicationAllowsContent, publicationRestoresBaseline } from "../../content/contentPublicationState";
+import { isContentRetired, publicationAllowsContent } from "../../content/contentPublicationState";
 import { resolveCalendarAspectPublication } from "./calendarAspectPublication";
-import { calendarAspectPublicationKeys, contentStudioExactRow, contentStudioExactSkyAspectKeys, isSkyAspectRetired, resolveSkyAspectContentStudioExact, resolveSkyAspectGeneratedContent, resolveSkyAspectOwnerAuthoredSigned } from "../../services/skyAspectContent";
+import { calendarAspectPublicationKeys, contentStudioExactSkyAspectKeys, isSkyAspectRetired, resolveSkyAspectContentStudioExact, resolveSkyAspectGeneratedContent, resolveSkyAspectOwnerAuthoredSigned } from "../../services/skyAspectContent";
 import {
   resolveApprovedExactSkyAspectCopy,
   resolveComposedSkyCalendarCard,
@@ -859,12 +859,9 @@ function transitCardStatusTag(event: LunarCalendarEvent) {
  * their precedence, and an unavailable pinned master cannot reveal older copy. */
 function resolveCalendarAspectMasterOverride(options: { generatedContent: Map<string, LiveGeneratedContent>; first: string; second: string; aspect: string }) {
   const contentKey = "sky.aspect.mercury.square.mars";
-  if (!contentStudioExactSkyAspectKeys(options.first, options.aspect, options.second).includes(contentKey)) return null;
-  const publication = contentPublication(contentKey);
-  if (publication && publicationRestoresBaseline(publication)) return null;
-  const row = options.generatedContent.get(contentKey);
-  if (!publication && !row) return null;
-  const exact = contentStudioExactRow(options.generatedContent, { a: "mercury", b: "mars", aspect: "square" });
+  if (!contentStudioExactSkyAspectKeys(options.first, options.aspect, options.second).includes(contentKey)
+    || !resolveCmsSurfaceOverride(options.generatedContent, [contentKey])) return null;
+  const exact = resolveSkyAspectContentStudioExact({ ...options, firstSign: "", secondSign: "" });
   if (!exact || !publicationAllowsContent(contentKey, exact.content.id, exact.content.updatedAt)) {
     return { sourceKeys: [contentKey], content: null, body: "" };
   }
