@@ -75,9 +75,9 @@ import {
 } from "../../content/readerSafety";
 import { cmsSurfaceKeys, resolveCmsSurfaceOverride } from "../../content/cmsSurfaceOverrides";
 import { slugContentPart } from "../../services/generatedContentKeys";
-import { isContentRetired } from "../../content/contentPublicationState";
-import { resolveCalendarAspectMasterOverride, resolveCalendarAspectPublication } from "./calendarAspectPublication";
-import { calendarAspectPublicationKeys, isSkyAspectRetired, resolveSkyAspectContentStudioExact, resolveSkyAspectGeneratedContent, resolveSkyAspectOwnerAuthoredSigned } from "../../services/skyAspectContent";
+import { contentPublication, isContentRetired, publicationAllowsContent, publicationRestoresBaseline } from "../../content/contentPublicationState";
+import { resolveCalendarAspectPublication } from "./calendarAspectPublication";
+import { calendarAspectPublicationKeys, contentStudioExactRow, contentStudioExactSkyAspectKeys, isSkyAspectRetired, resolveSkyAspectContentStudioExact, resolveSkyAspectGeneratedContent, resolveSkyAspectOwnerAuthoredSigned } from "../../services/skyAspectContent";
 import {
   resolveApprovedExactSkyAspectCopy,
   resolveComposedSkyCalendarCard,
@@ -853,6 +853,23 @@ function transitCardStatusTag(event: LunarCalendarEvent) {
   return "Transit";
 }
 
+
+/** PA-092's final owner selection supersedes its earlier signed Calendar card.
+ * Keep this exception at the exact identity: other signed publications retain
+ * their precedence, and an unavailable pinned master cannot reveal older copy. */
+function resolveCalendarAspectMasterOverride(options: { generatedContent: Map<string, LiveGeneratedContent>; first: string; second: string; aspect: string }) {
+  const contentKey = "sky.aspect.mercury.square.mars";
+  if (!contentStudioExactSkyAspectKeys(options.first, options.aspect, options.second).includes(contentKey)) return null;
+  const publication = contentPublication(contentKey);
+  if (publication && publicationRestoresBaseline(publication)) return null;
+  const row = options.generatedContent.get(contentKey);
+  if (!publication && !row) return null;
+  const exact = contentStudioExactRow(options.generatedContent, { a: "mercury", b: "mars", aspect: "square" });
+  if (!exact || !publicationAllowsContent(contentKey, exact.content.id, exact.content.updatedAt)) {
+    return { contentKey, content: null, body: "" };
+  }
+  return { contentKey, ...exact };
+}
 
 export function liveCalendarEventContent(
   generatedContent: Map<string, LiveGeneratedContent> | undefined,
