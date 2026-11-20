@@ -5422,7 +5422,7 @@ test.describe("client-facing user flow case studies", () => {
         const card = page.getByRole("button", { name: `Read more about ${pilot.title}`, exact: true });
         const expected = audience === "you" ? source.body_you! : source.body_they!;
         await expect(card).toBeVisible();
-        await expect(card.locator("h4")).toHaveText(pilot.title);
+        await expect(card.getByRole("heading", { name: pilot.title, level: 3, exact: true })).toBeVisible();
         await expect(card.locator("p")).toHaveText(expected);
         await expect(card).not.toContainText("running as one instinct");
         await card.click();
