@@ -149,3 +149,52 @@ The initial affected plan selects 203 API commands and 227 browser specs across
 That mandatory exact-head selection, Linux browser qualification and native
 PostgreSQL gates explain why release requires more than a short focused run.
 Local affected-flow evidence does not replace them.
+
+The final runtime candidate integrates `ad25950d8` at `46d6dbe29`. Canonical
+preflight passes ordinary Web, authenticated Web, standalone API types, client
+boundaries, server types and native startup. Standalone Studio initially fails
+its aggregate cap by 323 gzip bytes. A matched independently installed main
+control measures 935,523 bytes versus 936,118 for the editor (+595). The owner
+approved up to 500 aggregate compressed bytes in this chat; only the Studio
+aggregate receives 500 bytes, consuming another 95 bytes of existing headroom
+and leaving 177. All startup, styling, individual-chunk and Web caps stay
+unchanged. See the [measured receipt](natal-complete-editor-bundle-cost-2026-11-20.json).
+The integrated affected plan selects 204 API commands, 227 browser specs and
+16 browser jobs. Required hosted gates remain pending until admission.
+
+The complete-editor regression now supplies a synthetic shared template tail
+for both audiences rather than pinning the production recap. This preserves
+the original missing-sentence failure while allowing a separately authorized
+template edit. Actual preview-handler checks pass with that fixture; all four
+standalone Studio cases pass, including save/reopen/publication, unchanged pair
+and template rows, and one complete ending. Mobile/dark and desktop/light
+editor captures were inspected; remaining source-specific production text is
+verified against the renderer at deployment, without publishing owner prose.
+
+Final local browser evidence: the complete client-facing and natal-publication
+specs finished with 353 passes and four existing private-snapshot opt-in skips
+in 13.9 minutes. The client-facing runtime and its tests are unchanged after
+that run. The final synthetic-tail fixture then passed the entire 31-case natal
+publication spec in the Web entry (1.7 minutes), plus all four complete-editor
+cases in standalone Studio (44.3 seconds). The four opt-ins are the saved-body
+day/night and Friend-placement private snapshots; they are not passing cases.
+All four all-ten-planet design cases and their negative controls passed. Fresh
+Sun desktop/light and Uranus mobile/dark captures were inspected against the
+prior four-profile Sun/Uranus review; shared shell geometry, house headings,
+full prose and Gifts/Challenges cards agree.
+
+After integration, actual preview/source/exact-copy/display contracts, emitted
+native preview-handler startup, CSS/design-system, affected-selector/workflow
+contracts and the corrected Studio budget all pass. Broad API shard 2 passed
+during the base-update window and is not exact-final-head evidence. Shard 3
+first hit a sandbox IPC denial; rerunning with IPC available progressed to a
+missing protected report-evidence fixture. Shard 1 separately lacks protected
+ingress evidence. Neither is described as a complete API pass. Exact-head
+hosted API, Linux browser/PostgreSQL/privacy and production acceptance remain
+with the authorized cohort release owner.
+
+The owner authorized cross-chat release coordination in this chat. The existing
+coordinator in `thread:01a1efe7-84fd-7623-8559-23a770f86ad8` assigned this work
+to the next compatible cohort and owns integration, hosted gates, merge and main
+deployment. This source owner keeps the candidate unpushed, creates no separate
+PR or CI watch, and supplies bounded source/render acceptance evidence.

@@ -7,6 +7,7 @@ import {servingPackageRecords} from '../../api/_lib/serving-package-records';
 import {readerSession} from '../helpers/reader-session';
 import {emptyLastKnownGoodSnapshot} from '../helpers/bundled-publications';
 import {routeStudioPublicReader} from '../helpers/studio-public-reader-route';
+import {natalCompleteEditorTemplate} from '../../scripts/fixtures/natal-complete-editor-template.mjs';
 
 for (const width of [390,1440]) for (const theme of ['light','dark']) test(`Natal aspect complete editor preserves its closing sentence ${width} ${theme}`, async ({page}) => {
   test.setTimeout(90_000);
@@ -16,7 +17,9 @@ for (const width of [390,1440]) for (const theme of ['light','dark']) test(`Nata
   const seed={id:'00000000-0000-4000-8000-000000000072',content_key:pairKey,headline:'Synthetic Sun Mercury pair',body:pair.body,summary:'',status:'LIVE',lane:'serving',review_state:null,
     surface:'you',mode:'in_depth',provider:'tldrastro-fallback-architecture-v3',event_type:'fallback-system',block_type:'fallback_hook',updated_at:'2026-11-20T12:00:00Z',created_at:'2026-11-20T12:00:00Z',
     facts:{fallbackArchitectureV3:true},sections:{packageRecord:pair},source_snapshot:{sourcePackage:'tldrastro-fallback-architecture-v3',review_status:'approved'}};
-  const store=await studioApiStore([seed]);
+  const template=natalCompleteEditorTemplate(servingPackageRecords.get('fallback-template/natal.aspect'));
+  const templateSeed={...seed,id:'00000000-0000-4000-8000-000000000073',content_key:template.contentKey,headline:'Synthetic natal aspect template',body:template.body,sections:{packageRecord:template}};
+  const store=await studioApiStore([seed,templateSeed]);
   let unavailable=true;
   const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
   try {
@@ -35,13 +38,13 @@ for (const width of [390,1440]) for (const theme of ['light','dark']) test(`Nata
     const complete=page.getByRole('button',{name:'Edit complete write-up',exact:true});
     await complete.click();
     await expect(page.getByRole('alert')).toContainText('Synthetic publication state unavailable.');
-    expect((await store.call({method:'rows'})).length).toBe(1);
+    expect((await store.call({method:'rows'})).length).toBe(2);
     unavailable=false;await complete.click();
     const editor=page.getByRole('dialog',{name:'Generated content editor',exact:true});
     const you=editor.locator('[data-sky-field="body_you"]');
     const friend=editor.locator('[data-sky-field="body_they"]');
-    const expectedYou=pair.body+" That's your Sun conjunct Mercury: identity and the mind running as one instinct, always on together.";
-    const expectedFriend=pair.body_they+" That's {{Name}}'s Sun conjunct Mercury: identity and the mind running as one instinct, always on together.";
+    const expectedYou=pair.body+" Synthetic shared closing for your Sun and Mercury.";
+    const expectedFriend=pair.body_they+" Synthetic shared closing for {{Name}}'s Sun and Mercury.";
     await expect(you).toHaveValue(expectedYou);await expect(friend).toHaveValue(expectedFriend);
     await expect(editor.getByLabel('Content key',{exact:true})).toHaveValue(key);
     const edited=expectedYou+' Synthetic revised final sentence.';
@@ -61,8 +64,9 @@ for (const width of [390,1440]) for (const theme of ['light','dark']) test(`Nata
     const saved=(await store.call({method:'rows'})).find((r:any)=>r.content_key===key);
     const rendered=renderNatalPlacementPreviewState(normalizeNatalPlacementPreviewInput({kind:'natal-aspect',planet:'sun',second:'mercury',aspect:'conjunction',overrides:[{id:saved.id,status:saved.status,lane:saved.lane,provider:saved.provider,updatedAt:saved.updated_at,packageRow:saved.sections.packageRecord}]}));
     expect(rendered.rendered.body).toBe(edited);
-    expect(rendered.rendered.body.match(/That's your Sun conjunct Mercury/g)).toHaveLength(1);
+    expect(rendered.rendered.body.match(/Synthetic shared closing for your Sun and Mercury/g)).toHaveLength(1);
     expect((await store.call({method:'rows'})).find((r:any)=>r.content_key===pairKey)).toEqual(seed);
+    expect((await store.call({method:'rows'})).find((r:any)=>r.content_key===template.contentKey)).toEqual(templateSeed);
     expect(errors).toEqual([]);
   } finally {store.close();}
 });

@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { natalAspectCompleteDraft } from "../apps/admin/src/natalAspectSources.ts";
 import {servingPackageRecords} from "../api/_lib/serving-package-records.ts";
+import {natalCompleteEditorTemplate} from "./fixtures/natal-complete-editor-template.mjs";
 import {
   default as handler,
   normalizeNatalPlacementPreviewInput,
@@ -12,12 +13,16 @@ import {
 const fallbackProvider = "tldrastro-fallback-architecture-v3";
 
 const aspectSelection = { first: "sun", aspect: "conjunction", second: "mercury" };
-const aspectInput = normalizeNatalPlacementPreviewInput({ kind: "natal-aspect", planet: "sun", aspect: "conjunction", second: "mercury", overrides: [] });
+const aspectRequest = { kind: "natal-aspect", planet: "sun", aspect: "conjunction", second: "mercury", overrides: [{
+  id: "synthetic-editor-template", status: "LIVE", lane: "serving", provider: fallbackProvider,
+  packageRow: natalCompleteEditorTemplate(servingPackageRecords.get("fallback-template/natal.aspect"))
+}] };
+const aspectInput = normalizeNatalPlacementPreviewInput(aspectRequest);
 const aspectYou = renderNatalPlacementPreviewState(aspectInput).rendered;
 assert.ok(aspectYou.body.startsWith("Your ideas feel like part of who you are"));
-assert.ok(aspectYou.body.endsWith("That's your Sun conjunct Mercury: identity and the mind running as one instinct, always on together."));
+assert.ok(aspectYou.body.endsWith("Synthetic shared closing for your Sun and Mercury."));
 const aspectFriend = renderNatalAspectFriendDraft(aspectInput);
-assert.ok(aspectFriend.body.includes("That's {{Name}}'s Sun conjunct Mercury:"));
+assert.ok(aspectFriend.body.endsWith("Synthetic shared closing for {{Name}}'s Sun and Mercury."));
 const completeDraft = natalAspectCompleteDraft(aspectSelection, aspectYou.body, aspectFriend.body);
 assert.equal(completeDraft.body, aspectYou.body);
 assert.equal(completeDraft.sections.packageRecord.body_you, aspectYou.body);
@@ -111,7 +116,7 @@ try {
     assert.ok(url.searchParams.get("content_key").includes("fallback-hook/aspect-pair/sun/mercury/conjunction"));
     return Response.json([]);
   };
-  const aspectResponse = await request({ kind: "natal-aspect", planet: "sun", aspect: "conjunction", second: "mercury", overrides: [] });
+  const aspectResponse = await request(aspectRequest);
   assert.equal(aspectResponse.status, 200, JSON.stringify(aspectResponse.payload));
   assert.equal(aspectResponse.payload.rendered.body, aspectYou.body);
   assert.equal(aspectResponse.payload.friend.body, aspectFriend.body);
