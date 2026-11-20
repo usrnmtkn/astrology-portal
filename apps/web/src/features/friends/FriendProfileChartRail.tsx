@@ -1,4 +1,4 @@
-import { Expand } from "lucide-react";
+import { Maximize2 } from "lucide-react";
 import { CompositeWheel } from "../../components/charts/CompositeWheel";
 import { ChartFullscreenButton } from "../../components/charts/ChartFullscreenButton";
 import { SynastryWheel } from "../../components/charts/SynastryWheel";
@@ -87,7 +87,7 @@ export function FriendProfileChartRail({
       ) : wheel ? (
         <button id="friend-profile-chart-expand" type="button" className="natal-chart-expand" aria-label="Full-screen chart"
           onClick={() => onOpenFullscreen(activeTab === "composite" ? "composite" : "synastry")}>
-          <Expand size={18} aria-hidden="true" />
+          <Maximize2 size={24} aria-hidden="true" />
         </button>
       ) : null}
       {wheel ? <div className="chart-shell"><div className="wheel natal-wheel friend-wheel chart-frame"

@@ -99,7 +99,7 @@
   position: fixed;
   top: var(--article-back-top);
   left: 36px;
-  z-index: var(--z-floating);
+  z-index: var(--z-navigation-back);
   display: inline-flex;
   align-items: center;
   justify-content: center;

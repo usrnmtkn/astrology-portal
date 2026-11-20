@@ -74,6 +74,7 @@ import {
   ChevronRight,
   LogOut,
   MapPin,
+  Maximize2,
   Moon,
   Settings,
   Sparkles,
@@ -14613,7 +14614,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
               aria-label="TLDR Astro home"
               onClick={() => navigateToPortalMode(userProfile ? "member" : "guest")}
             >
-              TLDR Astro
+              <span>TLDR<span className="brand-word__suffix"> Astro</span></span>
             </button>
 
             <nav className="site-nav" aria-label="Primary navigation">
@@ -14931,7 +14932,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
                           setCityPickerOpenedFromMobileControls(false);
                           setMobileSkyControlsOpen(false);
                           setSkyFullChartOpen(true);
-                        }}><span aria-hidden="true">⛶</span></button>
+                        }}><Maximize2 size={24} aria-hidden="true" /></button>
               </section>
             )}
             {!isSignupMode && !usesFullPageLayout && isSkyLoading && (
