@@ -63,6 +63,11 @@ const failures = Object.entries(budgets).flatMap(([metric, limit]) => (
     ? [`${metric}: ${formatBytes(measurements[metric])} (${measurements[metric]} bytes) exceeds ${formatBytes(limit)} (${limit} bytes) by ${measurements[metric] - limit} bytes`]
     : []
 ));
+for(const item of javaScriptFiles) {
+  if(fs.readFileSync(path.join(distRoot,item.file),'utf8').includes('Saved result verification failed. Reopen it from Daily writing.')) {
+    failures.push('Private saved-result validation must stay on the server, outside Studio client assets.');
+  }
+}
 if (Object.keys(manifest).some(key => key.endsWith('/anonymousReaderTransport.ts'))) {
   failures.push('Standalone Studio includes the public reader startup transport.');
 }

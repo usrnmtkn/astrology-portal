@@ -62,3 +62,11 @@ Validation:
 Release verification must confirm the main deployment, private source hashes,
 unchanged unrelated profiles, unauthenticated denial and owner-visible saved
 settings. This is workflow verification, not a claim about generated prose quality.
+# Saved-result review projection
+
+The Calendar editor loads a selected result with `action: load` and
+`writerResultId`, bound to the requested date and time zone. The authenticated
+handler validates the original private workspace and returns only the complete
+passage plus its provenance fields. It excludes the workspace, writing profile,
+provider request and references. Ordinary Daily writing loads retain their full
+owner-only response. Review loads never generate, save or publish content.

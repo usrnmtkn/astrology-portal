@@ -6,7 +6,7 @@ import handler from '../api/admin/calendar-daily-writing';
 import publication from '../api/admin/content-publication';
 import {dailyFacts,digest,PROFILE_FIELDS} from '../api/_lib/calendar-daily-writing';
 import responses from '../src/astro-writing/openAIResponses.cjs';
-import {calendarDailyReviewDraft} from '../apps/admin/src/calendarDailyReviewDraft';
+import {calendarDailyReviewDraft} from '../api/_lib/calendar-daily-review';
 import {calendarPassageKey,calendarPassageRecord} from '../src/shared/features/calendar/calendarPassageTemplates';
 const storageFetch=globalThis.fetch;
 let calls=0,polls=0,unknown=false,failed=false,request:any;
@@ -73,6 +73,14 @@ const context={surface:'calendar' as const,...selection,sourceKey:calendarPassag
 const review=calendarDailyReviewDraft(row,context);
 assert.equal(review.body,candidate);assert.deepEqual(Object.keys(review).sort(),['body','source']);
 assert.deepEqual(Object.keys(review.source).sort(),['outputHash','requestHash','resultId','workspaceKey']);
+const projected=await invoke({action:'load',...selection,writerResultId:result.id});
+assert.equal(projected.status,200);assert.deepEqual(projected.review,review);
+assert.deepEqual(Object.keys(projected).sort(),['ok','review','status'],'Review loads return no private workspace, request or writing references');
+assert(!JSON.stringify(projected).includes(profile.instructions));
+assert.equal((await invoke({action:'load',...selection,writerResultId:result.id},'wrong')).status,401);
+assert.equal((await invoke({action:'generate',...selection,writerResultId:result.id})).status,400);
+for(const patch of [{writerResultId:'missing'},{writerResultId:''},{date:'2026-10-08'},{timeZone:'UTC'}])assert.equal((await invoke({action:'load',...selection,writerResultId:result.id,...patch})).status,400);
+assert.equal(calls,1,'Reviewing a saved result never dispatches another writer call');
 for(const invalid of [
   {...context,date:'2026-10-08'}, {...context,timeZone:'UTC'}, {...context,writerResultId:'missing'},
 ])assert.throws(()=>calendarDailyReviewDraft(row,invalid));

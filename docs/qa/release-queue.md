@@ -50,6 +50,14 @@ fixes. A separate PR does not require a separate production release.
   wake once for an authoritative status/log check and scoped recovery. Report
   the concrete blocker and next milestone once; continue without waiting for
   the human to request status. Keep one observer and remain quiet otherwise.
+- Inspect a failed phase within five minutes. If a repair is not verified within
+  twenty minutes, report its concrete blocker and revised estimate once, and
+  separate it from other ready fixes. Batch known corrections before another
+  CI-triggering push instead of submitting a sequence of partial repairs.
+- Scan a clean frozen checkout with `npm run privacy:check` and scan its built
+  public assets. Retain staged and history guards. Reserve Git-object `--ref`
+  scans for historical-tree audits; spawning Git for every unchanged source file
+  adds substantial delay without changing the bytes in a verified clean checkout.
 
 This supersedes a routine one-PR/one-release drain. Required checks, execution
 timeouts, branch protection, editorial authority and privacy remain in force.

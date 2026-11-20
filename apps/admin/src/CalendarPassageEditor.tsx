@@ -24,7 +24,7 @@ import CalendarPassageReaderPreview from './CalendarPassageReaderPreview';
 import { calendarDefaultPattern as defaultPattern, calendarWorkspaceReading, calendarWorkspaceTransitionKey } from './calendarPassageWorkspace';
 import type { SkyForecastPeriod } from './skyForecastTemplates';
 import type { CalendarPassageReviewContext } from './calendarPassageReviewRoute';
-import { calendarDailyReviewDraft, type CalendarDailyReviewDraft } from './calendarDailyReviewDraft';
+import type { CalendarDailyReviewDraft } from '../../../api/_lib/calendar-daily-review';
 
 const passageError = (reason: unknown, fallback: string) => reason instanceof Error && !reason.message.startsWith('/api/') ? reason.message : fallback;
 const localEdits = new Map<string, string>();
@@ -147,8 +147,10 @@ export default function CalendarPassageEditor({ period: studioPeriod, loadRows, 
       if (readerEntry?.writerResultId && period === 'daily' && scope === 'date' && target === 'overview'
         && requested.date === readerEntry.date && requested.timeZone === readerEntry.timeZone) {
         const writing = await requestStudioJson('/api/admin/calendar-daily-writing', secret, { method: 'POST', readOnly: true,
-          body: JSON.stringify({ action: 'load', date: requested.date, timeZone: requested.timeZone }) });
-        review = calendarDailyReviewDraft(writing.row, readerEntry);
+          body: JSON.stringify({ action: 'load', date: requested.date, timeZone: requested.timeZone, writerResultId: readerEntry.writerResultId }) });
+        const selectedReview=writing.review as CalendarDailyReviewDraft | null;
+        if(!selectedReview||typeof selectedReview.body!=='string'||!selectedReview.body.trim()||selectedReview.source?.resultId!==readerEntry.writerResultId)throw new Error('The selected writer result could not be loaded.');
+        review=selectedReview;
       }
       if (!active) return;
       const retained = localEdits.get(selectedKey);
