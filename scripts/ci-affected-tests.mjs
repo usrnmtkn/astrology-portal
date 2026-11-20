@@ -173,6 +173,12 @@ export function createAffectedPlan({root=process.cwd(),files,head,base,previousP
   const selected=new Set(),api=new Set(),reasons=[];
   let all=false,build=false;
   for(const file of files) {
+    if(file==='.github/workflows/visual-smoke.yml') {
+      runnableSpecs.forEach(spec=>selected.add(spec));
+      build=true;
+      reasons.push('browser workflow topology');
+      continue;
+    }
     if(nonRuntime.test(file)||infrastructure.test(file))continue;
     if(budget.test(file)){build=true;continue;}
     if(file.startsWith('tests/visual/')) {if(runnableSpecs.has(file))selected.add(file);continue;}
