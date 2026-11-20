@@ -9,6 +9,7 @@
   ],
   "scripts": {
     "qa:release-builds": "node scripts/test-release-build-preflight.mjs && node scripts/release-build-preflight.mjs",
+    "qa:release-evidence": "node scripts/lint-corpus-grammar.mjs && node scripts/test-synastry-directionality-batch-4-live.mjs && node scripts/build-knowledge-index.mjs --check && node scripts/build-phrase-index.mjs --check && node scripts/test-writing-kernel-drift.mjs && node scripts/test-packet-builder-migrations.mjs && node scripts/test-production-evidence-adapter.mjs && node scripts/test-production-sky-emission-coverage.mjs && node scripts/test-production-identifier-coverage.mjs && node scripts/test-production-precall-gate.mjs && node scripts/test-production-model-consolidation.mjs && node scripts/test-production-evidence-inspector.mjs && node scripts/test-production-surface-permissions.mjs && node scripts/build-production-sky-kernel-comparison.mjs && node scripts/test-sky-aspect-owner-gate-source.mjs",
     "test:location-consistency": "node --import tsx --test scripts/test-location-consistency.mts",
     "test:approved-voice-style": "node --test tests/astro-writing/approved-voice-style.test.mjs",
     "test:hellenistic-meaning": "node --test tests/astro-writing/hellenistic-meaning-support.test.mjs",
