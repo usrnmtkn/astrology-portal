@@ -9,6 +9,7 @@ export const sha256 = value => createHash('sha256').update(value).digest('hex');
 export const memoryRecordId = (sourcePath, line) => 'm-' + sha256(`${sourcePath}:${line}`).slice(0, 20);
 const stopWords = new Set('a an and are as at be by can could do does for from how i in is it me my of on or our should that the their this to use was we what when which with would you your please find remember'.split(' '));
 const tokens = value => [...new Set((value.toLowerCase().match(/[\p{L}\p{N}]+/gu) ?? []).filter(word => !stopWords.has(word)))];
+const wholeTextMatcher = value => new RegExp(`(?:^|[^\\p{L}\\p{N}])${value.replace(/[.*+?^${}()|[\]\\]/gu, '\\$&')}(?=$|[^\\p{L}\\p{N}])`, 'iu');
 const shortTitle = value => value.replace(/^TLDR-|\.md$/gu, '').replace(/[-_]/gu, ' ').replace(/\s+/gu, ' ').trim();
 
 function markdownSections(text) {
@@ -147,6 +148,8 @@ export function queryMemory(index, { query = '', phrase = false, kind = '', sour
   if (kind && !Object.hasOwn(index.counts, kind)) throw new Error('Unknown memory type');
   if (!Number.isInteger(limit) || limit < 1 || limit > 200 || !Number.isInteger(offset) || offset < 0) throw new Error('Invalid pagination');
   const terms = tokens(query).slice(0, 24);
+  const termMatchers = terms.map(wholeTextMatcher);
+  const phraseMatcher = wholeTextMatcher(query.trim());
   const results = [];
   for (const record of index.records) {
     if (!history && !['current', 'unverified'].includes(record.status)) continue;
@@ -156,14 +159,16 @@ export function queryMemory(index, { query = '', phrase = false, kind = '', sour
       if (!terms.length) continue;
       const context = `${record.title} ${record.family} ${record.register} ${record.contentKey} ${record.path}`.toLowerCase();
       const body = record.body.toLowerCase();
-      if (phrase && !context.includes(query.toLowerCase().trim()) && !body.includes(query.toLowerCase().trim())) continue;
+      const matchesPhrase = phraseMatcher.test(context) || phraseMatcher.test(body);
+      if (phrase && !matchesPhrase) continue;
       let matched = 0;
-      for (const term of terms) {
-        if (context.includes(term) || body.includes(term)) { matched++; score += context.includes(term) ? 4 : 1; }
+      for (const matcher of termMatchers) {
+        const matchesContext = matcher.test(context);
+        if (matchesContext || matcher.test(body)) { matched++; score += matchesContext ? 4 : 1; }
       }
       if (!matched) continue;
       score += (matched / terms.length) * 20;
-      if (body.includes(query.toLowerCase().trim())) score += 12;
+      if (phraseMatcher.test(body)) score += 12;
     }
     results.push({ record, score });
   }
