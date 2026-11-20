@@ -1,5 +1,3 @@
-import type { StudioPassageEdit } from '../../src/shared/studioPassageEdit.js';
-
 export type CalendarDailyReviewDraft = {
   body: string;
   source: { workspaceKey: string; resultId: string; requestHash: string; outputHash: string };
@@ -7,7 +5,9 @@ export type CalendarDailyReviewDraft = {
 
 // Only the selected passage crosses into the reader editor. Requests, references,
 // provider responses and earlier results remain in the private writing workspace.
-export function calendarDailyReviewDraft(row: any, context: StudioPassageEdit & { writerResultId?: string }): CalendarDailyReviewDraft {
+export function calendarDailyReviewDraft(row: any, context: {
+  surface: 'calendar'; date: string; timeZone: string; sourceKey: string; writerResultId?: string;
+}): CalendarDailyReviewDraft {
   const workspaceKey = `studio-writing-profile/calendar/daily-draft/${context.date}/${encodeURIComponent(context.timeZone)}`;
   const results = row?.sections?.run?.results;
   const matches = Array.isArray(results) ? results.filter(result => result.id === context.writerResultId) : [];

@@ -23,6 +23,7 @@ export function releaseBuildPreflight({env=process.env,cwd=process.cwd(),run=spa
   if(!phase('native-build-prerequisite',['--eval',"require('esbuild').transformSync('export const ready=true',{loader:'js'})"])) {
     throw new Error('Native build prerequisites failed before application checks. Match the launcher architecture to its installed dependencies.');
   }
+  npm('api-standalone-types','pretest:content-studio-api');
   if(npm('web-default-build','build'))npm('web-default-budget','qa:bundle');
   npm('server-types','typecheck:server');
   npm('native-production-startup','test:production-health');

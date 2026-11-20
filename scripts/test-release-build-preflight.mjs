@@ -5,7 +5,8 @@ import {releaseBuildEnvironment,releaseBuildPreflight} from './release-build-pre
 const env={npm_execpath:'/synthetic/npm-cli.js',PATH:process.env.PATH,VITE_SUPABASE_URL:'wrong-browser-fixture',VITE_SUPABASE_PUBLISHABLE_KEY:'wrong-key',VITE_ENABLE_NATAL_ASPECT_PATTERNS:'leaked',VITE_UNREGISTERED_FLAG:'leaked'};
 const calls=[];
 const receipts=releaseBuildPreflight({env,run:(command,args,options)=>{calls.push({command,args,env:options.env});return{status:0};},onPhase(){}});
-assert.equal(receipts.length,9);
+assert.equal(receipts.length,10);
+assert(calls.some(call=>call.args.includes('pretest:content-studio-api')),'Standalone API types must pass without browser ambient declarations');
 for(const call of calls){
   assert.equal(call.command,process.execPath,'Every child uses the actual verified Node launcher');
   for(const[key,value]of Object.entries(releaseBuildEnvironment))assert.equal(call.env[key],value);
