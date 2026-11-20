@@ -76,7 +76,7 @@ import {
 import { cmsSurfaceKeys, resolveCmsSurfaceOverride } from "../../content/cmsSurfaceOverrides";
 import { slugContentPart } from "../../services/generatedContentKeys";
 import { isContentRetired } from "../../content/contentPublicationState";
-import { resolveCalendarAspectPublication } from "./calendarAspectPublication";
+import { resolveCalendarAspectMasterOverride, resolveCalendarAspectPublication } from "./calendarAspectPublication";
 import { calendarAspectPublicationKeys, isSkyAspectRetired, resolveSkyAspectContentStudioExact, resolveSkyAspectGeneratedContent, resolveSkyAspectOwnerAuthoredSigned } from "../../services/skyAspectContent";
 import {
   resolveApprovedExactSkyAspectCopy,
@@ -880,6 +880,9 @@ export function liveCalendarEventContent(
     const lunar = resolveCalendarLunationAspectReading(event, generatedContent);
     if (lunar) return lunar.body ? generatedContent.get(lunar.contentKey) ?? null : null;
 
+    const master = resolveCalendarAspectMasterOverride({ generatedContent, first, second, aspect: event.aspect });
+    if (master) return master.content;
+
     const calendarPublication = resolveCalendarAspectPublication({
       generatedContent, first, second, aspect: event.aspect,
       firstMotion: event.fromMotion, secondMotion: event.toMotion,
@@ -1199,6 +1202,16 @@ export function normalizeCalendarEventSurface(
     if (lunar) return { surface: 'calendar-event', status: lunar.body ? 'servable' : 'not-servable',
       sections: lunar.body ? [{ slot: 'description', required: false, layer: 'authored', tier: 'content-studio-lunation-aspect',
         sourceKeys: lunar.sourceKeys, body: lunar.body }] : [] };
+  }
+  if (event.type === "aspect" && event.planets && event.aspect) {
+    const [first, second] = event.planets;
+    const master = resolveCalendarAspectMasterOverride({
+      generatedContent: generatedContent ?? (content ? new Map([[content.contentKey, content]]) : new Map()),
+      first, second, aspect: event.aspect
+    });
+    if (master) return { surface: "calendar-event", status: master.body ? "servable" : "not-servable",
+      sections: master.body ? [{ slot: "description", required: false, layer: "authored",
+        tier: "content-studio-exact-sky-aspect-v1", sourceKeys: [master.contentKey], body: master.body }] : [] };
   }
   // Manually authored Calendar entries are complete event write-ups. Preserve
   // every paragraph in the card and slide-out, as we do for exact aspects.

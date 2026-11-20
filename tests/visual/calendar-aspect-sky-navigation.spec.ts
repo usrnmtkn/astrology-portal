@@ -9,10 +9,72 @@ import { expectSkyAspectBody } from '../helpers/sky-aspect-reading';
 import { watchBrowserErrors } from './qaRuntimeGuards';
 import SwissEph from 'swisseph-wasm';
 import { bundledSkyPublications } from '../helpers/bundled-publications';
+import { studioApiStore } from '../helpers/studio-api-store';
+import { routeStudioPublicReader } from '../helpers/studio-public-reader-route';
 
 const date = '2026-04-07';
 const key = 'sky.aspect.moon.square.mercury';
 const body = 'Synthetic updated Moon square Mercury opening. The full published passage belongs in Sky.\n\nA separate complete final paragraph must survive navigation, Back, and reload.';
+
+for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const) {
+  test(`PA-092 final master wins over the earlier signed Calendar publication ${width} ${theme}`, async ({ page }) => {
+    test.setTimeout(120_000);
+    const masterKey = 'sky.aspect.mercury.square.mars';
+    const signedKey = 'sky-card/mercury/scorpio/square/mars/leo';
+    const master = 'Synthetic final master opening. The complete approved reading belongs on both surfaces.\n\nThe final master sentence survives navigation and reload exactly.';
+    const signed = 'Separate earlier signed Calendar reading remains stored unchanged.';
+    const common = { surface: 'sky', mode: 'feed', status: 'LIVE', lane: 'serving', review_state: null, target_date: null,
+      flags: [], provider: 'owner-content-studio', headline: 'Mercury Square Mars', summary: null, sections: null,
+      block_type: 'sky_aspect', updated_at: '2026-11-20T12:00:00Z' };
+    const store = await studioApiStore([
+      { ...common, id: 'a0000000-0000-4000-8000-000000000092', content_key: masterKey, body: master,
+        event_type: 'collective-aspect-card', source_snapshot: { contentStudioExactAspect: true,
+          exactSkyAspectIdentity: { a: 'mercury', b: 'mars', aspect: 'square' } } },
+      { ...common, id: 'b0000000-0000-4000-8000-000000000092', content_key: signedKey, body: signed,
+        event_type: 'calendar-aspect-owner-approved-revision', source_snapshot: { review_status: 'approved', owner_approved: true,
+          serving_enabled: true, calendarAspectPublication: { schema: 'content-studio-calendar-publication/v1', contentKey: signedKey } } }
+    ]);
+    try {
+      const event = (await getLunarCalendarMonth(defaultLocation, new Date('2026-10-02T16:00:00Z'))).events
+        .find(e => e.dateKey === '2026-10-02' && e.aspect === 'square' && e.planets?.includes('Mercury') && e.planets.includes('Mars'))!;
+      expect([event.fromSign, event.toSign]).toEqual(['Scorpio', 'Leo']);
+      await page.setViewportSize({ width, height: 1000 });
+      await page.addInitScript(({ theme, location }) => {
+        localStorage.setItem('tldrastro:theme', theme);
+        localStorage.setItem('tldrastro:selectedLocation', JSON.stringify(location));
+      }, { theme, location: defaultLocation });
+      await bundledPublications(page);
+      await page.route('**/api/**', async route => {
+        const url = new URL(route.request().url());
+        if (url.pathname === '/api/calendar' || url.pathname === '/api/sky') {
+          const res = { statusCode: 200, body: '', setHeader() {}, end(value: string) { this.body = value; } };
+          await (url.pathname === '/api/calendar' ? calendarHandler : skyHandler)(
+            { method: 'GET', url: url.href } as IncomingMessage, res as unknown as ServerResponse);
+          expect(res.statusCode).toBe(200);
+          return route.fulfill({ status: res.statusCode, contentType: 'application/json', body: res.body });
+        }
+        if (url.pathname === '/api/sky-reader') return route.fulfill({ status: 503, json: { error: 'Use calculated fixture handlers.' } });
+        if (await routeStudioPublicReader(route, url, message => store.call(message.method === 'reader'
+          ? { method: 'POST', url: '/api/content-reader', body: message.body } : message))) return;
+        await route.fallback();
+      });
+      await page.goto('/?date=2026-10-02#calendar?view=day&date=2026-10-02');
+      const card = page.locator('.calendar-day-events .calendar-stoic-card').filter({ hasText: /Mercury squares Mars/ });
+      const excerpt = card.locator('.calendar-stoic-card__excerpt');
+      await expect(excerpt).toHaveText(master.split(/\n\n/u), { timeout: 60_000 });
+      await card.screenshot({ path: `test-results/pa092-calendar-master-${width}-${theme}.png` });
+      await page.reload();
+      await expect(excerpt).toHaveText(master.split(/\n\n/u), { timeout: 60_000 });
+      await card.click();
+      await expectSkyAspectBody(page, master);
+      await page.reload();
+      await expectSkyAspectBody(page, master);
+      const saved = await store.call({ method: 'rows' });
+      expect(saved.find((row: any) => row.content_key === masterKey).body).toBe(master);
+      expect(saved.find((row: any) => row.content_key === signedKey).body).toBe(signed);
+    } finally { store.close(); }
+  });
+}
 
 for (const sample of [
   { date: '2026-04-07', second: 'Mercury' },
