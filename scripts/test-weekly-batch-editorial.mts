@@ -143,7 +143,7 @@ assert.equal(nativeTransport.requests.length,1);assert.deepEqual(JSON.parse(nati
 assert(nativeTransport.requests[0].request.messages[0].content.endsWith(weeklyDirectionWriterInput({version:WEEKLY_OWNER_DIRECTION,sign:'pisces',...nativeEdits})),'Native Claude receives the current sign directions after all other context');
 assert.equal(latest(native).source_snapshot.horoscopeGeneration.readings.pisces.rhetoricalReview.weeklyDirection.ending.outcome,'pass');
 assert(nativeTransport.requests[0].request.system.includes('An opening may need several connected sentences'),'The native Claude system retains the Weekly opening correction');
-assert(nativeTransport.requests[0].request.messages[0].content.includes('without requiring a psychological revelation'),'The native Claude plan retains the ordinary-language correction');
+assert(nativeTransport.requests[0].request.system.includes('without requiring a psychological revelation'),'The native Claude prose authority retains the ordinary-language correction');
 assert(nativeTransport.requests[0].request.messages[0].content.includes(JSON.stringify({previousReadings:latest(native).source_snapshot.horoscopeGeneration.readings.pisces.previousReadings})));
 assert.deepEqual(latest(native).sections.horoscopeEdition.passages.slice(0,11),nativeExisting);
 // Existing in-flight batches keep their pinned request and paid-stage budget.

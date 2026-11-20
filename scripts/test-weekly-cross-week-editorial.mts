@@ -63,7 +63,7 @@ for(const request of writerFixture.requests.values()){
  assert(request.input.includes('weekDifference is comparison-only analysis'));
  for(const field of ['voiceGuidance','structure','sourceGuidance'] as const)assert(request.input.includes(profile[field]),`Complete ${field} reaches the actual writer`);
  assert(request.instructions.includes('An opening may need several connected sentences'));
- assert(request.input.includes('without requiring a psychological revelation'));
+ assert(request.instructions.includes('without requiring a psychological revelation'),'The ordinary-language correction belongs in prose authority, not raw planning fields');
  assert(!request.input.includes('Let the ending follow from the recognition developed in this reading'));
 }
 assert.equal(writerFixture.batchCalls,2);assert.equal(writerFixture.calls,12);assert.equal(writerFixture.reviewCalls,12,'No extra judge, retry or rewrite calls');

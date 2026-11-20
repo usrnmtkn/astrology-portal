@@ -115,7 +115,9 @@ const expectedMonthly=composeMonthlyHoroscopeDraft({headline:'October 2026 Overv
 assert(request.input.includes(horoscopeEditorialPrompt(profile)));
 assert.equal(request.input.split(horoscopeEditorialPrompt(profile)).length-1,1,'Saved editorial instructions reach the provider once');
 assert(!request.input.includes('MONTHLY READING FORMAT\nBegin with a true TLDR'),'The output schema does not append another editorial overlay');
-assert(request.input.includes('REVIEWED GENERATION SCOPE'));
+assert(request.input.includes('REVIEWED EDITORIAL SCOPE'));
+assert(!request.input.includes('current-approved-argument-and-close'));
+assert(!request.input.includes('meaningPlanHash'));
 assert(!request.input.includes('permission earned by the passage'),'Monthly no longer inherits a permission ending from sign-reading scaffolding');
 assert(!request.input.includes('BEGIN EXACT OCTOBER TLDR'),'Starter profiles never lock a historical summary');
 assert(request.input.includes('Preserve meaning before changing expression.'));
