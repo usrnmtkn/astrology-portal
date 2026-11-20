@@ -36,12 +36,18 @@ only after the main deployment and affected production acceptance pass.
 npm run qa:natal-design
 ```
 
-The command runs the existing CSS/token/design-system audit and four fresh-built
-browser cases. Each case visits all ten natal planets, at 390px or 1440px in
+The command runs the existing CSS/token/design-system audit and eight fresh-built
+browser cases: four existing article-typography contracts and four all-planet
+design cases. The latter visit all ten natal planets, at 390px or 1440px in
 light or dark. It checks Gifts / Challenges, consistent house headings,
 semantic hierarchy, card placement and width, and fixed typography, padding,
 radius and surface expectations from the existing article design. It reloads
 Sun and Uranus and retains screenshots. An empty aspect category remains omitted.
+The existing typography contracts retain their font, card, narrative, eyebrow,
+navigation, reload and overflow assertions, with the approved natal house H2 and
+Gifts/Challenges H2 followed by H3 member titles. Other surfaces keep their own
+heading hierarchy. Include existing selector and typography consumers when
+changing markup; new regression cases alone do not cover those contracts.
 
 This catches both one-planet drift and uniform changes to the checked design
 roles. It has no reference-update option. For an intentional design revision,
