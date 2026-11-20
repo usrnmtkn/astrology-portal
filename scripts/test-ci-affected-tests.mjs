@@ -19,6 +19,9 @@ assert.equal(browser.apiCommands.length,0);assert.deepEqual(browser.browserSpecs
 assert.deepEqual(browser.browserJobs,['studio-admin-flows']);assert.equal(browser.postgres,false);
 const infrastructure=planFor(['.github/workflows/content-studio-api.yml','scripts/ci-test-plan.mjs','scripts/run-affected-playwright.mjs']);
 assert.equal(infrastructure.apiCommands.length,0);assert.equal(infrastructure.browserJobs.length,0);
+const browserWorkflow=planFor(['.github/workflows/visual-smoke.yml']);
+assert(browserWorkflow.browserJobs.includes('studio-admin-flows'),'Changing the Studio Admin matrix must exercise its exact-head shards');
+assert(browserWorkflow.browserSpecs.length>0,'Browser workflow topology cannot pass with every browser job skipped');
 const styling=planFor(['apps/admin/src/studio-system.css']);
 assert.equal(styling.apiCommands.length,0);assert(styling.browserJobs.length>1);
 const natal=planFor(['src/shared/natalSectPlacement.ts','api/admin/natal-placement-preview.ts']);
