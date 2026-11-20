@@ -62,6 +62,10 @@ timeouts, branch protection, editorial authority and privacy remain in force.
    --body candidate-number`. Supply the actual PR number explicitly so the command
    runs noninteractively.
    The variable is scheduling state, not a secret or content approval.
+   For a new candidate, reserve its number with a release issue, set admission,
+   then [convert that same issue into the PR](https://docs.github.com/en/rest/pulls/pulls#create-a-pull-request).
+   This lets its first PR event use the assigned slot instead of producing held
+   runs that need a second submission. Prepare the branch and review body first.
 3. The admitted owner updates once onto current main, regenerates affected
    artifacts, completes the scoped preflight below, then freezes the final head
    before pushing. Source owners supply bounded handoffs; the assigned integration

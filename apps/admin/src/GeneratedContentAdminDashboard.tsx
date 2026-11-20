@@ -7857,11 +7857,7 @@ export function GeneratedContentAdminDashboard() {
             <StudioTabs label="Calendar Write-ups workspaces" value={calendarWriteupWorkspaceView}
               tabs={calendarWriteupWorkspaceTabs}
               onValueChange={view => navigateAdminPage("calendarWriteups", new URLSearchParams({ view }))}>
-              {calendarWriteupWorkspaceView === "daily-writing" && <Suspense fallback={<PageLoading message="Loading daily writing…" />}><CalendarDailyWritingStudio secret={secret} dirtyRef={dailyWritingDirtyRef} onReviewDraft={(date,timeZone,resultId)=>{
-                const params=calendarPassageReviewParams(`calendar-passage/daily/${date}/${encodeURIComponent(timeZone)}`,resultId);
-                if(params)navigateAdminPage('calendarWriteups',params);
-                else setMessage('This writer result has an invalid date, time zone or identity. Reload the saved writing before reviewing.');
-              }} /></Suspense>}
+              {calendarWriteupWorkspaceView === "daily-writing" && <Suspense fallback={<PageLoading message="Loading daily writing…" />}><CalendarDailyWritingStudio secret={secret} dirtyRef={dailyWritingDirtyRef} onReviewDraft={params=>navigateAdminPage('calendarWriteups',params)} /></Suspense>}
               {calendarWriteupWorkspaceView === "subscription-events" && <Suspense fallback={<PageLoading message="Loading subscription events…" />}><CalendarSubscriptionEvents secret={secret} dirtyRef={subscriptionEventDirtyRef} /></Suspense>}
               {calendarWriteupWorkspaceView === "lunation-writing" && <Suspense fallback={<PageLoading message="Loading lunar writing…" />}><LunationWritingStudio key={requestedLunationId ?? "lunar-workspace"} secret={secret} dirtyRef={lunationWritingDirtyRef} requestedDraftId={requestedLunationId}
                 library={<LunarCalendarWorkspace scope="lunations" rows={rows} query={query} onQuery={setQuery} isLoading={isLoading || loadState !== "loaded"}

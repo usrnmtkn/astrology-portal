@@ -24,6 +24,9 @@ assert(browserWorkflow.browserJobs.includes('studio-admin-flows'),'Changing the 
 assert(browserWorkflow.browserSpecs.length>0,'Browser workflow topology cannot pass with every browser job skipped');
 const styling=planFor(['apps/admin/src/studio-system.css']);
 assert.equal(styling.apiCommands.length,0);assert(styling.browserJobs.length>1);
+const budgetChecker=planFor(['scripts/check-admin-bundle-budgets.mjs']);
+assert.equal(budgetChecker.apiCommands.length,0);
+assert.deepEqual(budgetChecker.browserJobs,['visual-smoke'],'A budget checker change must execute the build preflight without unrelated browser journeys');
 const natal=planFor(['src/shared/natalSectPlacement.ts','api/admin/natal-placement-preview.ts']);
 assert(natal.apiCommands.some(command=>command.includes('test-natal-editorial-library')));
 assert(natal.apiCommands.some(command=>command.includes('test-admin-natal-placement-preview-api')));

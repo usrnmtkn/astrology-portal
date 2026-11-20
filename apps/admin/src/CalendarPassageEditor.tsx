@@ -23,7 +23,8 @@ import { refreshContentPublications } from '../../web/src/services/contentPublic
 import CalendarPassageReaderPreview from './CalendarPassageReaderPreview';
 import { calendarDefaultPattern as defaultPattern, calendarWorkspaceReading, calendarWorkspaceTransitionKey } from './calendarPassageWorkspace';
 import type { SkyForecastPeriod } from './skyForecastTemplates';
-import { calendarDailyReviewDraft, type CalendarDailyReviewDraft, type CalendarPassageReviewContext } from './calendarPassageReviewRoute';
+import type { CalendarPassageReviewContext } from './calendarPassageReviewRoute';
+import { calendarDailyReviewDraft, type CalendarDailyReviewDraft } from './calendarDailyReviewDraft';
 
 const passageError = (reason: unknown, fallback: string) => reason instanceof Error && !reason.message.startsWith('/api/') ? reason.message : fallback;
 const localEdits = new Map<string, string>();

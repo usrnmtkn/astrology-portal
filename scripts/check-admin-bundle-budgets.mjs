@@ -102,6 +102,7 @@ if (javaScriptFiles.some(item => /fallbackArchitectureV3DeferredBundle-/.test(it
 }
 
 const forbiddenEntryMarkers = [
+  "Saved result verification failed. Reopen it from Daily writing.",
   "Fallback composition check",
   "bundled-deferred-core-rows-v3",
   "bundled-sky-core-rows-v3",

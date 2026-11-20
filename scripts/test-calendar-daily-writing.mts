@@ -6,7 +6,7 @@ import handler from '../api/admin/calendar-daily-writing';
 import publication from '../api/admin/content-publication';
 import {dailyFacts,digest,PROFILE_FIELDS} from '../api/_lib/calendar-daily-writing';
 import responses from '../src/astro-writing/openAIResponses.cjs';
-import {calendarDailyReviewDraft} from '../apps/admin/src/calendarPassageReviewRoute';
+import {calendarDailyReviewDraft} from '../apps/admin/src/calendarDailyReviewDraft';
 import {calendarPassageKey,calendarPassageRecord} from '../src/shared/features/calendar/calendarPassageTemplates';
 const storageFetch=globalThis.fetch;
 let calls=0,polls=0,unknown=false,failed=false,request:any;
