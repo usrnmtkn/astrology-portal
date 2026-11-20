@@ -75,9 +75,9 @@ import {
 } from "../../content/readerSafety";
 import { cmsSurfaceKeys, resolveCmsSurfaceOverride } from "../../content/cmsSurfaceOverrides";
 import { slugContentPart } from "../../services/generatedContentKeys";
-import { isContentRetired } from "../../content/contentPublicationState";
+import { isContentRetired, publicationAllowsContent } from "../../content/contentPublicationState";
 import { resolveCalendarAspectPublication } from "./calendarAspectPublication";
-import { calendarAspectPublicationKeys, isSkyAspectRetired, resolveSkyAspectContentStudioExact, resolveSkyAspectGeneratedContent, resolveSkyAspectOwnerAuthoredSigned } from "../../services/skyAspectContent";
+import { calendarAspectPublicationKeys, contentStudioExactSkyAspectKeys, isSkyAspectRetired, resolveSkyAspectContentStudioExact, resolveSkyAspectGeneratedContent, resolveSkyAspectOwnerAuthoredSigned } from "../../services/skyAspectContent";
 import {
   resolveApprovedExactSkyAspectCopy,
   resolveComposedSkyCalendarCard,
@@ -854,6 +854,20 @@ function transitCardStatusTag(event: LunarCalendarEvent) {
 }
 
 
+/** PA-092's final owner selection supersedes its earlier signed Calendar card.
+ * Keep this exception at the exact identity: other signed publications retain
+ * their precedence, and an unavailable pinned master cannot reveal older copy. */
+function resolveCalendarAspectMasterOverride(options: { generatedContent: Map<string, LiveGeneratedContent>; first: string; second: string; aspect: string }) {
+  const contentKey = "sky.aspect.mercury.square.mars";
+  if (!contentStudioExactSkyAspectKeys(options.first, options.aspect, options.second).includes(contentKey)
+    || !resolveCmsSurfaceOverride(options.generatedContent, [contentKey])) return null;
+  const exact = resolveSkyAspectContentStudioExact({ ...options, firstSign: "", secondSign: "" });
+  if (!exact || !publicationAllowsContent(contentKey, exact.content.id, exact.content.updatedAt)) {
+    return { sourceKeys: [contentKey], content: null, body: "" };
+  }
+  return { sourceKeys: [contentKey], ...exact };
+}
+
 export function liveCalendarEventContent(
   generatedContent: Map<string, LiveGeneratedContent> | undefined,
   event: LunarCalendarEvent,
@@ -879,6 +893,9 @@ export function liveCalendarEventContent(
 
     const lunar = resolveCalendarLunationAspectReading(event, generatedContent);
     if (lunar) return lunar.body ? generatedContent.get(lunar.contentKey) ?? null : null;
+
+    const master = resolveCalendarAspectMasterOverride({ generatedContent, first, second, aspect: event.aspect });
+    if (master) return master.content;
 
     const calendarPublication = resolveCalendarAspectPublication({
       generatedContent, first, second, aspect: event.aspect,
@@ -1196,9 +1213,15 @@ export function normalizeCalendarEventSurface(
   }
   if (event.type === 'aspect') {
     const lunar = resolveCalendarLunationAspectReading(event, generatedContent ?? new Map());
-    if (lunar) return { surface: 'calendar-event', status: lunar.body ? 'servable' : 'not-servable',
-      sections: lunar.body ? [{ slot: 'description', required: false, layer: 'authored', tier: 'content-studio-lunation-aspect',
-        sourceKeys: lunar.sourceKeys, body: lunar.body }] : [] };
+    const master = !lunar && event.planets && event.aspect ? resolveCalendarAspectMasterOverride({
+      generatedContent: generatedContent ?? (content ? new Map([[content.contentKey, content]]) : new Map()),
+      first: event.planets[0], second: event.planets[1], aspect: event.aspect
+    }) : null;
+    const reading = lunar ?? master;
+    if (reading) return { surface: 'calendar-event', status: reading.body ? 'servable' : 'not-servable',
+      sections: reading.body ? [{ slot: 'description', required: false, layer: 'authored',
+        tier: lunar ? 'content-studio-lunation-aspect' : 'content-studio-exact-sky-aspect-v1',
+        sourceKeys: reading.sourceKeys, body: reading.body }] : [] };
   }
   // Manually authored Calendar entries are complete event write-ups. Preserve
   // every paragraph in the card and slide-out, as we do for exact aspects.

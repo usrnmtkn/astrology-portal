@@ -63,6 +63,14 @@ aspect section should be redesigned**.
 
 ## Required content precedence
 
+The owner's November 20, 2026 direction in
+`thread:01a1eb6f-fded-7212-a0da-099fb4b6876f` selects the published PA-092 master
+(`sky.aspect.mercury.square.mars`) for Calendar ahead of its earlier signed
+publication. Preserve its complete wording and the other approved readings.
+This identity-specific selection respects publication retirement, pinned source
+versions, and explicit baseline restoration; an unavailable pinned master must
+not reveal older signed copy.
+
 Resolve each calculated Sky aspect in this order:
 
 ```text

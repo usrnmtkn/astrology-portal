@@ -87,7 +87,8 @@ await build({
   bundle: true,
   define: { "import.meta.env": "{}" },
   stdin: {resolveDir:repoRoot,loader:"tsx",contents:`
-    export {normalizeCalendarEventSurface} from './apps/web/src/features/calendar/LunarCalendar';
+    export {normalizeCalendarEventSurface, liveCalendarEventContent} from './apps/web/src/features/calendar/LunarCalendar';
+    export {installContentPublications} from './apps/web/src/content/contentPublicationState';
     export {loadCalendarFallbackArchitectureV3Bundle} from './apps/web/src/content/fallbackArchitectureV3Runtime';
   `},
   format: "esm",
@@ -107,7 +108,7 @@ await build({
   platform: "node"
 });
 
-const { normalizeCalendarEventSurface, loadCalendarFallbackArchitectureV3Bundle } = await import(
+const { normalizeCalendarEventSurface, liveCalendarEventContent, installContentPublications, loadCalendarFallbackArchitectureV3Bundle } = await import(
   `${pathToFileURL(bundleFile).href}?t=${Date.now()}`
 );
 await loadCalendarFallbackArchitectureV3Bundle();
@@ -337,3 +338,48 @@ const paired = normalizeCalendarEventSurface(
   nodeMap.get("sky.aspect.north-node.square.mars"), "Today", null, exactLookup, null, nodeMap
 );
 for (const row of nodeRows) assert.ok(paired.sections[0].body.includes(row.body), `${row.content_key}: Calendar must retain both edited node poles after hydration`);
+
+// The final PA-092 master must win even for the negative-angle Scorpio/Leo
+// contact. Earlier coverage used only the opposite zodiac rotation.
+const masterKey = "sky.aspect.mercury.square.mars";
+const signedKey = "sky-card/mercury/scorpio/square/mars/leo";
+const master = { id: "fixture-pa092-master", contentKey: masterKey, body: "Synthetic master opening.\n\nComplete synthetic final sentence.",
+  status: "LIVE", updatedAt: "2026-11-20T12:00:00Z", targetDate: null, sections: null,
+  sourceSnapshot: { contentStudioExactAspect: true, exactSkyAspectIdentity: { a: "mercury", b: "mars", aspect: "square" } } };
+const signed = { ...master, id: "fixture-signed", contentKey: signedKey, body: "Separate signed reading stays stored unchanged.",
+  eventType: "calendar-aspect-owner-approved-revision", sourceSnapshot: { review_status: "approved", owner_approved: true, serving_enabled: true,
+    calendarAspectPublication: { schema: "content-studio-calendar-publication/v1", contentKey: signedKey } } };
+const contentMap = new Map([master, signed].map(row => [row.contentKey, row]));
+const publication = (row, revision = 1, state = "live") => ({ content_key: row.contentKey, state, revision,
+  row_id: row.id, row_updated_at: row.updatedAt, updated_at: row.updatedAt });
+installContentPublications([publication(master), publication(signed)]);
+for (const reverse of [false, true]) for (const fromMotion of ["direct", "retrograde"]) for (const toMotion of ["direct", "retrograde"]) {
+  const event = { ...aspectEvent({ first: reverse ? "Mars" : "Mercury", second: reverse ? "Mercury" : "Mars", aspect: "square",
+    fromSign: reverse ? "Leo" : "Scorpio", toSign: reverse ? "Scorpio" : "Leo" }), fromMotion, toMotion };
+  const selected = liveCalendarEventContent(contentMap, event);
+  assert.equal(selected, master, "PA-092 must select the master without modifying either stored reading.");
+  const surface = normalizeCalendarEventSurface(event, selected, "Today", null, exactLookup, null, contentMap);
+  assert.equal(surface.sections[0]?.body, master.body);
+  assert.deepEqual(surface.sections[0]?.sourceKeys, [masterKey]);
+  for (const invalid of [null, { ...master, updatedAt: "2026-11-19T12:00:00Z" }, { ...master, sourceSnapshot: {} }]) {
+    const unavailable = new Map(contentMap);
+    if (invalid) unavailable.set(masterKey, invalid); else unavailable.delete(masterKey);
+    assert.equal(liveCalendarEventContent(unavailable, event), null);
+    assert.equal(normalizeCalendarEventSurface(event, signed, "Today", null, exactLookup, null, unavailable).status, "not-servable",
+      "Missing, stale or invalid pinned masters must not revive the earlier signed reading.");
+  }
+}
+const event = aspectEvent({ first: "Mercury", second: "Mars", aspect: "square", fromSign: "Scorpio", toSign: "Leo" });
+installContentPublications([publication(master, 2, "retired")]);
+assert.equal(liveCalendarEventContent(contentMap, event), null);
+assert.equal(normalizeCalendarEventSurface(event, signed, "Today", null, exactLookup, null, contentMap).status, "not-servable");
+installContentPublications([{ ...publication(master, 3), row_id: null, row_updated_at: null }]);
+assert.equal(liveCalendarEventContent(contentMap, event)?.body, signed.body, "Explicit baseline restoration retains its existing lifecycle meaning.");
+const otherKey = "sky-card/moon/aquarius/sextile/neptune/aries";
+const other = { ...signed, contentKey: otherKey, sourceSnapshot: { ...signed.sourceSnapshot,
+  calendarAspectPublication: { schema: "content-studio-calendar-publication/v1", contentKey: otherKey } } };
+const otherMap = new Map([[otherKey, other]]);
+const otherEvent = aspectEvent({ first: "Moon", second: "Neptune", aspect: "sextile", fromSign: "Aquarius", toSign: "Aries" });
+assert.equal(liveCalendarEventContent(otherMap, otherEvent)?.body, other.body);
+assert.equal(normalizeCalendarEventSurface(otherEvent, other, "Today", null, exactLookup, null, otherMap).sections[0]?.body, other.body);
+console.log("PA-092 master precedence, lifecycle and unrelated publication retention passed");
