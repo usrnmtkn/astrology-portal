@@ -2383,25 +2383,14 @@
       "surface": "you|friends",
       "headline": "{{possessive}} {{planetATitle}} {{aspectName}} {{planetBTitle}}",
       "requiredSlots": [
-        "possessive",
-        "planetATitle",
-        "planetBTitle",
-        "aspectAdj",
-        "aspectName",
-        "planetACore",
-        "planetBCore",
-        "aspectTypeLine",
-        "aspectMotion",
-        "possessiveLow"
-      ],
-      "optionalSlots": [
         "pairSentences"
       ],
-      "body": "{{possessive}} {{planetATitle}} is {{aspectAdj}} your {{planetBTitle}}, meaning {{planetACore}} and {{planetBCore}} are wired together in you. {{aspectTypeLine}}{{#pairSentences}} {{pairSentences}}{{/pairSentences}}",
+      "optionalSlots": [],
+      "body": "{{pairSentences}}",
       "replaces": "fallback-hook/you.natal-aspect",
-      "body_you": "{{#pairSentences}}{{pairSentences}} That's {{possessiveLow}} {{planetATitle}} {{aspectAdj}} {{planetBTitle}}: {{planetACore}} and {{planetBCore}} {{aspectMotion}}.{{/pairSentences}}{{^pairSentences}}{{possessive}} {{planetATitle}} is {{aspectAdj}} your {{planetBTitle}}: {{planetACore}} meeting {{planetBCore}}. {{aspectTypeLine}}{{/pairSentences}}",
-      "body_they": "{{#pairSentences}}{{pairSentences}} That's {{possessiveLow}} {{planetATitle}} {{aspectAdj}} {{planetBTitle}}: {{planetACore}} and {{planetBCore}} {{aspectMotion}}.{{/pairSentences}}{{^pairSentences}}{{possessive}} {{planetATitle}} is {{aspectAdj}} their {{planetBTitle}}: {{planetACore}} meeting {{planetBCore}}. {{aspectTypeLine}}{{/pairSentences}}",
-      "note": "Natal aspects, app voice: fused-wiring line + aspect-type mechanics + optional per-pair section from the Natal-Aspect cookbook."
+      "body_you": "{{pairSentences}}",
+      "body_they": "{{pairSentences}}",
+      "note": "Natal aspect cards preserve the complete reviewed pair passage and end on its existing practice line. Do not append a shared aspect recap. Owner correction: thread:01a1fa07-c530-7761-bcfc-6850ce89c1ce, 2026-11-20."
     },
     {
       "contentKey": "fallback-template/natal.ruler-bridge",
