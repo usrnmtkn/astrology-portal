@@ -61,10 +61,10 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
       await page.goto('/?date=2026-10-02#calendar?view=day&date=2026-10-02');
       const card = page.locator('.calendar-day-events .calendar-stoic-card').filter({ hasText: /Mercury squares Mars/ });
       const excerpt = card.locator('.calendar-stoic-card__excerpt');
-      await expect(excerpt).toHaveText(master.split(/\n\n/u), { timeout: 60_000 });
+      await expect(excerpt).toHaveText(master, { timeout: 60_000 });
       await card.screenshot({ path: `test-results/pa092-calendar-master-${width}-${theme}.png` });
       await page.reload();
-      await expect(excerpt).toHaveText(master.split(/\n\n/u), { timeout: 60_000 });
+      await expect(excerpt).toHaveText(master, { timeout: 60_000 });
       await card.click();
       await expectSkyAspectBody(page, master);
       await page.reload();
