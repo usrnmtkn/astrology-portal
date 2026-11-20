@@ -111,7 +111,9 @@ Keep the scope affected; this rule does not require a routine complete-suite run
   excess in the applicable profile is a failure; a budget change needs its
   existing measured-cost approval rather than an automatic cap increase.
 - **Runner and preview readiness:** validate the selected Playwright image and
-  browser setup, then start a fresh preview from this checkout's build. Verify the
+  browser setup. For local checks, verify the actual launcher's Node architecture
+  matches its native dependencies, including subprocesses launched by Python.
+  Then start a fresh preview from this checkout's build. Verify the
   intended app and API are ready within the existing deadline before running
   dependent assertions. A listening port or an HTML response from an API URL is
   insufficient. Diagnose startup failures from their phase and logs before

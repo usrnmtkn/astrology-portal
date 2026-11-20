@@ -32,6 +32,15 @@ assert(natal.browserSpecs.includes('tests/visual/natal-friend-publication.spec.t
 assert(!natal.browserSpecs.includes('tests/visual/report-library-ui.spec.ts'));
 const unknown=planFor(['new-unclassified-runtime.ts']);
 assert.equal(unknown.apiCommands.length,apiTestCommands(pkg).length);assert(unknown.reasons.length);
+const writing=planFor(['src/astro-writing/forecastProseDevelopment.cjs','scripts/assert-horoscope-request-evidence.mjs']);
+assert(writing.apiCommands.some(command=>command.includes('test-lunation-saved-writing')),'Retain the lunar writer consumer');
+assert(writing.apiCommands.some(command=>command.includes('test-horoscope-monthly')),'Retain the Monthly writer consumer');
+assert(writing.apiCommands.length<apiTestCommands(pkg).length,'Indexed writing modules must use their actual API consumers');
+assert(writing.browserSpecs.includes('tests/visual/horoscope-model-choice.spec.ts'),'Retain the forked actual-handler browser consumer');
+assert(!writing.browserSpecs.includes('tests/visual/friends-loading-performance.spec.ts'),'A writer change must not select unrelated Friends loading');
+const unknownWriter=planFor(['src/astro-writing/unmapped-source.cjs']);
+assert.equal(unknownWriter.apiCommands.length,unknown.apiCommands.length,'Unmapped writing sources retain the conservative fallback');
+assert.deepEqual(unknownWriter.browserSpecs,unknown.browserSpecs);
 const friendsUiFiles=[
   'apps/web/src/features/friends/CompatibilityTab.tsx',
   'apps/web/src/features/friends/FriendProfileChartRail.tsx',
@@ -118,6 +127,10 @@ try {
   write('tests/ssr.mts',"server.ssrLoadModule('/src/features/friends/Card.tsx');");
   write('src/worker.ts',"import './shared.js';");
   write('src/worker-loader.ts',"new Worker(new URL('./worker.ts',import.meta.url));");
+  write('src/process-shared.cjs','module.exports=1;');
+  write('tests/process-helper.mts',"const value=require('../src/process-shared.cjs');");
+  write('tests/forked.mjs',"fork(path.resolve('tests/process-helper.mts'),[]);");
+  write('tests/spawned.mjs',"spawn(process.execPath,['--import','tsx',path.resolve('tests/process-helper.mts')]);");
   const uiGraph=createDependencyGraph(directory,[...fixtureFiles]);
   const friendCard=new Set(['apps/web/src/features/friends/Card.tsx']);
   assert(!uiGraph.reaches(['src/types-only.ts'],new Set(['src/shared.ts'])),'Type-only imports and exports do not execute a module');
@@ -125,6 +138,8 @@ try {
   assert(uiGraph.reaches(['tests/text.mts'],new Set(['src/raw.ts'])),'Text reads depend on the exact file');
   assert(!uiGraph.reaches(['tests/text.mts'],new Set(['src/shared.ts'])),'Reading source text must not execute its imports');
   assert(uiGraph.reaches(['src/worker-loader.ts'],new Set(['src/shared.ts'])),'Worker URL imports remain transitive');
+  assert(uiGraph.reaches(['tests/forked.mjs'],new Set(['src/process-shared.cjs'])),'Forked helpers retain their transitive CommonJS consumers');
+  assert(uiGraph.reaches(['tests/spawned.mjs'],new Set(['src/process-shared.cjs'])),'Node subprocess helpers retain their transitive consumers');
   assert(uiGraph.reaches(['tests/ssr.mts'],friendCard),'Resolve Vite SSR /src modules');
   assert(!uiGraph.reaches(['tests/visual/friends.spec.ts'],friendCard),'Browser route evidence must not create API dependencies');
   assert(uiGraph.reachesBrowser(['tests/visual/friends.spec.ts'],friendCard,true),'A route journey covers its composed UI');
