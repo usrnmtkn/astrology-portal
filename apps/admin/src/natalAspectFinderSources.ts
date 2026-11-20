@@ -1,4 +1,4 @@
-import { natalAspectComposedSourceKeys, natalAspectDisplayTitle, natalAspectTitleCase, natalAspectContentKeyPrefix, type NatalAspectSelection, type NatalAspectSourceRow } from "./natalAspectSources";
+import { natalAspectComposedSourceKeys, natalAspectDisplayTitle, natalAspectTitleCase, natalAspectContentKeyPrefix, natalAspectResolverDependencyKeys, type NatalAspectSelection, type NatalAspectSourceRow } from "./natalAspectSources";
 import { studioPackageObject as object } from "../../../src/shared/studioPackagePatch";
 
 // Keep source-card descriptions with the lazy finder, outside Studio startup.
@@ -25,6 +25,24 @@ export function natalAspectSourceFields(row: { body?: string | null; sections?: 
     body_they: typeof record.body_they === 'string' ? record.body_they : text(sections.body_they),
     astroHint: typeof record.astroHint === 'string' ? record.astroHint : text(sections.astroHint)
   };
+}
+
+export function natalAspectPreviewOverrides(rows: Array<{
+  content_key: string; id?: string | null; body?: string | null; sections?: unknown;
+  lane?: string | null; provider?: string | null; status: string; review_state?: string | null; updated_at?: string | null;
+}>, selection: NatalAspectSelection) {
+  const keys = new Set(natalAspectResolverDependencyKeys(selection));
+  return rows.filter(row => keys.has(row.content_key)).flatMap(row => {
+    const sections = object(row.sections);
+    const record = object(sections.packageRecord);
+    if (typeof record.content_role !== "string") return [];
+    return [{
+      id: row.id ?? "", lane: row.lane ?? null, provider: row.provider ?? null,
+      status: row.review_state ? "DRAFT" : row.status, updatedAt: row.updated_at ?? null,
+      packageRow: { ...record, contentKey: row.content_key, body: sections.body ?? record.body ?? row.body,
+        body_you: sections.body_you ?? record.body_you, body_they: sections.body_they ?? record.body_they }
+    }];
+  });
 }
 
 

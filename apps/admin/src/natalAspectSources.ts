@@ -182,3 +182,13 @@ export function natalAspectSourceDraft(selection: NatalAspectSelection): NatalAs
     }
   };
 }
+
+export function natalAspectCompleteDraft(selection: NatalAspectSelection, you: string, they: string): NatalAspectSourceDraft {
+  if (!you.trim() || !they.trim()) throw new Error("The complete You and Friend write-ups could not be loaded.");
+  const draft = natalAspectSourceDraft(selection);
+  return {
+    ...draft,
+    body: you,
+    sections: { packageRecord: { ...draft.sections.packageRecord, body: you, body_you: you, body_they: they } }
+  };
+}

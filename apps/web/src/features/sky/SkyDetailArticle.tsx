@@ -1,4 +1,5 @@
 import { NatalChartReadings } from "../../components/NatalChartReadings";
+import { NatalPlacementAspects } from "../../components/NatalPlacementAspects";
 import { ArticleKeyDates, type ArticleKeyDate } from "../../components/ArticleKeyDates";
 import { skyPlacementAspectParagraphs } from '../../content/skyPlacementAspectBridge';
 import { SeasonArticleLink } from "../../components/SeasonArticleLink";
@@ -94,6 +95,7 @@ export type SkyPersonalizedPlacement = {
 };
 
 export type SkyDetail = {
+  natalPlacement?: boolean;
   aspectType?: string;
   natalPlanetReading?: import("../../content/natalChartReadings").NatalPlanetReadingContext;
   previewLabel?: string;
@@ -564,7 +566,7 @@ export function SkyDetailArticle({
       ? []
       : relatedAspectRows.filter((row) => row.group === group.id)
   })).filter((group) => group.sections.length > 0 || group.rows.length > 0);
-  const hasAspectCard = aspectGroups.length > 0;
+  const hasAspectCard = !detail.natalPlacement && aspectGroups.length > 0;
   const hasReadableBody = Boolean(
     (placementPage && articleSub) ||
     detail.lensHint ||
@@ -765,6 +767,8 @@ export function SkyDetailArticle({
           </div>
           ) : null}
         </div>
+
+        {detail.natalPlacement && <NatalPlacementAspects rows={detail.relatedAspects?.rows ?? []} />}
 
         {!placementPage ? <ArticleKeyDates dates={detail.keyDates ?? []} intro={detail.keyDatesIntro ? <FormattedProse text={detail.keyDatesIntro} /> : null} titleId="sky-detail-key-dates-title" /> : null}
 

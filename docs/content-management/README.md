@@ -195,6 +195,13 @@ usages as well. An aspect without a composed resolver group does not advertise
 unused shared sources. Browsing and opening sources never creates or publishes
 content; the normal draft and owner publication actions remain separate.
 
+When an aspect uses shared writing, **Edit complete write-up** loads the full
+published You and Friend passages through the reader renderer, including the
+template's closing sentence. It opens an unsaved exact-passage draft for that
+aspect. Saving and publishing use the normal version and owner-review checks;
+the shared sources remain unchanged. Unavailable publication state or missing
+reader sources stops the action instead of opening a partial passage.
+
 ### Sky reader preview
 
 **Reader date** is shared by the source panel, Published/Draft preview,

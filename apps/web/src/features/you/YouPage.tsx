@@ -8,6 +8,7 @@ import { ChartFullscreenButton } from "../../components/charts/ChartFullscreenBu
 import type { ChartReportSource } from "../../services/chartReport";
 import { NatalPlacementSections } from "../../components/NatalPlacementSections";
 import { NatalChartReadings } from "../../components/NatalChartReadings";
+import { NatalPlacementAspects } from "../../components/NatalPlacementAspects";
 import { NatalInsightPage } from "../../components/NatalInsightPage";
 import { NatalSectPage } from "../../components/NatalSectPage";
 import { useNatalReadingRoute } from "../../hooks/useNatalReadingRoute";
@@ -46,6 +47,7 @@ import { YouReportActions, type YouAccountRecovery } from "./YouReportActions";
 type NatalChartViewMode = "circle" | "table";
 type AspectToneBucket = "gifts" | "lessons";
 type RelatedAspectRow = {
+  aspectType?: string;
   group?: AspectToneBucket | "planets" | "points";
   key: string;
   node: ReactNode;
@@ -1114,7 +1116,7 @@ function YouTransitArticlePage({
                 );
               })}
               {displayArticle.natalPlanetReading ? <NatalChartReadings {...displayArticle.natalPlanetReading} /> : null}
-              {displayArticle.relatedAspects?.rows.length ? (
+              {!displayArticle.natalPlacement && displayArticle.relatedAspects?.rows.length ? (
                 <section className="article-related-aspects" aria-label="Placement aspects">
                   <h2 className="sr-only">Placement aspects</h2>
                   {relatedAspectGroups.map((group) => (
@@ -1141,6 +1143,8 @@ function YouTransitArticlePage({
           </div>
           ) : null}
         </div>
+
+        {displayArticle.natalPlacement && <NatalPlacementAspects rows={displayArticle.relatedAspects?.rows ?? []} />}
 
         <ArticleKeyDates dates={keyDates} titleId="you-transit-key-dates-title" />
 

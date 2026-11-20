@@ -119,6 +119,11 @@ Before completing any heading or title change:
 
 ## Design-system and CSS integrity
 
+Preserve approved page patterns during functional and content work. Follow the
+[design-preservation command](docs/qa/preserve-design-command.md) before changing
+shared UI, source-dependent presentation, or design assertions. Existing scoped
+design approvals remain valid; functional fixes alone do not authorize redesign.
+
 Every new or changed product surface must use the shared design system in
 `apps/web/src/styles/theme.css`. Do not introduce raw colors, spacing, radii,
 shadows, font families, font sizes, font weights, line heights, or tracking in

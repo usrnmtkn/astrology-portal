@@ -1,4 +1,6 @@
 import { StudioButton } from "./StudioControls";
+import { useEffect, useRef, useState } from "react";
+import { requestStudioJson } from "./generatedContentClient";
 import { PageLoading } from "../../../src/shared/components/PageLoading";
 import { AdminSelect } from "./AdminNativeControls";
 import { MetricCard } from "./studio-ds/patterns";
@@ -10,10 +12,10 @@ import {
   natalAspectMatchesSelection,
   natalAspectSelectionOptions,
   parseNatalAspectContentKey,
-  natalAspectComposedSources, natalAspectSourceFields
+  natalAspectComposedSources, natalAspectSourceFields, natalAspectPreviewOverrides
 } from "./natalAspectFinderSources";
 
-import { natalAspectContentKeyPrefix, natalAspectDisplayTitle, natalAspectSourceDraft, natalAspectTitleCase as titleCase, type NatalAspectSelection, type NatalAspectSourceDraft } from "./natalAspectSources";
+import { natalAspectCompleteDraft, natalAspectContentKeyPrefix, natalAspectDisplayTitle, natalAspectSourceDraft, natalAspectTitleCase as titleCase, type NatalAspectSelection, type NatalAspectSourceDraft } from "./natalAspectSources";
 
 type PreviewRow = {
   id?: string | null;
@@ -36,6 +38,7 @@ type Props = {
   onSelectionChange: (next: Partial<NatalAspectSelection>) => void;
   rows: PreviewRow[];
   second: string;
+  secret?: string;
 };
 
 function previewForRow(row: PreviewRow) {
@@ -51,8 +54,19 @@ export default function NatalAspectSourceFinder({
   onOpenSource,
   onSelectionChange,
   rows,
-  second
+  second,
+  secret = ""
 }: Props) {
+  const [loadingComplete, setLoadingComplete] = useState(false);
+  const [completeError, setCompleteError] = useState("");
+  const selectionKey = `${first}/${aspect}/${second}`;
+  const currentSelection = useRef(selectionKey);
+  currentSelection.current = selectionKey;
+  useEffect(() => {
+    currentSelection.current = selectionKey;
+    setCompleteError("");
+    return () => { currentSelection.current = ""; };
+  }, [selectionKey]);
   const sourceRows = [...rows.reduce((latest, row) => {
     if (row.status === 'ARCHIVED') return latest;
     const previous = latest.get(row.content_key);
@@ -75,6 +89,22 @@ export default function NatalAspectSourceFinder({
       : "Choose a natal aspect";
   const composedSources = fullSelection ? natalAspectComposedSources({ first, aspect, second }) : [];
   const hasExactSource = matches.some(row => row.content_key.startsWith(natalAspectContentKeyPrefix));
+
+  async function editCompleteWriteup() {
+    setLoadingComplete(true);
+    setCompleteError("");
+    try {
+      const response = await requestStudioJson("/api/admin/natal-placement-preview", secret, {
+        method: "POST", readOnly: true,
+        body: JSON.stringify({ kind: "natal-aspect", planet: first, aspect, second, audience: "you",
+          overrides: natalAspectPreviewOverrides(sourceRows, { first, aspect, second }) })
+      }) as { rendered?: { body: string }; friend?: { body: string } };
+      if (currentSelection.current !== selectionKey) return;
+      onCreateSource(natalAspectCompleteDraft({ first, aspect, second }, response.rendered?.body ?? "", response.friend?.body ?? ""));
+    } catch (error) {
+      if (currentSelection.current === selectionKey) setCompleteError(error instanceof Error ? error.message : "The complete write-up could not be loaded.");
+    } finally { setLoadingComplete(false); }
+  }
 
   return (
     <section className="admin-natal-placement-finder" aria-label="Find natal aspect source writing">
@@ -119,9 +149,19 @@ export default function NatalAspectSourceFinder({
       {!isLoading && fullSelection && matches.length === 0 && (
           <div className="admin-empty-state">
             <strong>No exact pair-specific passage is saved for {selectedTitle}.</strong>
+            {composedSources.length > 0 && (
+              <>
+                <p>The complete write-up includes the pair writing and its closing sentence. Edit a copy for this aspect, then review and publish it.</p>
+                <StudioButton type="button" className="primary" disabled={loadingComplete} onClick={() => void editCompleteWriteup()}>
+                  {loadingComplete ? "Loading complete write-up…" : "Edit complete write-up"}
+                </StudioButton>
+                {completeError && <p role="alert">{completeError}</p>}
+              </>
+            )}
             <StudioButton
               type="button"
-              className="primary"
+              className={composedSources.length ? undefined : "primary"}
+              disabled={loadingComplete}
               onClick={() => onCreateSource(natalAspectSourceDraft({ first, aspect, second }))}
             >
               Write {selectedTitle}
@@ -170,7 +210,7 @@ export default function NatalAspectSourceFinder({
                     <p className="admin-natal-source-key"><span>Source key</span><code>{row.content_key}</code></p>
                     {preview && <blockquote>{preview}</blockquote>}
                   </div>
-                  <StudioButton type="button" onClick={() => onOpenSource(row.content_key, title)} disabled={isLoading}>Edit source</StudioButton>
+                  <StudioButton type="button" onClick={() => onOpenSource(row.content_key, title)} disabled={isLoading || loadingComplete}>Edit source</StudioButton>
                 </article>
               );
             })}
@@ -200,7 +240,7 @@ export default function NatalAspectSourceFinder({
                       <p className="admin-natal-source-key"><span>Source key</span><code>{contentKey}</code></p>
                       {preview && <blockquote>{preview}</blockquote>}
                     </div>
-                    <StudioButton type="button" onClick={() => onOpenSource(contentKey, source.label)} disabled={isLoading}>
+                    <StudioButton type="button" onClick={() => onOpenSource(contentKey, source.label)} disabled={isLoading || loadingComplete}>
                       {savedRow ? "Edit source" : "Load and edit"}
                     </StudioButton>
                   </article>
