@@ -57,7 +57,10 @@ async function verifyGridPrecision(page: Page, csv: string) {
       const radians = (positions.get(`${row[0]}|${row[1]}`)! - positions.get(`${row[2]}|${row[3]}`)!) * Math.PI / 180;
       const orb = Math.abs(Math.abs(Math.atan2(Math.sin(radians), Math.cos(radians))) * 180 / Math.PI - exact[row[4]]);
       expect(Math.abs(Number(row[5]) - orb), `${row[1]} ${row[4]} ${row[3]} CSV retains the calculated precision`).toBeLessThan(1e-7);
-      const minutes = Math.round(orb * 60), label = `${Math.floor(minutes / 60)}°${String(minutes % 60).padStart(2, "0")}′`;
+      // The independent trig calculation above checks numeric precision. At a
+      // half-minute boundary its floating-point drift can change rounding, so
+      // compare the grid label with the exact exported orb used by that grid.
+      const minutes = Math.round(Number(row[5]) * 60), label = `${Math.floor(minutes / 60)}°${String(minutes % 60).padStart(2, "0")}′`;
       const cell = page.locator(".full-chart").getByRole("button", { name: `${row[1]} ${row[4]} ${row[3]}, orb ${label}`, exact: true });
       await expect(cell).toHaveCount(1);
       checked++;
