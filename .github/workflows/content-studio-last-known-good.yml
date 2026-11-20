@@ -4,17 +4,10 @@ on:
   schedule:
     - cron: "7,22,37,52 * * * *"
   workflow_dispatch:
-  workflow_run:
-    workflows: [Content Studio API contract, Visual smoke, Project privacy]
-    types: [completed]
-    branches: [automation/content-studio-snapshot]
 
 permissions:
   contents: write
   pull-requests: write
-  actions: write
-  checks: read
-  statuses: read
 
 concurrency:
   group: content-studio-last-known-good
@@ -22,7 +15,7 @@ concurrency:
 
 jobs:
   refresh:
-    if: github.ref == 'refs/heads/main' && (github.event_name != 'workflow_run' || github.event.workflow_run.head_repository.full_name == github.repository)
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -33,7 +26,7 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: 22
-      - name: Reconcile published content and exact-head checks
+      - name: Prepare published snapshot for the release queue
         env:
           PROJECT_PRIVACY_POLICY: ${{ secrets.PROJECT_PRIVACY_POLICY }}
           GH_TOKEN: ${{ github.token }}

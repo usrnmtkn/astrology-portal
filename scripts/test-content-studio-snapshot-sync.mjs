@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { readPublicationSnapshot, publicationSnapshotIdentity, assertStablePublicationSnapshot } from './lib/content-studio-snapshot.mjs';
-import { publishContentStudioSnapshot, snapshotBranch, snapshotPath, snapshotGates } from './publish-content-studio-snapshot.mjs';
+import { publishContentStudioSnapshot, snapshotBranch, snapshotPath } from './publish-content-studio-snapshot.mjs';
 
 const ledger = { content_key: '__content-publication-ledger/v1', state: 'live', revision: 1, updated_at: '2026-01-01T00:00:00Z' };
 const published = { content_key: 'cms/example', state: 'live', revision: 2, row_id: 'row-2', row_updated_at: '2026-01-02T00:00:00Z', updated_at: '2026-01-02T00:00:00Z' };
@@ -34,73 +35,69 @@ await assert.rejects(readPublicationSnapshot({ supabaseUrl: 'https://example.inv
   fetchImpl: async () => ({ ok: true, json: async () => page }) }), /did not advance/u);
 
 const head = '1'.repeat(40);
-const successful = Object.keys(snapshotGates).map(name => ({ name, status: 'COMPLETED', conclusion: 'SUCCESS', startedAt: '2026-01-01T00:00:00Z' }));
-function scenario({ pr = {}, open = true, runs = [], changed = [snapshotPath], mergeFailure = false, ahead = 0, env = {} } = {}) {
+function scenario({ pr = {}, open = true, changed = [snapshotPath], previousHead = '', env = {} } = {}) {
   const calls = [];
+  let body;
   const run = (command, args) => {
     calls.push([command, ...args]);
     if (command === 'gh') {
-      if (args[0] === 'pr' && args[1] === 'list') return JSON.stringify(open ? [{ number: 7 }] : []);
+      if (args[0] === 'pr' && args[1] === 'list') return JSON.stringify(Array.isArray(open) ? open : open ? [{ number: 7 }] : []);
       if (args[0] === 'pr' && args[1] === 'view') return JSON.stringify({ number: 7, author: { login: 'app/github-actions', is_bot: true },
         baseRefName: 'main', headRefName: snapshotBranch, headRefOid: head, isCrossRepository: false,
-        files: [{ path: snapshotPath }], statusCheckRollup: successful, ...pr });
-      if (args[0] === 'api') return JSON.stringify({ workflow_runs: runs, ahead_by: ahead });
-      if (args[0] === 'pr' && args[1] === 'merge' && mergeFailure) throw new Error('Branch policy prohibits this merge.');
-      if (args[0] === 'pr' && args[1] === 'create') return 'https://github.com/example/repository/pull/7';
-      return '';
+        files: [{ path: snapshotPath }], ...pr });
+      if (args[0] === 'pr' && args[1] === 'create') {
+        body = readFileSync(args[args.indexOf('--body-file') + 1], 'utf8');
+        return 'https://github.com/example/repository/pull/7';
+      }
+      throw new Error(`Unexpected GitHub operation: ${args[0]} ${args[1]}`);
     }
     if (command === 'git' && args[0] === 'diff') return changed.join('\n');
+    if (command === 'git' && args[0] === 'ls-remote') return previousHead ? `${previousHead}\trefs/heads/${snapshotBranch}` : '';
     if (command === 'git' && args[0] === 'rev-parse') return head;
-    return '';
+    if (command === process.execPath || (command === 'git' && ['switch', 'config', 'add', 'commit', 'push'].includes(args[0]))) return '';
+    throw new Error(`Unexpected operation: ${command}`);
   };
   const execute = () => publishContentStudioSnapshot({ run, env: {
     GITHUB_REPOSITORY: 'example/repository', GITHUB_REF: 'refs/heads/main', GITHUB_EVENT_NAME: 'schedule', ...env
   } });
-  return { calls, execute };
+  return { calls, execute, get body() { return body; } };
 }
-const merged = scenario();
-assert.equal(merged.execute().state, 'merged');
-const merge = merged.calls.find(call => call[0] === 'gh' && call[1] === 'pr' && call[2] === 'merge');
-assert.ok(merge.includes('--match-head-commit') && merge.includes(head));
-assert.ok(!merge.includes('--admin') && !merge.includes('--auto'));
-assert.equal(merged.calls.filter(call => call.includes('--ref') && call.includes('main')).length, 3);
-assert.ok(!merged.calls.some(call => call[0] === process.execPath), 'A pending candidate stays frozen.');
-const behind = scenario({ ahead: 2 });
-assert.equal(behind.execute().state, 'base_update_pending');
-assert.ok(behind.calls.some(call => call.includes('PUT') && call.includes(`expected_head_sha=${head}`)));
-assert.ok(!behind.calls.some(call => call[2] === 'merge'), 'Updated bases require new-head evidence before merging.');
-const pending = scenario({ pr: { statusCheckRollup: successful.slice(1) } });
-assert.equal(pending.execute().state, 'checks_pending');
-assert.equal(pending.calls.filter(call => call[1] === 'workflow' && call[2] === 'run').length, 1);
-assert.ok(!pending.calls.some(call => call[2] === 'merge'));
-const running = scenario({ pr: { statusCheckRollup: [] }, runs: [{ head_sha: head, status: 'in_progress' }] });
-assert.equal(running.execute().state, 'checks_pending');
-assert.ok(!running.calls.some(call => call[1] === 'workflow'), 'Running checks must not be duplicated.');
-for (const conclusion of ['FAILURE', 'SKIPPED', 'CANCELLED']) {
-  const failed = scenario({ pr: { statusCheckRollup: [{ ...successful[0], conclusion }, ...successful.slice(1)] } });
-  assert.throws(failed.execute, /failed or was skipped/u);
-  assert.ok(!failed.calls.some(call => call[1] === 'workflow' || call[2] === 'merge'));
+for (const conclusion of ['SUCCESS', 'FAILURE', 'SKIPPED', 'CANCELLED', null]) {
+  const queued = scenario({ pr: { statusCheckRollup: ['content-studio-api', 'browser-release-gate', 'project-privacy']
+    .map(name => ({ name, status: conclusion ? 'COMPLETED' : 'IN_PROGRESS', conclusion })) } });
+  assert.deepEqual(queued.execute(), { state: 'queued', number: 7, head });
+  assert.equal(queued.calls.length, 2, 'An existing PR permits only the two identity reads, regardless of gate state.');
+  assert.ok(queued.calls.every(call => call[0] === 'gh' && call[1] === 'pr' && ['list', 'view'].includes(call[2])),
+    'The publisher cannot admit, update, approve, retry, dispatch or merge a queued candidate.');
 }
-const retried = scenario({ pr: { statusCheckRollup: [...successful, { ...successful[0], startedAt: '2026-01-02T00:00:00Z', status: 'IN_PROGRESS', conclusion: null }] } });
-assert.equal(retried.execute().state, 'checks_pending', 'An older passing check cannot mask its newer pending rerun.');
-for (const patch of [{ author: { login: 'someone-else' } }, { files: [{ path: 'api/admin/content.ts' }] }, { isCrossRepository: true }, { baseRefName: 'other' }, { headRefName: 'other' }]) {
+for (const patch of [{ author: { login: 'someone-else' } }, { author: { login: 'app/github-actions', is_bot: false } },
+  { files: [{ path: snapshotPath }, { path: 'api/admin/content.ts' }] }, { isCrossRepository: true },
+  { baseRefName: 'other' }, { headRefName: 'other' }, { headRefOid: 'invalid' }]) {
   const tampered = scenario({ pr: patch });
   assert.throws(tampered.execute, /identity or file scope changed/u);
-  assert.ok(!tampered.calls.some(call => call[2] === 'merge'));
+  assert.equal(tampered.calls.length, 2);
 }
-assert.throws(scenario({ mergeFailure: true }).execute, /Branch policy/u);
-const idle = scenario({ open: false, env: { GITHUB_EVENT_NAME: 'workflow_run' } });
-assert.equal(idle.execute().state, 'no_pending_snapshot');
-assert.ok(!idle.calls.some(call => call[0] === process.execPath));
+assert.throws(scenario({ open: [{ number: 7 }, { number: 8 }] }).execute, /Multiple active/u);
 const unchanged = scenario({ open: false, changed: [] });
 assert.equal(unchanged.execute().state, 'synchronized');
 assert.ok(!unchanged.calls.some(call => call.includes('commit')));
-const created = scenario({ open: false });
-assert.equal(created.execute().state, 'checks_pending');
-assert.equal(created.calls.filter(call => call[1] === 'workflow' && call[2] === 'run').length, 3);
+const created = scenario({ open: false, previousHead: '2'.repeat(40) });
+assert.deepEqual(created.execute(), { state: 'queued', url: 'https://github.com/example/repository/pull/7', head });
 assert.equal(created.calls.filter(call => call[1] === 'pr' && call[2] === 'create').length, 1);
-assert.ok(created.calls.find(call => call[0] === 'git' && call[1] === 'push').some(arg => arg.startsWith('--force-with-lease=')));
-assert.ok(!created.calls.some(call => call[2] === 'merge'));
+assert.deepEqual(created.calls.find(call => call[0] === 'git' && call[1] === 'push'),
+  ['git', 'push', `--force-with-lease=refs/heads/${snapshotBranch}:${'2'.repeat(40)}`, 'origin', `HEAD:refs/heads/${snapshotBranch}`]);
+assert.ok(created.calls.filter(call => call[0] === 'gh').every(call => call[1] === 'pr' && ['list', 'create'].includes(call[2])));
+assert.match(created.body, /queued for the existing release coordinator, not admitted or validated for release/u);
+assert.match(created.body, /genuine pull-request checks, normal merge, main deployment and production acceptance/u);
+assert.ok(created.calls.find(call => call[0] === process.execPath && call[1].endsWith('refresh-content-studio-last-known-good.mjs')).includes('--if-changed'));
+const manual = scenario({ open: false, changed: [], env: { GITHUB_EVENT_NAME: 'workflow_dispatch' } });
+assert.equal(manual.execute().state, 'synchronized');
+assert.ok(!manual.calls.find(call => call[0] === process.execPath).includes('--if-changed'));
+assert.throws(scenario({ open: false, previousHead: 'invalid' }).execute, /Invalid previous snapshot/u);
 assert.throws(scenario({ open: false, changed: [snapshotPath, 'api/other.ts'] }).execute, /Unexpected source changes/u);
-assert.throws(scenario({ open: false, env: { GITHUB_REF: 'refs/heads/untrusted' } }).execute, /must start from main/u);
+for (const env of [{ GITHUB_REF: 'refs/heads/untrusted' }, { GITHUB_EVENT_NAME: 'workflow_run' }, { GITHUB_REPOSITORY: '' }]) {
+  const invalid = scenario({ env });
+  assert.throws(invalid.execute);
+  assert.deepEqual(invalid.calls, [], 'Untrusted execution contexts must stop before any command.');
+}
 console.log('Content Studio snapshot synchronization contracts passed.');
