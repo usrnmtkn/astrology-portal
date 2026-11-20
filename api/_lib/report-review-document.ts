@@ -1,13 +1,16 @@
 import crypto from "node:crypto";
+import type { ReportDraft, ReportKeyDateCategory } from "./report-generation.ts";
 
-export type ReviewedUnit = { unitId: string; draft: { headline?: string; summary?: string; body?: string; timing?: string; sections?: Array<{ heading?: string; body?: string }> } };
+export type ReviewedUnit = { unitId: string; draft: ReportDraft; sourceSnapshot?: Record<string, unknown> };
+export type BuildReviewedReportDocumentInput = { id: string; reportDomain: string; reportHorizon: string; periodStart: string; periodEnd: string; factsEngine: string; factsHash: string; generatedAt?: string | null; units: ReviewedUnit[] };
 export type ReviewedReportDocument = {
   id: string;
   reportType: "report";
-  cover: { kicker: string; title: string; subtitle?: string; meta?: string[] };
-  chapters: Array<{ id: string; kicker: string; title: string; paragraphs: string[] }>;
-  keyDates: Array<{ id: string; date: string; title: string; paragraphs: string[]; attributionText?: string }>;
-  colophon: { factsEngine: string; generatedAt?: string; entries: Array<{ label: string; value: string }> };
+  cover: { kicker: string; title: string; subtitle?: string; meta?: string[]; periodLine?: string; handleLine?: string; glyphLine?: string };
+  chapters: Array<{ id: string; kicker: string; title: string; paragraphs: string[]; attributionText?: string; keyDates?: Array<{ id: string; eventId: string; date: string; title: string; category: ReportKeyDateCategory; paragraphs: string[]; attributionText: string }>; selectionEvidence?: Record<string, unknown> }>;
+  keyDates: Array<{ id: string; eventId?: string; date: string; title: string; category?: ReportKeyDateCategory; paragraphs: string[]; attributionText?: string }>;
+  colophon: { factsEngine?: string; generatedAt?: string; entries: Array<{ label: string; value: string }> | string[] };
+  reviewMetadata?: { factsEngine: string; factsHash: string; generatedAt?: string };
 };
 
 function paragraphs(value: string | undefined) { return (value ?? "").split(/\n\s*\n/gu).map((entry) => entry.trim()).filter(Boolean); }
@@ -19,7 +22,7 @@ function keyDates(body: string | undefined) {
   });
 }
 
-export function buildReviewedReportDocument(input: { id: string; reportDomain: string; reportHorizon: string; periodStart: string; periodEnd: string; factsEngine: string; factsHash: string; generatedAt?: string | null; units: ReviewedUnit[] }): ReviewedReportDocument {
+export function buildReviewedReportDocument(input: BuildReviewedReportDocumentInput): ReviewedReportDocument {
   const overview = input.units.find((unit) => unit.unitId === "overview");
   if (!overview) throw new Error("REPORT_DELIVERY_INCOMPLETE: overview is missing.");
   const keyDateUnit = input.units.find((unit) => unit.unitId === "key-dates");
