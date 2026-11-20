@@ -5,12 +5,11 @@ Natal planetary placement pages must retain the same design system and Gifts /
 Challenges pattern. The owner also reported that the Sun–Mercury aspect editor
 omitted the closing sentence visible in the reader.
 
-Candidate: uncommitted changes on `fix/natal-aspect-complete-editor-20261120`,
-based on refreshed `origin/main` at
-`28489df1c937c5195bb5946b351721c2a5ac3f6b` (zero committed divergence).
-Runtime/test source fingerprint:
-`52de1b18998c12fdc4273b7238d99f41b1c8781d67051a06f6b602281196ce9a`.
-It hashes sorted changed/new non-Markdown paths, NUL, complete bytes, NUL.
+Initial candidate: `712631232ee911b72328650ac6792f89a08302cc` on
+`fix/natal-aspect-complete-editor-20261120`, initially based on
+`28489df1c937c5195bb5946b351721c2a5ac3f6b`. Final integration, frozen-head gates
+and production evidence are recorded in the release handoff. Earlier local
+source fingerprints do not identify the later release corrections.
 
 ## Causes and repair
 
@@ -81,9 +80,9 @@ and all four browser cases (40 planet visits). Each case temporarily forces
 11px narrative text across every natal article and confirms that the pinned
 design assertion rejects it, then removes the test-only style and verifies
 the original type again. The final run passed in 51.6 seconds. Repository
-privacy scanning passed for 12,035 files. Runtime source remains the already
-verified local repair; this follow-up adds instructions, a command and stricter
-tests, without changing the rendered application design.
+privacy scanning passed for 12,035 files. Later release preflight also removes obsolete counterpart branches and shares
+the existing aspect-card shell and row normalization. Its rendered consumers
+require a fresh verification before release.
 
 ## Acceptance evidence
 
@@ -129,3 +128,24 @@ main merge, Git deployment and production acceptance with the release handoff.
 Use the existing release queue without interrupting its admitted candidate.
 Do not promote a branch preview to production or publish owner content as part
 of these software fixes. Local evidence above is not a production claim.
+
+## Retained release preflight findings
+
+The original ordinary Web build exceeded the unchanged aggregate JavaScript
+limit by 687 gzip bytes; authenticated startup exceeded it by 794. Intermediate
+cleanup measurements also failed (639, 410, 299, 94 and 168 bytes over). These
+are retained failures, not passing release evidence. No limit was increased.
+Standalone Studio previously passed with 82 bytes of aggregate headroom and
+must be remeasured after the shared draft helper correction and integration.
+
+The broader API preflight reached an unavailable protected ingress reference
+fixture in shard 1. Its fail-closed reference-storage failures are not an
+application regression or a complete API pass. The required CI API workflow
+supplies protected fixtures. The actual affected preview/source contracts and
+production-style native preview-handler startup pass independently.
+
+The initial affected plan selects 203 API commands and 227 browser specs across
+16 jobs because the shared `App.tsx` change selects the conservative fallback.
+That mandatory exact-head selection, Linux browser qualification and native
+PostgreSQL gates explain why release requires more than a short focused run.
+Local affected-flow evidence does not replace them.

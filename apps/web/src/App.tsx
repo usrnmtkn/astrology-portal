@@ -804,7 +804,7 @@ export type YouTransitArticle = {
   }>;
   relatedAspects?: {
     heading: string;
-    grouping?: "tone" | "counterpart";
+    grouping?: "tone";
     rows: Array<ReactNode | SkyDetailRelatedAspectRow>;
   };
   historicalLookback?: SkyHistoricalLookback | null;

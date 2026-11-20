@@ -151,7 +151,7 @@ export default function NatalAspectSourceFinder({
             <strong>No exact pair-specific passage is saved for {selectedTitle}.</strong>
             {composedSources.length > 0 && (
               <>
-                <p>The complete write-up includes the pair writing and its closing sentence. Edit a copy for this aspect, then review and publish it.</p>
+                <p>Edit the full write-up, including its closing sentence.</p>
                 <StudioButton type="button" className="primary" disabled={loadingComplete} onClick={() => void editCompleteWriteup()}>
                   {loadingComplete ? "Loading complete write-up…" : "Edit complete write-up"}
                 </StudioButton>
