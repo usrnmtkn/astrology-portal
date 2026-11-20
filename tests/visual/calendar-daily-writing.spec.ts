@@ -135,6 +135,7 @@ test.describe('Daily writer review from another browser time zone',()=>{
    await editor.getByRole('button',{name:'Publish passage',exact:true}).click();await expect(editor.getByRole('status',{name:'Calendar save status',exact:true})).toContainText('Published. The Calendar uses this passage.');
    const reader=await call({method:'POST',body:{keys:[key]},url:'/api/content-reader'});expect(reader.status).toBe(200);expect(reader.payload.rows[0].body).toBe(edited);expect(JSON.stringify(reader.payload)).not.toContain('PRIVATE WRITER INPUT');
    await preview.getByRole('button',{name:'Published',exact:true}).click();await expect(preview.getByLabel('Assembled passage preview',{exact:true})).toContainText('Synthetic owner-edited opening.');await expect(preview.getByLabel('Assembled passage preview',{exact:true})).toContainText('Complete owner-edited ending.');
+   await page.locator('[aria-label="Writer result review"]').screenshot({path:`test-results/calendar-daily-review-context-${width}-${theme}.png`});
    await page.screenshot({path:`test-results/calendar-daily-reviewed-${width}-${theme}.png`,fullPage:true});
    await page.reload();await expect(wording).toHaveValue(edited);await expect(preview.getByLabel('Assembled passage preview',{exact:true})).toContainText('Complete owner-edited ending.');
    const history=editor.locator('details').filter({has:page.locator(':scope > summary').filter({hasText:'Publication and history'})}).first();await history.locator(':scope > summary').click();

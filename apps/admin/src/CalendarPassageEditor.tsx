@@ -224,7 +224,7 @@ export default function CalendarPassageEditor({ period: studioPeriod, loadRows, 
   }
   return <section className="admin-template-reader-drilldown studio-surface" aria-label="Assembled Calendar passage">
     <header className="admin-section-heading-row"><div><h3>Complete passage</h3><p>Edit your passage and check the reader preview for the selected date.</p></div></header>
-    {readerEntry && <p className="admin-field-hint">Passage context · {readerEntry.date} · {readerEntry.timeZone}. {readerEntry.writerResultId ? 'Reviewing a saved writer result. Save your draft before publishing.' : 'Your existing saved draft opens first.'}</p>}
+    {readerEntry && <p className="admin-field-hint">Passage context · {readerEntry.date} · {readerEntry.timeZone}. {readerEntry.writerResultId ? null : 'Your existing saved draft opens first.'}</p>}
     <div className="admin-daily-glance-context-form">
       <label><span>Date</span><StudioInput type="date" aria-label="Passage date" value={date} disabled={busy || dirty} onChange={event => setDate(event.target.value)} /></label>
       <label><span>Time zone</span><StudioInput aria-label="Passage time zone" value={timeZone} disabled={busy || dirty} onChange={event => setTimeZone(event.target.value)} /></label>
@@ -236,9 +236,9 @@ export default function CalendarPassageEditor({ period: studioPeriod, loadRows, 
     {sourceEditor}
     {ready && <>
       {writerReview && <div className="studio-context-panel" aria-label="Writer result review">
-        <p>The original writer result stays in Daily writing. Changes here are saved as a separate Calendar draft; publishing makes that saved wording available for this date.</p>
+        <p>The original stays in Daily writing. Save edits as a separate draft; publish to update this date.</p>
         {writerChoiceNeeded && <>
-          <p role="note">An edited passage already exists for this date. Its saved or unsaved wording is shown in the editor and has been preserved. You can keep it or use the selected writer result below before saving.</p>
+          <p role="note">An edited passage already exists for this date. Keep its saved or unsaved wording, or choose the writer result before saving.</p>
           <StudioTextarea formatting={false} readOnly aria-label="Selected writer result" value={writerReview.body} rows={8} />
           <div className="admin-new-actions"><StudioButton disabled={busy} onClick={() => {setBody(writerReview.body);setWriterApplied(true);setWriterChoiceNeeded(false);}}>Use selected writer result</StudioButton>
             <StudioButton disabled={busy} onClick={() => setWriterChoiceNeeded(false)}>Keep existing draft</StudioButton></div>

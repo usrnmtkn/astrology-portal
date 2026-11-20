@@ -1,4 +1,4 @@
-import forecastProse from './forecastProsePolicy.cjs';
+import forecastProse from './forecastProseDevelopment.cjs';
 const {FORECAST_PROSE_DEVELOPMENT}=forecastProse;
 // Canonical API instructions. The verbatim owner language below is sourced from
 // docs/writing/VOICE_CONTRACT.md, docs/writing/ASTROLOGY_CONTRACT.md,

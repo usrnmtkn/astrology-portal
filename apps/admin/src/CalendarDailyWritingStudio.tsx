@@ -85,7 +85,6 @@ export default function CalendarDailyWritingStudio({secret,dirtyRef,onReviewDraf
               if(params)onReviewDraft(params);
               else setError('This writer result has an invalid date, time zone or identity. Reload the saved writing before reviewing.');
             }}>Review & edit</StudioButton></div>
-            <p>Open this result in the Calendar editor to make changes, preview the date, save a draft and publish. The original writer result stays here.</p>
             <details className="admin-workspace-details"><AdminDisclosureSummary>Exact request, response and usage</AdminDisclosureSummary><StudioTextarea formatting={false} readOnly aria-label="Generation receipt" value={JSON.stringify(result,null,2)} rows={12}/></details></section>)}
         </div>}
       </StudioTabs>
