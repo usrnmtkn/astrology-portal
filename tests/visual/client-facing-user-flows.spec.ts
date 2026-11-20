@@ -5403,6 +5403,45 @@ test.describe("client-facing user flow case studies", () => {
     });
   }
 
+  for (const width of [390, 1440]) for (const theme of ["light", "dark"] as const) {
+    for (const pilot of [
+      { birthDate: "1997-01-01", placement: "Sun in Capricorn", title: "Sun Conjunction Mercury", key: "sun/mercury" },
+      { birthDate: "1997-01-09", placement: "Uranus in Aquarius", title: "Uranus Conjunction Moon", key: "moon/uranus" }
+    ]) test(`Natal aspect cards end on their practice line ${pilot.key} ${width} ${theme}`, async ({ page }) => {
+      test.setTimeout(120_000);
+      const noErrors = await expectNoClientErrors(page);
+      await page.setViewportSize({ width, height: 1000 });
+      await seedClientState(page, { profile: true, friends: true, friendMatchesProfile: true,
+        profileBirthDate: pilot.birthDate, preloadProfileNatalSky: true, theme });
+      const source = fallbackSourceRowsV3.hookRows.find(row => row.contentKey === `fallback-hook/aspect-pair/${pilot.key}/conjunction`)!;
+      for (const audience of ["you", "friend"]) {
+        const natalRoute = audience === "you" ? "/#you?tab=chart" : "/#friends?tab=charts&chart=friend-nikki&view=natal";
+        await expectClientRouteLoads(page, natalRoute);
+        if (audience === "you") await selectYouNatalTab(page);
+        await page.locator("button.placement-table-row").filter({ hasText: pilot.placement }).first().click();
+        const card = page.getByRole("button", { name: `Read more about ${pilot.title}`, exact: true });
+        const expected = audience === "you" ? source.body_you! : source.body_they!;
+        await expect(card).toBeVisible();
+        await expect(card.locator("h4")).toHaveText(pilot.title);
+        await expect(card.locator("p")).toHaveText(expected);
+        await expect(card).not.toContainText("running as one instinct");
+        await card.click();
+        const article = page.locator(".sky-detail-article");
+        await expect(article).toContainText(expected);
+        await expect(article).not.toContainText("always on together");
+        await article.screenshot({ path: `test-results/natal-aspect-practice-${audience}-${pilot.key.replace("/", "-")}-${width}-${theme}.png` });
+        await page.reload();
+        await expectClientRouteLoads(page, natalRoute);
+        if (audience === "you") await selectYouNatalTab(page);
+        await page.locator("button.placement-table-row").filter({ hasText: pilot.placement }).first().click();
+        await expect(card.locator("p")).toHaveText(expected);
+        await card.click();
+        await expect(article).toContainText(expected);
+      }
+      await noErrors();
+    });
+  }
+
   test("content QA flags directional copy in You ascendant placement detail", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
