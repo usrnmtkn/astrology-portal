@@ -5,9 +5,10 @@ import {releaseBuildEnvironment,releaseBuildPreflight} from './release-build-pre
 const env={npm_execpath:'/synthetic/npm-cli.js',PATH:process.env.PATH,VITE_SUPABASE_URL:'wrong-browser-fixture',VITE_SUPABASE_PUBLISHABLE_KEY:'wrong-key',VITE_ENABLE_NATAL_ASPECT_PATTERNS:'leaked',VITE_UNREGISTERED_FLAG:'leaked'};
 const calls=[];
 const receipts=releaseBuildPreflight({env,run:(command,args,options)=>{calls.push({command,args,env:options.env});return{status:0};},onPhase(){}});
-assert.equal(receipts.length,11);
+assert.equal(receipts.length,12);
 assert(calls.some(call=>call.args.includes('pretest:content-studio-api')),'Standalone API types must pass without browser ambient declarations');
 assert(calls.some(call=>call.args.includes('qa:admin-boundary')),'Studio client and API implementation boundaries must pass before builds');
+assert(calls.some(call=>call.args.includes('qa:release-evidence')),'Generated evidence dependencies must be current before builds');
 for(const call of calls){
   assert.equal(call.command,process.execPath,'Every child uses the actual verified Node launcher');
   for(const[key,value]of Object.entries(releaseBuildEnvironment))assert.equal(call.env[key],value);
@@ -34,4 +35,8 @@ assert(block.includes('VITE_ENABLE_NATAL_ASPECT_PATTERNS: "true"'));
 assert(block.includes('npm run build && npm run qa:bundle'));
 assert(block.includes('npm run build:web && npm run qa:bundle'));
 assert(block.includes('npm run build:admin && node scripts/check-admin-bundle-budgets.mjs'));
+const evidenceWorkflow=readFileSync('.github/workflows/corpus-grammar.yml','utf8');
+const evidenceCommands=[...evidenceWorkflow.matchAll(/^\s+(?:run: )?(node scripts\/[^\n]+)/gmu)].map(([,command])=>command);
+const scripts=JSON.parse(readFileSync('package.json','utf8')).scripts;
+assert.deepEqual(scripts['qa:release-evidence'].split(' && '),evidenceCommands,'Preflight must cover the complete hosted corpus/evidence dependency chain');
 console.log('PASS canonical CI build profiles: fixture/flag isolation, native launcher prerequisite, independent failures, fresh artifacts and workflow parity.');

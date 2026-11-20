@@ -9,6 +9,7 @@
   ],
   "scripts": {
     "qa:release-builds": "node scripts/test-release-build-preflight.mjs && node scripts/release-build-preflight.mjs",
+    "qa:release-evidence": "node scripts/lint-corpus-grammar.mjs && node scripts/test-synastry-directionality-batch-4-live.mjs && node scripts/build-knowledge-index.mjs --check && node scripts/build-phrase-index.mjs --check && node scripts/test-writing-kernel-drift.mjs && node scripts/test-packet-builder-migrations.mjs && node scripts/test-production-evidence-adapter.mjs && node scripts/test-production-sky-emission-coverage.mjs && node scripts/test-production-identifier-coverage.mjs && node scripts/test-production-precall-gate.mjs && node scripts/test-production-model-consolidation.mjs && node scripts/test-production-evidence-inspector.mjs && node scripts/test-production-surface-permissions.mjs && node scripts/build-production-sky-kernel-comparison.mjs && node scripts/test-sky-aspect-owner-gate-source.mjs",
     "test:location-consistency": "node --import tsx --test scripts/test-location-consistency.mts",
     "test:approved-voice-style": "node --test tests/astro-writing/approved-voice-style.test.mjs",
     "test:hellenistic-meaning": "node --test tests/astro-writing/hellenistic-meaning-support.test.mjs",
@@ -118,6 +119,7 @@
     "qa:article-voice": "npm run test:article-voice-routing -w @tldr/astro-knowledge",
     "test:aspect-warmth-harvest": "npm run test:aspect-warmth-harvest -w @tldr/astro-knowledge",
     "qa:css-audit": "node scripts/run-css-consistency-audit.mjs && node scripts/run-css-token-integrity-audit.mjs && node scripts/run-studio-css-architecture-audit.mjs && node scripts/test-studio-ds-layers.mjs && node --experimental-strip-types scripts/test-studio-theme.mjs && node scripts/test-live-ds-layers.mjs && node scripts/generate-live-ds-design-md.mjs --check",
+    "qa:natal-design": "npm run qa:css-audit && playwright test -c playwright.reader-release.config.ts tests/visual/client-facing-user-flows.spec.ts tests/visual/design-handoff-pages.spec.ts --grep \"all natal planets retain the shared placement design|Article typography matches approved reading roles\" --workers=1",
     "qa:auth-access": "playwright test --config=playwright.auth.config.ts",
     "test:auth-access": "node --import tsx scripts/test-passive-auth-observer.mts && node scripts/test-auth-account-isolation.mjs && node scripts/test-report-auth-identity.mjs && node --import tsx scripts/test-admin-auth.mjs",
     "qa:bundle": "node scripts/check-web-bundle-budgets.mjs",

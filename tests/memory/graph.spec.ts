@@ -67,6 +67,10 @@ for (const viewport of [{ width: 1167, height: 815 }, { width: 390, height: 844 
 
       await search.fill('ab');
       await expect(page.getByRole('complementary',{name:'Matching memories',exact:true})).toHaveCount(0);
+      await search.fill('chan');
+      await expect(page.getByRole('status')).toHaveText('0 matching memories');
+      await search.fill('mechanics');
+      await expect(page.getByRole('complementary',{name:'Matching memories',exact:true})).toBeVisible();
       await search.fill('the catch');
       const matches=page.getByRole('complementary',{name:'Matching memories',exact:true});
       await expect(matches.getByRole('heading',{level:2})).toHaveText('Matching memories:');

@@ -115,6 +115,13 @@ Keep the scope affected; this rule does not require a routine complete-suite run
   and wait for explicit article readiness before asserting rendered content.
   Inspect screenshots against the current approved UI and contact inventory;
   update an obsolete expectation only after verifying the intended behavior.
+- **Generated evidence:** for knowledge or serving-source changes, run
+  `npm run qa:release-evidence` before builds. It covers the hosted corpus guard,
+  knowledge and phrase indexes, request/evidence contracts and the production
+  Sky comparison. Regenerate the affected dependency chain, review its diff and
+  verify it together before freezing; a current knowledge index alone does not
+  prove its downstream comparison is current. Keep deterministic evidence
+  construction separate from paid generation and editorial approval.
 - **Build budgets:** build every affected hosted profile, including ordinary Web,
   authentication startup and standalone Studio where applicable, with the pinned
   CI toolchain and locked dependencies. Run `npm run qa:release-builds` for the

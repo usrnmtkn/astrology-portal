@@ -25,6 +25,7 @@ export function releaseBuildPreflight({env=process.env,cwd=process.cwd(),run=spa
   }
   npm('api-standalone-types','pretest:content-studio-api');
   npm('studio-boundary-contracts','qa:admin-boundary');
+  npm('generated-evidence-contracts','qa:release-evidence');
   if(npm('web-default-build','build'))npm('web-default-budget','qa:bundle');
   npm('server-types','typecheck:server');
   npm('native-production-startup','test:production-health');

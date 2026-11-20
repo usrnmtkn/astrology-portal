@@ -2,11 +2,74 @@ import {test,expect} from '@playwright/test';
 import {readFileSync} from 'node:fs';
 import {studioApiStore} from '../helpers/studio-api-store';
 import {routeStudioInventoryApi} from '../helpers/studio-inventory-route';
-import {normalizeNatalPlacementPreviewInput,renderNatalPlacementPreviewState} from '../../api/admin/natal-placement-preview';
+import {normalizeNatalPlacementPreviewInput,renderNatalPlacementPreviewState,renderNatalAspectFriendDraft} from '../../api/admin/natal-placement-preview';
 import {servingPackageRecords} from '../../api/_lib/serving-package-records';
 import {readerSession} from '../helpers/reader-session';
 import {emptyLastKnownGoodSnapshot} from '../helpers/bundled-publications';
 import {routeStudioPublicReader} from '../helpers/studio-public-reader-route';
+import {natalCompleteEditorTemplate} from '../../scripts/fixtures/natal-complete-editor-template.mjs';
+
+for (const width of [390,1440]) for (const theme of ['light','dark']) test(`Natal aspect complete editor preserves its closing sentence ${width} ${theme}`, async ({page}) => {
+  test.setTimeout(90_000);
+  const pairKey='fallback-hook/aspect-pair/sun/mercury/conjunction';
+  const key='fallback-hook/natal-aspect-lived/sun/conjunction/mercury';
+  const pair={...servingPackageRecords.get(pairKey),body:'Synthetic complete You opening. Synthetic pair ending.',body_you:'Synthetic complete You opening. Synthetic pair ending.',body_they:'Synthetic complete Friend opening. Synthetic Friend pair ending.',review_status:'approved'};
+  const seed={id:'00000000-0000-4000-8000-000000000072',content_key:pairKey,headline:'Synthetic Sun Mercury pair',body:pair.body,summary:'',status:'LIVE',lane:'serving',review_state:null,
+    surface:'you',mode:'in_depth',provider:'tldrastro-fallback-architecture-v3',event_type:'fallback-system',block_type:'fallback_hook',updated_at:'2026-11-20T12:00:00Z',created_at:'2026-11-20T12:00:00Z',
+    facts:{fallbackArchitectureV3:true},sections:{packageRecord:pair},source_snapshot:{sourcePackage:'tldrastro-fallback-architecture-v3',review_status:'approved'}};
+  const template=natalCompleteEditorTemplate(servingPackageRecords.get('fallback-template/natal.aspect'));
+  const templateSeed={...seed,id:'00000000-0000-4000-8000-000000000073',content_key:template.contentKey,headline:'Synthetic natal aspect template',body:template.body,sections:{packageRecord:template}};
+  const store=await studioApiStore([seed,templateSeed]);
+  let unavailable=true;
+  const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
+  try {
+    await page.setViewportSize({width,height:1000});
+    await page.addInitScript(theme=>{localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture');localStorage.setItem('tldrastro:studio-theme',theme);},theme);
+    await routeStudioInventoryApi(page,{call:store.call,answer:async(route,url)=>{
+      if(url.pathname==='/api/admin/natal-placement-preview') {
+        if(unavailable) { await route.fulfill({status:503,json:{ok:false,error:'Synthetic publication state unavailable.'}});return true; }
+        const input=normalizeNatalPlacementPreviewInput(route.request().postDataJSON());
+        await route.fulfill({json:{ok:true,...renderNatalPlacementPreviewState(input),friend:renderNatalAspectFriendDraft(input)}});return true;
+      }
+      if(url.pathname==='/api/content-reader') {const result=await store.call({method:'POST',url:url.pathname,body:route.request().postDataJSON()});await route.fulfill({status:result.status,json:result.payload});return true;}
+      return false;
+    }});
+    await page.goto('/admin/content#exact-content?category=Natal+Aspects&first=sun&aspect=conjunction&second=mercury');
+    const complete=page.getByRole('button',{name:'Edit complete write-up',exact:true});
+    await complete.click();
+    await expect(page.getByRole('alert')).toContainText('Synthetic publication state unavailable.');
+    expect((await store.call({method:'rows'})).length).toBe(2);
+    unavailable=false;await complete.click();
+    const editor=page.getByRole('dialog',{name:'Generated content editor',exact:true});
+    const you=editor.locator('[data-sky-field="body_you"]');
+    const friend=editor.locator('[data-sky-field="body_they"]');
+    const expectedYou=pair.body+" Synthetic shared closing for your Sun and Mercury.";
+    const expectedFriend=pair.body_they+" Synthetic shared closing for {{Name}}'s Sun and Mercury.";
+    await expect(you).toHaveValue(expectedYou);await expect(friend).toHaveValue(expectedFriend);
+    await expect(editor.getByLabel('Content key',{exact:true})).toHaveValue(key);
+    const edited=expectedYou+' Synthetic revised final sentence.';
+    await you.fill(edited);
+    await editor.locator('.admin-editor-savebar').getByRole('button',{name:'Save draft',exact:true}).click();
+    await expect.poll(async()=>(await store.call({method:'rows'})).find((r:any)=>r.content_key===key)?.sections?.packageRecord?.body_you).toBe(edited);
+    await editor.screenshot({path:`test-results/natal-complete-editor-${width}-${theme}.png`});
+    await editor.getByRole('button',{name:'Close',exact:true}).click();await page.reload();
+    const passages=page.getByRole('region',{name:'Matching natal aspect passages'});
+    await passages.getByRole('button',{name:'Edit source',exact:true}).click();
+    await expect(you).toHaveValue(edited);await expect(friend).toHaveValue(expectedFriend);
+    await editor.locator('.admin-editor-savebar').getByRole('button',{name:'Save & publish',exact:true}).click();
+    await expect.poll(async()=>{
+      const reader=await store.call({method:'POST',url:'/api/content-reader',body:{keys:[key]}});
+      return reader.payload.rows?.[0]?.sections?.packageRecord?.body_you;
+    }).toBe(edited);
+    const saved=(await store.call({method:'rows'})).find((r:any)=>r.content_key===key);
+    const rendered=renderNatalPlacementPreviewState(normalizeNatalPlacementPreviewInput({kind:'natal-aspect',planet:'sun',second:'mercury',aspect:'conjunction',overrides:[{id:saved.id,status:saved.status,lane:saved.lane,provider:saved.provider,updatedAt:saved.updated_at,packageRow:saved.sections.packageRecord}]}));
+    expect(rendered.rendered.body).toBe(edited);
+    expect(rendered.rendered.body.match(/Synthetic shared closing for your Sun and Mercury/g)).toHaveLength(1);
+    expect((await store.call({method:'rows'})).find((r:any)=>r.content_key===pairKey)).toEqual(seed);
+    expect((await store.call({method:'rows'})).find((r:any)=>r.content_key===template.contentKey)).toEqual(templateSeed);
+    expect(errors).toEqual([]);
+  } finally {store.close();}
+});
 
 for(const width of [390,1440]) for(const theme of ['light','dark']) test(`Friend Fortune aspects use calculated day/night positions and exact copy ${width} ${theme}`,async({page})=>{
   await checkFriendFortune(page,width,theme,false);
