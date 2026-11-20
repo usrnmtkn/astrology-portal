@@ -356,7 +356,6 @@ import {
 import { clearNatalCardTaglineCache, loadNatalCardTaglines, natalCardTagline } from "./services/natalPlacementTaglines";
 import {
   completeNatalAspectsForPlacement,
-  natalAspectCounterpartGroup,
   uniqueDisplayableNatalAspects as uniqueNatalAspectRows
 } from "./services/natalAspectDisplay";
 import { clearPlanetTopicVocabularyCache, loadPlanetTopicVocabulary, planetTopicPhrase, signNeedPhrase, signStylePhrase, signStyleShortPhrase, type PlanetTopicVariant } from "./services/planetTopicVocabulary";
@@ -805,7 +804,7 @@ export type YouTransitArticle = {
   }>;
   relatedAspects?: {
     heading: string;
-    grouping?: "tone" | "counterpart";
+    grouping?: "tone";
     rows: Array<ReactNode | SkyDetailRelatedAspectRow>;
   };
   historicalLookback?: SkyHistoricalLookback | null;
@@ -5787,15 +5786,13 @@ function relatedAspectRowsForPlacement({
         : normalizedSurfacePreview(normalizeNatalAspectSurface(aspect, ownerContext));
       const displaySummary = rowSummary;
       const key = `${mode}-${pointName}-${aspect.from}-${aspect.type}-${aspect.to}`;
-      const rowGroup = mode === "natal"
-        ? natalAspectCounterpartGroup(aspect, pointName) ?? "points"
-        : normalizedAspectToneBucket(aspect.type);
+      const rowGroup = normalizedAspectToneBucket(aspect.type);
       const exact = mode === "sky" && wholeDegreeOrb(aspect.orb) === "0°";
       const rowContent = (
         <>
           <AspectGlyphs from={mode === "sky" ? skyAspectMotionName(pointName, positions) : pointName} aspect={aspect.type} to={mode === "sky" ? skyAspectMotionName(otherPoint, positions) : otherPoint} />
           <span className="aspect-row-copy">
-            <h4>{title}</h4>
+            {mode === "natal" ? <h3>{title}</h3> : <h4>{title}</h4>}
             {timing ? <span className="aspect-row-timing" aria-label={timing.label}>
               <span>{timing.rangeLabel}</span>
             </span> : null}
@@ -15741,19 +15738,13 @@ function natalPlacementV3NormalizedSections(
     }];
 
     if (position.house && parts[1]) {
-      const housePartKey = rendered.partKeys?.[1];
-      const isExactHouseCopy = housePartKey?.startsWith("fallback-hook/natal-you-placement-house-final/")
-        || housePartKey?.startsWith("fallback-hook/placement-house-lived/")
-        || housePartKey?.startsWith("fallback-hook/house-lived/");
       sections.push({
         slot: "house",
         required: true,
         layer: "fallback",
         tier: "fallback-architecture-v3",
         sourceKeys: sourceKeysForPart(1),
-        heading: isExactHouseCopy
-          ? `${position.planet} in the ${ordinalHouse(position.house)} house`
-          : `${position.planet} in ${position.sign} in the ${ordinalHouse(position.house)} house`,
+        heading: `${position.planet} in the ${ordinalHouse(position.house)} house`,
         body: parts[1]
       });
     }
@@ -15949,7 +15940,7 @@ function natalPlacementDetailArticle(
     relatedAspects: relatedAspectRows.length > 0
       ? {
           heading: "Natal aspects",
-          grouping: "counterpart",
+          grouping: "tone",
           rows: relatedAspectRows
         }
       : undefined,

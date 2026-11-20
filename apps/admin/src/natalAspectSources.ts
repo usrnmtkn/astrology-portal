@@ -138,7 +138,7 @@ export function natalAspectDisplayTitle(selection: NatalAspectSelection) {
 }
 
 
-export function natalAspectSourceDraft(selection: NatalAspectSelection): NatalAspectSourceDraft {
+export function natalAspectSourceDraft(selection: NatalAspectSelection, you = "", they = ""): NatalAspectSourceDraft {
   const contentKey = natalAspectContentKey(selection);
   return {
     id: null,
@@ -148,7 +148,7 @@ export function natalAspectSourceDraft(selection: NatalAspectSelection): NatalAs
     status: "DRAFT",
     headline: natalAspectDisplayTitle(selection),
     summary: "Exact natal aspect writing for the reader's birth chart.",
-    body: "",
+    body: you,
     lane: "reference",
     reviewState: "needs-review",
     blockType: "fallback_hook",
@@ -158,9 +158,9 @@ export function natalAspectSourceDraft(selection: NatalAspectSelection): NatalAs
         contentKey,
         content_role: "full_copy",
         grammar_frame: "complete_sentence",
-        body: "",
-        body_you: "",
-        body_they: "",
+        body: you,
+        body_you: you,
+        body_they: they,
         reader_only: true,
         render_policy: "reader-only-exact-lived-v1",
         review_status: "needs_review"
@@ -181,4 +181,9 @@ export function natalAspectSourceDraft(selection: NatalAspectSelection): NatalAs
       sourcePackage: "tldrastro-fallback-architecture-v3"
     }
   };
+}
+
+export function natalAspectCompleteDraft(selection: NatalAspectSelection, you: string, they: string): NatalAspectSourceDraft {
+  if (!you.trim() || !they.trim()) throw new Error("The complete You and Friend write-ups could not be loaded.");
+  return natalAspectSourceDraft(selection, you, they);
 }

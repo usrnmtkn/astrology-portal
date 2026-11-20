@@ -8900,6 +8900,7 @@ export function GeneratedContentAdminDashboard() {
           onSelectionChange={updateNatalAspectSelection}
           rows={rows}
           second={natalAspectSecond}
+          secret={secret}
         />
       </Suspense>
     );

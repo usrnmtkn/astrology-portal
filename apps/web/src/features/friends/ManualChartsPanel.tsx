@@ -892,6 +892,7 @@ export function ManualChartsPanel({
     };
 
     return {
+      natalPlacement: article.natalPlacement,
       pills: article.pills,
       natalPlanetReading: article.natalPlanetReading,
       glyph: article.glyph || pointGlyph(position.planet),

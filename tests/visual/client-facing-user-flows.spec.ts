@@ -4838,7 +4838,7 @@ test.describe("client-facing user flow case studies", () => {
       "A philosophy has more value after it has survived contact with a larger world."
     );
     await expect(article.getByText("Natal aspects", { exact: true })).toHaveCount(0);
-    await expect(article.getByRole("heading", { level: 3, name: "Planetary aspects", exact: true })).toHaveCount(1);
+    await expect(article.getByRole("heading", { level: 2, name: "Challenges", exact: true })).toHaveCount(1);
     await assertNoClientErrors();
   });
 
@@ -4877,7 +4877,7 @@ test.describe("client-facing user flow case studies", () => {
     await bigThree.getByRole("button").first().click();
     await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
     await expect(page.getByRole("button", { name: "Close detail" })).toBeVisible();
-    await expect(page.getByRole("heading", { level: 3, name: "Planetary aspects", exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 2, name: "Challenges", exact: true })).toBeVisible();
     await expectNoDuplicateArticleHeadings(page, "Friend natal placement detail");
 
     const bodyType = await page.evaluate(() => {
@@ -5521,7 +5521,86 @@ test("published Uranus Scorpio reader retains the complete owner passage after h
   await expect(article).toBeVisible();
   await expect(article).toContainText(ownerCopy);
   await expect(article).toContainText("Your freedom comes from knowing what has power over you well enough to choose differently.");
+  await expect(article.getByRole("heading", { level: 2, name: "Uranus in the 6th house", exact: true })).toBeVisible();
 });
+
+for (const width of [390, 1440]) for (const theme of ["light", "dark"] as const) {
+  test(`all natal planets retain the shared placement design ${width} ${theme}`, async ({ page }) => {
+    test.setTimeout(180_000);
+    await page.setViewportSize({ width, height: 1000 });
+    await seedClientState(page, { profile: true, profileBirthDate: "1980-02-01", profileBirthTime: "12:00 PM", preloadProfileNatalSky: true, theme });
+    await expectClientRouteLoads(page, "/#you");
+    await selectYouNatalTab(page);
+    let titleStyles: unknown;
+    for (const planet of ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"]) {
+      await page.getByRole("button", { name: new RegExp(`^${planet}(?: Rx)? in `) }).click();
+      const article = page.locator(".you-transit-article-page");
+      await expect(article.locator("h1")).toContainText(planet);
+      const houseHeading = article.getByRole("heading", { level: 2, name: new RegExp(`^${planet} in the \\d+(?:st|nd|rd|th) house$`) });
+      await expect(houseHeading).toBeVisible();
+      // Pin the existing article design as well as cross-planet parity. Comparing
+      // planets only would let an accidental change to every page pass together.
+      const compact = width < 800;
+      await expect(article.locator("h1")).toHaveCSS("font-size", compact ? "34px" : "36px");
+      await expect(article.locator("h1")).toHaveCSS("font-family", /Newsreader/u);
+      await expect(article.locator("h1")).toHaveCSS("text-align", "center");
+      await expect(houseHeading).toHaveCSS("font-size", compact ? "24px" : "28px");
+      await expect(houseHeading).toHaveCSS("font-family", /Newsreader/u);
+      await expect(houseHeading).toHaveCSS("font-weight", "400");
+      const bodyCopy = article.locator(".article-body-inner .article-section p").first();
+      await expect(bodyCopy).toHaveCSS("font-size", compact ? "19px" : "26px");
+      await expect(bodyCopy).toHaveCSS("font-family", /Newsreader/u);
+      await expect(bodyCopy).toHaveCSS("line-height", compact ? "28.5px" : "37.7px");
+      if (planet === "Sun") {
+        await test.step("reject a uniform typography regression", async () => {
+          const override = await page.addStyleTag({ content: ".article-page .article-body-inner .article-section p { font-size: 11px !important; }" });
+          try {
+            await expect(expect(bodyCopy).toHaveCSS("font-size", compact ? "19px" : "26px", { timeout: 100 })).rejects.toThrow();
+          } finally { await override.evaluate(element => element.remove()); }
+          await expect(bodyCopy).toHaveCSS("font-size", compact ? "19px" : "26px");
+        });
+      }
+      const styles = await houseHeading.evaluate(element => {
+        const s = getComputedStyle(element);
+        return [s.fontFamily, s.fontSize, s.fontWeight, s.lineHeight, s.letterSpacing, s.marginTop, s.marginBottom];
+      });
+      if (titleStyles) expect(styles).toEqual(titleStyles); else titleStyles = styles;
+      await expect(article.getByText("Planetary aspects", { exact: true })).toHaveCount(0);
+      await expect(article.getByText("Angles and points", { exact: true })).toHaveCount(0);
+      const groups = article.locator(".article-related-aspects-card");
+      expect(await groups.count()).toBeGreaterThan(0);
+      for (const group of await groups.all()) {
+        expect(await group.getAttribute("aria-labelledby")).toBeTruthy();
+        expect(await group.evaluate(element => element.parentElement?.classList.contains("article-shell"))).toBe(true);
+        expect(await group.evaluate(element => element.previousElementSibling?.tagName)).toBe("H2");
+        await expect(group).toHaveCSS("background-color", theme === "dark" ? "rgb(28, 31, 38)" : "rgb(255, 255, 255)");
+        await expect(group).toHaveCSS("border-radius", "28px");
+        await expect(group).toHaveCSS("padding", compact ? "32px 24px 28px" : "40px 32px 32px");
+        const names = await group.locator("h3").allTextContents();
+        expect(names.length).toBeGreaterThan(0);
+        await expect(group.locator("h4")).toHaveCount(0);
+      }
+      expect(await article.locator("h2.article-related-aspects__label--outside").allTextContents()).toEqual(
+        planet === "Pluto" ? ["Gifts"] : ["Gifts", "Challenges"]
+      );
+      const boxes = await article.locator(".article-card").evaluateAll(elements => elements.map(element => {
+        const b = element.getBoundingClientRect(); return { left: b.left, right: b.right, width: b.width };
+      }));
+      for (const box of boxes) {
+        expect(box.left).toBeGreaterThanOrEqual(0);
+        expect(box.right).toBeLessThanOrEqual(width + 1);
+        expect(Math.abs(box.width - boxes[0].width)).toBeLessThanOrEqual(1);
+        expect(Math.abs(box.width - (compact ? width - 32 : 880))).toBeLessThanOrEqual(1);
+      }
+      if (["Sun", "Uranus"].includes(planet)) {
+        await article.screenshot({ path: `test-results/natal-pattern-${planet.toLowerCase()}-${width}-${theme}.png` });
+        await page.reload(); await expect(houseHeading).toBeVisible();
+      }
+      await page.getByRole("button", { name: "Back to updates", exact: true }).click();
+      await selectYouNatalTab(page);
+    }
+  });
+}
 
 test("Chiron Jupiter owner revision renders its complete opening and ending", async ({ page }) => {
   const copy = JSON.parse(readFileSync("docs/content-management/owner-copy/chiron-jupiter-hard-2026-09-07.json", "utf8"));

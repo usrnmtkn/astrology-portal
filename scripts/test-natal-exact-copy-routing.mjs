@@ -158,18 +158,14 @@ for (const [name, renderPlacement] of [
 }
 
 const youPage = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/you/YouPage.tsx"), "utf8");
-assert.match(youPage, /label: "Planetary aspects"/u);
-assert.match(youPage, /label: "Angles and points"/u);
-assert.match(youPage, /article-related-aspects__group-label/u);
-assert.match(
-  youPage,
-  /<h3 className="eyebrow section-label article-related-aspects__label article-related-aspects__group-label">/u,
-  "Natal aspect subgroup labels must be semantic headings with the eyebrow treatment."
-);
-assert.doesNotMatch(
-  youPage,
-  /<span className="eyebrow section-label article-related-aspects__label article-related-aspects__group-label">/u,
-  "Natal aspect subgroup labels must not fall back to non-semantic spans."
-);
+const natalPattern = fs.readFileSync(path.join(repoRoot, "apps/web/src/components/ArticleAspects.tsx"), "utf8");
+assert.match(youPage, /<NatalPlacementAspects rows=/u);
+assert.match(natalPattern, /label: "Gifts"/u);
+assert.match(natalPattern, /label: "Challenges"/u);
+assert.match(natalPattern, /level = "h2"/u);
+assert.match(natalPattern, /<Heading className="eyebrow section-label article-related-aspects__label article-related-aspects__label--outside"/u,
+  "Natal aspect group labels retain the shared semantic heading treatment.");
+assert.doesNotMatch(youPage, /label: "(?:Planetary aspects|Angles and points)"/u,
+  "Content-source or counterpart grouping must not replace the approved natal design.");
 
 console.log("natal exact-copy routing: ok (231-row frozen non-V15 baseline plus 60-row V15 angle batch with governed Friends variants; dashboard hook lane; contextual house bridges; matching subgroup labels)");

@@ -1,4 +1,5 @@
 import { NatalChartReadings } from "../../components/NatalChartReadings";
+import { ArticleAspectCard, NatalPlacementAspects, normalizeRelatedAspectRow } from "../../components/ArticleAspects";
 import { ArticleKeyDates, type ArticleKeyDate } from "../../components/ArticleKeyDates";
 import { skyPlacementAspectParagraphs } from '../../content/skyPlacementAspectBridge';
 import { SeasonArticleLink } from "../../components/SeasonArticleLink";
@@ -48,7 +49,7 @@ import {
 export type AspectToneBucket = "gifts" | "lessons";
 const SkyReaderExportStatus = lazy(() => import("./SkyReaderExportStatus"));
 const SkyPlacementKeyDates = lazy(() => import("./SkyPlacementKeyDates").then(module => ({ default: module.SkyPlacementKeyDates })));
-export type RelatedAspectGroup = AspectToneBucket | "planets" | "points";
+export type RelatedAspectGroup = AspectToneBucket;
 
 export type SkyDetailRelatedAspectRow = {
   key: string;
@@ -94,6 +95,7 @@ export type SkyPersonalizedPlacement = {
 };
 
 export type SkyDetail = {
+  natalPlacement?: boolean;
   aspectType?: string;
   natalPlanetReading?: import("../../content/natalChartReadings").NatalPlanetReadingContext;
   previewLabel?: string;
@@ -137,7 +139,7 @@ export type SkyDetail = {
   sections?: SkyDetailSection[];
   relatedAspects?: {
     heading: string;
-    grouping?: "tone" | "counterpart" | "event";
+    grouping?: "tone" | "event";
     rows: Array<ReactNode | SkyDetailRelatedAspectRow>;
   };
   personalizedPlacement?: SkyPersonalizedPlacement | null;
@@ -356,29 +358,6 @@ function isRetrogradeTimelineNode(node: ReactNode) {
   return typeof node.props.className === "string" && node.props.className.includes("retrograde-detail-line");
 }
 
-function normalizeRelatedAspectRow(row: ReactNode | SkyDetailRelatedAspectRow, index: number): SkyDetailRelatedAspectRow {
-  if (
-    row
-    && typeof row === "object"
-    && "node" in row
-    && !isValidElement(row)
-  ) {
-    const relatedRow = row as SkyDetailRelatedAspectRow;
-    return {
-      ...relatedRow,
-      key: relatedRow.key || `related-aspect-${index}`,
-      group: relatedRow.group ?? normalizedArticleAspectToneBucket(relatedRow.aspectType)
-    };
-  }
-
-  return {
-    key: `related-aspect-${index}`,
-    aspectType: "",
-    group: "lessons",
-    node: row
-  };
-}
-
 const skyPlacementDateLinePattern = /^(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2}(?:,\s+\d{4})?\s+(?:to|through|[-–])\s+(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},\s+\d{4}$/iu;
 
 const skyAspectExactDateLinePattern = /^(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2}(?:,\s+\d{4})?(?:(?:,\s+and\s+|,\s+|\s+and\s+)(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2}(?:,\s+\d{4})?)*$/iu;
@@ -544,11 +523,6 @@ export function SkyDetailArticle({
   const relatedAspectGrouping = detail.relatedAspects?.grouping ?? "tone";
   const aspectGroupDefinitions = relatedAspectGrouping === "event"
     ? ([{ id: "key-aspects" as const, label: "Key aspects" }])
-    : relatedAspectGrouping === "counterpart"
-    ? ([
-        { id: "planets" as const, label: "Planetary aspects" },
-        { id: "points" as const, label: "Angles and points" }
-      ])
     : ([
         { id: "gifts" as const, label: "Gifts" },
         { id: "lessons" as const, label: "Lessons" }
@@ -557,14 +531,12 @@ export function SkyDetailArticle({
     ...group,
     sections: relatedAspectGrouping === "event"
       ? aspectSections
-      : relatedAspectGrouping === "tone"
-        ? aspectSections.filter((section) => section.group === group.id)
-        : [],
+      : aspectSections.filter((section) => section.group === group.id),
     rows: relatedAspectGrouping === "event"
       ? []
       : relatedAspectRows.filter((row) => row.group === group.id)
   })).filter((group) => group.sections.length > 0 || group.rows.length > 0);
-  const hasAspectCard = aspectGroups.length > 0;
+  const hasAspectCard = !detail.natalPlacement && aspectGroups.length > 0;
   const hasReadableBody = Boolean(
     (placementPage && articleSub) ||
     detail.lensHint ||
@@ -766,6 +738,8 @@ export function SkyDetailArticle({
           ) : null}
         </div>
 
+        {detail.natalPlacement && <NatalPlacementAspects rows={detail.relatedAspects?.rows ?? []} />}
+
         {!placementPage ? <ArticleKeyDates dates={detail.keyDates ?? []} intro={detail.keyDatesIntro ? <FormattedProse text={detail.keyDatesIntro} /> : null} titleId="sky-detail-key-dates-title" /> : null}
 
         {placementPage && <div className="sky-placement-article__sections" key={detail.routePath}>
@@ -777,18 +751,7 @@ export function SkyDetailArticle({
           <>
             <h2 className="sr-only">Aspect details</h2>
             {aspectGroups.map((group) => (
-              <Fragment key={group.id}>
-                <h3
-                  className="eyebrow section-label article-related-aspects__label article-related-aspects__label--outside"
-                  id={`sky-detail-related-aspects-${group.id}`}
-                >
-                  {group.label}
-                </h3>
-                <section
-                  className="article-card article-related-aspects article-related-aspects-card"
-                  aria-labelledby={`sky-detail-related-aspects-${group.id}`}
-                >
-                  <div className="article-related-aspects__group">
+              <ArticleAspectCard key={group.id} id={`sky-detail-related-aspects-${group.id}`} label={group.label} level="h3">
                     {group.sections.length ? (
                       <div className="article-related-aspects__copy-list">
                         {group.sections.map((section) => {
@@ -853,9 +816,7 @@ export function SkyDetailArticle({
                         ))}
                       </div>
                     ) : null}
-                  </div>
-                </section>
-              </Fragment>
+              </ArticleAspectCard>
             ))}
           </>
         ) : null}
