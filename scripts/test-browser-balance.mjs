@@ -100,7 +100,7 @@ for (const [config, shard] of [
   ['playwright.sky-placement-reader.config.ts', '1/2'],
   ['playwright.reader-surfaces.config.ts', '1/3'],
   ['playwright.studio-ui.config.ts', '1/2'],
-  ['playwright.studio-admin-flows.config.ts', '1/7']
+  ['playwright.studio-admin-flows.config.ts', '1/8']
 ]) {
   const result = spawnSync(process.execPath, ['scripts/balanced-browser-tests.mjs', '--config', config, shard, '--plan'], { encoding: 'utf8' });
   assert.equal(result.status, 0, result.stdout + result.stderr);
