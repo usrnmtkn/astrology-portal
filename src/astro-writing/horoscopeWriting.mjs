@@ -1,3 +1,5 @@
+import forecastProse from './forecastProseDevelopment.cjs';
+const {FORECAST_PROSE_DEVELOPMENT_VERSION}=forecastProse;
 import {approvedVoiceStyleReference} from './approvedVoiceStyle.mjs';
 import {WEEKLY_BATCH_EDITORIAL,WEEKLY_CROSS_WEEK_EDITORIAL} from './weeklyBatchEditorial.mjs';
 import {WEEKLY_OWNER_DIRECTION,weeklyOwnerDirection,weeklyDirectionWriterInput} from './weeklyConcernDirection.mjs';
@@ -111,10 +113,10 @@ export function prepareHoroscopeWriting(row,{studioCorrections=[],feedbackReceip
   const seasonalMeaning=resolveSeasonalMeaning(brief,sources.seasonalBank,seasonalSourceRows);
   const sourceHash=seasonalMeaning?digest({repository:sources.sha256,seasonalMeaning:seasonalMeaning.sha256}):sources.sha256;
   const rejectedReadings=edition.window.period==='weekly'?row.source_snapshot?.horoscopeGeneration?.rejections??[]:[];
-  const proseVersion=usesRefinedHoroscopeProse(edition.window.period)?{proseInstructionsVersion:HOROSCOPE_PROSE_INSTRUCTIONS_VERSION,
+  const proseVersion={forecastProseDevelopmentVersion:FORECAST_PROSE_DEVELOPMENT_VERSION,...(usesRefinedHoroscopeProse(edition.window.period)?{proseInstructionsVersion:HOROSCOPE_PROSE_INSTRUCTIONS_VERSION,
     ...(usesWeeklyFromSamples(writingProfile.profile)?{weeklyFromSamplesVersion:WEEKLY_FROM_SAMPLES_VERSION}:{}),
     ...(edition.window.period==='daily'?{dailyBatchEditorial:DAILY_BATCH_EDITORIAL}:{}),
-    ...(edition.window.period==='weekly'?{weeklyBatchEditorial:WEEKLY_BATCH_EDITORIAL}:{})}:{};
+    ...(edition.window.period==='weekly'?{weeklyBatchEditorial:WEEKLY_BATCH_EDITORIAL}:{})}:{})};
   const comparison=edition.window.period==='weekly'?row.source_snapshot?.weeklyComparison:null;
   const comparisonBinding=comparison?{weeklyComparisonHash:comparison.contextHash,weeklyComparisonContract:WEEKLY_CROSS_WEEK_EDITORIAL}:{};
   const ownerEdits=edition.window.period==='weekly'?row.source_snapshot?.horoscopeGeneration?.weeklyEditorial?.plan?.ownerEdits:null;
