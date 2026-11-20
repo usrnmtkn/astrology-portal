@@ -3,8 +3,8 @@ import { studioPackageRecord as objectRecord } from "../../../src/shared/studioP
 import { studioLazy as lazy, StudioPanelLoadError } from "./studioLazy";
 import { templateSavedWordingReferences } from "./templateSavedWordingReferences";
 import SkyFallbackPlainFields from "./SkyFallbackPlainFields";
-import { parseStudioPassageEdit, skyPassageEditPlacement } from '../../../src/shared/studioPassageEdit';
-import { calendarPassageReviewParams } from './calendarPassageReviewRoute';
+import { skyPassageEditPlacement } from '../../../src/shared/studioPassageEdit';
+import { calendarPassageReviewParams, parseCalendarPassageReview } from './calendarPassageReviewRoute';
 import type {AdminHookCatalogDomain} from "./adminHookCatalogData";
 import type { WheelTooltipEditorSession } from "./wheelTooltipEditorSession";
 import { skyPlacementBrowseIdentity } from "./skyPlacementBrowse";
@@ -3175,7 +3175,7 @@ export function GeneratedContentAdminDashboard() {
   const [requestedEditionId, setRequestedEditionId] = useState(() => parseAdminHash().page === "horoscopes" ? parseAdminHash().params.get("edition") : null);
   const [requestedLunationId, setRequestedLunationId] = useState(() => parseAdminHash().page === "calendarWriteups" ? parseAdminHash().params.get("draft") : null);
   const [requestedMoonDraftId,setRequestedMoonDraftId]=useState(()=>parseAdminHash().page==='moonHoroscopes'?parseAdminHash().params.get('draft'):null);
-  const [readerEntry, setReaderEntry] = useState(() => parseStudioPassageEdit(window.location.hash));
+  const [readerEntry, setReaderEntry] = useState(() => parseCalendarPassageReview(window.location.hash));
   const [hasOpenedHoroscopes, setHasOpenedHoroscopes] = useState(() => parseAdminHash().page === "horoscopes");
   useEffect(() => { if (activePage === "horoscopes") setHasOpenedHoroscopes(true); }, [activePage]);
   const [hasOpenedAiWriting, setHasOpenedAiWriting] = useState(() => parseAdminHash().page === "aiWriting");
@@ -4412,7 +4412,7 @@ export function GeneratedContentAdminDashboard() {
   }
 
   function applyAdminRouteState(page: AdminDashboardPage, params: URLSearchParams) {
-    const entry = parseStudioPassageEdit(adminHashForPage(page, params));
+    const entry = parseCalendarPassageReview(adminHashForPage(page, params));
     setReaderEntry(entry);
     if (entry?.surface === 'sky') {
       const placement = skyPassageEditPlacement(entry.sourceKey);
@@ -7857,7 +7857,11 @@ export function GeneratedContentAdminDashboard() {
             <StudioTabs label="Calendar Write-ups workspaces" value={calendarWriteupWorkspaceView}
               tabs={calendarWriteupWorkspaceTabs}
               onValueChange={view => navigateAdminPage("calendarWriteups", new URLSearchParams({ view }))}>
-              {calendarWriteupWorkspaceView === "daily-writing" && <Suspense fallback={<PageLoading message="Loading daily writing…" />}><CalendarDailyWritingStudio secret={secret} dirtyRef={dailyWritingDirtyRef} /></Suspense>}
+              {calendarWriteupWorkspaceView === "daily-writing" && <Suspense fallback={<PageLoading message="Loading daily writing…" />}><CalendarDailyWritingStudio secret={secret} dirtyRef={dailyWritingDirtyRef} onReviewDraft={(date,timeZone,resultId)=>{
+                const params=calendarPassageReviewParams(`calendar-passage/daily/${date}/${encodeURIComponent(timeZone)}`,resultId);
+                if(params)navigateAdminPage('calendarWriteups',params);
+                else setMessage('This writer result has an invalid date, time zone or identity. Reload the saved writing before reviewing.');
+              }} /></Suspense>}
               {calendarWriteupWorkspaceView === "subscription-events" && <Suspense fallback={<PageLoading message="Loading subscription events…" />}><CalendarSubscriptionEvents secret={secret} dirtyRef={subscriptionEventDirtyRef} /></Suspense>}
               {calendarWriteupWorkspaceView === "lunation-writing" && <Suspense fallback={<PageLoading message="Loading lunar writing…" />}><LunationWritingStudio key={requestedLunationId ?? "lunar-workspace"} secret={secret} dirtyRef={lunationWritingDirtyRef} requestedDraftId={requestedLunationId}
                 library={<LunarCalendarWorkspace scope="lunations" rows={rows} query={query} onQuery={setQuery} isLoading={isLoading || loadState !== "loaded"}

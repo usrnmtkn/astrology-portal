@@ -6,6 +6,8 @@ import handler from '../api/admin/calendar-daily-writing';
 import publication from '../api/admin/content-publication';
 import {dailyFacts,digest,PROFILE_FIELDS} from '../api/_lib/calendar-daily-writing';
 import responses from '../src/astro-writing/openAIResponses.cjs';
+import {calendarDailyReviewDraft} from '../apps/admin/src/calendarPassageReviewRoute';
+import {calendarPassageKey,calendarPassageRecord} from '../src/shared/features/calendar/calendarPassageTemplates';
 const storageFetch=globalThis.fetch;
 let calls=0,polls=0,unknown=false,failed=false,request:any;
 const candidate='  Synthetic untouched first-pass paragraph.\n';
@@ -18,6 +20,7 @@ globalThis.fetch=async(input:any,options:any={})=>{
   return storageFetch(input,options);
 };
 process.env.OPENAI_API_KEY='synthetic-only';
+process.env.STUDIO_UUID_IDS='1';
 async function invoke(body:any,secret='calendar-api-fixture',endpoint=handler){
   const req:any=Readable.from([JSON.stringify(body)]);req.method='POST';req.url='/api/admin/calendar-daily-writing';req.headers={'x-content-generation-secret':secret};
   const res:any={statusCode:200,setHeader(){},end(raw:string){this.payload=JSON.parse(raw);}};await endpoint(req,res);return{status:res.statusCode,...res.payload};
@@ -64,6 +67,37 @@ assert.equal((await call('save',{workspace})).status,409);assert.equal((await ca
 row=(await call('poll')).row;assert.equal(polls,1);assert.equal(calls,1);
 const result=row.sections.run.results[0];assert.equal(result.candidate,candidate);assert.equal(result.outputHash,digest(candidate));assert.equal(result.ownerApproved,false);assert.equal(result.promotionAuthorized,false);assert.equal(result.status,'needs_review');
 assert.deepEqual(result.response.usage,{input_tokens:10,output_tokens:20});assert.equal((await invoke({action:'load',...selection})).row.sections.run.results[0].candidate,candidate);
+// A writer result opens a separate editable Calendar draft. Only explicit owner
+// publication changes the normal reader; private generation evidence stays put.
+const context={surface:'calendar' as const,...selection,sourceKey:calendarPassageKey('daily',selection.date,selection.timeZone),writerResultId:result.id};
+const review=calendarDailyReviewDraft(row,context);
+assert.equal(review.body,candidate);assert.deepEqual(Object.keys(review).sort(),['body','source']);
+assert.deepEqual(Object.keys(review.source).sort(),['outputHash','requestHash','resultId','workspaceKey']);
+for(const invalid of [
+  {...context,date:'2026-10-08'}, {...context,timeZone:'UTC'}, {...context,writerResultId:'missing'},
+])assert.throws(()=>calendarDailyReviewDraft(row,invalid));
+for(const patch of [{status:'invalid'},{response:{status:'incomplete'}},{candidate:''},{facts:{...result.facts,date:'2026-10-08'}}]){
+  assert.throws(()=>calendarDailyReviewDraft({...row,sections:{...row.sections,run:{results:[{...result,...patch}]}}},context));
+}
+const originalGeneration=structuredClone(row);
+const draftBody=review.body+'\nComplete owner-edited ending.';
+const record=calendarPassageRecord(context.sourceKey,draftBody);
+let passageResult=await store.invoke('POST',{contentKey:context.sourceKey,surface:'sky',mode:'feed',eventType:'calendar-passage',blockType:'fallback_hook',status:'DRAFT',lane:'reference',headline:record.headline,body:draftBody,
+  facts:{fallbackArchitectureV3:true},provider:'tldrastro-fallback-architecture-v3',sections:{packageRecord:record,packageDraft:record,calendarDailyWriterSource:review.source},sourceSnapshot:{sourcePackage:record.source_package,content_role:'full_copy',review_status:'needs_review'}});
+assert.equal(passageResult.status,200,JSON.stringify(passageResult));let passage=passageResult.payload.rows[0];
+assert.equal((await store.invoke('POST',{keys:[context.sourceKey]},'/api/content-reader')).payload.rows.length,0);
+assert.equal((await store.invoke('PATCH',{id:passage.id,expectedUpdatedAt:'2020-01-01T00:00:00.000Z',sections:{}})).status,409);
+passageResult=await store.invoke('PATCH',{id:passage.id,expectedUpdatedAt:passage.updated_at,ownerAction:'approve-package-revision'});
+assert.equal(passageResult.status,200,JSON.stringify(passageResult));passage=passageResult.payload.rows[0];assert.equal(passage.status,'LIVE');
+const publicPassage=await store.invoke('POST',{keys:[context.sourceKey]},'/api/content-reader');assert.equal(publicPassage.status,200);
+assert.equal(publicPassage.payload.rows[0].body,draftBody);
+assert(!JSON.stringify(publicPassage.payload).includes('Latest edit.'),'Private instructions cannot enter the published projection');
+assert(!JSON.stringify(publicPassage.payload).includes('openai_response_id'));
+assert(!JSON.stringify(publicPassage.payload).includes('calendarDailyWriterSource'));
+assert(!JSON.stringify(publicPassage.payload).includes('studio-writing-profile/'));
+assert.deepEqual(store.rows.get(row.id),originalGeneration,'Review and publication must retain the untouched writer operation');
+const unpublish=await store.invoke('POST',{action:'retire',contentKey:context.sourceKey,id:passage.id,expectedUpdatedAt:passage.updated_at},'/api/admin/content-publication');
+assert.equal(unpublish.status,200,JSON.stringify(unpublish));assert.equal((await store.invoke('POST',{keys:[context.sourceKey]},'/api/content-reader')).payload.rows.length,0);
 assert.equal((await call('generate',{requestHash:prep.requestHash,authorizeWriterCall:true})).status,409);assert.equal(calls,1);
 // Invalid output is preserved, with no hidden evaluator or retry.
 row=(await call('save',{workspace:{...workspace,thought:'Synthetic second distinct owner-approved concern.'}})).row;prep=(await call('prepare')).prepared;
