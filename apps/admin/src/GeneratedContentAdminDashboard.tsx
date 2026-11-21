@@ -792,6 +792,9 @@ const vocabularySections: Array<{ key: AdminVocabularySection; label: string; de
   { key: "career", label: "Career", description: "Work, vocation, money, and public-facing purpose phrases." }
 ];
 
+const horoscopeWorkspaceTabs=[['moonHoroscopes','New & Full Moon horoscopes'],['planetaryHoroscopes','Planetary horoscopes'],['horoscopeFallbacks','Fallback horoscopes']] as const;
+const isHoroscopeWorkspace=(page:AdminDashboardPage)=>page==='horoscopes'||horoscopeWorkspaceTabs.some(([value])=>value===page);
+
 const adminPageHashKeys: Record<AdminDashboardPage, string> = {
   wheelTooltips: "wheel-tooltips",
   connectionTransits: "connection-transits",
@@ -3178,9 +3181,7 @@ export function GeneratedContentAdminDashboard() {
   }, [secret]);
   const [activePage, setActivePage] = useState<AdminDashboardPage>(() => parseAdminHash().page);
   const [requestedEditionId, setRequestedEditionId] = useState(() => parseAdminHash().page === "horoscopes" ? parseAdminHash().params.get("edition") : null);
-  const [requestedPlanetaryId,setRequestedPlanetaryId]=useState(()=>parseAdminHash().page==='planetaryHoroscopes'?parseAdminHash().params.get('draft'):null);
-  const [requestedLunationId, setRequestedLunationId] = useState(() => parseAdminHash().page === "calendarWriteups" ? parseAdminHash().params.get("draft") : null);
-  const [requestedMoonDraftId,setRequestedMoonDraftId]=useState(()=>parseAdminHash().page==='moonHoroscopes'?parseAdminHash().params.get('draft'):null);
+  const [requestedDatedDraftId,setRequestedDatedDraftId]=useState(()=>parseAdminHash().params.get('draft'));
   const [readerEntry, setReaderEntry] = useState(() => parseCalendarPassageReview(window.location.hash));
   const [hasOpenedHoroscopes, setHasOpenedHoroscopes] = useState(() => parseAdminHash().page === "horoscopes");
   const planetaryHoroscopesDirtyRef=useRef(false);
@@ -4454,9 +4455,7 @@ export function GeneratedContentAdminDashboard() {
 
     setActivePage(page);
     setRequestedEditionId(page === "horoscopes" ? params.get("edition") : null);
-    setRequestedPlanetaryId(page==='planetaryHoroscopes'?params.get('draft'):null);
-    setRequestedLunationId(page === "calendarWriteups" ? params.get("draft") : null);
-    setRequestedMoonDraftId(page==='moonHoroscopes'?params.get('draft'):null);
+    setRequestedDatedDraftId(params.get('draft'));
     setCategoryFilter(category && categoryFilters.some((filter) => filter.key === category) ? category : "all");
     setShowReferenceRows(page === "content" && category === "Calendar Aspects");
     setContentLibraryView(page === "content" && ['sky', 'calendar', 'compatibility'].includes(view ?? '') ? view as ContentLibraryView : "all");
@@ -7363,7 +7362,7 @@ export function GeneratedContentAdminDashboard() {
                   ? isCompositionPage(activePage) && !(activePage === "knowledge" && fallbackSectionFilter === "lunar-calendar")
                   : item.page === "skyWriteups"
                     ? activePage === item.page && skyWriteupWorkspaceView === "catalog"
-                  : item.page==='horoscopes'?['horoscopes','moonHoroscopes','planetaryHoroscopes','horoscopeFallbacks'].includes(activePage):activePage === item.page;
+                  : item.page==='horoscopes'?isHoroscopeWorkspace(activePage):activePage === item.page;
             return (
               <Fragment key={item.key ?? item.page}>
                 <StudioButton
@@ -7379,10 +7378,8 @@ export function GeneratedContentAdminDashboard() {
                   <Icon size={16} aria-hidden="true" />
                   <span>{item.label}</span>
                 </StudioButton>
-                {item.page === "horoscopes" && <div className="admin-nav-workspace-group" hidden={!["horoscopes", "horoscopeFallbacks", "moonHoroscopes", "planetaryHoroscopes"].includes(activePage)} aria-label="Horoscopes sections">
-                  <StudioButton type="button" onClick={() => navigateAdminPage("moonHoroscopes")} aria-current={activePage === "moonHoroscopes" ? "page" : undefined}>New &amp; Full Moon horoscopes</StudioButton>
-                  <StudioButton type="button" onClick={() => navigateAdminPage("planetaryHoroscopes")} aria-current={activePage === "planetaryHoroscopes" ? "page" : undefined}>Planetary horoscopes</StudioButton>
-                  <StudioButton type="button" onClick={() => navigateAdminPage("horoscopeFallbacks")} aria-current={activePage === "horoscopeFallbacks" ? "page" : undefined}>Fallback horoscopes</StudioButton>
+                {item.page === "horoscopes" && <div className="admin-nav-workspace-group" hidden={!isHoroscopeWorkspace(activePage)} aria-label="Horoscopes sections">
+                  {horoscopeWorkspaceTabs.map(([page,label])=><StudioButton key={page} type="button" onClick={()=>navigateAdminPage(page)} aria-current={activePage===page?'page':undefined}>{label}</StudioButton>)}
                 </div>}
                 {(item.page === "calendarWriteups" || item.page === "skyWriteups") && (
                   <div className="admin-nav-workspace-group" hidden={activePage !== item.page}
@@ -7529,7 +7526,7 @@ export function GeneratedContentAdminDashboard() {
             href: item.page ? adminHashForPage(item.page) : undefined,
             onSelect: item.page ? () => navigateAdminPage(item.page as AdminDashboardPage) : undefined
           }))}
-          createActions={["aiWriting", "horoscopes", "horoscopeFallbacks", "moonHoroscopes", "planetaryHoroscopes"].includes(activePage) || activePage === "calendarWriteups" && ["lunation-writing", "daily-writing"].includes(calendarWriteupWorkspaceView) ? [] : activePage === "articles" ? [
+          createActions={(activePage==="aiWriting"||isHoroscopeWorkspace(activePage)) || activePage === "calendarWriteups" && ["lunation-writing", "daily-writing"].includes(calendarWriteupWorkspaceView) ? [] : activePage === "articles" ? [
             { key: "article", label: "New article", description: "Write a standalone article", icon: FileText,
               onSelect: () => handleCreateAction("articles", "New article draft started.") },
             { key: "guide", label: "New guide", description: "Write a standalone guide", icon: BookOpenText,
@@ -7619,8 +7616,8 @@ export function GeneratedContentAdminDashboard() {
         {activePage === "variables" && <><Suspense fallback={<PageLoading message="Loading variables…" />}><StudioVariables secret={secret} customVariables={customVariableLibrary.variables} onCustomChange={customVariableLibrary.setVariables} customError={customVariableLibrary.error} customLoading={customVariableLibrary.loading} customLoaded={customVariableLibrary.loaded} initialVariableName={parseAdminHash().params.get('editVariable') ?? undefined} onReloadCustom={customVariableLibrary.reload} createRequest={variableCreateRequest} onCreateHandled={() => setVariableCreateRequest(0)} onDirty={trackCustomVariableDraft} onOpenSource={(key, _label, field) => void openRow(rows.find(row => row.content_key === key) ?? { id: `package:${key}`, content_key: key, inventory_only: true } as AdminGeneratedContentRow, null, field)} /></Suspense>{renderEditor()}</>}
 
         {hasOpenedHoroscopes && <div hidden={activePage !== "horoscopes"}><Suspense fallback={<PageLoading message="Loading horoscope editions…" />}><HoroscopeEditionsStudio sidePanel active={activePage === "horoscopes"} secret={secret} requestedEditionId={requestedEditionId} onEditionChange={setRequestedEditionId} onStateChange={state => { horoscopeEditionStateRef.current = state; }} /></Suspense></div>}
-        {activePage === "moonHoroscopes" && <Suspense fallback={<PageLoading message="Loading Moon horoscopes…" />}><MoonHoroscopesStudio key={requestedMoonDraftId??'new'} secret={secret} dirtyRef={moonHoroscopesDirtyRef} requestedDraftId={requestedMoonDraftId}/></Suspense>}
-        {activePage === "planetaryHoroscopes" && <Suspense fallback={<PageLoading message="Loading planetary horoscopes…" />}><PlanetaryHoroscopesStudio key={requestedPlanetaryId??'new'} secret={secret} dirtyRef={planetaryHoroscopesDirtyRef} requestedDraftId={requestedPlanetaryId}/></Suspense>}
+        {activePage === "moonHoroscopes" && <Suspense fallback={<PageLoading message="Loading Moon horoscopes…" />}><MoonHoroscopesStudio key={requestedDatedDraftId??'new'} secret={secret} dirtyRef={moonHoroscopesDirtyRef} requestedDraftId={requestedDatedDraftId}/></Suspense>}
+        {activePage === "planetaryHoroscopes" && <Suspense fallback={<PageLoading message="Loading planetary horoscopes…" />}><PlanetaryHoroscopesStudio key={requestedDatedDraftId??'new'} secret={secret} dirtyRef={planetaryHoroscopesDirtyRef} requestedDraftId={requestedDatedDraftId}/></Suspense>}
         {activePage === "horoscopeFallbacks" && <><Suspense fallback={<PageLoading message="Loading fallback horoscopes…" />}>
           <FallbackHoroscopeStudio rows={rows} credential={secret}
             onLoadCatalog={signal => retryStudioRead(async () => {
@@ -7870,7 +7867,7 @@ export function GeneratedContentAdminDashboard() {
               onValueChange={view => navigateAdminPage("calendarWriteups", new URLSearchParams({ view }))}>
               {calendarWriteupWorkspaceView === "daily-writing" && <Suspense fallback={<PageLoading message="Loading daily writing…" />}><CalendarDailyWritingStudio secret={secret} dirtyRef={dailyWritingDirtyRef} onReviewDraft={params=>navigateAdminPage('calendarWriteups',params)} /></Suspense>}
               {calendarWriteupWorkspaceView === "subscription-events" && <Suspense fallback={<PageLoading message="Loading subscription events…" />}><CalendarSubscriptionEvents secret={secret} dirtyRef={subscriptionEventDirtyRef} /></Suspense>}
-              {calendarWriteupWorkspaceView === "lunation-writing" && <Suspense fallback={<PageLoading message="Loading lunar writing…" />}><LunationWritingStudio key={requestedLunationId ?? "lunar-workspace"} secret={secret} dirtyRef={lunationWritingDirtyRef} requestedDraftId={requestedLunationId}
+              {calendarWriteupWorkspaceView === "lunation-writing" && <Suspense fallback={<PageLoading message="Loading lunar writing…" />}><LunationWritingStudio key={requestedDatedDraftId ?? "lunar-workspace"} secret={secret} dirtyRef={lunationWritingDirtyRef} requestedDraftId={requestedDatedDraftId}
                 library={<LunarCalendarWorkspace scope="lunations" rows={rows} query={query} onQuery={setQuery} isLoading={isLoading || loadState !== "loaded"}
                   editor={null} onEdit={row => openCalendarWritingSource(row as AdminGeneratedContentRow)}
                   loadRows={loadCalendarPreviewRows} onLoad={row => hydrateGeneratedContentRow(row as AdminGeneratedContentRow)} onCreate={() => {}} />}

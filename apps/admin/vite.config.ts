@@ -195,12 +195,12 @@ export default defineConfig(({ command, mode }) => {
               || /apps\/admin\/src\/(?:horoscopeEditionDraft|horoscopeEditionDeletion)\.ts$/u.test(id)
               || /apps\/web\/src\/content\/horoscopeEditions\.mjs$/u.test(id)
               || /src\/shared\/features\/horoscopes\/HoroscopeLocation\.tsx$/u.test(id)
-              || /src\/astro-writing\/horoscopeWriterCatalog\.mjs$/u.test(id)) return "horoscopeEditionManagement";
+              || /src\/astro-writing\/horoscopeWriterCatalog\.mjs$/u.test(id)) return "review";
             if (/apps\/admin\/src\/(?:HoroscopeWritingStudio|HoroscopeSaveRecovery|PlanetaryHoroscopesStudio)\.tsx$/u.test(id)
-              || /src\/shared\/planetaryHoroscopeEditor\.ts$/u.test(id)) return "HoroscopeWritingStudio";
+              || /src\/shared\/planetaryHoroscopeEditor\.ts$/u.test(id)) return "review";
             // Profile metadata and reconciliation load with their editing panels.
             if (/src\/astro-writing\/(?:horoscopeWritingProfiles|monthlyHoroscopeGuidance|seasonalComposition|horoscopeStreamCheckpoint)\.mjs$/u.test(id)
-              || /apps\/admin\/src\/horoscopeEditReconciliation\.ts$/u.test(id)) return "HoroscopeWritingStudio";
+              || /apps\/admin\/src\/horoscopeEditReconciliation\.ts$/u.test(id)) return "review";
             // The same summary workspaces use these two small source loaders.
             // Share their transport without moving the complete JSON artifacts.
             if (/apps\/admin\/src\/(?:skySummarySourceBank|skyMoonSummarySources)\.ts$/u.test(id)) return "admin-sky-summary-workspace";
