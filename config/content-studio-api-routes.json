@@ -213,6 +213,15 @@
       "access": "owner"
     },
     {
+      "path": "/api/admin/planetary-horoscope-writing",
+      "file": "api/admin/planetary-horoscope-writing.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "access": "owner"
+    },
+    {
       "path": "/api/admin/prepopulate-content",
       "file": "api/admin/prepopulate-content.ts",
       "methods": [
@@ -307,6 +316,14 @@
       "methods": [
         "GET",
         "POST"
+      ],
+      "access": "owner"
+    },
+    {
+      "path": "/api/admin/synastry-writer-status",
+      "file": "api/admin/synastry-writer-status.ts",
+      "methods": [
+        "GET"
       ],
       "access": "owner"
     },

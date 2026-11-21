@@ -1,0 +1,229 @@
+{
+  "schema": "synastry-interpretive-detail-audit/v1",
+  "sourceHead": "a7103cff661f81349fc35356e78eaac0cf9f37dd",
+  "scope": "Twenty selected DRAFT records gain source-backed natal-to-natal detail and optional derived examples. Existing fields and all approved reader/voice passages remain unchanged.",
+  "readerProseApproval": false,
+  "publicationAuthorized": false,
+  "paidCalls": 0,
+  "sources": [
+    {
+      "id": "davison-synastry",
+      "title": "Synastry",
+      "author": "Ronald C. Davison",
+      "sha256": "2ff806457401a161af779e94d273ddeec4f10c08fb47fd0d6fded00bb9b7d94e",
+      "pdfPages": [
+        53,
+        55,
+        57,
+        72,
+        76,
+        80,
+        81
+      ]
+    },
+    {
+      "id": "jansky-synastry",
+      "title": "Synastry",
+      "author": "Robert C. Jansky",
+      "sha256": "53cc9976919ba596b58720de4c098893f39d43dd1923b91b6db1f5c98c0b9edd",
+      "pdfPages": [
+        39,
+        40,
+        52,
+        67,
+        68,
+        69,
+        70
+      ]
+    }
+  ],
+  "sourceReadingNotes": [
+    "Davison pair discussions supply contact-specific meaning; general aspect discussions qualify it.",
+    "Jansky Mercury examples are explicitly identified as method rather than Mercury-Mars case evidence.",
+    "Jansky supplies a direct Mars-Saturn square example and separately discusses continuing transits; no transit timing is imported.",
+    "Module 18 was reread as a secondary comparison but not used as source authority for these detail records.",
+    "The Greene PDF body was not text-readable beyond print markers in the available extraction and is not claimed as an interpretive source."
+  ],
+  "changes": [
+    {
+      "id": "A-mercury_B-mars_square",
+      "sourcePath": "packages/astro-knowledge/data/synastry/aspects/A-mercury_B-mars_square.json",
+      "originalFileSha256": "3e03b1fba507fdd5a15f439fa81ea6405e34ac8e202a1683010a7310d04e99ce",
+      "updatedFileSha256": "61053fb02ec8d5078c51d631e9eba1bfd328bc29e773c369cff916be6de64737",
+      "primaryMeaningSha256": "11a180c25904af7e8e3d64891ca5a56f42ba36f95cc78b912239e7e2e10dd713",
+      "detailSha256": "05c2d30878d1be920bd290520761721dd40cfd9e5710f60d0b98ae233d5c39ea",
+      "exampleCount": 2
+    },
+    {
+      "id": "A-mars_B-mercury_square",
+      "sourcePath": "packages/astro-knowledge/data/synastry/aspects/A-mars_B-mercury_square.json",
+      "originalFileSha256": "dea0133f9bb2ca0941be9d917b0d61b456828ba81096db8f06c03732e30536d6",
+      "updatedFileSha256": "157ac65cf29851aa24d5e18f90efde91178a8054bcb6c38c2ea126f7aeb4fcee",
+      "primaryMeaningSha256": "6ce6437da229ca3851565d2f5e327a8f38d2d1922230904c48698a5af5693857",
+      "detailSha256": "af0ad378b564397b687d4d07d6f427269a61813d4ebcd3ec466b9ddfa4610f39",
+      "exampleCount": 2
+    },
+    {
+      "id": "A-mercury_B-mars_opposition",
+      "sourcePath": "packages/astro-knowledge/data/synastry/aspects/A-mercury_B-mars_opposition.json",
+      "originalFileSha256": "0b488ee0bab96e08f96983317052ae90ee80ebe5ba90c45897810e8ab49098ca",
+      "updatedFileSha256": "f4f19b1cc9adb6445973aedd9e2e4b702f8ab00bb9937d842662aea266934659",
+      "primaryMeaningSha256": "9086911d4c14b65d83fee27617322b2917e41a304c79854842164c60593edd68",
+      "detailSha256": "f6147aa7a2997bfdd3d952e8ce3ad968e1f5b2abf2fb731c3b2f8fea7db702b9",
+      "exampleCount": 2
+    },
+    {
+      "id": "A-mars_B-mercury_opposition",
+      "sourcePath": "packages/astro-knowledge/data/synastry/aspects/A-mars_B-mercury_opposition.json",
+      "originalFileSha256": "063b4694c78232324c19e31cfa718e77d90e81d81ccce7e8493638f628560a6d",
+      "updatedFileSha256": "b622366b88ce674d9bd35b1c946c4f73446dddcbae846fa51e2947b71ab10498",
+      "primaryMeaningSha256": "418c67afd01e425a4565ef901f5d33a8de96239319703f263fbae24b531fd375",
+      "detailSha256": "5d7cb054c6497a5e22064fabd378b1baf1ec9eca5016f15b4778462a710a8bd6",
+      "exampleCount": 2
+    },
+    {
+      "id": "A-venus_B-jupiter_trine",
+      "sourcePath": "packages/astro-knowledge/data/synastry/aspects/A-venus_B-jupiter_trine.json",
+      "originalFileSha256": "4928e31fad6e911436e011a3709c4454fab7974ea9764154685717e072a582d3",
+      "updatedFileSha256": "ad250dc86d3a63b77f2f1c0f6289b2d2bc394abeac6dcf7029876bacf2224225",
+      "primaryMeaningSha256": "186351b6a3d1fe1f2ff65cf49199115c89137e7ae671b938a89598a46eed7a9f",
+      "detailSha256": "60e475c986a7138454389828fae62fb942cd1117176b14484e2749ea0bc28c1d",
+      "exampleCount": 2
+    },
+    {
+      "id": "A-jupiter_B-venus_trine",
+      "sourcePath": "packages/astro-knowledge/data/synastry/aspects/A-jupiter_B-venus_trine.json",
+      "originalFileSha256": "ffa306e5b24d5e98f9d6da4c8b5f57590107ff02f49c43651ca97bae5acf12b1",
+      "updatedFileSha256": "857339a86ea89cddfb9607d9c23ecced159399cf4b57a48c13be3b4add70b1af",
+      "primaryMeaningSha256": "91c7f805a191e2ca0b4cdec8e36969ecafc4268f5e32561015bd67f0ff55605b",
+      "detailSha256": "e69d02062c3985c942e062bc05d9699a6a0741fac4aeb89b26422e3c90ba5508",
+      "exampleCount": 2
+    },
+    {
+      "id": "A-venus_B-jupiter_sextile",
+      "sourcePath": "packages/astro-knowledge/data/synastry/aspects/A-venus_B-jupiter_sextile.json",
+      "originalFileSha256": "0af274f91f68eff6f543bc1e1ca4d153c8509d542579380ab0690a04119045ea",
+      "updatedFileSha256": "78efe6ec0b1169be5d088e209ac73a562c8cf472a93b59d83196ad37d27624c6",
+      "primaryMeaningSha256": "213b6fc560c66f7eb202181fde965641c0565ceb0a171e6d504673ef9a4080c0",
+      "detailSha256": "242d67f4750519bf56dba95e4028f1665d838dc5f2b640caab6ed68eaa851142",
+      "exampleCount": 2
+    },
+    {
+      "id": "A-jupiter_B-venus_sextile",
+      "sourcePath": "packages/astro-knowledge/data/synastry/aspects/A-jupiter_B-venus_sextile.json",
+      "originalFileSha256": "7ac1d36d99b1de3fc1be6589d62086d1b1b8cd8be606995f76f45ee648595d51",
+      "updatedFileSha256": "f7cbd0fad5e9c6a04e930a023d56aaa747fb4f1919792d8ed27a369b44f6cac4",
+      "primaryMeaningSha256": "311ab48957d4a9d75819d23876c82902c47decf17c46c33b51bb2de701598a3f",
+      "detailSha256": "65b3a5356a2281c6795d7015dc74ffae7e08969b1afe1201b0c80c4ef5b237e8",
+      "exampleCount": 2
+    },
+    {
+      "id": "A-venus_B-jupiter_square",
+      "sourcePath": "packages/astro-knowledge/data/synastry/aspects/A-venus_B-jupiter_square.json",
+      "originalFileSha256": "5191d9ae7614bfe82a5d6aebf0f6ae9e2f4febe086fe136f4b67e240191847b7",
+      "updatedFileSha256": "d9327041d7d29974294dc699b49b03dd6a168f821485d40d57e7eb1b55c5f794",
+      "primaryMeaningSha256": "e523e31ed9380d3deef79967fd63ac8a29aad436eaf401f361645f508a97b886",
+      "detailSha256": "91b779992b1beca0013f921fb320ef8398f5ee0716454dc29a130a145cecee98",
+      "exampleCount": 2
+    },
+    {
+      "id": "A-jupiter_B-venus_square",
+      "sourcePath": "packages/astro-knowledge/data/synastry/aspects/A-jupiter_B-venus_square.json",
+      "originalFileSha256": "e3a5f994f3c0cac48c957175b0f09e63a485e349cfff10f5f63e0b38755801a9",
+      "updatedFileSha256": "c3e1ec18c9a2a983e3f2d6d422995326e27f6d6b06bd6959ca8354f2e2ff4b3f",
+      "primaryMeaningSha256": "dfa50682a0c21904733c55d61c6a289b6c4c48844431c17fdd91d7f8fecd770e",
+      "detailSha256": "f311d540c4f19a7755eee17b2e6aace99919b901cb0aae7ccdadbe6aaeeb6916",
+      "exampleCount": 2
+    },
+    {
+      "id": "A-venus_B-jupiter_opposition",
+      "sourcePath": "packages/astro-knowledge/data/synastry/aspects/A-venus_B-jupiter_opposition.json",
+      "originalFileSha256": "a275bc7c32386ff3e7cf2913f7a897cd25672aaa832b3e3efc50592f8cbbbe3b",
+      "updatedFileSha256": "68734f3a87f672857b5f26b94adbf8a75a4e132df52c8c7d85db010fa2e3224c",
+      "primaryMeaningSha256": "20520026fb70f6c36ed4d51e6270e7ff891690306d83f12a59d15c81bb66d2fe",
+      "detailSha256": "ea77613f52c648ce9edbb1159ca2b20b054b56cf34dceab9521774676f966c20",
+      "exampleCount": 2
+    },
+    {
+      "id": "A-jupiter_B-venus_opposition",
+      "sourcePath": "packages/astro-knowledge/data/synastry/aspects/A-jupiter_B-venus_opposition.json",
+      "originalFileSha256": "51d3919a2e4e98c27e8a32f8fb0ed8071d93bbc86518d860d0a5f614df11b60a",
+      "updatedFileSha256": "614cfca0730c8c88b9b8aef68adf2d2d70e34e62a484c7a16153fcae6b00d0e3",
+      "primaryMeaningSha256": "80e6976ed5b1e5c6d3fb6546e5617c7f21ae01efc103cfa514cc006c1b3d6c76",
+      "detailSha256": "153475c3258d6104860145c42a9f1625229d4f392522af6a1b24fbf49ce7da76",
+      "exampleCount": 2
+    },
+    {
+      "id": "A-mars_B-saturn_trine",
+      "sourcePath": "packages/astro-knowledge/data/synastry/aspects/A-mars_B-saturn_trine.json",
+      "originalFileSha256": "14ca980f0d9ffbe00fd39b05330c38f5b7429f452de89ae67d68fb4defd9fab6",
+      "updatedFileSha256": "1b0046eea8b5ae978a316415ebf74d876d074b7ead03ee441430fa7b97ccc06d",
+      "primaryMeaningSha256": "abbfb601324c27881ad7dce4ffdd62a1f10fb5f54f29fbe7129643772de7642c",
+      "detailSha256": "5f8f7e9fbe89a2deb9d63f1837c9f12169bd170c868db9254bdccf58f3446ce0",
+      "exampleCount": 2
+    },
+    {
+      "id": "A-saturn_B-mars_trine",
+      "sourcePath": "packages/astro-knowledge/data/synastry/aspects/A-saturn_B-mars_trine.json",
+      "originalFileSha256": "0c5dd6f25906371b6dcb82f5632d3a26d058eef3616288acb5072ea19ee3321f",
+      "updatedFileSha256": "892f062ce2542b80872fe1bcd163b3b64e5eeb7d49287e6266c15d9d699aaf19",
+      "primaryMeaningSha256": "b96d6ce195316fd9953a554d644b80e6cbb56c71d3606e0124821d13f5529982",
+      "detailSha256": "7d1d2f7d69ea5f431a27448fcaf53963d05f6fbf842678d1288690bd9d42f6e4",
+      "exampleCount": 2
+    },
+    {
+      "id": "A-mars_B-saturn_sextile",
+      "sourcePath": "packages/astro-knowledge/data/synastry/aspects/A-mars_B-saturn_sextile.json",
+      "originalFileSha256": "141f0620cbc0ec838dd83e7d932d37d933ece4cf5f2c785f3fbfe7f2cf2d16a0",
+      "updatedFileSha256": "3d106bcf05a4cba1c9ed727405b7406d9d806b5f45980a3bbb802df2979a6e8d",
+      "primaryMeaningSha256": "6d24a09b68bd05744a60d1d0e788f57f7d34a4bf61498926bcd1097ac80e9557",
+      "detailSha256": "b5988bf02ba31f443818a75db826c2cd51cf24b4d713c5316c5bc0496cbad3cb",
+      "exampleCount": 2
+    },
+    {
+      "id": "A-saturn_B-mars_sextile",
+      "sourcePath": "packages/astro-knowledge/data/synastry/aspects/A-saturn_B-mars_sextile.json",
+      "originalFileSha256": "3835790ce9819353b572976931bd3299ebaf7bdc77950806c212a4e08d61b264",
+      "updatedFileSha256": "28043e0aaba17fe6cad960926149e86d86c2962b9bf70789bcdfba27f092a7c0",
+      "primaryMeaningSha256": "d864dbe79bb07883745240234963ca8c5470b88c1b54ca7ab4d3aca85c60668e",
+      "detailSha256": "38e19a6c8e50876064eff87d23f9f00e3cf8191e87b6b5743a9e051f311e2580",
+      "exampleCount": 2
+    },
+    {
+      "id": "A-mars_B-saturn_square",
+      "sourcePath": "packages/astro-knowledge/data/synastry/aspects/A-mars_B-saturn_square.json",
+      "originalFileSha256": "7161028d67e8db2f342b8a413a7853b6c2560488c48d2c4e6af1b86663436e9b",
+      "updatedFileSha256": "b2ae6f9ff68aab801fe3a80dd47f933e28b2b2019a4845afedec806f0f37fa06",
+      "primaryMeaningSha256": "3d38d322519a22bb0a7f432ec5033c9665a5f6db8f0660d95e8266780f75d595",
+      "detailSha256": "b3108b8a48265c7fef1c2d7d11908a894469290f2bfa9044e58ec5e2ca4d7dcf",
+      "exampleCount": 2
+    },
+    {
+      "id": "A-saturn_B-mars_square",
+      "sourcePath": "packages/astro-knowledge/data/synastry/aspects/A-saturn_B-mars_square.json",
+      "originalFileSha256": "e29741a67408ff87435ba551c9c4a6010feea05994deabe6792654ba18b3c811",
+      "updatedFileSha256": "26012aa593dcce9010b0675aaeada1737e9e93e5ddda148e110a2ed2bf7a0fd0",
+      "primaryMeaningSha256": "59855adc8e4fc2ae871889a9d9e49a3bb14fce26a458789efbb60cb194adfebd",
+      "detailSha256": "84a36b9adb0cc580c608372542e85284921d748f43e469c55ff800983c33825e",
+      "exampleCount": 2
+    },
+    {
+      "id": "A-mars_B-saturn_opposition",
+      "sourcePath": "packages/astro-knowledge/data/synastry/aspects/A-mars_B-saturn_opposition.json",
+      "originalFileSha256": "9551484870f9e14dd195b8a1cd5b2777e77401a8a202c11e0ebd294cb5e4d796",
+      "updatedFileSha256": "53729b85e53a809d5d3526afa196bc307b87219bdc01e6f94f9860e0443ecbcf",
+      "primaryMeaningSha256": "7ad18903e3d2218155c7d905adff893b9e2afdaf1e37a676df704e533c27997a",
+      "detailSha256": "0c2f431d5993c195736a2ed1948890cbb360d9c857bda083a292cbce06ba8490",
+      "exampleCount": 2
+    },
+    {
+      "id": "A-saturn_B-mars_opposition",
+      "sourcePath": "packages/astro-knowledge/data/synastry/aspects/A-saturn_B-mars_opposition.json",
+      "originalFileSha256": "5f68da9aa5bb93a31469431cceb2a696002ea53f2953d214c7f98fcaa897838a",
+      "updatedFileSha256": "7640775f46b4145a3b2df8a94d213a624732fd177d217e81cbca8d767f8419b8",
+      "primaryMeaningSha256": "1aeae3339c59a679181eb6cb75abdbf95b0a32557211f45ef87424748d2cbe53",
+      "detailSha256": "aeca35beda4c734803b83d81d9c37fb4ea449ea4a0261ae0d35a44766edc400c",
+      "exampleCount": 2
+    }
+  ]
+}

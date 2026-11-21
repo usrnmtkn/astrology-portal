@@ -28,7 +28,7 @@ async function standaloneWheel(wheel: SVGSVGElement) {
   const clone = wheel.cloneNode(true) as SVGSVGElement;
   const originals = [wheel, ...wheel.querySelectorAll<SVGElement>("*")];
   const copies = [clone, ...clone.querySelectorAll<SVGElement>("*")];
-  const properties = ["fill", "fill-opacity", "stroke", "stroke-width", "stroke-opacity", "stroke-linecap", "stroke-linejoin", "stroke-dasharray", "opacity", "font-family", "font-size", "font-weight", "font-style", "letter-spacing", "text-anchor", "dominant-baseline", "paint-order", "visibility", "display", "filter", "text-transform"];
+  const properties = ["color", "flood-color", "flood-opacity", "fill", "fill-opacity", "stroke", "stroke-width", "stroke-opacity", "stroke-linecap", "stroke-linejoin", "stroke-dasharray", "opacity", "font-family", "font-size", "font-weight", "font-style", "letter-spacing", "text-anchor", "dominant-baseline", "paint-order", "visibility", "display", "filter", "text-transform"];
   for (let index = 0; index < originals.length; index++) {
     const style = getComputedStyle(originals[index]);
     properties.forEach(property => {

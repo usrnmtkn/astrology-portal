@@ -57,7 +57,10 @@ async function verifyGridPrecision(page: Page, csv: string) {
       const radians = (positions.get(`${row[0]}|${row[1]}`)! - positions.get(`${row[2]}|${row[3]}`)!) * Math.PI / 180;
       const orb = Math.abs(Math.abs(Math.atan2(Math.sin(radians), Math.cos(radians))) * 180 / Math.PI - exact[row[4]]);
       expect(Math.abs(Number(row[5]) - orb), `${row[1]} ${row[4]} ${row[3]} CSV retains the calculated precision`).toBeLessThan(1e-7);
-      const minutes = Math.round(orb * 60), label = `${Math.floor(minutes / 60)}°${String(minutes % 60).padStart(2, "0")}′`;
+      // The independent trig calculation above checks numeric precision. At a
+      // half-minute boundary its floating-point drift can change rounding, so
+      // compare the grid label with the exact exported orb used by that grid.
+      const minutes = Math.round(Number(row[5]) * 60), label = `${Math.floor(minutes / 60)}°${String(minutes % 60).padStart(2, "0")}′`;
       const cell = page.locator(".full-chart").getByRole("button", { name: `${row[1]} ${row[4]} ${row[3]}, orb ${label}`, exact: true });
       await expect(cell).toHaveCount(1);
       checked++;
@@ -159,6 +162,7 @@ for (const theme of ["light", "dark"]) test(`real downloads render as standalone
   const innerAngle = Math.atan2(300 - Number(houses[12][2]), Number(houses[12][1]) - 300);
   expect(Math.abs(Math.sin((outerAngle - innerAngle) / 2)), 'The calculated fixture charts have different rising signs').toBeGreaterThan(0.1);
   const glyphFilters = await report.locator(".full-chart__wheel svg image").evaluateAll(nodes => [...new Set(nodes.map(node => getComputedStyle(node).filter))]);
+  const glyphColors = await wheel.locator('feFlood').evaluateAll(nodes => [...new Set(nodes.map(node => getComputedStyle(node).floodColor))]);
   await report.getByRole("button", { name: "Download", exact: true }).click();
   await report.getByLabel("Include names and chart date").uncheck();
   await report.getByLabel("Download format", { exact: true }).selectOption("svg");
@@ -175,7 +179,14 @@ for (const theme of ["light", "dark"]) test(`real downloads render as standalone
     if (format === "svg") {
       const svg = bytes.toString(); expect(svg).toContain("Created with TLDR Astro"); expect(svg).toContain("data:font");
       expect(await exportedHouses(page, svg)).toEqual(houses);
-      for (const filter of glyphFilters) expect(svg).toContain(`filter: ${filter}`);
+      const exportedFilters = await page.evaluate(text => [...new Set([...new DOMParser().parseFromString(text, 'image/svg+xml').querySelectorAll('image')].map(node => (node as SVGElement).style.filter))], svg);
+      for (const filter of glyphFilters) {
+        const fragment = filter.match(/#([^"')]+)/)?.[1];
+        if (fragment) expect(exportedFilters.some(value => value.match(/#([^"')]+)/)?.[1] === fragment && !value.includes('http'))).toBe(true);
+        else expect(exportedFilters).toContain(filter);
+      }
+      const exportedColors = await page.evaluate(text => [...new Set([...new DOMParser().parseFromString(text, 'image/svg+xml').querySelectorAll('feFlood')].map(node => (node as SVGElement).style.getPropertyValue('flood-color')))], svg);
+      expect(exportedColors).toEqual(glyphColors);
       expect(svg).toContain("text-transform: uppercase");
       expect(svg).not.toContain("Fixture Friend"); expect(svg).not.toContain("Test Reader"); expect(svg).not.toMatch(/(?:href|src)="\//);
       const rendered = await page.evaluate(async text => { const url = URL.createObjectURL(new Blob([text], { type: "image/svg+xml" })); const image = new Image(); image.src = url; await image.decode(); URL.revokeObjectURL(url); return [image.naturalWidth, image.naturalHeight]; }, svg);

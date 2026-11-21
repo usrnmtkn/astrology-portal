@@ -29,7 +29,7 @@ const revision = { ...structuredClone(live), id: 'revision-sun-virgo', mode: 'st
 const template = structuredClone(servingPackageRecords.get('fallback-template/natal.angle-in-sign')!);
 template.body = 'Fixture {{signTitle}}. TARGET';
 const templateRow = {...structuredClone(live), id: 'fixture-natal-template', content_key: template.contentKey, surface: 'natal', event_type: 'fallback-template', block_type: 'fallback_template', headline: 'Fixture sign-aware template', body: template.body, sections: {packageRecord: template}, source_snapshot: {sourcePackage: 'tldrastro-fallback-architecture-v3', content_role: 'template'}};
-export const store = await createApiStore(process.env.SKY_SAVE_FIXTURE ? JSON.parse(readFileSync(process.env.SKY_SAVE_FIXTURE, 'utf8')) : process.env.ZODIAC_TEMPLATE_FIXTURE ? [templateRow] : [revision, live]);
+export const store = await createApiStore(process.env.SKY_SAVE_FIXTURE ? JSON.parse(readFileSync(process.env.SKY_SAVE_FIXTURE, 'utf8')) : process.env.ZODIAC_TEMPLATE_FIXTURE ? [templateRow] : [revision, live], {uuidIds:process.env.STUDIO_UUID_IDS==='1'});
 if(process.env.LUNAR_WRITER_FIXTURE==='1')for(const row of lunarSavedWritingFixtures())store.rows.set(row.id,row);
 let versionSequence = 0;
 const nextVersion = () => new Date(Date.now() + ++versionSequence).toISOString();
@@ -43,6 +43,7 @@ const matches = (row: any, params: URLSearchParams) => [...params].every(([field
  }
  if(field==='source_snapshot->horoscopeGeneration->batch->>status')return row.source_snapshot?.horoscopeGeneration?.batch?.status===value.slice(3);
  if (value === 'is.null') return row[field] == null;
+ if (value.startsWith('not.')) return matchesStoredInventory(row, new URLSearchParams([[field, value]]));
  if (value.startsWith('like.')) return String(row[field] ?? '').startsWith(value.slice(5).replace(/\*$/u, ''));
  if (value.startsWith('eq.')) return String(row[field] ?? '') === value.slice(3);
  if (value.startsWith('neq.')) return String(row[field] ?? '') !== value.slice(4);
@@ -104,7 +105,7 @@ globalThis.fetch = async (input: any, options: any = {}) => {
  }
  if(process.env.HOROSCOPE_EDITORIAL_FIXTURE==='1'&&url.pathname==='/rest/v1/studio_writing_feedback')return Response.json([{id:'synthetic-seasonal-rejection',version:1,kind:'rejection',status:'active',target_keys:['horoscope/seasonal'],rejected_text:'A rejected synthetic Seasonal passage.',owner_reason:'This synthetic passage failed to develop its premise.',source_uri:'test:seasonal-owner-rejection',source_date:'2026-10-05'}]);
  if (process.env.LUNAR_WRITER_FIXTURE === '1' && url.pathname === '/rest/v1/studio_writing_feedback') return Response.json([]);
- if (url.pathname === '/rest/v1/content_publications') return Response.json(fixturePublications([...store.rows.values()]));
+ if (url.pathname === '/rest/v1/content_publications') return Response.json([...new Map([...fixturePublications([...store.rows.values()]), ...await store.publication.publications()].map(row=>[row.content_key,row])).values()].filter(row=>matchesStoredInventory(row,url.searchParams)));
  if (url.pathname !== '/rest/v1/generated_interpretations') throw new Error(`Unexpected storage path ${url.pathname}`);
  const found = [...store.rows.values()].filter(row => matches(row, url.searchParams));
  if (!options.method || options.method === 'GET') {
@@ -133,7 +134,7 @@ globalThis.fetch = async (input: any, options: any = {}) => {
  if (options.method === 'POST') {
   if ([...store.rows.values()].some((r: any) => r.content_key === patch.content_key && r.mode === patch.mode && r.target_date == patch.target_date)) return Response.json({message: 'duplicate target'}, {status: 409});
   const timestamp = nextVersion();
-  const created = storageOrder({ ...(patch.content_key.startsWith('horoscope/')?{created_by:null,openai_response_id:null,error:null,studio_facts:null}:{}),...patch, id: patch.content_key.startsWith('horoscope/') ? `00000000-0000-4000-8000-${String(store.rows.size).padStart(12,'0')}` : `new-${store.rows.size}`, updated_at: timestamp, created_at: timestamp }); store.rows.set(created.id, created); return Response.json([created]);
+  const created = storageOrder({ ...(patch.content_key.startsWith('horoscope/')?{created_by:null,openai_response_id:null,error:null,studio_facts:null}:{}),...patch, id: patch.content_key.startsWith('horoscope/') || process.env.STUDIO_UUID_IDS==='1' ? `00000000-0000-4000-8000-${String(store.rows.size).padStart(12,'0')}` : `new-${store.rows.size}`, updated_at: timestamp, created_at: timestamp }); store.rows.set(created.id, created); return Response.json([created]);
  }
  throw new Error(`Unexpected storage method ${options.method}`);
 };

@@ -1,3 +1,4 @@
+import { slugContentPart } from "./generatedContentKeys.js";
 import type {
   ApprovedExactSkyAspectCopy,
   ResolvedSkyCalendarComposedCard
@@ -258,3 +259,5 @@ export function resolveApprovedExactSkyAspectCopy({
     tier: "approved-exact-sky-aspect-v1"
   };
 }
+
+export { skyAspectPackageCandidates, skyAspectReadingDateLine } from "./skyAspectReaderFacts.js";

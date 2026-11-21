@@ -80,7 +80,8 @@ for (const width of [390, 1024, 1440]) for (const theme of ["light", "dark"]) {
     await page.goto("/#sky-writeups?view=daily-summary");
     const dailySummary = page.getByRole("region", { name: "Daily Sky Summary editor", exact: true });
     await expect(dailySummary).toBeVisible();
-    await expect(dailySummary.getByRole("heading", { name: "Full summary template", exact: true })).toBeVisible();
+    await expect(dailySummary.getByRole("textbox", { name: "Summary wording text", exact: true })).toBeVisible();
+    await expect(dailySummary.getByRole("heading", { name: "Reader preview", exact: true })).toBeVisible();
     await expect(page.getByTestId("sky-debility-studio")).toHaveCount(0);
     await page.reload();
     await expect(dailySummary).toBeVisible();

@@ -1,0 +1,105 @@
+{
+  "schema": "natal-template-editability-bundle-cost/v1",
+  "date": "2026-11-18",
+  "baseRevision": "767a98a5285ac9e917aadaab0712a7f20a8c493f",
+  "featureSourceRevision": "b3f86f925060b326edd4642998270f944afe19e2",
+  "profile": "Separate locked npm-ci worktrees; Node 22.20.0 arm64; gzip level 9; identical visual-smoke Supabase placeholders and natal aspect patterns enabled; ordinary prerequisite knowledge builds.",
+  "control": {
+    "memoryGraphJavaScriptGzipBytes": 46030,
+    "memoryGraphCssGzipBytes": 33122,
+    "appBootGzipBytes": 399013,
+    "appChunkGzipBytes": 90152,
+    "readerBootGzipBytes": 458202,
+    "readerInitialCssGzipBytes": 59189,
+    "largestJavaScriptGzipBytes": 350686,
+    "friendsWorkspaceChunkGzipBytes": 10132,
+    "skyDetailChunkGzipBytes": 6870,
+    "reportRouteChunkGzipBytes": 3148,
+    "horoscopeReaderChunkGzipBytes": 5776,
+    "horoscopeEditorChunkGzipBytes": 15991,
+    "studioCsvChunkGzipBytes": 8108,
+    "skyPlacementFallbackChunkGzipBytes": 127245,
+    "lunationBookFallbackChunkGzipBytes": 210198,
+    "transitFallbackChunkGzipBytes": 350686,
+    "calendarFallbackChunkGzipBytes": 8970,
+    "relationshipFallbackChunkGzipBytes": 192466,
+    "signupChunkGzipBytes": 4249,
+    "totalCssGzipBytes": 151514,
+    "totalJavaScriptGzipBytes": 3798747
+  },
+  "candidate": {
+    "memoryGraphJavaScriptGzipBytes": 46029,
+    "memoryGraphCssGzipBytes": 33122,
+    "appBootGzipBytes": 399003,
+    "appChunkGzipBytes": 90144,
+    "readerBootGzipBytes": 458192,
+    "readerInitialCssGzipBytes": 59189,
+    "largestJavaScriptGzipBytes": 350686,
+    "friendsWorkspaceChunkGzipBytes": 10132,
+    "skyDetailChunkGzipBytes": 6872,
+    "reportRouteChunkGzipBytes": 3150,
+    "horoscopeReaderChunkGzipBytes": 5777,
+    "horoscopeEditorChunkGzipBytes": 15987,
+    "studioCsvChunkGzipBytes": 8107,
+    "skyPlacementFallbackChunkGzipBytes": 127245,
+    "lunationBookFallbackChunkGzipBytes": 210198,
+    "transitFallbackChunkGzipBytes": 350686,
+    "calendarFallbackChunkGzipBytes": 8970,
+    "relationshipFallbackChunkGzipBytes": 192466,
+    "signupChunkGzipBytes": 4252,
+    "totalCssGzipBytes": 151514,
+    "totalJavaScriptGzipBytes": 3799901
+  },
+  "aggregateDelta": 1154,
+  "allocation": 1280,
+  "oldAggregateLimit": 3798969,
+  "newAggregateLimit": 3800249,
+  "retainedCiFailure": {
+    "head": "b3f86f925060b326edd4642998270f944afe19e2",
+    "job": "auth-access",
+    "measuredTotal": 3799906,
+    "limit": 3798969,
+    "overage": 937
+  },
+  "scope": "The requested natal editor controls and complete source selection stay deferred to Studio. No new dependency, eager content data, CSS or reader prose. Startup, individual chunk, payload, dependency and other numeric limits remain unchanged. The allocation records feature cost, not a performance improvement; every exact-head gate remains required.",
+  "standaloneStudio": {
+    "control": {
+      "entryJavaScriptRawBytes": 843692,
+      "entryJavaScriptGzipBytes": 245649,
+      "largestJavaScriptRawBytes": 843692,
+      "totalJavaScriptGzipBytes": 934087
+    },
+    "candidate": {
+      "entryJavaScriptRawBytes": 845203,
+      "entryJavaScriptGzipBytes": 245951,
+      "largestJavaScriptRawBytes": 845203,
+      "totalJavaScriptGzipBytes": 935248
+    },
+    "delta": {
+      "entryJavaScriptRawBytes": 1511,
+      "entryJavaScriptGzipBytes": 302,
+      "largestJavaScriptRawBytes": 1511,
+      "totalJavaScriptGzipBytes": 1161
+    },
+    "allocation": {
+      "entryJavaScriptRawBytes": 1536,
+      "largestJavaScriptRawBytes": 1536,
+      "entryJavaScriptGzipBytes": 320,
+      "totalJavaScriptGzipBytes": 1280
+    },
+    "retainedLocalFailure": {
+      "entryRawOverage": 417,
+      "entryGzipOverage": 53,
+      "aggregateGzipOverage": 890
+    },
+    "reason": "Measured cost of the requested complete Natal source editing controls and contextual template preview. Preserve control headroom with bounded rounding; existing lazy-group, content payload, dependency and all other guards remain enforced. No additional source corpus or runtime dependency is bundled. Earlier over-cap results remain failures; all exact-head gates are still required."
+  },
+  "retainedVisualSmokeFailure": {
+    "workflow": "Browser release gate",
+    "job": "visual-smoke",
+    "pullRequestMergeRevision": "3409bd481bcc9c70b7743c303efbaf025b89d8fb",
+    "measuredTotal": 3799947,
+    "limit": 3798969,
+    "overage": 978
+  }
+}

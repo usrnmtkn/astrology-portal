@@ -14,6 +14,66 @@ const natalKey='fallback-hook/natal/planet-intro/neptune';
 const natalSignKey='fallback-hook/natal-you-placement-sign-final/uranus/scorpio';
 const copy=(family:string,index:number,audience:string,revision:string)=>`Synthetic ${family} ${index} ${audience} opening ${revision}.\n\nThe complete final ${audience} sentence ${revision}.`;
 
+for (const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dark']] as const) {
+ test(`Natal installed opening is editable without a saved mirror ${width} ${theme}`,async({page})=>{
+  test.setTimeout(90_000);
+  const key='fallback-hook/natal/planet-intro/saturn';
+  const intro=servingPackageRecords.get(key)!;
+  const store=await studioApiStore([],{publicationDb:true});
+  const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
+  try {
+   await page.setViewportSize({width,height:1000});
+   await page.addInitScript(theme=>{
+    localStorage.setItem('tldrastro:contentAdminSecret','qa-secret');
+    localStorage.setItem('tldrastro:studio-theme',theme);
+   },theme);
+   await routeStudioInventoryApi(page,{call:store.call,actualDocumentRoute:true,answer:async(route,url)=>{
+    const request=route.request();
+    if(url.pathname==='/api/admin/natal-placement-preview'){
+     const result=renderNatalPlacementPreviewState(normalizeNatalPlacementPreviewInput(request.postDataJSON()),await store.call({method:'publications'}));
+     await route.fulfill({json:{ok:true,...result}});return true;
+    }
+    if(!['/api/admin/content-live-status','/api/content-reader','/api/admin/content-history','/api/admin/content-publication'].includes(url.pathname))return false;
+    const result=await store.call({method:request.method(),url:url.pathname+url.search,body:request.method()==='GET'?undefined:request.postDataJSON()});
+    await route.fulfill({status:result.status,json:result.payload});return true;
+   }});
+   const url='/admin/content#exact-content?category=Natal+Chart&planet=saturn&sign=virgo';
+   await page.goto(url);
+   const preview=page.locator('.admin-natal-reader-preview');
+   await expect(preview).toContainText(intro.body_you);
+   await expect(preview.getByRole('button',{name:'Edit saturn introduction',exact:true})).toBeVisible();
+   await preview.getByRole('button',{name:'Edit planet-in-sign section',exact:true}).click();
+   const editor=page.getByRole('dialog',{name:'Generated content editor',exact:true});
+   const rail=page.getByRole('complementary',{name:'Template variable reference',exact:true});
+   await expect(rail.locator('button[data-variable-name="planetIntro"]').first()).toContainText(intro.body_you);
+   await rail.getByRole('button',{name:'Close variables',exact:true}).click();
+   await editor.getByRole('button',{name:'Close',exact:true}).click();
+   await preview.getByRole('button',{name:'Edit saturn introduction',exact:true}).click();
+   const you=editor.locator('textarea[data-sky-field="body_you"]');
+   const friend=editor.locator('textarea[data-sky-field="body_they"]');
+   await expect(you).toHaveValue(intro.body_you);await expect(friend).toHaveValue(intro.body_they);
+   const changed='Synthetic editable natal opening. Complete synthetic opening ending.';
+   await you.fill(changed);
+   await editor.locator('.admin-editor-savebar').getByRole('button',{name:'Save draft',exact:true}).click();
+   await expect.poll(async()=>(await store.call({method:'rows'})).some((row:any)=>row.content_key===key&&row.sections?.packageDraft?.body_you===changed)).toBe(true);
+   await expect(editor.locator('.admin-editor-savebar').getByRole('button',{name:'Save draft',exact:true})).toBeDisabled();
+   await editor.getByRole('button',{name:'Close',exact:true}).click();
+   await page.reload();
+   await preview.getByRole('button',{name:'Edit saturn introduction',exact:true}).click();
+   await expect(you).toHaveValue(changed);await expect(friend).toHaveValue(intro.body_they);
+   await editor.getByRole('button',{name:'Close',exact:true}).click();
+   await preview.getByText('Edit other wording in this section',{exact:true}).click();
+   await preview.getByRole('button',{name:'Edit saturn in virgo day-to-day phrase 1',exact:true}).click();
+   await expect(editor).toBeVisible();
+   expect((await store.call({method:'rows'})).every((row:any)=>row.content_key===key)).toBe(true);
+   expect(errors).toEqual([]);
+   await editor.getByRole('button',{name:'Close',exact:true}).click();
+   await page.screenshot({path:`test-results/natal-template-editability-${width}-${theme}.png`});
+   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  }finally{await page.close();store.close();}
+ });
+}
+
 for(const width of [390,1440])for(const family of ['house','natal','natal-sign'] as const){
  test(`${family} complete private publication, archive and restoration ${width}`,async({page})=>{
   test.setTimeout(120_000);

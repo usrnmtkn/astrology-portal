@@ -93,7 +93,8 @@ try{
       assert(prose.instructions.includes('An opening may need several connected sentences'));
       assert(prose.instructions.includes('No compulsory hook'));
       assert(prose.instructions.includes('abstract psychological verdict'));
-      assert(prose.input.includes('without requiring a psychological revelation'));
+      assert(prose.instructions.includes('The approved plan sets scope, not a required recognition, complication, correction or paragraph sequence.'));
+      assert(prose.instructions.includes('without requiring a psychological revelation'));
       const facts=JSON.parse(prose.input.split('CALCULATED FACTS\n')[1].split('\n')[0]);
       assert.equal(facts.signs.length,1);assert.equal(facts.signs[0].sign,'aries');assert.equal(packet.brief.signs.length,12);
     }

@@ -6,6 +6,13 @@ import { fileURLToPath } from 'node:url';
 import handler, { createMemoryGraphHandler, authorizeMemoryRequest } from '../api/admin/memory-graph.ts';
 import { createPreviewMemoryAuthorizer } from './memory-preview-auth.mjs';
 const memoryHandler = process.env.MEMORY_PREVIEW_TEST_MODE === '1' ? handler : createMemoryGraphHandler(createPreviewMemoryAuthorizer(authorizeMemoryRequest));
+if (process.env.MEMORY_PREVIEW_TEST_MODE === '1') {
+  const {startRulebookStorage} = await import('../tests/helpers/writing-rulebook-storage.mjs');
+  const fixture = await startRulebookStorage();
+  process.env.SUPABASE_URL = fixture.url;
+  process.env.SUPABASE_SERVICE_ROLE_KEY = 'synthetic-rulebook-service-key';
+  process.env.STUDIO_MEMORY_FEEDBACK_ENABLED = 'true';
+}
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), process.env.MEMORY_PREVIEW_TEST_MODE === '1' ? '../apps/web/.memory-test-dist' : '../apps/web/dist');
 const port = Number(process.env.MEMORY_PREVIEW_PORT ?? 4197);

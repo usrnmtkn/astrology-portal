@@ -1,0 +1,27 @@
+{
+  "schema": "writing-reference-bundle-allocation/v1",
+  "baseRevision": "767a98a5285ac9e917aadaab0712a7f20a8c493f",
+  "featureSourceRevision": "4e2f78a90f53ed6f85204d0793fa9fd72d17e8a2",
+  "profile": "Same isolated checkout, owned locked npm-ci; ARM64 Node 22.20.0; identical visual-smoke public URL/anon-key build environment; ordinary Web/Admin prerequisites; no metadata normalization.",
+  "control": {
+    "webJavaScriptGzipBytes": 3798791,
+    "adminJavaScriptGzipBytes": 934087,
+    "memoryGraphCssGzipBytes": 33122
+  },
+  "candidate": {
+    "webJavaScriptGzipBytes": 3802195,
+    "adminJavaScriptGzipBytes": 937070,
+    "memoryGraphCssGzipBytes": 33189
+  },
+  "allocation": {
+    "webJavaScriptGzipBytes": 3404,
+    "adminJavaScriptGzipBytes": 2983,
+    "memoryGraphCssGzipBytes": 67
+  },
+  "preservedHeadroom": {
+    "webJavaScriptGzipBytes": 178,
+    "adminJavaScriptGzipBytes": 271,
+    "memoryGraphCssGzipBytes": 20
+  },
+  "reason": "Measured cost of the owner-requested complete reference renderer, read-only live guidance sections and independent retry states. Rule text and private records remain API-only. Preserve all startup, largest-chunk, deferred-boundary, dependency, source-payload, other CSS and privacy limits. Retain the original over-cap failures; this allocation does not claim a performance improvement."
+}

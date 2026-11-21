@@ -1,4 +1,5 @@
 import type { ReportDomain, ReportDraft, ReportHorizon } from "./report-generation.ts";
+import { canonicalReportEvents } from "./report-events.js";
 
 export type ReportKeyDateSourceUnit = {
   unitId: string;
@@ -295,7 +296,12 @@ export function reportKeyDateEventManifest(
 ): ReportKeyDateEventManifestEntry[] {
   const root = record(frozenFacts.reportWindow) ?? frozenFacts;
   const eligible = eligibleFactorIds ? new Set(eligibleFactorIds) : null;
+  const canonicalByFactorAndMoment = new Map(canonicalReportEvents(frozenFacts).map((event) => [`${event.factorId}:${event.occursAt}`, event]));
   return allKeyDateEvents(root)
+    .map((event) => {
+      const canonical = canonicalByFactorAndMoment.get(`${event.factorId}:${event.occursAt}`);
+      return canonical ? { ...event, id: canonical.eventId, attribution: canonical.attribution } : event;
+    })
     .filter((event) => Number.isFinite(event.sortAt))
     .filter((event) => !eligible || eligible.has(event.factorId)
       || [...eligible].some((factorId) => factorId.startsWith(`${event.factorId}-`)))
@@ -345,11 +351,21 @@ export function assembleDeterministicReportKeyDates(input: {
   const allowedSourceIds = new Set(reportKeyDateSourceUnitIds(input.reportHorizon));
   const root = record(input.frozenFacts.reportWindow) ?? input.frozenFacts;
   const rawEvents = allKeyDateEvents(root);
-  const priorityByEventId = new Map(rawEvents.map((event) => [event.id, event.priority]));
+  const canonicalByFactorAndMoment = new Map(canonicalReportEvents(input.frozenFacts).map((event) => [`${event.factorId}:${event.occursAt}`, event]));
+  const priorityByEventId = new Map(rawEvents.map((event) => [
+    canonicalByFactorAndMoment.get(`${event.factorId}:${event.occursAt}`)?.eventId ?? event.id,
+    event.priority
+  ]));
   const allEvents = reportKeyDateEventManifest(input.frozenFacts, input.reportHorizon);
   const allEventById = new Map(allEvents.map((event) => [event.eventId, event]));
-  const eligibleEventIds = new Set(input.eligibleEventIds);
-  const interpretedEventIds = new Set(input.interpretedEventIds);
+  for (const event of allEvents) {
+    const siblings = allEvents.filter((candidate) => candidate.factorId === event.factorId);
+    allEventById.set(`${event.factorId}:${siblings.indexOf(event)}`, event);
+    if (siblings.length === 1) allEventById.set(event.factorId, event);
+  }
+  const normalizeId = (eventId: string) => allEventById.get(eventId)?.eventId ?? eventId;
+  const eligibleEventIds = new Set([...input.eligibleEventIds].map(normalizeId));
+  const interpretedEventIds = new Set([...input.interpretedEventIds].map(normalizeId));
   for (const eventId of eligibleEventIds) {
     if (!allEventById.has(eventId)) throw new Error(`REPORT_KEY_DATES_FACT_GAP: unknown eligible event '${eventId}'.`);
   }
@@ -366,7 +382,7 @@ export function assembleDeterministicReportKeyDates(input: {
   const eventById = new Map(events.map((event) => [event.eventId, event]));
   const selectedRaw = input.sourceUnits
     .filter((unit) => allowedSourceIds.has(unit.unitId))
-    .flatMap((unit) => (unit.draft.keyDates ?? []).map((entry) => ({ ...entry, unitId: unit.unitId })));
+    .flatMap((unit) => (unit.draft.keyDates ?? []).map((entry) => ({ ...entry, eventId: normalizeId(entry.eventId), unitId: unit.unitId })));
   for (const entry of selectedRaw) {
     if (!allEventById.has(entry.eventId)) throw new Error(`REPORT_KEY_DATES_UNINTERPRETED_EVENT: '${entry.eventId}' is not an eligible interpreted factor.`);
   }

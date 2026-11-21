@@ -96,8 +96,8 @@ assert.doesNotMatch(
 );
 assert.match(
   appSource,
-  /grouping: "counterpart"/u,
-  "Natal placement details must keep planetary aspects separate from angles and points."
+  /grouping: "tone"/u,
+  "Natal placement details must retain the owner's Gifts and Challenges grouping."
 );
 assert.match(
   friendChartModelSource,

@@ -87,11 +87,14 @@ export function compositionPreviewExampleValues(options: CompositionPreviewOptio
   const natal = options.natalPlacement;
   if (!natal) return options.exampleValues ?? {};
   const prefix = ["Sun", "Moon", "North Node", "South Node"].includes(natal.planetTitle);
+  const signs = ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"];
+  const signIndex = signs.indexOf(natal.signTitle);
   return {
     ...natal,
     planetRef: `${prefix ? "the " : ""}${natal.planetTitle}`,
     planetRefCap: `${prefix ? "The " : ""}${natal.planetTitle}`,
     angleTitle: natal.planetTitle,
+    ...(signIndex >= 0 ? { oppositeSignTitle: signs[(signIndex + 6) % 12] } : {}),
     possessive: "Your", possessiveLow: "your",
     ...options.exampleValues
   };
@@ -317,6 +320,19 @@ function representativeSource(
     return slot.sources.find(source => source.row.content_key.split("/").at(-1) === sign) ?? null;
   }
   if ((!includeOptionalSources && slot.requirement === "Optional") || !slot.sources.length) return null;
+  if (slot.name === "pairSentences" && slot.sourceContract.prefixes[0] === "fallback-hook/aspect-pair/") {
+    const planet = (name: string) => (values.get(name) ?? "").toLowerCase().trim().replace(/\s+/gu, "-");
+    const aspect = (values.get("aspectName") ?? "").toLowerCase();
+    const group = ({ conjunction: "conjunction", square: "hard", opposition: "hard", trine: "soft", sextile: "soft" } as Record<string, string>)[aspect];
+    if (!group) return null;
+    const a = planet("planetATitle"), b = planet("planetBTitle");
+    // Match the natal resolver's exact family, aspect group and forward/reverse order.
+    for (const [first, second] of [[a, b], [b, a]]) {
+      const exact = slot.sources.find(source => source.row.content_key === `fallback-hook/aspect-pair/${first}/${second}/${group}`);
+      if (exact) return exact;
+    }
+    return null;
+  }
   if (slot.sources.length === 1) return slot.sources[0];
   const directAnchorNames: Record<string, string[]> = {
     angleIntro: ["angleTitle"],
@@ -333,11 +349,13 @@ function representativeSource(
     planetACore: ["planetATitle"],
     planetBCore: ["planetBTitle"],
     planetBest: ["planetTitle"],
+    planetIntro: ["planetTitle"],
     planetExcess: ["planetTitle"],
     planetFunction: ["planetTitle"],
     planetTopic: ["planetTitle"],
     planetCore: ["planetTitle"],
     planetProductive: ["planetTitle"],
+    signStyle: ["signTitle"],
     planetVerb: ["planetTitle"],
     signAdverb: ["signTitle"],
     signNeed: ["signTitle"],
@@ -345,6 +363,7 @@ function representativeSource(
   };
   const directAnchors = (directAnchorNames[slot.name] ?? [])
     .map((name) => (values.get(name) ?? "").toLowerCase().trim().replace(/\s+/gu, "-"))
+    .map(anchor => slot.name === "angleIntro" ? ({ asc: "ascendant", dc: "descendant", mc: "midheaven", ic: "imum-coeli" }[anchor] ?? anchor) : anchor)
     .filter(Boolean);
   for (const prefix of slot.sourceContract.prefixes) {
     for (const anchor of directAnchors) {
@@ -570,8 +589,24 @@ function buildCompositionPreview(
   const fields = compositionPreviewFields(row).map((field) => {
       const fieldValues = new Map(values);
       const sourceByName = new Map<string, CompositionMapSource>();
+      const listSources = new Map<string, CompositionMapSource[]>();
       const audience = field.audience === "they" ? "they" : "you";
       slots.forEach((slot) => {
+        if (options.natalPlacement && slot.name === "modifierSentences") return;
+        if (options.natalPlacement && slot.name === "placementGerundText") {
+          const planet = options.natalPlacement.planetTitle.toLowerCase().replace(/\s+/gu, "-");
+          const sign = options.natalPlacement.signTitle.toLowerCase();
+          const matched = slot.sources.filter(source => source.row.content_key.startsWith(`fallback-vocab/placement-gerund/${planet}/${sign}/`))
+            .sort((a, b) => a.row.content_key.localeCompare(b.row.content_key, undefined, { numeric: true }));
+          for (const source of matched.filter(source => source.row.inventory_only)) {
+            if (!pendingSources.some(candidate => candidate.row.id === source.row.id)) pendingSources.push(source);
+          }
+          const loaded = matched.filter(source => !source.row.inventory_only && previewSourceText(source, audience, slot.name).trim());
+          listSources.set(slot.name, loaded);
+          fieldValues.set(slot.name, loaded.map(source => previewSourceText(source, audience, slot.name)).join(", or "));
+          if (loaded.length) selectedSavedSlots.add(slot.name);
+          return;
+        }
         const source = representativeSource(slot, slots, values, options.includeOptionalSources);
         if (!source) return;
         if (source.row.inventory_only) {
@@ -593,7 +628,13 @@ function buildCompositionPreview(
         fieldValues.set("possessive", "Maya's");
         fieldValues.set("possessiveLow", "Maya's");
       }
-      const segments = previewSegments(field.value, fieldValues, slots, sourceByName);
+      const segments = previewSegments(field.value, fieldValues, slots, sourceByName).flatMap<CompositionPreviewSegment>(segment => {
+        const list = segment.name ? listSources.get(segment.name) : undefined;
+        return list?.length ? list.flatMap((source, index) => [
+          ...(index ? [{ text: ", or " }] : []),
+          { ...segment, kind: source.kind, source, text: previewSourceText(source, audience, segment.name!) }
+        ]) : [segment];
+      });
       segments.forEach((segment) => {
         if (segment.source && !sources.some((candidate) => candidate.row.content_key === segment.source?.row.content_key)) sources.push(segment.source);
       });

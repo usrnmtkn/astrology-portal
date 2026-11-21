@@ -147,13 +147,15 @@ export async function loadUserGeneratedInterpretation({
   subjectId,
   contentKey,
   targetDate,
-  signal
+  signal,
+  throwOnError = false
 }: {
   subjectType: UserGeneratedSubjectType;
   subjectId: string;
   contentKey: string;
   targetDate?: string;
   signal?: AbortSignal;
+  throwOnError?: boolean;
 }) {
   signal?.throwIfAborted();
   const supabase = await getSupabaseClient();
@@ -168,6 +170,7 @@ export async function loadUserGeneratedInterpretation({
   const userId = sessionData.session?.user.id;
 
   if (sessionError || !userId) {
+    if (throwOnError && sessionError) throw sessionError;
     if (sessionError) {
       console.warn("Personalized generated content could not confirm the signed-in user.", sessionError);
     }

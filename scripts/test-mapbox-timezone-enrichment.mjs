@@ -116,6 +116,7 @@ try {
   assert.equal(suggestions.length, 1, "searchCities should return one mocked suggestion");
   assert.equal(suggestions[0].label, "El Vigia, Merida");
   assert.equal(suggestions[0].timeZone, "America/Caracas", "searchCities should enrich Mapbox coordinates with API timezone");
+  assert.deepEqual(suggestions[0].coordinateSource, { provider: "mapbox", sourceId: suggestions[0].id, resolution: "municipal_centroid" }, "Birth-city selections must persist governed centroid provenance.");
 
   const reverse = await reverseGeocodeCity(8.633333, -71.65);
   assert.equal(reverse?.label, "El Vigia, Merida");

@@ -200,6 +200,12 @@ for (const name of ["FullChartView", "chartDownload"]) {
   }
 }
 
+for (const name of ["NatalInsightReading", "NatalInsightSourceFinder", "NatalReadingAuthoring", "PersonalizedReadingEditor"]) {
+  const entries = Object.values(manifest).filter(item => item.name === name);
+  if (entries.length !== 1 || !entries[0].isDynamicEntry) failures.push(`${name} must remain an on-demand entry.`);
+  else if (bootFiles.has(entries[0].file)) failures.push(`${name} must stay outside reader startup.`);
+}
+
 const formattingChunks = javaScriptFiles.filter(item => /\/(?:studio-rich-text|writing-markdown|FormattedWritingContent)-/u.test(item.file));
 if (!deferredCalendarItem || bootFiles.has(deferredCalendarItem.file)) {
   failures.push("Calendar copy must remain in its own on-demand chunk outside reader startup.");

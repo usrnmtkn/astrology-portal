@@ -7,6 +7,7 @@ import { studioListingFacts, studioListingRow } from "../../api/_lib/studio-list
 import { routeStudioInventoryApi } from "../helpers/studio-inventory-route";
 import { createMonthlyAspectPublicationFixture } from "../helpers/horoscope-publication-fixture.mts";
 import { studioApiStore } from "../helpers/studio-api-store";
+import { studioBuildAsset } from '../helpers/studio-build-assets';
 
 // Exercise the real saved inventory, rather than an empty dashboard fixture.
 const inventory = JSON.parse(readFileSync(new URL("../../apps/web/public/content-studio-last-known-good.json", import.meta.url), "utf8")).rows as Array<Record<string, unknown> & { id: string; content_key: string }>;
@@ -103,7 +104,8 @@ for (const [width, theme] of [[1440, "light"], [390, "dark"]] as const) {
         return url.origin === studioOrigin && !url.pathname.startsWith("/api/")
           ? route.continue() : route.abort("blockedbyclient");
       });
-      await page.route(url => /\/SkyFallbackFieldsEditor-[^/]+\.js$/u.test(url.pathname), route => {
+      const optionalEditorAsset = await studioBuildAsset('src/SkyFallbackFieldsEditor.tsx');
+      await page.route(url => url.pathname === optionalEditorAsset, route => {
         editorDownloads++;
         return route.fulfill({ status: 404, contentType: "text/javascript", body: "/* Old deployment chunk is gone. */" });
       });
@@ -466,7 +468,8 @@ for (const theme of ["light", "dark"]) for (const width of [390, 1440]) {
     await mockStudio(page);
     // Fault injection is confined to the test browser's module response.
     let recoverOnReload = false;
-    await page.route("**/SkyPlacementComposition-*.js", route => route.fulfill({
+    const compositionAsset = await studioBuildAsset('src/SkyPlacementComposition.tsx');
+    await page.route(url => url.pathname === compositionAsset, route => route.fulfill({
       contentType: "text/javascript",
       body: recoverOnReload ? 'export default function(){return null;}' : 'export default function(){if(!document.documentElement.hasAttribute("data-qa-recovered"))throw new Error("Studio recovery fixture");return null;}'
     }));
@@ -522,7 +525,8 @@ for (const action of ['Retry page', 'Open Review Queue']) {
     let missing = true;
     let documents = 0;
     page.on('request', request => { if (request.isNavigationRequest() && request.frame() === page.mainFrame()) documents++; });
-    await page.route('**/ContentCoverageDashboard-*.js', route => missing
+    const coverageAsset = await studioBuildAsset('src/ContentCoverageDashboard.tsx');
+    await page.route(url => url.pathname === coverageAsset, route => missing
       ? route.fulfill({ status: 503, contentType: 'text/javascript', body: '/* Initial dashboard unavailable. */' })
       : route.continue());
     await page.goto('/admin/content/coverage');
@@ -566,11 +570,12 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
         return url.origin === studioOrigin && !url.pathname.startsWith("/api/")
           ? route.continue() : route.abort("blockedbyclient");
       });
-      await page.route(url => /\/StudioFormattingEditor-[^/]+\.js$/u.test(url.pathname), route => missing
+      const formattingAsset = await studioBuildAsset('src/StudioFormattingEditor.tsx');
+      await page.route(url => url.pathname === formattingAsset, route => missing
         ? route.fulfill({ status: 503, contentType: "text/javascript", body: "/* Optional formatting unavailable. */" })
         : route.continue());
       page.on("response", response => {
-        if (/\/StudioFormattingEditor-[^/]+\.js$/.test(new URL(response.url()).pathname)) statuses.push(response.status());
+        if (new URL(response.url()).pathname === formattingAsset) statuses.push(response.status());
       });
       await routeStudioInventoryApi(page, { call: message => {
         if (["POST", "PATCH", "DELETE"].includes(message.method)) writes++;
@@ -590,7 +595,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
       const recovery = editor.getByRole("alert").filter({ hasText: "This section could not load." });
       await expect(recovery).toBeVisible();
       await recovery.getByText("Error details", { exact: true }).click();
-      await expect(recovery).toContainText(/StudioFormattingEditor-/);
+      await expect(recovery).toContainText(formattingAsset);
       expect(statuses).toEqual([503]);
       expect(await mountedEditor!.evaluate(element => element.isConnected)).toBe(true);
       await expect(page.locator(".admin-dashboard")).toHaveAttribute("data-studio-theme", theme);
@@ -646,9 +651,10 @@ for (const [width, theme] of [[390, "dark"], [1440, "light"]] as const) {
       }, { storageKey, token: token("initial"), theme });
       await context.route("**/*", route => new URL(route.request().url()).hostname === "127.0.0.1"
         ? route.continue() : route.abort("blockedbyclient"));
-      await page.route("**/AdminAccessGate-*.js", route => route.fulfill({ status: 503, contentType: "text/javascript", body: "/* Synthetic sign-in panel unavailable. */" }));
+      const accessAsset = await studioBuildAsset('src/AdminAccessGate.tsx');
+      await page.route(url => url.pathname === accessAsset, route => route.fulfill({ status: 503, contentType: "text/javascript", body: "/* Synthetic sign-in panel unavailable. */" }));
       page.on("response", response => {
-        if (/\/AdminAccessGate-[^/]+\.js$/.test(new URL(response.url()).pathname)) statuses.push(response.status());
+        if (new URL(response.url()).pathname === accessAsset) statuses.push(response.status());
       });
       await routeStudioInventoryApi(page, { call: message => {
         if (["POST", "PATCH", "DELETE"].includes(message.method)) writes++;
@@ -710,7 +716,8 @@ for (const entry of ["/", "/admin/content"]) test(`standalone Studio retains ini
   await mockStudio(page);
   let missing = true, documents = 0;
   page.on("request", request => { if (request.isNavigationRequest() && request.frame() === page.mainFrame()) documents++; });
-  await page.route("**/assets/index-*.js", route => missing
+  const entryAsset = await studioBuildAsset('index.html');
+  await page.route(url => url.pathname === entryAsset, route => missing
     ? route.fulfill({ status: 503, contentType: "text/javascript", body: "/* Entry unavailable. */" })
     : route.continue());
   await page.goto(entry);

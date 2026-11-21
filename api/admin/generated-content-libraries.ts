@@ -21,11 +21,11 @@ export { assertCleanReaderCopy } from "../../apps/web/src/content/editorialCopyB
 export { skyWritingIssues } from "../../apps/web/src/content/contentReviewReadiness.js";
 export { packagePublicationAdmissionIssue, isRegisteredLunarJournalKey } from "../_lib/content-studio-package-admission.js";
 export { approvedSkyArticleReaderEdition } from '../../apps/web/src/content/skyArticleEditionReader.js';
-export { astro101PublicationIssue } from "../../apps/web/src/content/astro101.ts";
-export { fillAstro101EphemerisSlots } from "../../apps/web/src/content/astro101Ephemeris.ts";
+export { astro101PublicationIssue } from "../../apps/web/src/content/astro101.js";
+export { fillAstro101EphemerisSlots } from "../../apps/web/src/content/astro101Ephemeris.js";
 export { isRetiredCompositionKey } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/retiredCompositions.mjs";
 export { skySummaryTemplateErrors } from "../../apps/web/src/content/skyDailySummaryCatalog.js";
-export { skyDebilityTemplateErrors } from "../../apps/web/src/content/skyDebilityCatalog.ts";
+export { skyDebilityTemplateErrors } from "../../apps/web/src/content/skyDebilityCatalog.js";
 export { frictionFlowField, frictionFlowTemplateErrors } from "../../apps/web/src/content/frictionFlowCatalog.js";
 export { wheelTooltipField, wheelTooltipTemplateErrors } from "../../apps/web/src/content/wheelTooltipCatalog.js";
 export { isSkyPlacementVariableField, skyPlacementVariableIssues } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementVariables.mjs";
@@ -73,3 +73,5 @@ export { publicationTimestamp, validContentPublication } from '../../apps/web/sr
 export {skyAspectReaderCopyPassesBoundary} from "../../apps/web/src/services/skyAspectContent.js";
 export { isCalendarMoonIngressContentKey } from '../_lib/calendar-moon-ingress-sources.js';
 export {assertMoonHoroscopeRow} from '../../src/shared/datedLunationHoroscopes.mjs';
+
+export { isNatalInsightContentKey } from "../../apps/web/src/content/natalInsightCatalog.js";

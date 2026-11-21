@@ -4,11 +4,20 @@ import {
   natalPlacementExactKey,
   natalPlacementLabel,
   natalPlacementPlanets,
+  natalPlacementSigns,
+  natalPlacementResolverDependencyKeys,
   natalPlacementPointLabel,
   natalPlacementSelectionFromText,
   natalPlacementSourceGroups
 } from "../apps/admin/src/natalPlacementSources.ts";
 import { renderNatalAngle, renderNatalPlacement } from "../apps/web/src/content/fallbackArchitectureV3/resolver/renderFallback.mjs";
+import { servingPackageRecords } from "../api/_lib/serving-package-records.ts";
+import { transitNatalPackagedSourceDraft } from "../apps/admin/src/transitNatalPackagedSource.ts";
+
+for (const template of JSON.parse(fs.readFileSync("apps/web/src/content/fallbackArchitectureV3/source-rows/placement-interim-fixes-v1.json", "utf8")).templates) {
+  assert.deepEqual(servingPackageRecords.get(template.contentKey), template, "Every installed planet template must be available intact to Studio.");
+  assert.equal(transitNatalPackagedSourceDraft(template, template.contentKey).blockType, "fallback_template");
+}
 
 const selection = natalPlacementSelectionFromText("Chiron in Taurus in the 12th house");
 assert.deepEqual(selection, { planet: "chiron", sign: "taurus", house: "12" });
@@ -86,7 +95,14 @@ assert.match(retrogradeGroups.find((group) => group.key === "motion")?.descripti
 assert.match(retrogradeGroups.find((group) => group.key === "exact")?.description ?? "", /stored separately/u);
 
 const sources = groups.flatMap((group) => group.sources);
-assert.equal(sources.length, 14);
+assert.equal(new Set(sources.map(source => source.key)).size, sources.length);
+for (const planet of natalPlacementPlanets) for (const sign of natalPlacementSigns)
+for (const house of ["", ...Array.from({length:12}, (_, index) => String(index + 1))]) for (const motion of ["direct", "retrograde"]) {
+  const editable = new Set(natalPlacementSourceGroups(planet, sign, house, motion).flatMap(group => group.sources).map(source => source.key));
+  for (const key of natalPlacementResolverDependencyKeys(planet, sign, house, motion)) {
+    if (!key.startsWith("fallback-template/")) assert.ok(editable.has(key), `Reader wording has no editing path: ${key}`);
+  }
+}
 assert.ok(sources.some((source) => source.key === "fallback-hook/natal-you-placement-sign-final/chiron/taurus"));
 assert.ok(sources.some((source) => source.key === "fallback-hook/natal-you-placement-complete-final/chiron/taurus/12"));
 assert.ok(sources.some((source) => source.key === "fallback-hook/placement-sentence/chiron/taurus"));

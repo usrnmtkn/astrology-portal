@@ -11,7 +11,12 @@
       "label": "New York, New York",
       "latitude": 40.712749,
       "longitude": -74.005994,
-      "timeZone": "America/New_York"
+      "timeZone": "America/New_York",
+      "coordinateSource": {
+        "provider": "test_fixture",
+        "sourceId": "synthetic-new-york-centroid",
+        "resolution": "municipal_centroid"
+      }
     },
     "settings": {
       "houseSystem": "whole_sign",
@@ -23,7 +28,12 @@
     "label": "New York, New York",
     "latitude": 40.712749,
     "longitude": -74.005994,
-    "timeZone": "America/New_York"
+    "timeZone": "America/New_York",
+    "coordinateSource": {
+      "provider": "test_fixture",
+      "sourceId": "synthetic-new-york-centroid",
+      "resolution": "municipal_centroid"
+    }
   },
   "window": {
     "start": "2026-02-18",

@@ -9,10 +9,72 @@ import { expectSkyAspectBody } from '../helpers/sky-aspect-reading';
 import { watchBrowserErrors } from './qaRuntimeGuards';
 import SwissEph from 'swisseph-wasm';
 import { bundledSkyPublications } from '../helpers/bundled-publications';
+import { studioApiStore } from '../helpers/studio-api-store';
+import { routeStudioPublicReader } from '../helpers/studio-public-reader-route';
 
 const date = '2026-04-07';
 const key = 'sky.aspect.moon.square.mercury';
 const body = 'Synthetic updated Moon square Mercury opening. The full published passage belongs in Sky.\n\nA separate complete final paragraph must survive navigation, Back, and reload.';
+
+for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const) {
+  test(`PA-092 final master wins over the earlier signed Calendar publication ${width} ${theme}`, async ({ page }) => {
+    test.setTimeout(120_000);
+    const masterKey = 'sky.aspect.mercury.square.mars';
+    const signedKey = 'sky-card/mercury/scorpio/square/mars/leo';
+    const master = 'Synthetic final master opening. The complete approved reading belongs on both surfaces.\n\nThe final master sentence survives navigation and reload exactly.';
+    const signed = 'Separate earlier signed Calendar reading remains stored unchanged.';
+    const common = { surface: 'sky', mode: 'feed', status: 'LIVE', lane: 'serving', review_state: null, target_date: null,
+      flags: [], provider: 'owner-content-studio', headline: 'Mercury Square Mars', summary: null, sections: null,
+      block_type: 'sky_aspect', updated_at: '2026-11-20T12:00:00Z' };
+    const store = await studioApiStore([
+      { ...common, id: 'a0000000-0000-4000-8000-000000000092', content_key: masterKey, body: master,
+        event_type: 'collective-aspect-card', source_snapshot: { contentStudioExactAspect: true,
+          exactSkyAspectIdentity: { a: 'mercury', b: 'mars', aspect: 'square' } } },
+      { ...common, id: 'b0000000-0000-4000-8000-000000000092', content_key: signedKey, body: signed,
+        event_type: 'calendar-aspect-owner-approved-revision', source_snapshot: { review_status: 'approved', owner_approved: true,
+          serving_enabled: true, calendarAspectPublication: { schema: 'content-studio-calendar-publication/v1', contentKey: signedKey } } }
+    ]);
+    try {
+      const event = (await getLunarCalendarMonth(defaultLocation, new Date('2026-10-02T16:00:00Z'))).events
+        .find(e => e.dateKey === '2026-10-02' && e.aspect === 'square' && e.planets?.includes('Mercury') && e.planets.includes('Mars'))!;
+      expect([event.fromSign, event.toSign]).toEqual(['Scorpio', 'Leo']);
+      await page.setViewportSize({ width, height: 1000 });
+      await page.addInitScript(({ theme, location }) => {
+        localStorage.setItem('tldrastro:theme', theme);
+        localStorage.setItem('tldrastro:selectedLocation', JSON.stringify(location));
+      }, { theme, location: defaultLocation });
+      await bundledPublications(page);
+      await page.route('**/api/**', async route => {
+        const url = new URL(route.request().url());
+        if (url.pathname === '/api/calendar' || url.pathname === '/api/sky') {
+          const res = { statusCode: 200, body: '', setHeader() {}, end(value: string) { this.body = value; } };
+          await (url.pathname === '/api/calendar' ? calendarHandler : skyHandler)(
+            { method: 'GET', url: url.href } as IncomingMessage, res as unknown as ServerResponse);
+          expect(res.statusCode).toBe(200);
+          return route.fulfill({ status: res.statusCode, contentType: 'application/json', body: res.body });
+        }
+        if (url.pathname === '/api/sky-reader') return route.fulfill({ status: 503, json: { error: 'Use calculated fixture handlers.' } });
+        if (await routeStudioPublicReader(route, url, message => store.call(message.method === 'reader'
+          ? { method: 'POST', url: '/api/content-reader', body: message.body } : message))) return;
+        await route.fallback();
+      });
+      await page.goto('/?date=2026-10-02#calendar?view=day&date=2026-10-02');
+      const card = page.locator('.calendar-day-events .calendar-stoic-card').filter({ hasText: /Mercury squares Mars/ });
+      const excerpt = card.locator('.calendar-stoic-card__excerpt');
+      await expect(excerpt).toHaveText(master, { timeout: 60_000 });
+      await card.screenshot({ path: `test-results/pa092-calendar-master-${width}-${theme}.png` });
+      await page.reload();
+      await expect(excerpt).toHaveText(master, { timeout: 60_000 });
+      await card.click();
+      await expectSkyAspectBody(page, master);
+      await page.reload();
+      await expectSkyAspectBody(page, master);
+      const saved = await store.call({ method: 'rows' });
+      expect(saved.find((row: any) => row.content_key === masterKey).body).toBe(master);
+      expect(saved.find((row: any) => row.content_key === signedKey).body).toBe(signed);
+    } finally { store.close(); }
+  });
+}
 
 for (const sample of [
   { date: '2026-04-07', second: 'Mercury' },
@@ -231,5 +293,177 @@ for (const sample of [
     await page.goBack();
     await expect(page).toHaveURL(new RegExp(`#calendar\\?view=day&date=${sample.date}$`));
     assertNoErrors();
+  });
+}
+
+for (const sample of [
+  { date: '2026-12-04', first: 'Mercury', second: 'Jupiter', aspect: 'square', verb: 'squares', firstSign: 'Scorpio', secondSign: 'Leo', rx: false },
+  { date: '2026-11-04', first: 'Venus', second: 'Jupiter', aspect: 'sextile', verb: 'sextiles', firstSign: 'Libra', secondSign: 'Leo', rx: true }
+]) for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const) {
+  test(`Published Calendar and Read More copy stay identical ${sample.first} ${sample.date} ${width} ${theme}`, async ({ page }) => {
+    test.setTimeout(180_000);
+    const publicationKey = `sky-card/${sample.first.toLowerCase()}/${sample.firstSign.toLowerCase()}/${sample.aspect}/${sample.second.toLowerCase()}/${sample.secondSign.toLowerCase()}`;
+    const defaultBody = 'Synthetic published Calendar opening. Every paragraph belongs to the selected publication.\n\nThis is the complete final Calendar sentence.';
+    const rxBody = 'Synthetic published retrograde opening. The same complete retrograde passage belongs on every surface.\n\nThis is the complete final retrograde sentence.';
+    const selectedBody = sample.rx ? rxBody : defaultBody;
+    const fullBody = selectedBody;
+    const store = await studioApiStore([{
+      id: 'c0000000-0000-4000-8000-000000000001', content_key: publicationKey,
+      surface: 'sky', mode: 'feed', status: 'LIVE', lane: 'serving', review_state: null, target_date: null,
+      flags: [], provider: 'owner-content-studio', headline: `${sample.first} ${sample.aspect} ${sample.second}`,
+      summary: null, body: defaultBody, sections: { RetrogradeBodyA: rxBody }, block_type: 'sky_aspect',
+      updated_at: '2026-11-20T12:00:00Z', event_type: 'calendar-aspect-owner-approved-revision',
+      source_snapshot: { review_status: 'approved', owner_approved: true, serving_enabled: true,
+        calendarAspectPublication: { schema: 'content-studio-calendar-publication/v1', contentKey: publicationKey } }
+    }]);
+    try {
+      const event = (await getLunarCalendarMonth(defaultLocation, new Date(`${sample.date}T17:00:00Z`))).events
+        .find(event => event.dateKey === sample.date && event.aspect === sample.aspect && event.planets?.includes(sample.first) && event.planets.includes(sample.second))!;
+      expect(event).toBeDefined();
+      expect([event.fromSign, event.toSign]).toEqual([sample.firstSign, sample.secondSign]);
+      expect(event.fromMotion === 'retrograde').toBe(sample.rx);
+      await page.setViewportSize({ width, height: 1000 });
+      await page.emulateMedia({ reducedMotion: 'reduce', colorScheme: theme });
+      await page.addInitScript(({ theme, location }) => {
+        localStorage.setItem('tldrastro:theme', theme);
+        localStorage.setItem('tldrastro:selectedLocation', JSON.stringify(location));
+      }, { theme, location: defaultLocation });
+      await bundledPublications(page);
+      await page.route('**/api/**', async route => {
+        const url = new URL(route.request().url());
+        if (url.pathname === '/api/calendar' || url.pathname === '/api/sky') {
+          const response = { statusCode: 200, body: '', setHeader() {}, end(body: string) { this.body = body; } };
+          await (url.pathname === '/api/calendar' ? calendarHandler : skyHandler)(
+            { method: 'GET', url: url.href } as IncomingMessage, response as unknown as ServerResponse);
+          expect(response.statusCode).toBe(200);
+          return route.fulfill({ status: response.statusCode, contentType: 'application/json', body: response.body });
+        }
+        if (url.pathname === '/api/sky-reader') return route.fulfill({ status: 503, json: { error: 'Calculated isolated fixture.' } });
+        if (await routeStudioPublicReader(route, url, message => store.call(message.method === 'reader'
+          ? { method: 'POST', url: '/api/content-reader', body: message.body } : message))) return;
+        await route.fallback();
+      });
+      const datedRoute = `/?date=${sample.date}#sky/aspect/${sample.first.toLowerCase()}/${sample.aspect}/${sample.second.toLowerCase()}/at/${encodeURIComponent(event.startsAt)}`;
+      // A cold direct link must request the sign publication, without a Calendar cache.
+      await page.goto(datedRoute);
+      await expectSkyAspectBody(page, fullBody);
+      await page.screenshot({ path: `test-results/calendar-copy-parity-article-${sample.first}-${width}-${theme}.png`, fullPage: true });
+      await page.reload();
+      await expectSkyAspectBody(page, fullBody);
+      for (const view of ['day', 'weekly', 'month']) {
+        await page.goto(`/?date=${sample.date}#calendar?view=${view}&date=${sample.date}`);
+        if (view === 'month') await page.locator(`.lunar-calendar-day[data-calendar-date="${sample.date}"]`).click();
+        const scope = view === 'weekly' ? page.locator(`#calendar-day-group-${sample.date}`) : page.locator('.calendar-day-events');
+        const card = scope.getByRole('button', { name: new RegExp(`${sample.first}(?: Rx)? ${sample.verb} ${sample.second}`) });
+        await expect(card).toBeVisible({ timeout: 60_000 });
+        if (view !== 'weekly') await expect(card.locator('.calendar-stoic-card__excerpt')).toHaveText(selectedBody);
+        await card.click();
+        await expectSkyAspectBody(page, fullBody);
+        await page.getByRole('button', { name: 'Close detail', exact: true }).click();
+        await expect(page).toHaveURL(new RegExp(`#calendar\\?view=${view}&date=${sample.date}$`));
+      }
+      await page.screenshot({ path: `test-results/calendar-copy-parity-${sample.first}-${width}-${theme}.png`, fullPage: true });
+      const saved = (await store.call({ method: 'rows' }))[0];
+      expect(saved.body).toBe(defaultBody);
+      expect(saved.sections.RetrogradeBodyA).toBe(rxBody);
+    } finally { store.close(); }
+  });
+}
+
+let archiveFixture: Promise<any> | undefined;
+async function archivedSaturnEvent() {
+  const { getSkyPlacementSnapshot } = await import('../../apps/web/src/services/ephemeris');
+  const snapshot = await getSkyPlacementSnapshot(defaultLocation, 'Saturn', 'Aries', new Date('2026-03-01T17:00:00Z'), true, 'placement');
+  return snapshot.placementAspectFacts!.inSign.find(event => event.aspect === 'conjunction'
+    && event.otherPlanet === 'Neptune' && event.occursAt >= '2026-02-13')!;
+}
+for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const) {
+  test(`Archived placement, current placement and Calendar share approved copy ${width} ${theme}`, async ({ page }) => {
+    test.setTimeout(240_000);
+    const event = await (archiveFixture ??= archivedSaturnEvent());
+    expect(event).toBeDefined();
+    expect([event.fromSign, event.toSign, event.fromMotion, event.toMotion]).toEqual(['Aries', 'Aries', 'direct', 'direct']);
+    const key = 'sky-card/saturn/aries/conjunction/neptune/aries';
+    const exactKey = 'sky.aspect.saturn.conjunction.neptune';
+    const body = 'Synthetic shared approved opening. The archived event retains its own complete published reading.\n\nThe complete final approved sentence survives every view and reload.';
+    const oldBody = 'Synthetic older general passage must not replace the published sign-specific reading.';
+    const common = { surface: 'sky', mode: 'feed', status: 'LIVE', lane: 'serving', review_state: null, target_date: null,
+      flags: [], provider: 'owner-content-studio', headline: 'Saturn Conjunction Neptune', summary: null, block_type: 'sky_aspect', updated_at: '2026-11-20T12:00:00Z' };
+    const store = await studioApiStore([
+      { ...common, id: 'd0000000-0000-4000-8000-000000000001', content_key: key, body,
+        sections: { RetrogradeBodyA: 'Synthetic wrong reference-day retrograde passage must never replace the exact-event reading.' },
+        event_type: 'calendar-aspect-owner-approved-revision', source_snapshot: { review_status: 'approved', owner_approved: true, serving_enabled: true,
+          calendarAspectPublication: { schema: 'content-studio-calendar-publication/v1', contentKey: key } } },
+      { ...common, id: 'd0000000-0000-4000-8000-000000000002', content_key: exactKey, body: oldBody, sections: {},
+        event_type: 'sky-aspect-owner-approved-exact', source_snapshot: { contentStudioExactAspect: true,
+          exactSkyAspectIdentity: { a: 'saturn', b: 'neptune', aspect: 'conjunction' } } }
+    ]);
+    try {
+      await page.setViewportSize({ width, height: 1000 });
+      await page.emulateMedia({ reducedMotion: 'reduce', colorScheme: theme });
+      await page.addInitScript(({ theme, location }) => {
+        localStorage.setItem('tldrastro:theme', theme);
+        localStorage.setItem('tldrastro:pageAnimations', 'off');
+        localStorage.setItem('tldrastro:selectedLocation', JSON.stringify(location));
+      }, { theme, location: defaultLocation });
+      await bundledPublications(page);
+      await page.route('**/api/**', async route => {
+        const url = new URL(route.request().url());
+        if (url.pathname === '/api/calendar' || url.pathname === '/api/sky') {
+          const response = { statusCode: 200, body: '', setHeader() {}, end(body: string) { this.body = body; } };
+          await (url.pathname === '/api/calendar' ? calendarHandler : skyHandler)(
+            { method: 'GET', url: url.href } as IncomingMessage, response as unknown as ServerResponse);
+          return route.fulfill({ status: response.statusCode, contentType: 'application/json', body: response.body });
+        }
+        if (url.pathname === '/api/sky-reader') return route.fulfill({ status: 503, json: { error: 'Calculated isolated fixture.' } });
+        if (await routeStudioPublicReader(route, url, message => store.call(message.method === 'reader'
+          ? { method: 'POST', url: '/api/content-reader', body: message.body } : message))) return;
+        await route.fallback();
+      });
+      const archive = '/?date=2026-11-20#sky/archive/saturn/aries/2026';
+      await page.goto(archive);
+      const archivedCard = page.locator('.article-related-aspects__copy').filter({ hasText: 'Saturn Conjunction Neptune' });
+      const paragraphs = body.split('\n\n');
+      await expect(archivedCard).toContainText(paragraphs[0], { timeout: 120_000 });
+      await expect(archivedCard).toContainText(paragraphs[1]);
+      await expect(archivedCard).not.toContainText(oldBody);
+      await expect(archivedCard).not.toContainText('wrong reference-day');
+      const archiveReadings = page.locator('.article-related-aspects__copy');
+      const readingCount = await archiveReadings.count();
+      expect(readingCount).toBeGreaterThan(1);
+      const readingLinks = archiveReadings.locator(':scope > a.article-related-aspects__copy-link');
+      expect(await readingLinks.count(), 'Every dated reading retains its own visible label and Read More link.').toBe(readingCount);
+      expect(await readingLinks.locator('h4').count()).toBe(readingCount);
+      const headingStyles = await readingLinks.locator('h4').evaluateAll(headings => headings.map(heading => {
+        const style = getComputedStyle(heading);
+        return [style.fontFamily, style.fontSize, style.fontWeight, style.lineHeight, style.letterSpacing,
+          style.marginTop, style.marginBottom, style.textTransform];
+      }));
+      expect(new Set(headingStyles.map(style => JSON.stringify(style))).size).toBe(1);
+      await archivedCard.scrollIntoViewIfNeeded();
+      await archivedCard.screenshot({ path: `test-results/archive-aspect-parity-card-${width}-${theme}.png` });
+      await page.getByRole('link', { name: 'Read more about Saturn Trine Jupiter', exact: true }).last().locator('..')
+        .screenshot({ path: `test-results/archive-repeat-aspect-label-${width}-${theme}.png` });
+      await page.screenshot({ path: `test-results/archive-aspect-parity-${width}-${theme}.png`, fullPage: true });
+      await page.reload();
+      await expect(archivedCard).toContainText(paragraphs[1], { timeout: 120_000 });
+      await archivedCard.getByRole('link', { name: 'Read more about Saturn Conjunction Neptune', exact: true }).click();
+      await expectSkyAspectBody(page, body);
+      await page.getByRole('button', { name: 'Close detail', exact: true }).click();
+      await expect(page).toHaveURL(/#sky\/archive\/saturn\/aries\/2026$/);
+      await expect(archivedCard).toContainText(paragraphs[1], { timeout: 120_000 });
+      const date = event.occursAt.slice(0, 10);
+      await page.goto(`/?date=${date}#sky/placement/saturn/aries`);
+      const currentCard = page.locator('.article-related-aspect-row').filter({ hasText: /Saturn.*Conjunction Neptune/ });
+      await expect(currentCard).toContainText(paragraphs[0], { timeout: 120_000 });
+      await expect(currentCard).toContainText(paragraphs[1]);
+      await page.goto(`/?date=${date}#calendar?view=day&date=${date}`);
+      const calendarCard = page.locator('.calendar-day-events').getByRole('button', { name: /Saturn conjoins Neptune/ });
+      await expect(calendarCard).toContainText(paragraphs[0], { timeout: 60_000 });
+      await expect(calendarCard).toContainText(paragraphs[1]);
+      const saved = await store.call({ method: 'rows' });
+      expect(saved.find((row: any) => row.content_key === key).body).toBe(body);
+      expect(saved.find((row: any) => row.content_key === exactKey).body).toBe(oldBody);
+    } finally { store.close(); }
   });
 }

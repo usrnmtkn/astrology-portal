@@ -7,6 +7,11 @@ export type LocationInput = {
   latitude: number;
   longitude: number;
   timeZone?: string;
+  coordinateSource?: {
+    provider: string;
+    sourceId: string;
+    resolution: "municipal_centroid" | "borough_centroid" | "legacy_unprovenanced";
+  };
 };
 
 export type PlanetPosition = {
@@ -59,12 +64,24 @@ export type SolarDaylight = {
   sunsetSettingSign?: string | null;
 };
 
+export type SkyPlacementAspectEvent = {
+  id: string;
+  occursAt: string;
+  planet: string;
+  aspect: string;
+  otherPlanet: string;
+  fromSign?: string;
+  toSign?: string;
+  fromMotion?: string;
+  toMotion?: string;
+};
+
 export type SkyPlacementAspectFacts = {
   planet: string;
   sign: string;
   timeZone: string;
-  inSign: Array<{ id: string; occursAt: string; planet: string; aspect: string; otherPlanet: string }>;
-  retrograde?: Array<{ id: string; occursAt: string; planet: string; aspect: string; otherPlanet: string }>;
+  inSign: SkyPlacementAspectEvent[];
+  retrograde?: SkyPlacementAspectEvent[];
   retrogradeStart?: string;
   retrogradeEnd?: string;
 };

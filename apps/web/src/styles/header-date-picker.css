@@ -24,6 +24,7 @@
 .header-date-toolbar .segmented-control { --segmented-bg: var(--surface-2); --segmented-border: transparent; --segmented-gap: 0; --segmented-item-height: var(--control-navigation-size); --segmented-item-px: var(--space-2); --segmented-active-bg: var(--surface); --segmented-active-fg: var(--ink); flex: 1; min-width: 0; }
 .header-date-toolbar .segmented-control__item { font-size: var(--text-button-size); }
 .header-date-close { display: grid; place-items: center; flex: none; width: var(--size-4); height: var(--size-4); padding: 0; border: 0; border-radius: var(--radius-circle); background: var(--surface-2); color: var(--ink); }
+.header-date-close > svg { width: var(--size-3); height: var(--size-3); flex: none; }
 .header-date-panel .date-picker--embedded { position: static; width: 100%; max-height: none; overflow: visible; border-radius: 0; background: transparent; box-shadow: none; }
 .header-date-location { display: grid; gap: var(--space-2); }
 .header-date-location__label { color: var(--ink-2); font-family: var(--font-ui); font-size: var(--type-ui-copy-size); font-weight: var(--weight-semibold); }

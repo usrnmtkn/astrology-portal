@@ -1,3 +1,5 @@
+import forecastProse from './forecastProseDevelopment.cjs';
+const {forecastWriterScope,forecastWriterEvidence}=forecastProse;
 import {seasonalEvidenceInput,seasonalSharedEvidence,sharedEvidenceWithPassageReferences} from './seasonalEvidenceInput.mjs';
 import {buildHoroscopePromptVariables} from './horoscopePromptVariables.mjs';
 import {horoscopeOverviewHeadline} from '../../apps/web/src/content/horoscopeEditions.mjs';
@@ -8,6 +10,7 @@ import {buildSeasonalDraftInput} from './seasonalDraftInput.mjs';
 /** Audience is shared; direct address follows the owner's complete collective essays. */
 export function buildHoroscopeOverviewInput({context,task,target,engineFacts,argumentOutline,writingProfile}) {
   if(engineFacts?.window?.period==='seasonal')return buildSeasonalDraftInput({context,task,engineFacts,argumentOutline,writingProfile});
+  context=forecastWriterEvidence(context);
   const {developments,seasonalMeaning,relationalContext,signs,risingSign,house,...facts}=engineFacts;
   const seasonal=facts.window.period==='seasonal';
   const primaryIds=new Set(context.primaryRegisterPassages.map(p=>p.id));
@@ -34,7 +37,7 @@ export function buildHoroscopeOverviewInput({context,task,target,engineFacts,arg
     ...(seasonalMeaning?[`ZODIAC SEASON AND LEARNING AXIS\n${JSON.stringify(seasonalMeaning)}`,
       'Integrate the supplied zodiac-season and learning-axis meanings into the shared introduction. Explain their relevance through a developed human thought, not a list of traits or a compulsory lesson. The symbolic axis is not another calculated transit. No individual house placement belongs in this introduction.']:[]),
     seasonal?'Write a substantial introduction to the calculated zodiac season. Establish its central possibilities and tensions, informed by the complete season and learning-axis sources. Select dated developments that deepen or redirect that thought. Leave sign-specific life areas to the twelve separate readings.':`MONTHLY READING FORMAT\nReturn the TLDR and dated forecast in their separate schema fields. A saved exact opening for the dated forecast belongs in body, after the TLDR. A direction to return headline and body does not remove the required tldr field from this run's schema.`,
-    `${seasonal?'OWNER-APPROVED WRITING PLAN':'REVIEWED GENERATION SCOPE — NOT A PROSE OUTLINE'}\n${JSON.stringify(argumentOutline)}`,
+    `REVIEWED EDITORIAL SCOPE\n${JSON.stringify(forecastWriterScope(argumentOutline))}`,
     `SHARED FIVE-ROLE EVIDENCE\n${JSON.stringify(seasonal?seasonalSharedEvidence(context):sharedEvidenceWithPassageReferences(context,completePassages,{includeSupportingArgumentCandidates:true}))}`,
     `RELEVANT OWNER PASSAGES\n${JSON.stringify(context.relevantOwnerPassages.map(p=>({completePassageRef:p.id})))}`,
     ...(!variables.uses('ownerCorrections')?[`CURRENT OWNER CORRECTIONS\n${JSON.stringify(context.corrections)}`]:[]),

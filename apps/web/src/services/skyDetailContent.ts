@@ -5,7 +5,9 @@ import { contentPublicationsAvailableOnline } from "./contentPublications";
 import type { SkySnapshot } from "../types";
 import { skySnapshotDate } from "./skySelection";
 import type { LiveGeneratedContent } from "./generatedContent";
-import { contentStudioExactSkyAspectKeys, skyAspectGeneratedContentKeys } from "./skyAspectContent";
+import { contentStudioExactSkyAspectKeys } from "./skyAspectContent";
+
+import { skyAspectReadingContentKeys } from "./skyPlacementAspectContentKeys";
 
 /** Candidates are transport only: actual calculated events still choose copy.
  * An oversized candidate set disables preparation rather than truncating it. */
@@ -65,10 +67,11 @@ export function skySnapshotAspectContentKeys(snapshot: SkySnapshot) {
     const firstSign = aspect.fromSign ?? snapshot.positions.find(position => position.planet === aspect.from)?.sign;
     const secondSign = aspect.toSign ?? snapshot.positions.find(position => position.planet === aspect.to)?.sign;
     if (!firstSign || !secondSign) return [];
-    return skyAspectGeneratedContentKeys({
+    const identity = {
       first: aspect.from, second: aspect.to, aspect: aspect.type,
       firstSign, secondSign, targetDate: skySnapshotDate(snapshot)
-    });
+    };
+    return skyAspectReadingContentKeys(identity);
   })));
 }
 

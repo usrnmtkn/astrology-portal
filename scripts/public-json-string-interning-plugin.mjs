@@ -4,7 +4,10 @@ const sourceFiles = [
   "/apps/web/src/content/fallbackArchitectureV3/initial-sky-core-transport-v1.json",
   "/apps/web/src/content/fallbackArchitectureV3/deferred-reader-support-transport-v1.json",
   "/apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-rows-v3.json",
-  "/apps/web/src/content/fallbackArchitectureV3/bundled-deferred-core-rows-v3.json"
+  "/apps/web/src/content/fallbackArchitectureV3/bundled-deferred-core-rows-v3.json",
+  "/apps/web/src/content/fallbackArchitectureV3/bundled-transit-core-authored-cards-v3.json",
+  "/apps/web/src/content/fallbackArchitectureV3/bundled-relationship-hook-rows-v3.json",
+  "/apps/web/src/content/fallbackArchitectureV3/bundled-relationship-authored-cards-v3.json"
 ];
 
 export function internJsonStringLiterals(code, parse, minimumLength = 80) {

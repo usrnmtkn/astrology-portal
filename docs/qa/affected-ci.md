@@ -52,6 +52,11 @@ transitive. Unknown runtime changes and shared data/dependency changes retain
 the full fallback. Complete selected browser specs still run; this does not
 filter individual cases or weaken the required gates.
 
+Indexed writing modules and assertion helpers select their actual API and browser
+consumers. Node subprocess entries, including `fork(path.resolve(...))`, retain
+the entry module's transitive imports; reading a source file as text does not
+execute its imports. An unmapped writing module still selects the full fallback.
+
 Use `node scripts/ci-affected-tests.mjs --json` with `PR_BASE_SHA` (or
 `AFFECTED_BASE_SHA`) and `HEAD_SHA` to inspect a committed candidate's plan.
 The normal CI invocation writes the same plan to job outputs and logs counts.

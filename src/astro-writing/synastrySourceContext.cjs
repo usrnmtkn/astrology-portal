@@ -1,10 +1,33 @@
 "use strict";
 const { createHash } = require("node:crypto");
 
-const VERSION = "synastry-source-context/v1-2026-10-21";
+const VERSION = "synastry-source-context/v4-2026-10-24";
 const key = value => String(value ?? "").trim().toLowerCase().replace(/[_\s]+/gu, "-");
 const textHash = value => createHash("sha256").update(value).digest("hex");
 const object = value => value && typeof value === "object" && !Array.isArray(value);
+
+// Recognize the complete legacy scaffold, not individual words or prose style.
+// These five generated descriptions supply no pair-specific interpretation.
+const keywordScaffold = /^A's [^.\n]+ meets B's [^.\n]+\. The (?:conjunction fuses them - intense and inseparable|square puts them in friction|opposition pulls them into push-and-pull|trine lets them flow together easily|sextile supports them, if you act on it)\.$/u;
+function assertSynastryMeaningComplete(record) {
+  if (record?.kind === "interaspect" && keywordScaffold.test(String(record.plainTranslation ?? "").trim())) {
+    throw new Error(`SYNASTRY_KNOWLEDGE_INCOMPLETE: ${record.id ?? "contact"} still contains a keyword placeholder. Source-backed contact meaning is required before generation.`);
+  }
+  const detail = record?.interpretiveDetail;
+  if (detail !== undefined && (!object(detail)
+    || detail.version !== "synastry-interpretive-detail/v1"
+    || detail.comparison !== "natal_to_natal"
+    || detail.evidenceRole !== "interpretive_meaning_not_voice"
+    || detail.people?.personA?.planet !== record.planetA
+    || detail.people?.personB?.planet !== record.planetB
+    || detail.aspectExpression?.aspect !== record.aspect
+    || !Array.isArray(detail.examples)
+    || detail.examples.some(example => example?.status !== "hypothetical_illustration_not_event_or_biography"
+      || !object(example.planetResponses)
+      || Object.keys(example.planetResponses).some(planet => ![record.planetA, record.planetB].includes(planet))))) {
+    throw new Error(`SYNASTRY_KNOWLEDGE_CONTEXT_CONFLICT: ${record?.id ?? "contact"} detail must preserve both natal owners, the aspect and hypothetical example roles.`);
+  }
+}
 
 function synastryContactOwnership(facts) {
   const planetA = String(facts.planetA ?? facts.body1 ?? facts.from ?? "").trim();
@@ -29,6 +52,7 @@ function synastryContactOwnership(facts) {
 
 function projectRecord(record, path, exclusions, adviceRequested) {
   if (!object(record) || record.kind !== "interaspect" || !record.planetA || !record.planetB) return record;
+  assertSynastryMeaningComplete(record);
   const projected = { ...record };
   // These are complete legacy knowledge fields, not protected author passages.
   // Unknown source pronouns cannot be rebound to the current reader by position.
@@ -106,9 +130,20 @@ function synastrySourceReceipt(input) {
   if (!context) return null;
   return { version: VERSION, planetA: context.ownership.personA.planet, planetB: context.ownership.personB.planet,
     readerPerson: context.ownership.readerPerson, exclusions: context.exclusions,
+    primaryStyleReferences: (input.sourceSnapshot.primarySynastryStyleReferences ?? []).map(reference => ({
+      path: reference.path, textSha256: reference.sha256,
+      wordCount: reference.text.trim().split(/\s+/u).length,
+      evidenceRole: "primary_natal_style_only", sourceApprovalUnchanged: true })),
+    protectedVoice: input.sourceSnapshot.protectedSynastryVoice ? {
+      sources: (input.sourceSnapshot.protectedSynastryVoice.sources ?? []).map(source => ({
+        sourceId: source.sourceId, documentSha256: source.documentSha256,
+        approvalToolCall: source.approvalToolCall, referenceCount: source.referenceCount
+      })),
+      referenceCount: input.sourceSnapshot.protectedSynastryVoice.referenceCount
+    } : null,
     designatedVoiceReferences: designatedSynastryVoiceReferences(input.sourceSnapshot).map(reference => ({
       textSha256: reference.sha256, wordCount: reference.text.trim().split(/\s+/u).length,
       evidenceRole: "designated_voice_only", sourceApprovalUnchanged: true })) };
 }
 
-module.exports = { SYNASTRY_SOURCE_CONTEXT_VERSION: VERSION, synastryContactOwnership, prepareSynastrySourceInput, synastryMeaningPlanSchema, designatedSynastryVoiceReferences, validateSynastryMeaningPlan, synastrySourceReceipt };
+module.exports = { SYNASTRY_SOURCE_CONTEXT_VERSION: VERSION, assertSynastryMeaningComplete, synastryContactOwnership, prepareSynastrySourceInput, synastryMeaningPlanSchema, designatedSynastryVoiceReferences, validateSynastryMeaningPlan, synastrySourceReceipt };

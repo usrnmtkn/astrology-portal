@@ -174,7 +174,9 @@ jobs:
       - name: Audit form typography
         run: npm run qa:form-typography
       - name: Verify Content Studio link routing
-        run: node --experimental-strip-types scripts/test-content-studio-link-routing.mjs
+        run: node --import tsx scripts/test-content-studio-link-routing.mjs
+      - name: Verify glyph paint and contrast measurements
+        run: node scripts/test-glyph-paint-contrast.mjs
       - name: Verify Content Studio editor UX
         run: node scripts/test-admin-content-studio-usability.mjs
       - name: Verify Content Studio server module startup
@@ -285,7 +287,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4, 5, 6]
+        shard: [1, 2, 3, 4, 5, 6, 7, 8]
     env:
       CI_AFFECTED_TEST_PLAN: ${{ needs.scope.outputs.test_plan }}
       PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
@@ -303,7 +305,7 @@ jobs:
       - run: npm run build:knowledge
       - run: node scripts/ci-validate-playwright-image.mjs
       - name: Run Content Studio admin user flows
-        run: node scripts/balanced-browser-tests.mjs --config playwright.studio-admin-flows.config.ts ${{ matrix.shard }}/6
+        run: node scripts/balanced-browser-tests.mjs --config playwright.studio-admin-flows.config.ts ${{ matrix.shard }}/8
       - name: Upload Content Studio flow artifacts
         if: always()
         uses: actions/upload-artifact@v6
@@ -590,7 +592,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        suite: [studio-style, studio-web-entry, studio-variables, sky-article, sky-cms, horoscope-writing, lunation-studio, sky-reader-preview]
+        suite: [studio-style, studio-web-entry, studio-variables, sky-article, sky-cms, horoscope-writing, planetary-studio, lunation-studio, sky-reader-preview]
         include:
           - suite: studio-ui
             shard: 1

@@ -1,7 +1,7 @@
 import { CalendarPassageProse } from '../../../src/shared/features/calendar/CalendarPassageProse';
 import { lunarContentIdentity } from './lunarCalendarContent';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { StudioButton, StudioInput } from './StudioControls';
+import { StudioButton, StudioInput, StudioTextarea } from './StudioControls';
 import CalendarPassageTemplateEditor, { type CalendarTemplateHandle } from './CalendarPassageTemplateEditor';
 import { calendarPassageVariableLabel as variableLabel, calendarPassageVariableHelp, calendarVariableKind, isConditionVariable } from './variablePresentation';
 import { calendarPassageMoonTiming } from './calendarPassageMoonTiming';
@@ -23,7 +23,12 @@ import { refreshContentPublications } from '../../web/src/services/contentPublic
 import CalendarPassageReaderPreview from './CalendarPassageReaderPreview';
 import { calendarDefaultPattern as defaultPattern, calendarWorkspaceReading, calendarWorkspaceTransitionKey } from './calendarPassageWorkspace';
 import type { SkyForecastPeriod } from './skyForecastTemplates';
-import type { StudioPassageEdit } from '../../../src/shared/studioPassageEdit';
+import type { CalendarPassageReviewContext } from './calendarPassageReviewRoute';
+
+type CalendarDailyReviewDraft = {
+  body: string;
+  source: { workspaceKey: string; resultId: string; requestHash: string; outputHash: string };
+};
 
 const passageError = (reason: unknown, fallback: string) => reason instanceof Error && !reason.message.startsWith('/api/') ? reason.message : fallback;
 const localEdits = new Map<string, string>();
@@ -33,7 +38,7 @@ const bodyOf = (row?: SavedRow) => row?.sections?.packageDraft?.body_you ?? row?
 export default function CalendarPassageEditor({ period: studioPeriod, loadRows, secret, onEditSource, readerEntry, sourceEditor, sourceDraft }: {
   period: SkyForecastPeriod; loadRows: (keys: string[]) => Promise<CalendarPreviewRow[]>; secret: string;
   onEditSource: (row: CalendarPreviewRow) => void;
-  readerEntry?: StudioPassageEdit | null;
+  readerEntry?: CalendarPassageReviewContext | null;
   sourceEditor?: ReactNode;
   sourceDraft?: { contentKey: string; body: string } | null;
 }) {
@@ -60,6 +65,9 @@ export default function CalendarPassageEditor({ period: studioPeriod, loadRows, 
   const [history, setHistory] = useState<any[] | null>(null);
   const [sourcesChanged, setSourcesChanged] = useState(false);
   const [selectedSourceKey, setSelectedSourceKey] = useState('');
+  const [writerReview, setWriterReview] = useState<CalendarDailyReviewDraft | null>(null);
+  const [writerChoiceNeeded, setWriterChoiceNeeded] = useState(false);
+  const [writerApplied, setWriterApplied] = useState(false);
   const activeSourceKey = sourceEditor && sourceDraft?.contentKey === selectedSourceKey ? selectedSourceKey : '';
   const contextKey = `${studioPeriod}|${requested.date}|${requested.timeZone}|${attempt}|${scope}|${target}`;
   const sharedMoon = period === 'daily' && target === 'moon' && scope === 'shared';
@@ -102,6 +110,7 @@ export default function CalendarPassageEditor({ period: studioPeriod, loadRows, 
   useEffect(() => {
     let active = true;
     setError(''); setStatus('Loading the assembled passage…'); setHistory(null);
+    setWriterReview(null); setWriterChoiceNeeded(false); setWriterApplied(false);
     void (async () => {
       const instant = zonedDateTimeToUtc(requested.date, '12:00 PM', requested.timeZone);
       const result = await calculateCalendarPreview(studioPeriod, instant.toISOString(), requested.timeZone);
@@ -138,8 +147,25 @@ export default function CalendarPassageEditor({ period: studioPeriod, loadRows, 
       const shared = sourceContent.get(calendarPassageKey(period));
       const sharedPattern = shared?.body ?? defaultPattern(period);
       const pattern = bodyOf(proposal) ?? bodyOf(editions.find(row => row.id.startsWith('package:'))) ?? (scope === 'date' ? calendarEditablePassage(sharedPattern, assembledValues) : sharedPattern);
+      let review: CalendarDailyReviewDraft | null = null;
+      if (readerEntry?.writerResultId && period === 'daily' && scope === 'date' && target === 'overview'
+        && requested.date === readerEntry.date && requested.timeZone === readerEntry.timeZone) {
+        const writing = await requestStudioJson('/api/admin/calendar-daily-writing', secret, { method: 'POST', readOnly: true,
+          body: JSON.stringify({ action: 'load', date: requested.date, timeZone: requested.timeZone, writerResultId: readerEntry.writerResultId }) });
+        const selectedReview=writing.review as CalendarDailyReviewDraft | null;
+        if(!selectedReview||typeof selectedReview.body!=='string'||!selectedReview.body.trim()||selectedReview.source?.resultId!==readerEntry.writerResultId)throw new Error('The selected writer result could not be loaded.');
+        review=selectedReview;
+      }
+      if (!active) return;
+      const retained = localEdits.get(selectedKey);
+      const hasSavedPassage = proposal && !proposal.id.startsWith('package:');
+      const sameWriterPassage = review && hasSavedPassage && (bodyOf(proposal) === review.body
+        || proposal.sections?.calendarDailyWriterSource?.resultId === review.source.resultId);
+      const applyWriter = Boolean(review && retained === undefined && !hasSavedPassage);
       setContentKey(selectedKey); setSourcesChanged(false); setCalculation(result); setSources(rows); setSaved(proposal ?? retiredTarget); setPublished(live); setHistoryId([live, proposal, editions[0]].find(row => row && !row.id.startsWith('package:'))?.id ?? '');
-      setBody(localEdits.get(selectedKey) ?? pattern); setBaseline(pattern);
+      setWriterReview(review); setWriterApplied(applyWriter || Boolean(sameWriterPassage));
+      setWriterChoiceNeeded(Boolean(review && (retained !== undefined || hasSavedPassage && !sameWriterPassage)));
+      setBody(retained ?? (applyWriter ? review!.body : pattern)); setBaseline(pattern);
       setLoaded(contextKey); setStatus(proposal ? proposal.status === 'LIVE' ? 'Published passage. Editing creates a separate draft.' : proposal.id.startsWith('package:') ? 'Original shared source. Editing creates a draft; the current reader wording stays published.' : 'Saved draft. Readers still see the last published passage.' : period === 'monthly' && !shared && !assembledValues.overview ? 'No published monthly overview is available. Write a passage using the calculated variables below.' : scope === 'shared' ? 'No shared template has been saved. Reader preview shows the published passage; you are editing the default shared template.' : 'No saved passage for this selection. Starting with the current shared writing.');
     })().catch(reason => { if (active) { setError(passageError(reason, 'The passage could not load. Reload saved status to try again.')); setStatus(''); } });
     return () => { active = false; };
@@ -168,7 +194,8 @@ export default function CalendarPassageEditor({ period: studioPeriod, loadRows, 
       const record = saved?.sections?.packageRecord ?? calendarPassageRecord(contentKey, body);
       const persisted = saved && !saved.id.startsWith('package:');
       const proposal = { ...record, body, body_you: body };
-      const sections = { ...(saved?.sections ?? {}), packageRecord: record, packageDraft: proposal, calendarPassageSources: sourceSnapshot };
+      const sections = { ...(saved?.sections ?? {}), packageRecord: record, packageDraft: proposal, calendarPassageSources: sourceSnapshot,
+        ...(writerApplied && writerReview ? { calendarDailyWriterSource: writerReview.source } : {}) };
       const payload = persisted ? { id: saved.id, expectedUpdatedAt: saved.updated_at, sections }
         : { contentKey, surface: 'sky', mode: sharedMoon ? 'in_depth' : 'feed', eventType: sharedMoon ? 'fallback-hook' : 'calendar-passage', blockType: 'fallback_hook', status: 'DRAFT', lane: 'reference', headline: record.headline || 'Calendar assembled passage', body, facts: { fallbackArchitectureV3: true },
           provider: 'tldrastro-fallback-architecture-v3', sections, sourceSnapshot: { sourcePackage: record.source_package || 'tldrastro-fallback-architecture-v3', content_role: 'full_copy', review_status: 'needs_review' } };
@@ -203,7 +230,7 @@ export default function CalendarPassageEditor({ period: studioPeriod, loadRows, 
   }
   return <section className="admin-template-reader-drilldown studio-surface" aria-label="Assembled Calendar passage">
     <header className="admin-section-heading-row"><div><h3>Complete passage</h3><p>Edit your passage and check the reader preview for the selected date.</p></div></header>
-    {readerEntry && <p className="admin-field-hint">Passage context · {readerEntry.date} · {readerEntry.timeZone}. Your existing saved draft opens first.</p>}
+    {readerEntry && <p className="admin-field-hint">Passage context · {readerEntry.date} · {readerEntry.timeZone}. {readerEntry.writerResultId ? null : 'Your existing saved draft opens first.'}</p>}
     <div className="admin-daily-glance-context-form">
       <label><span>Date</span><StudioInput type="date" aria-label="Passage date" value={date} disabled={busy || dirty} onChange={event => setDate(event.target.value)} /></label>
       <label><span>Time zone</span><StudioInput aria-label="Passage time zone" value={timeZone} disabled={busy || dirty} onChange={event => setTimeZone(event.target.value)} /></label>
@@ -214,6 +241,16 @@ export default function CalendarPassageEditor({ period: studioPeriod, loadRows, 
     {!ready && <><p role="status" aria-label="Calendar save status">{selectionPending ? 'Choose Load passage to open the selected date and time zone.' : status}</p>{error && <p role="alert">{error}</p>}</>}
     {sourceEditor}
     {ready && <>
+      {writerReview && <div className="studio-context-panel" aria-label="Writer result review">
+        <p>The original stays in Daily writing. Save edits as a separate draft; publish to update this date.</p>
+        {writerChoiceNeeded && <>
+          <p role="note">An edited passage already exists for this date. Keep its saved or unsaved wording, or choose the writer result before saving.</p>
+          <StudioTextarea formatting={false} readOnly aria-label="Selected writer result" value={writerReview.body} rows={8} />
+          <div className="admin-new-actions"><StudioButton disabled={busy} onClick={() => {setBody(writerReview.body);setWriterApplied(true);setWriterChoiceNeeded(false);}}>Use selected writer result</StudioButton>
+            <StudioButton disabled={busy} onClick={() => setWriterChoiceNeeded(false)}>Keep existing draft</StudioButton></div>
+        </>}
+        <a className="admin-source-action" href={`#calendar-writeups?${new URLSearchParams({view:'daily-writing',date:readerEntry!.date,timeZone:readerEntry!.timeZone})}`}>Back to writer results</a>
+      </div>}
       {period === 'daily' && <div className="studio-variable-description studio-context-panel" aria-label="Calendar editing source">
         <p><strong>{target === 'moon' ? 'Moon transition passage' : 'Daily overview'} · {scope === 'date' ? 'Date-only edit' : 'Shared edit'}</strong></p>
         <p>{scope === 'date' ? `Editing the complete passage for ${requested.date} in ${requested.timeZone}. Other dates keep their writing.`

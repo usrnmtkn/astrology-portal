@@ -149,7 +149,25 @@ const packageReferences = new Map(templatePackage.templates.flatMap((template) =
 const genericPackageReferences = [...packageReferences.values()].filter((reference) => (
   reference.source === "Runtime resolver" || reference.source === "Calculated runtime fact"
 ));
-assert.equal(packageReferences.size, 72, "The variable guide should cover every variable and declared resolver dependency in the current fallback template package.");
+// Audit the current package by variable identity. A total can conceal one missing
+// variable behind another, and became stale when the owner retired the natal recap.
+const packageVariableNames = new Set();
+function collectPackageTokens(value) {
+  if (typeof value === "string") {
+    for (const token of value.matchAll(/\{\{([^{}]+)\}\}/gu)) {
+      const name = token[1].trim().replace(/^[#\/^]\s*/u, "");
+      if (name !== ".") packageVariableNames.add(name);
+    }
+  } else if (value && typeof value === "object") {
+    Object.values(value).forEach(collectPackageTokens);
+  }
+}
+for (const template of templatePackage.templates) {
+  collectPackageTokens(template);
+  for (const name of [...template.requiredSlots ?? [], ...template.optionalSlots ?? []]) packageVariableNames.add(name);
+}
+assert.deepEqual([...packageReferences.keys()].sort(), [...packageVariableNames].sort(),
+  "The variable guide should cover every variable and declared resolver dependency in the current fallback template package.");
 assert.deepEqual(genericPackageReferences, [], "Every packaged template variable should have a specific editorial definition, example, and source.");
 
 console.log(`Admin template variable reference tests passed (${packageReferences.size} packaged variables documented).`);

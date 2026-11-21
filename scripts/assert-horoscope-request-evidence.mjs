@@ -56,6 +56,13 @@ export function resolveHoroscopeRequestPassage(input,passage) {
 export function assertHoroscopeRequestEvidence(input, additionalLabels=[]) {
   assert(!input.includes('register-gold:sky-placement:saturn-capricorn-v3'));
   assert(!input.includes('Saturn stands at the threshold where a choice becomes a consequence.'));
+  const scopeMatch=input.match(/REVIEWED EDITORIAL SCOPE\n([^\n]+)\n\n/u);
+  if(scopeMatch){
+    const scope=JSON.parse(scopeMatch[1]);
+    assert.deepEqual(Object.keys(scope).sort(),['boundaries','direction']);
+    assert(scope.direction?.trim()&&scope.boundaries?.trim(),'Reviewed scope retains direction and factual boundaries');
+    assert(!input.includes('current-approved-argument-and-close'),'Generated argument prose stays outside the writer packet');
+  }
   if(/(?:DAILY|WEEKLY) COMPLETE SOURCE PASSAGES\n/u.test(input)) {
     const sources=JSON.parse(input.match(/(?:DAILY|WEEKLY) COMPLETE SOURCE PASSAGES\n([^\n]+)\n\n/u)[1]);
     assert.equal(new Set(sources.map(p=>p.id)).size,sources.length);
@@ -113,7 +120,8 @@ export function assertHoroscopeRequestEvidence(input, additionalLabels=[]) {
   for(const [role,refs] of Object.entries(packet.roles)){
     // Phrase lookup is required, but unmatched future-season themes may return
     // no phrases. The production evidence policy checks this conditional role.
-    if(role!=='phrase')assert(refs.length,`${role} evidence remains available`);
+    if(role==='argument'&&scopeMatch)assert.equal(refs.length,0,'Reviewed scope replaces generated argument prose');
+    else if(role!=='phrase')assert(refs.length,`${role} evidence remains available`);
     for(const ref of refs){assert(!Object.hasOwn(ref,'text'),'Role index never duplicates prose');assert.equal(entries.get(ref.evidenceRef)?.role,role);assert(resolve(ref).trim());}
   }
   const texts=packet.entries.filter(e=>e.text).map(e=>e.text);

@@ -82,6 +82,12 @@ for (const contentKey of pairKeys) {
         );
         assert.equal(browserResult.templateKey, nodeResult.templateKey, `${voice}: ${first} ${aspect} ${second}: resolver keys must match.`);
         assert.equal(browserResult.body, nodeResult.body, `${voice}: ${first} ${aspect} ${second}: resolver bodies must match.`);
+        if (nodeResult.provenanceTier === "legacy-reviewed") {
+          const pairRow = sourceRows.hookRows.find((row) => row.contentKey === `fallback-hook/aspect-pair/${first}/${second}/${group}`)
+            ?? sourceRows.hookRows.find((row) => row.contentKey === `fallback-hook/aspect-pair/${second}/${first}/${group}`);
+          const expected = voice === "you" ? pairRow.body_you : pairRow.body_they;
+          assert.equal(nodeResult.body, expected, `${voice}: ${first} ${aspect} ${second}: the card must end with its complete pair passage, without an appended aspect recap.`);
+        }
       }
     }
   }

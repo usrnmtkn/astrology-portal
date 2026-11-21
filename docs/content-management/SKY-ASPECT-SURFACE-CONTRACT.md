@@ -63,15 +63,25 @@ aspect section should be redesigned**.
 
 ## Required content precedence
 
+The owner's November 20, 2026 direction in
+`thread:01a1eb6f-fded-7212-a0da-099fb4b6876f` selects the published PA-092 master
+(`sky.aspect.mercury.square.mars`) for Calendar ahead of its earlier signed
+publication. Preserve its complete wording and the other approved readings.
+This identity-specific selection respects publication retirement, pinned source
+versions, and explicit baseline restoration; an unavailable pinned master must
+not reveal older signed copy.
+
 Resolve each calculated Sky aspect in this order:
 
 ```text
-1. Owner-approved sign-specific Sky aspect copy for the current signs
-2. Governed LIVE Content Studio exact-aspect version for the exact identity after Sign Off
-3. Owner-approved exact-aspect reader copy from the canonical transit corpus as the baseline
-4. Approved exact or pair-specific Sky aspect phrasebook hook
-5. Explicitly approved generated write-up for the current planet/aspect/sign facts
-6. SOURCE_GAP
+1. The identity-specific owner-selected PA-092 master
+2. Published sign-specific Calendar reading or authorized composed card
+3. Signed owner-authored exact Studio reading
+4. Governed LIVE general Content Studio exact-aspect version
+5. Owner-approved exact-aspect reader copy from the canonical transit corpus
+6. Approved sign-specific, exact or pair-specific Sky aspect phrasebook hook
+7. Explicitly approved generated write-up for the current planet/aspect/sign facts
+8. SOURCE_GAP
 ```
 
 Owner-approved sign-specific copy and the canonical exact-aspect baseline remain author-final historical sources. A signed-off Content Studio exact row is a separately approved version of the same exact identity, not a mutation of that historical baseline. DRAFT or pending-review Studio rows are never reader-eligible. A generated row must never replace an approved sign-specific, signed-off exact Studio, or canonical exact unit, even when the generated row is more sign-specific, newer, or judge-scored. Generated content is an enhancement only when no approved exact or phrasebook unit exists, and it must be labeled as generated in application provenance rather than `authored`.
@@ -83,6 +93,43 @@ loading-only state. When no approved specific or generated unit exists, the
 interpretation fails closed. The calculated aspect remains visible through its
 existing factual detail row: bodies, aspect, timing, and orb, with no prose
 body.
+
+### Shared Calendar and Sky selection
+
+`services/skyAspectReading.ts` selects the complete reading for Calendar event
+cards, current Sky aspect cards, archived placement aspect sections, full
+dated/current Sky aspect articles and Calendar subscription readings. Keep the existing Calendar selection order:
+the explicitly selected PA-092 master, published sign-specific Calendar reading
+or authorized composed card, signed exact Studio reading, general exact Studio
+or approved corpus reading, reviewed sign-specific/pair phrasebook, then eligible
+generated copy. The PA-092 exception remains identity-specific. Lunar-event
+publications retain their existing separate calculated-event precedence.
+
+A newer signed Calendar replacement is a complete unit. It must not inherit
+Details from an older composed card. Bundled two-part cards retain their complete
+forecast and Details. Event-time signs, motion and the selected zone's date line
+must reach the same selector on both surfaces. Both readers request the same
+`sky-card/` publication keys in either body order, including on a cold dated link
+and reload. Retirement, pinned versions and baseline restoration remain enforced.
+
+Archived placement routes calculate the published archive source's own date
+window. Their exact events retain calculated signs and motion in subject order;
+they never borrow these facts from the current Sky snapshot. Archive hydration
+requests the same general, sign-specific and dated keys as the other readers.
+Each aspect section retains the complete shared reading and its real source
+keys, with the archive's existing exact-date label kept separately. Distinct
+reading units for repeated contacts retain their own aspect label and dated
+Read More link; narrative-heading deduplication must not remove these labels.
+
+The actual-adapter parity check in
+`scripts/test-sky-calendar-composed-card-routing.mjs` compares every eligible
+exact corpus record and composed card across all three adapters in both orders,
+plus signed, retrograde,
+missing/stale pinned and retired publications. The browser regression in
+`tests/visual/calendar-aspect-sky-navigation.spec.ts` covers both reported
+Mercury/Jupiter and Venus/Jupiter events across Calendar views, cold direct
+links, Back and reload on phone/desktop in both themes. Isolated fixtures do not
+establish that a production deployment has passed acceptance.
 
 ## Content-key rule
 

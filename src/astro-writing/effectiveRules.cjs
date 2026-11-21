@@ -117,9 +117,12 @@ function renderEffectiveRulesForPrompt(input = {}) {
   // a later generic rule must not reinstate a mandatory next move.
   const datedIngress = input.surface === 'sky' && input.family === 'sky-ingress-essay';
   const synastry = surface === 'synastry';
+  const forecast = ['horoscope','lunations','lunation-article'].includes(input.family);
   const skyAspect = ['sky', 'card'].includes(input.surface) && input.family === 'sky-aspect';
   const render = (entries) => entries.map((rule) => `- ${rule.id}: ${skyAspect && rule.id === 'lived-cause-consequence-v2'
     ? 'Explain the supplied collective aspect through recognizable human experience and supported consequences. The opening stands alone as a preview. A scene, difficulty, practical move or advice ending is not compulsory; stop when the aspect is understood.'
+    : forecast && rule.id === 'lived-cause-consequence-v2'
+    ? 'Develop the supplied astrology through supported human experience in the complete primary owner voice. An observation or feeling can be complete without a practical next move. Do not require a scene, corrective lesson, advice ending or the same concern across different events and signs.'
     : datedIngress && rule.id === 'lived-cause-consequence-v2'
     ? 'Use supported human experience, direct consequences and enough personality to sound written rather than generated. A useful next move belongs when it develops the thought or is required by the field; it is not a default paragraph ending. Concrete means an observable action, decision, exchange or consequence, not a decorative prop or an unsupported life domain.'
     : synastry && rule.id === 'lived-cause-consequence-v2'

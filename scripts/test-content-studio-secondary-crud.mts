@@ -77,6 +77,29 @@ try {
     assert.equal((await invoke(personalized, 'PATCH', input)).status, 409);
     row = null; assert.equal((await invoke(personalized, 'PATCH', input)).status, 404);
   });
+  await test('natal drafting-note validation uses the stored identity without censoring other personalized writing', async () => {
+    const exact = 'Editor notes: deliberate owner prose. Tarot — heaven, 2025, and whether.';
+    for (const content_key of ['natal-insight/fixture', 'cms/legacy-personalized']) {
+      let row: any = { id, updated_at: version, content_key, status: 'DRAFT', body: 'QA complete existing reading.' };
+      let patches = 0;
+      storage = async (_url, init) => {
+        if (init.method !== 'PATCH') return Response.json([row]);
+        patches++; row = { ...row, ...JSON.parse(String(init.body)) }; return Response.json([row]);
+      };
+      const result = await invoke(personalized, 'PATCH', {
+        ...input, body: exact, contentKey: 'cms/caller-cannot-bypass-the-stored-natal-key'
+      });
+      assert.equal(result.status, content_key.startsWith('natal-insight/') ? 400 : 200);
+      assert.equal(patches, content_key.startsWith('natal-insight/') ? 0 : 1);
+      if (patches) assert.equal(result.rows[0].body, exact);
+      else {
+        const saved = await invoke(personalized, 'PATCH', { ...input, body: 'Complete natal opening.\n\nComplete final sentence. ' });
+        assert.equal(saved.status, 200); assert.equal(saved.rows[0].body, 'Complete natal opening.\n\nComplete final sentence. ');
+        const emptyLive = await invoke(personalized, 'PATCH', { ...input, expectedUpdatedAt: row.updated_at, body: '', status: 'LIVE' });
+        assert.equal(emptyLive.status, 400); assert.equal(patches, 1);
+      }
+    }
+  });
   await test('publication propagates timeout and protocol errors and verifies the published identity', async () => {
     storage = async () => { throw new DOMException('timeout', 'AbortError'); };
     assert.equal((await invoke(publication, 'POST', publicationInput)).status, 504);

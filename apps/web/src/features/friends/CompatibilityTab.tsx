@@ -45,10 +45,13 @@ export type CompatibilityPlanetCard = {
 
 export type CompatibilityTabProps = {
   cards: CompatibilityPlanetCard[];
+  dynamics?: CompatibilityDynamic[];
   daily?: { body: string; opening?: string; dateLabel: string } | null;
   friendName: string;
   onOpenCard?: (card: CompatibilityPlanetCard, paragraphs: string[]) => void;
 };
+
+export type CompatibilityDynamic = { id: string; title: string; summary: string; glyphs: string };
 
 function CompatibilitySignLabel({ sign }: { sign: string }) {
   return <span className="compatibility-sign-label"><span className="compatibility-sign-glyph" aria-hidden="true">{signGlyph(sign)}︎</span><span>{sign}</span></span>;
@@ -57,6 +60,7 @@ function CompatibilitySignLabel({ sign }: { sign: string }) {
 
 export function CompatibilityTab({
   cards,
+  dynamics = [],
   daily,
   friendName,
   onOpenCard
@@ -137,6 +141,15 @@ export function CompatibilityTab({
           )})}
           </div>
         </section>
+
+        {dynamics.length > 0 && <section className="compatibility-comparisons" aria-label="Compatibility dynamics">
+          <div className="friend-profile-section-heading"><h2 className="chart-section-title">Challenges</h2></div>
+          <div className="compatibility-card-list">{dynamics.map(dynamic => <article className="compatibility-card" key={dynamic.id}>
+            <span className="friend-dynamic-card__glyphs" aria-hidden="true">{dynamic.glyphs}</span>
+            <h3>{dynamic.title}</h3>
+            <FormattedProse text={dynamic.summary} />
+          </article>)}</div>
+        </section>}
 
       </div>
     </div>

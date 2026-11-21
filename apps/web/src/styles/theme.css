@@ -630,7 +630,10 @@
   --layout-action-slot: 168px;
   --menu-panel-width: 340px;
   --sheet-panel-width: 440px;
-  --sheet-height: 100svh;
+  --sheet-height: 100dvh;
+  /* Navigation covers Safari's expanded viewport and clears device safe areas. */
+  --navigation-sheet-padding: calc(var(--space-6) + env(safe-area-inset-top, 0px)) var(--space-6) calc(var(--space-6) + env(safe-area-inset-bottom, 0px));
+  --navigation-scroll-surface: linear-gradient(to bottom, var(--bg) 80%, transparent);
   --card-preview-fade: linear-gradient(180deg, #000 55%, transparent 100%);
   --card-preview-lines: 4;
   --card-preview-lines-compact: 3;
@@ -1369,6 +1372,7 @@
   --chart-size: clamp(560px, 42vw, 700px);
   --relationship-picker-width: var(--container-picker);
   --z-topbar: 1000;
+  --z-navigation-back: calc(var(--z-topbar) + 1);
   --z-floating: 120;
   --z-popover: 100;
   --z-picker: 40;
@@ -1422,8 +1426,8 @@
   --top-control-height: var(--size-7);
   --top-icon-button-size: var(--size-7);
   --top-brand-size: 32px;
-  --top-nav-icon-size: 15px;
-  --top-action-icon-size: 19px;
+  --top-nav-icon-size: var(--size-3);
+  --top-action-icon-size: var(--size-3);
   --top-control-gap: 8px;
   /* Keep the centered header group clear of child-page Back controls. */
   --header-back-gutter: 176px;
@@ -1599,8 +1603,8 @@
     --top-control-height: var(--size-6);
     --top-icon-button-size: var(--size-6);
     --top-brand-size: 32px;
-    --top-nav-icon-size: 15px;
-    --top-action-icon-size: 19px;
+    --top-nav-icon-size: var(--size-3);
+    --top-action-icon-size: var(--size-3);
     --page-gutter: var(--mobile-page-gutter);
     --page-nav-gap: var(--space-10);
     --row-padding-y: var(--sp-2);

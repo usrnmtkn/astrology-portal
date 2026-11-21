@@ -67,6 +67,10 @@ for (const viewport of [{ width: 1167, height: 815 }, { width: 390, height: 844 
 
       await search.fill('ab');
       await expect(page.getByRole('complementary',{name:'Matching memories',exact:true})).toHaveCount(0);
+      await search.fill('chan');
+      await expect(page.getByRole('status')).toHaveText('0 matching memories');
+      await search.fill('mechanics');
+      await expect(page.getByRole('complementary',{name:'Matching memories',exact:true})).toBeVisible();
       await search.fill('the catch');
       const matches=page.getByRole('complementary',{name:'Matching memories',exact:true});
       await expect(matches.getByRole('heading',{level:2})).toHaveText('Matching memories:');
@@ -137,7 +141,8 @@ test('Content Studio Operations opens the graph using the existing admin credent
   if (!await operations.evaluate(element => (element as HTMLDetailsElement).open)) await operations.locator('summary').click();
   await operations.getByRole('button',{name:'Writing standard',exact:true}).click();
   await expect(page).toHaveURL(/\/admin\/content\/memory\?view=writing-standard$/);
-  await expect(page.getByRole('article',{name:'Writing standard'}).getByRole('heading',{level:1})).toHaveText('TLDR Astro: Planetary Aspect Writing Standard');
+  await expect(page.getByRole('region',{name:'All writing rules',exact:true}).getByRole('heading',{level:1})).toHaveText('All writing rules');
+  await expect(page.getByRole('article',{name:'TLDR Astro: Planetary Aspect Writing Standard',exact:true}).getByRole('heading',{level:2})).toHaveText('TLDR Astro: Planetary Aspect Writing Standard');
   await expect(page.getByRole('article').getByText('And if the reader has to work to understand what a sentence means, rewrite the sentence.',{exact:true})).toBeVisible();
   await page.getByRole('link',{name:'Back to Content Studio',exact:true}).click();
   if (!await operations.evaluate(element => (element as HTMLDetailsElement).open)) await operations.locator('summary').click();

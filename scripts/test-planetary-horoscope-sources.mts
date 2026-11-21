@@ -7,6 +7,7 @@ import {loadSkyPlacementFallbackArchitectureV3Bundle} from '../apps/web/src/cont
 import {planetaryHoroscopeReading,planetaryHoroscopeBody} from '../apps/web/src/features/horoscopes/planetaryHoroscopeReading';
 import type {PlanetPosition} from '../apps/web/src/types';
 import type {LiveGeneratedContent} from '../apps/web/src/services/generatedContent';
+import {emptyPlanetaryReadings,planetaryEventKey,planetaryReadingsBody,type PlanetaryEvent} from '../src/shared/planetaryHoroscopes';
 
 const fixture=await skyPlacementSourceFixture('mercury','scorpio');
 const readings=WRITEUP_HOROSCOPE_SIGNS.map(sign=>({sign,body:`Synthetic ${sign} opening.\n\nSynthetic ${sign} complete final sentence.`}));
@@ -30,6 +31,21 @@ assert.equal(planetaryHoroscopeReading(position,'gemini',edition.transitStartIns
 assert.equal(planetaryHoroscopeReading(position,'gemini',edition.transitEndInstant,[row]).body,fallback,'An ended write-up does not leak into the next period.');
 assert.equal(planetaryHoroscopeReading(position,'gemini',edition.transitStartInstant,[{...row,status:'DRAFT'}]).body,fallback,'AI or manual drafts remain private.');
 assert.equal(planetaryHoroscopeReading(position,'gemini',edition.transitStartInstant,[{...row,updatedAt:'2000-01-01T00:00:00Z'}]).body,fallback,'A stale publication version cannot supply prose.');
+const event:PlanetaryEvent={schema:'planetary-horoscope-event/v1',planet:'mercury',sign:'scorpio',startsAt:new Date(edition.transitStartInstant).toISOString(),endsAt:new Date(edition.transitEndInstant).toISOString(),referenceInstant:new Date(edition.transitStartInstant).toISOString(),timeZone:'UTC'};
+const datedPosition={...position,transitStart:event.startsAt,transitEnd:event.endsAt};
+const datedReadings={...emptyPlanetaryReadings(event),passages:emptyPlanetaryReadings(event).passages.map(p=>({...p,headline:`Dated ${p.sign}`,body:`Dated ${p.sign} opening.\n\nDated ${p.sign} complete final sentence.`}))};
+const datedRow={content_key:planetaryEventKey(event),surface:'sky',mode:'article',event_type:'planetary-horoscopes',status:'LIVE',lane:'serving',review_state:null,target_date:null,facts:{planetaryEvent:{event}},sections:{planetaryHoroscopes:datedReadings},body:planetaryReadingsBody(datedReadings)};
+for(const sign of WRITEUP_HOROSCOPE_SIGNS){
+ const reading=planetaryHoroscopeReading(datedPosition,sign,event.referenceInstant,[row],[datedRow] as any);
+ assert.equal(reading.body,datedReadings.passages.find(p=>p.sign===sign)!.body,'The exact dated set wins only for its calculated visit.');
+ assert.equal(reading.headline,`Dated ${sign}`);assert.equal(reading.window?.end.toISOString(),event.endsAt);
+}
+for(const invalid of [
+ {...datedRow,status:'DRAFT'},
+ {...datedRow,content_key:datedRow.content_key.replace(event.startsAt.slice(0,4),'2099')},
+ {...datedRow,facts:{planetaryEvent:{event:{...event,endsAt:new Date(Date.parse(event.endsAt)+86400000).toISOString()}}}},
+ {...datedRow,sections:{planetaryHoroscopes:{...datedReadings,passages:datedReadings.passages.map((p,i)=>i===0?{...p,house:99}:p)}}}
+])assert.equal(planetaryHoroscopeReading(datedPosition,'gemini',event.referenceInstant,[row],[invalid] as any).body,readings[2].body,'An invalid/private/other-year/other-visit dated set cannot hide the existing published write-up.');
 installContentPublications([{...publication,state:'retired',revision:2}]);
 assert.equal(planetaryHoroscopeReading(position,'gemini',edition.transitStartInstant,[row]).body,fallback,'Retirement removes the published reading.');
 console.log('PASS: all twelve published sign readings and exact periods reach planetary readers; private, ended, stale and retired sources do not replace evergreen fallback.');
