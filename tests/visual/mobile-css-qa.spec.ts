@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import { bundledPublications } from '../helpers/bundled-publications';
 import { readerResponse } from '../helpers/reader-response';
 import { createRequire } from 'node:module';
+import { glyphPaintContrast } from '../helpers/glyph-paint-contrast.mjs';
 
 const require = createRequire(import.meta.url);
 const { PNG } = require(require.resolve('playwright-core/package.json').replace('package.json', 'lib/utilsBundle.js'));
@@ -113,14 +114,35 @@ for (const theme of ['light', 'dark']) for (const width of [320, 390, 768, 1440]
     await page.evaluate(() => document.fonts.ready);
     await page.screenshot({ path: info.outputPath('transit-wheel.png') });
     const expectPaintedGlyphs = async (dark: boolean) => {
-      for (const glyph of await images.all()) {
-        const png = PNG.sync.read(await glyph.screenshot());
-        let contrasting = 0;
-        for (let i = 0; i < png.data.length; i += 4) {
-          const lightness = (png.data[i] + png.data[i + 1] + png.data[i + 2]) / 3;
-          if (dark ? lightness > 150 : lightness < 180) contrasting++;
+      for (const [index, glyph] of (await images.all()).entries()) {
+        const ink = await glyph.evaluate(element => {
+          const flood = element.closest('.wheel-planet-glyph')!.querySelector('feFlood')!;
+          const canvas = document.createElement('canvas'); canvas.width = canvas.height = 1;
+          const context = canvas.getContext('2d')!;
+          context.fillStyle = getComputedStyle(flood).floodColor;
+          context.fillRect(0, 0, 1, 1);
+          const rgba = [...context.getImageData(0, 0, 1, 1).data];
+          let opacity = Number(getComputedStyle(flood).floodOpacity);
+          for (let node: Element | null = element; node; node = node.parentElement) opacity *= Number(getComputedStyle(node).opacity);
+          return [rgba[0], rgba[1], rgba[2], rgba[3] / 255 * opacity];
+        });
+        const opacity = await glyph.evaluate(element => ({ value: (element as SVGElement).style.getPropertyValue('opacity'),
+          priority: (element as SVGElement).style.getPropertyPriority('opacity') }));
+        let blank;
+        try {
+          await glyph.evaluate(element => (element as SVGElement).style.setProperty('opacity', '0', 'important'));
+          blank = PNG.sync.read(await glyph.screenshot({ scale: 'css' }));
+        } finally {
+          await glyph.evaluate((element, prior) => prior.value
+            ? (element as SVGElement).style.setProperty('opacity', prior.value, prior.priority)
+            : (element as SVGElement).style.removeProperty('opacity'), opacity);
         }
-        expect(contrasting, 'The actual painted glyph must contrast with its wheel, including in WebKit').toBeGreaterThan(1);
+        const painted = PNG.sync.read(await glyph.screenshot({ scale: 'css' }));
+        const metrics = glyphPaintContrast(painted, blank, ink);
+        // WCAG 1.4.11 evaluates authored colors rather than antialiased edge
+        // brightness: https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast.html
+        expect(metrics.inkContrast, `Glyph ${index} authored ink against its ${dark ? 'dark' : 'light'} wheel`).toBeGreaterThanOrEqual(3);
+        expect(metrics.paintedArea, `Glyph ${index} must actually paint more than one full pixel of its intended ink`).toBeGreaterThan(1);
       }
     };
     await expectPaintedGlyphs(theme === 'dark');

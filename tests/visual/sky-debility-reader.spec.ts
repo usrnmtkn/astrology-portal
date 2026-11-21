@@ -4,6 +4,7 @@ import { expectEffortCardSpacing } from "./sky-debility-layout";
 import { readerResponse } from "../helpers/reader-response";
 import { bundledPublications } from "../helpers/bundled-publications";
 import { skyDebilityInterpretationSlots } from "../../apps/web/src/content/skyDebilityIdentity.mjs";
+import { recoverySnapshot } from "../helpers/recovery-snapshot.mjs";
 
 // The paired configuration serves Studio at 4297 and the reader at 4298.
 test.use({ baseURL: "http://127.0.0.1:4298" });
@@ -32,7 +33,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) test("pu
     row_updated_at: publishedVersion, updated_at: publishedVersion
   }] : [];
   await page.route("**/content-studio-last-known-good.json", route => route.fulfill({
-    json: { schema: "content-studio-last-known-good-v2", rowCount: rows.length, rows, publications: publications() }
+    json: recoverySnapshot(rows, publications())
   }));
   await page.route("**/api/content-reader", route => route.fulfill({ json: readerResponse(rows, publications()) }));
   await page.route("**/api/calendar?**", route => route.fulfill({ json: { ok: true, calendar: { days: [] } } }));
@@ -89,7 +90,7 @@ for (const fixture of [
     source_snapshot: {contentSystem: "cms-surface-override", contentType: "mustache-template", allowedSlots: skyDebilityInterpretationSlots},
     body: `Synthetic complete opening.\n\n${fixture.template}\n\nSynthetic complete ending.`};
   const publications = [{content_key: row.content_key, state: "live", revision: 1, row_id: row.id, row_updated_at: row.updated_at, updated_at: row.updated_at}];
-  await page.route("**/content-studio-last-known-good.json", route => route.fulfill({json: {schema: "content-studio-last-known-good-v2", rowCount: 1, rows: [row], publications}}));
+  await page.route("**/content-studio-last-known-good.json", route => route.fulfill({json: recoverySnapshot([row], publications)}));
   await page.route("**/api/content-reader", route => route.fulfill({json: readerResponse([row], publications)}));
   await page.route("**/api/calendar?**", route => route.fulfill({json: {ok: true, calendar: {days: []}}}));
   await page.goto(`/?date=${fixture.date}#sky`);
@@ -159,10 +160,8 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) test(`co
     body: "September fixture opening stays complete.\n\n{planetList}.\n\nSeptember fixture ending stays complete." };
   let rows = [october, september];
   let revision = 1;
-  await page.route("**/content-studio-last-known-good.json", route => route.fulfill({ json: {
-    schema: "content-studio-last-known-good-v2", rowCount: rows.length, rows,
-    publications: [october, september].map(row => ({ content_key: row.content_key, state: "live", revision, row_id: row.id, row_updated_at: row.updated_at, updated_at: row.updated_at }))
-  } }));
+  await page.route("**/content-studio-last-known-good.json", route => route.fulfill({ json: recoverySnapshot(rows,
+    [october, september].map(row => ({ content_key: row.content_key, state: "live", revision, row_id: row.id, row_updated_at: row.updated_at, updated_at: row.updated_at }))) }));
   await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse(rows, [october, september].map(row => ({ content_key: row.content_key, state: 'live', revision, row_id: row.id, row_updated_at: row.updated_at, updated_at: row.updated_at }))) }));
   await page.route("**/api/calendar?**", route => route.fulfill({ json: { ok: true, calendar: { days: [] } } }));
   const card = page.locator(".sky-debility-ledger:visible").first();

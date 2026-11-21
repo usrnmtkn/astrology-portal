@@ -174,7 +174,9 @@ jobs:
       - name: Audit form typography
         run: npm run qa:form-typography
       - name: Verify Content Studio link routing
-        run: node --experimental-strip-types scripts/test-content-studio-link-routing.mjs
+        run: node --import tsx scripts/test-content-studio-link-routing.mjs
+      - name: Verify glyph paint and contrast measurements
+        run: node scripts/test-glyph-paint-contrast.mjs
       - name: Verify Content Studio editor UX
         run: node scripts/test-admin-content-studio-usability.mjs
       - name: Verify Content Studio server module startup
