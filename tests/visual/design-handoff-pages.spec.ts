@@ -1411,7 +1411,8 @@ for (const width of [320,390,768,1440]) test(`Overflow theme control persists an
       return {navRight:nav.right,profileX:profile.x,profileRight:profile.right,menuX:menu.x,profileY:profile.y,menuY:menu.y,navY:nav.y,profileSize:profile.width,menuSize:menu.width,visible:profile.x>=0&&menu.right<=innerWidth};
     });
     expect(geometry.navRight).toBeLessThan(geometry.profileX);expect(geometry.profileRight).toBeLessThan(geometry.menuX);expect(geometry.profileY).toBe(geometry.menuY);expect(geometry.profileY).toBe(geometry.navY);expect(geometry.profileSize).toBe(geometry.menuSize);expect(geometry.profileSize).toBe(width<=720?48:56);expect(geometry.visible).toBe(true);
-    await expectReadableTheme(page,readable);
+    // Theme changes animate control colours; measure the settled light state too.
+    await expect(async()=>await expectReadableTheme(page,readable)).toPass({timeout:2000});
     await selectMenuTheme(page,'dark');
     await expect.poll(()=>page.evaluate(()=>localStorage.getItem('tldrastro:theme'))).toBe('dark');
     await expect(async()=>await expectReadableTheme(page,readable)).toPass({timeout:2000});
