@@ -450,7 +450,11 @@ export function SkyDetailArticle({
     heading: isLegacySkyArticleScaffoldHeading(section.heading) ? "" : section.heading,
     body: typeof section.body === "string" ? cleanGeneratedSectionBody(section.body) : section.body
   })).filter((section) => typeof section.body !== "string" || isReaderFacingCopy(section.body));
-  const generatedSections = dedupeArticleSectionHeadings(rawGeneratedSections, detail.title);
+  // Separate archived passes can select different complete approved readings.
+  // Each reading retains its aspect label and dated navigation link.
+  const generatedSections = dedupeArticleSectionHeadings(rawGeneratedSections, detail.title)
+    .map((section, index) => section.role === "aspect" && detail.routePath?.startsWith("sky/archive/")
+      ? rawGeneratedSections[index] : section);
   const contentSections = generatedSections.filter((section) => section.role !== "aspect");
   const aspectSections = generatedSections
     .filter((section) => section.role === "aspect")

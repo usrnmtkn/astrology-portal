@@ -58,6 +58,8 @@ try {
     label: "Auckland, New Zealand", latitude: -36.8485, longitude: 174.7633, timeZone: "Pacific/Auckland"
   } };
   const localKeys = skySnapshotAspectContentKeys(localDayFacts);
+  assert.ok(localKeys.includes('sky-card/lilith/sagittarius/square/sun/virgo'), 'Sky must request the same sign publication as Calendar.');
+  assert.ok(localKeys.includes('sky-card/sun/virgo/square/lilith/sagittarius'), 'A publication saved in reversed planet order must also hydrate.');
   assert.ok(localKeys.some(key => key.includes("2026-11-05")), "Dated Sky copy requests follow the selected city's local day.");
   assert.ok(!localKeys.some(key => key.includes("2026-11-04")), "The UTC day cannot select a different dated passage.");
   const key = "sky.aspect.sun.square.lilith";

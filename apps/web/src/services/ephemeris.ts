@@ -1,4 +1,4 @@
-import type { LocationInput, PlanetPosition, SkySnapshot, SolarDaylight } from "../types.js";
+import type { LocationInput, PlanetPosition, SkySnapshot, SolarDaylight, SkyPlacementAspectEvent } from "../types.js";
 import { skyLunationAspectKey } from '../../../../src/shared/skyLunationAspectIdentity.js';
 import { remainingSkyMinutes } from "./skyClock.js";
 import { SOLAR_HORIZON_VERSION } from "../../../../src/shared/solarHorizon.js";
@@ -3622,7 +3622,7 @@ export type SkyPlacementTransitFacts = {
     entryDate: string;
     exitDate: string;
   } | null;
-  rankedEventsDuringTransit: Array<{
+  rankedEventsDuringTransit: Array<SkyPlacementAspectEvent & {
     id: string;
     eventType: "exact-aspect";
     planet: string;
@@ -3817,6 +3817,10 @@ function rankPlacementEvents(events: LunarCalendarEvent[], planet: string) {
       aspect: event.aspect || "",
       occursAt: event.startsAt,
       dateKey: event.dateKey,
+      fromSign: event.planets?.[0] === planet ? event.fromSign : event.toSign,
+      toSign: event.planets?.[0] === planet ? event.toSign : event.fromSign,
+      fromMotion: event.planets?.[0] === planet ? event.fromMotion : event.toMotion,
+      toMotion: event.planets?.[0] === planet ? event.toMotion : event.fromMotion,
       rank: index + 1
     }));
 }
