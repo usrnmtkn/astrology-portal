@@ -1,8 +1,8 @@
-import { isContentRetired, contentPublicationRecords, installContentPublications, mergeContentPublications, publicationAllowsContent } from "../content/contentPublicationState";
+import { isContentRetired, contentPublicationRecords, installContentPublications, mergeContentPublications, publicationAllowsContent, validContentPublication, publicationTimestamp, type ContentPublication } from "../content/contentPublicationState";
 import { updateLastKnownGoodFallbackArchitectureV3Bundle, loadFallbackArchitectureV3BundledCoreManifest, loadFallbackArchitectureV3BundledSkyPlacementManifest } from "../content/fallbackArchitectureV3Runtime";
 import { packageFallbackArchitectureV3CoreRows } from "./fallbackArchitectureV3CorePackaging";
 import type { GeneratedContentRow } from "./generatedContent";
-import { recoverySnapshotUrl, validateRecoverySnapshot } from "../content/contentStudioRecovery.mjs";
+import { recoverySnapshotUrl } from "../content/contentStudioRecovery.mjs";
 
 export async function installOfflineContentSnapshot(rows: GeneratedContentRow[], publications: unknown[]) {
   // Reuse the shipped partitions instead of downloading a duplicate full index.
@@ -40,7 +40,21 @@ export async function loadOfflineContentRows(): Promise<GeneratedContentRow[]> {
           try {
             const response = await fetch(url, { cache: "no-cache", signal: AbortSignal.timeout(url === recoverySnapshotUrl ? 3000 : 8000) });
             if (!response.ok) continue;
-            const snapshot = validateRecoverySnapshot(await response.json());
+            const snapshot = await response.json();
+            if (snapshot?.schema !== "content-studio-last-known-good-v2" || typeof snapshot.sourceRevision !== "string"
+              || Object.keys(snapshot).length !== 5 || !Array.isArray(snapshot.rows) || snapshot.rowCount < 100
+              || snapshot.rowCount !== snapshot.rows.length || !Array.isArray(snapshot.publications)
+              || !snapshot.publications.every(validContentPublication)) continue;
+            const publications = new Map<string, ContentPublication>();
+            mergeContentPublications(publications, snapshot.publications);
+            if (publications.size !== snapshot.publications.length || !publications.has("__content-publication-ledger/v1")
+              || new Set(snapshot.rows.map((row: GeneratedContentRow) => row.content_key)).size !== snapshot.rows.length
+              || !snapshot.rows.every((row: GeneratedContentRow) => {
+                const record = publications.get(row.content_key);
+                return row.status === "LIVE" && row.lane === "serving" && row.review_state == null && row.target_date == null
+                  && record?.state === "live" && record.row_id === row.id && Boolean(record.row_updated_at)
+                  && publicationTimestamp(record.row_updated_at!) === publicationTimestamp(row.updated_at);
+              })) continue;
             await installOfflineContentSnapshot(snapshot.rows, snapshot.publications);
             return snapshot.rows as GeneratedContentRow[];
           } catch { /* A failed recovery host must not disable the packaged copy. */ }

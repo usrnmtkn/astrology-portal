@@ -5,8 +5,8 @@ import { mkdtempSync, mkdirSync, readFileSync, writeFileSync, rmSync } from 'nod
 import { execFileSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { validateRecoverySnapshot, recoveryDeploymentConfig } from '../apps/web/src/content/contentStudioRecovery.mjs';
-import { readPublicationSnapshot, publicationSnapshotIdentity, assertStablePublicationSnapshot } from './lib/content-studio-snapshot.mjs';
+import { recoveryDeploymentConfig } from '../apps/web/src/content/contentStudioRecovery.mjs';
+import { readPublicationSnapshot, publicationSnapshotIdentity, assertStablePublicationSnapshot, validateRecoverySnapshot } from './lib/content-studio-snapshot.mjs';
 import { publishContentStudioSnapshot, snapshotBranch, snapshotPath } from './publish-content-studio-snapshot.mjs';
 
 const ledger = { content_key: '__content-publication-ledger/v1', state: 'live', revision: 1, updated_at: '2026-01-01T00:00:00Z' };

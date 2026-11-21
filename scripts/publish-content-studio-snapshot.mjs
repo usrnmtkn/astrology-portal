@@ -5,7 +5,9 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { recoveryBranch, recoverySnapshotPath, recoveryDeploymentConfig, validateRecoverySnapshot } from '../apps/web/src/content/contentStudioRecovery.mjs';
+import { recoveryBranch, recoverySnapshotPath, recoveryDeploymentConfig } from '../apps/web/src/content/contentStudioRecovery.mjs';
+
+import { validateRecoverySnapshot } from './lib/content-studio-snapshot.mjs';
 
 export const snapshotBranch = recoveryBranch;
 export const snapshotPath = recoverySnapshotPath;
