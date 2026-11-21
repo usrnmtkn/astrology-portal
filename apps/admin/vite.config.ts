@@ -200,7 +200,14 @@ export default defineConfig(({ command, mode }) => {
               || /apps\/admin\/src\/moonHoroscopeDraft\.ts$/u.test(id)
               || /apps\/web\/src\/content\/(?:editorialCopyBoundary\.mjs|bondEffectIdentity\.ts)$/u.test(id)) return "admin-source-drafts";
             if (id.endsWith("/apps/web/src/services/generatedContentKeys.ts")) return "admin-source-drafts";
+            // Deferred source assembly shares one transport, rather than several small chunks.
+            if (/apps\/admin\/src\/(?:skyPlacementAssembly|skyIngressPreview)\.ts$/u.test(id)
+              || id.endsWith('/apps/web/src/content/fallbackArchitectureV3/resolver/skyIngressComposition.mjs')
+              || id.endsWith('/apps/web/src/services/skySelection.ts')) return "admin-source-drafts";
+            if (id.endsWith('/apps/admin/src/skySummaryComposition.ts')) return "admin-sky-summary-workspace";
             // Calendar assembly and its UI are used in the same deferred workspace.
+            if (id.endsWith('/apps/admin/src/calendarTemplateDefinitions.ts')
+              || /src\/shared\/features\/calendar\/(?:calendarOverviewResolve|moonContinuationSummaries)\.ts$/u.test(id)) return "admin-calendar-workspace";
             if (/apps\/admin\/src\/calendarPassageWorkspace\.ts$/u.test(id)) return "admin-calendar-workspace";
             // Required edition helpers share one leaf chunk. The editor keeps
             // its source entry and optional writing/recovery panels stay separate.
@@ -248,8 +255,9 @@ export default defineConfig(({ command, mode }) => {
         ecma: 2020,
         compress: {
           passes: 5,
-          // Let Terser simplify the now-shared deferred helpers across call sites.
-          inline: 3
+          // Retaining shared functions compresses better across the Studio chunks.
+          inline: 1,
+          reduce_funcs: false
         },
         format: {
           comments: false,
