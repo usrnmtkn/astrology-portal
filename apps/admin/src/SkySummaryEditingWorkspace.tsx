@@ -8,15 +8,15 @@ import { sunSeasonRuler } from '../../web/src/content/skySunSeason';
 import { pairedSummarySign } from '../../web/src/content/skySummaryGeometry';
 import { publishedSkySummaryContent, type SummaryCompositionRow } from './skySummaryComposition';
 
-export type SummaryEditingState = { key: string; body: string; id?: string | null; status: string; dirty: boolean };
+export type SummaryEditingState = { contentKey: string; body: string; id?: string | null; status: string };
 export type SummaryEditingActions = {
   editing: SummaryEditingState | null;
   active: boolean;
+  dirty: boolean;
   error: string;
   onOpen: (field: SkySummaryField) => Promise<boolean>;
   onChange: (body: string) => void;
-  onSave: () => Promise<boolean>;
-  onPublish: () => Promise<boolean>;
+  onSave: (status: 'DRAFT' | 'LIVE') => Promise<unknown>;
 };
 const sections = [
   { id: 'opening', label: 'Opening', accepts: (f: SkySummaryField) => /\/assembly\/(opening|openingSameSign|sunOnly|moonOnly)$/u.test(f.key) },
@@ -54,7 +54,7 @@ export default function SkySummaryEditingWorkspace({ rows, busy, focusSunSummari
   const [voidRemaining, setVoidRemaining] = useState('');
   const [lunation, setLunation] = useState('none');
   useEffect(() => { onExampleFactsChange?.({ sun, moon, moonKind }); }, [sun, moon, moonKind, onExampleFactsChange]);
-  const current = actions.editing?.key === selected.key ? actions.editing : null;
+  const current = actions.active && actions.editing?.contentKey === selected.key ? actions.editing : null;
   const errors = current ? skySummaryTemplateErrors(selected.key, current.body) : [];
   const ready = Boolean(current && actions.active && !busy);
   async function open(field: SkySummaryField, nextSection = section) {
@@ -137,16 +137,16 @@ export default function SkySummaryEditingWorkspace({ rows, busy, focusSunSummari
           </details>}
           {errors.length > 0 && <div role="alert">{errors.map(error => <p key={error}>{error}</p>)}</div>}
           <div className="admin-summary-save-actions studio-inline">
-            <StudioButton className="admin-primary-button" disabled={!ready || errors.length > 0 || Boolean(current.id && !current.dirty)} onClick={() => void actions.onSave()}>Save draft</StudioButton>
-            <StudioButton disabled={!ready || errors.length > 0 || !current.id || current.dirty || current.status === 'LIVE'}
+            <StudioButton className="admin-primary-button" disabled={!ready || errors.length > 0 || Boolean(current.id && !actions.dirty)} onClick={() => void actions.onSave('DRAFT')}>Save draft</StudioButton>
+            <StudioButton disabled={!ready || errors.length > 0 || !current.id || actions.dirty || current.status === 'LIVE'}
               onClick={() => { setReview(true); setView('draft'); }}>Review &amp; publish</StudioButton>
           </div>
-          <p role="status">{busy ? 'Working…' : current.dirty ? 'Unsaved changes' : current.status === 'LIVE' ? 'Published wording' : current.id ? 'Draft saved · not published' : 'Built-in wording · no saved draft'}</p>
+          <p role="status">{busy ? 'Working…' : actions.dirty ? 'Unsaved changes' : current.status === 'LIVE' ? 'Published wording' : current.id ? 'Draft saved · not published' : 'Built-in wording · no saved draft'}</p>
           {review && <section className="admin-summary-publication-review studio-stack" data-gap="sm" aria-label="Review summary publication">
             <h4>Review shared wording</h4>
             <p>Publishing replaces this shared wording on every matching date. Check the Draft preview and compare Published before continuing.</p>
             <p>{sourceScope(selected)}</p>
-            <StudioButton disabled={!ready || current.dirty || errors.length > 0} onClick={() => void actions.onPublish().then(saved => { if (saved) { setReview(false); setView('published'); } })}>Publish shared wording</StudioButton>
+            <StudioButton disabled={!ready || actions.dirty || errors.length > 0} onClick={() => void actions.onSave('LIVE').then(saved => { if (saved) { setReview(false); setView('published'); } })}>Publish shared wording</StudioButton>
             <StudioButton disabled={busy} onClick={() => setReview(false)}>Back to editing</StudioButton>
           </section>}
         </> : <div role="status">{loadFailed ? 'The wording could not load. Your existing work is kept.' : 'Loading wording…'}
@@ -168,7 +168,7 @@ export default function SkySummaryEditingWorkspace({ rows, busy, focusSunSummari
         {view === 'draft' && errors.length ? null : <div className="admin-template-reader-copy" aria-label="Summary preview passage">
           {skySummaryParagraphs(parts).map((paragraph, i) => <p key={i}>{paragraph.map(part => part.text).join('')}</p>)}
         </div>}
-        {view === 'draft' && current?.dirty && unchanged && !errors.length && <p className="admin-field-hint">This wording may apply to a different example. Change the example facts to check that case.</p>}
+        {view === 'draft' && current && actions.dirty && unchanged && !errors.length && <p className="admin-field-hint">This wording may apply to a different example. Change the example facts to check that case.</p>}
         <details className="admin-workspace-details"><AdminDisclosureSummary>Change example facts</AdminDisclosureSummary>
           <div className="admin-summary-example-fields studio-grid">
             <label className="studio-stack" data-gap="sm"><span>Sun sign</span><AdminSelect aria-label="Preview Sun sign" value={sun} onChange={e => { setSun(e.target.value); if (moonKind !== 'regular') setMoon(pairedSummarySign(e.target.value, moonKind)); }}>{skySummarySigns.map(s => <option key={s}>{s}</option>)}</AdminSelect></label>

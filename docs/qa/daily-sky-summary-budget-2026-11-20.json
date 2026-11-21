@@ -1,0 +1,25 @@
+{
+  "baseRevision": "c16f62f34fbe9dd85a016c7f01750bf4a6b81f9d",
+  "budgetPolicy": "Both budget JSON files remain byte-identical to current accepted main. No cap increases.",
+  "measurement": "Studio diagnostic build with the canonical releaseBuildEnvironment, CI=true, ARM64 Node22.20.0 and unchanged locked dependencies. Full canonical release check and browser results are retained separately by the release worker.",
+  "studio": {
+    "measured": {
+      "entryJavaScriptRawBytes": 843575,
+      "entryJavaScriptGzipBytes": 245782,
+      "totalJavaScriptGzipBytes": 935308
+    },
+    "limits": {
+      "entryJavaScriptRawBytes": 844786,
+      "entryJavaScriptGzipBytes": 245898,
+      "totalJavaScriptGzipBytes": 936295
+    }
+  },
+  "changes": [
+    "Coalesce the new summary editor and related existing source modules within the existing lazy Sky summary workspace.",
+    "Move summary-source loading and the unchanged draft factory behind their existing feature boundary.",
+    "Keep the old composition-map function available to contracts without including its namespace in the app draft-factory import.",
+    "Use current wording for all 24 historical import keys; preserve the canonical artifact and provenance, with coverage guarded by the composition contract."
+  ],
+  "preservation": "Editing layout, source/version guards, saved drafts, source artifacts, writer instructions, reader content and publication state unchanged. No paid generation or live storage writes.",
+  "integration": "Bounded source handoff for the coordinated release owner. Required exact-head API, browser, privacy and main-production acceptance remain mandatory on the integrated candidate."
+}

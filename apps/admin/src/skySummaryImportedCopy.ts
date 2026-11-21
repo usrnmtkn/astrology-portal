@@ -9,6 +9,6 @@ export function importedSkySummary(key: string): string | undefined {
     const current = (clauses[body] as Record<string, string>)[sign];
     if (current) return current;
   }
-  return supplied.rows.find(row => row.key === key)?.body.replace(/\.$/u, "");
+  return undefined;
 }
 export const skySummaryImportProvenance = supplied.provenance;

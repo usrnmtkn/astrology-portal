@@ -30,14 +30,6 @@
       "files": 82
     }
   },
-  "allocation": {
-    "web": {
-      "totalJavaScriptGzipBytes": 2048
-    },
-    "admin": {
-      "totalJavaScriptGzipBytes": 3072
-    }
-  },
   "localVerification": {
     "summaryBrowserCases": 38,
     "summaryBrowserResult": "passed",
@@ -47,12 +39,21 @@
   },
   "preservedFailures": [
     "Initial38-case run:26passed,1failed,11unrun because a legacy reload test did not reopen the collapsed advanced panel; interaction corrected without weakening its saved-version assertions.",
-    "Original candidate exceeded Web aggregate JavaScript and memory CSS ceilings. Duplicate preview removed; canonical Studio styles reused. Later candidate exceeded unchanged aggregate JavaScript ceilings; the measured requested feature cost is allocated here."
+    "Original candidate exceeded Web aggregate JavaScript and memory CSS ceilings. Duplicate preview removed; canonical Studio styles reused. Later candidate exceeded unchanged aggregate JavaScript ceilings. Proposed aggregate allocations are superseded and are not applied to the current candidate."
   ],
   "requiredHostedGates": [
     "content-studio-api",
     "browser-release-gate",
     "project-privacy"
   ],
-  "scope": "Requested Daily Sky Summary editor rebuild only. Saved drafts, writer instructions, approved prose, calculation facts and reader publication state unchanged. No paid generation or live content writes."
+  "scope": "Requested Daily Sky Summary editor rebuild only. Saved drafts, writer instructions, approved prose, calculation facts and reader publication state unchanged. No paid generation or live content writes.",
+  "recordStatus": "Historical preflight measurements. The proposed aggregate cap increases were withdrawn on 2026-11-20; current main budget files remain byte-identical. This older noncanonical profile does not establish compliance for the current release.",
+  "supersededAllocation": {
+    "web": {
+      "totalJavaScriptGzipBytes": 2048
+    },
+    "admin": {
+      "totalJavaScriptGzipBytes": 3072
+    }
+  }
 }

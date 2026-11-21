@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import supplied from "../apps/admin/src/skySummaryImportedCopy.json";
+import clauses from "../apps/web/src/content/skyDailySummaryClauses.json";
 import { importedSkySummary } from "../apps/admin/src/skySummaryImportedCopy.ts";
 import assert from "node:assert/strict";
 import { buildSkySummaryComposition } from "../apps/admin/src/skySummaryComposition.ts";
@@ -59,3 +60,13 @@ assert.equal(publishedIngressTldr([{ ...ingress, review_state: "EDITORIAL_REVIEW
 assert.equal(publishedIngressTldr([ingress], "Mercury", "Virgo"), undefined);
 assert.equal(publishedIngressTldr([{ ...ingress, content_key: "sky.ingress.mercury.libra.2026-09-10" }], "Mercury", "Libra"), undefined);
 assert.ok(publishedIngressTldr([{ ...ingress, content_key: "sky.ingress.north_node.libra" }], "North Node", "Libra"));
+
+// Every historical supplied key resolves to current approved wording. Keep the
+// canonical artifact intact without shipping its unused rows in the editor.
+for (const row of supplied.rows) {
+  const [, , family, sign, ...rest] = row.key.split("/");
+  assert.equal(rest.length, 0);
+  const current = (clauses as Record<string, Record<string, string>>)[family]?.[sign];
+  assert.ok(current, `Current wording must cover supplied key ${row.key}`);
+  assert.equal(importedSkySummary(row.key), current);
+}

@@ -6892,27 +6892,9 @@ export function GeneratedContentAdminDashboard() {
     setEditorSaveError("");
     setIsLoading(true);
     try {
-      const { skySummaryCandidateReceipt, loadSkySummarySourceBank } = await import("./skySummarySourceBank");
-      const suppliedBank = initialBody !== undefined && /^cms\/sky-daily-summary\/(sun|moon)\//u.test(field.key)
-        ? await loadSkySummarySourceBank() : undefined;
-      const candidateReceipt = suppliedBank && initialBody !== undefined ? skySummaryCandidateReceipt(field.key, initialBody, suppliedBank) : undefined;
-      const result = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
-        studioInventoryDocumentPath(field.key), secret);
-      if (!Array.isArray(result.rows)) throw new Error("Could not load the saved summary wording. Please try again.");
-      const moonSource = /^cms\/sky-daily-summary\/moon\/[^/]+\/[^/]+$/u.test(field.key)
-        ? (await (await import("./skyMoonSummarySources")).loadSkyMoonSummarySources()).rows.find(row => row.key === field.key) : undefined;
-      let existing = result.rows.find(row => row.content_key === field.key);
-      if (!existing && field.key.startsWith("cms/sky-daily-summary/ingress/")) {
-        const { ingressTldrSourceKeys, publishedIngressTldr } = await import("./skyIngressTldrSources");
-        const [planet, sign] = field.label.split(" enters ");
-        const sources = await Promise.all(ingressTldrSourceKeys(planet, sign).map(async key => {
-          const response = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
-            studioInventoryDocumentPath(key), secret);
-          if (!Array.isArray(response.rows)) throw new Error("Could not check the existing ingress TLDR. Please try again.");
-          return response.rows;
-        }));
-        existing = publishedIngressTldr(sources.flat(), planet, sign);
-      }
+      const { loadSkySummaryEditingSource } = await import("./skySummaryEditingSource");
+      const { existing, candidateReceipt, moonSource } = await loadSkySummaryEditingSource(field, initialBody,
+        key => adminJsonRequest<{ rows: AdminGeneratedContentRow[] }>(studioInventoryDocumentPath(key), secret));
       if (requestId !== sourceOpenRequestRef.current || window.location.hash !== originatingHash) return false;
       if (existing) {
         const current = { ...existing, body: currentSkySummaryWording(existing.content_key, existing.body ?? ""),
@@ -6924,7 +6906,7 @@ export function GeneratedContentAdminDashboard() {
           sourceSnapshot: { ...previous.sourceSnapshot, allowedSlots: field.allowedSlots, ...(candidateReceipt ? { suppliedBank: candidateReceipt } : {}) }
         } : previous);
       } else {
-        const { newSkySummaryDraft } = await import("./skySummaryComposition");
+        const { newSkySummaryDraft } = await import("./skySummaryDraft");
         const nextDraft = newSkySummaryDraft(field,
           field.key.startsWith(SKY_DEBILITY_INTERPRETATION_PREFIX) ? "" : field.label,
           initialBody, candidateReceipt, moonSource);
@@ -7932,11 +7914,10 @@ export function GeneratedContentAdminDashboard() {
                 <Suspense fallback={<PageLoading message="Loading Sky Write-ups…" />}>
                   <SkySummaryWorkspace daily={skyWriteupWorkspaceView === "daily-summary"} rows={rows} secret={secret} onOpenDraft={row => void openRow(row as AdminGeneratedContentRow)} onEdit={(field, initialBody) => void openSkySummaryField(field, initialBody)} busy={isLoading} focusSunSummaries={focusSunSummaries}
                     editingActions={{ active: skySummaryInlineEditing, error: editorSaveError,
-                      editing: skySummaryInlineEditing && draft?.contentKey.startsWith('cms/sky-daily-summary/') ? { key: draft.contentKey, body: draft.body, id: draft.id, status: draft.status, dirty: hasChangedSavedDraft() } : null,
+                      editing: draft, dirty: hasChangedSavedDraft(),
                       onOpen: field => openSkySummaryField(field, undefined, true),
                       onChange: body => setDraft(current => current ? invalidateContentStudioReview({ ...current, body }) : current),
-                      onSave: async () => Boolean(await saveDraft('DRAFT')),
-                      onPublish: async () => Boolean(await saveDraft('LIVE'))
+                      onSave: saveDraft
                     }} />
                 </Suspense>
                 {(skyWriteupWorkspaceView !== 'daily-summary' || !skySummaryInlineEditing) && renderEditor()}
