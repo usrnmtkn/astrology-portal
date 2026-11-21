@@ -7220,12 +7220,16 @@ test("Live filters keep unknown status separate and retry after refresh", async 
 
 test("Natal Empty Houses opens exact sources and supports repeated edits and retirement", async ({ page }) => {
   const writes: Array<{method:string;payload:Record<string,unknown>}> = [];
+  const acknowledgeSaves: Array<() => void> = [];
   const key="fallback-hook/empty-house/base/1";
   const record=servingPackageRecords.get(key)!;
   const row={...generatedContentRows[0],id:"aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",content_key:key,headline:"Empty first house introduction",body:record.body_you,
     status:"LIVE",lane:"serving",review_state:null,target_date:null,provider:"tldrastro-fallback-architecture-v3",event_type:"fallback-hook",block_type:"fallback_hook",
     facts:{fallbackArchitectureV3:true},source_snapshot:{sourcePackage:"tldrastro-fallback-architecture-v3"},sections:{packageRecord:record}};
-  await seedAdminApi(page,{generatedRows:[row],onGeneratedContentWrite:write=>writes.push(write),compositionCatalog:[
+  await seedAdminApi(page,{generatedRows:[row],onGeneratedContentWrite:async write=>{
+    writes.push(write);
+    if (writes.length <= 2) await new Promise<void>(resolve => acknowledgeSaves.push(resolve));
+  },compositionCatalog:[
     {content_key:"fallback-hook/empty-house/rising-ruler/gemini/mercury/10",headline:"Gemini rising ruler in tenth house",role:"fallback_hook"},
     {content_key:"fallback-vocab/empty-house-ruler-jurisdiction/10",headline:"Tenth house jurisdiction",role:"vocabulary"}
   ]});
@@ -7245,12 +7249,19 @@ test("Natal Empty Houses opens exact sources and supports repeated edits and ret
   await manager.getByLabel("Selected composition source").selectOption(row.id);
   await manager.getByRole("button",{name:"Edit selected source"}).click();
   const editor=page.getByRole("dialog",{name:"Generated content editor"});
-  for(const text of ["QA empty house first edit.","QA empty house second edit."]) {
+  const edits = ["QA empty house first edit.","QA empty house second edit."];
+  for(const [index,text] of edits.entries()) {
     await editor.getByLabel("Reader phrase · You",{exact:true}).fill(text);
     await editor.getByRole("button",{name:/^Save(?: draft)?$/}).click();
+    await expect.poll(() => writes.length).toBe(index + 1);
+    await expect.poll(() => acknowledgeSaves.length).toBe(index + 1);
+    await expect(editor.locator(".admin-editor-save-state")).toHaveText("Saving…");
+    acknowledgeSaves[index]();
+    await expect(editor.locator(".admin-editor-save-state")).toHaveText(/^(?:All changes saved|Draft saved)$/);
     await expect(editor.getByRole("button",{name:/^Save(?: draft)?$/})).toBeDisabled();
   }
   expect(writes).toHaveLength(2);
+  expect(writes.map(write => write.payload.body)).toEqual(edits);
   await openEditorMoreActions(editor);
   await editor.getByRole("button",{name:"Retire everywhere",exact:true}).click();
   await openEditorMoreActions(editor);

@@ -1,0 +1,53 @@
+{
+  "schema": "synastry-voice-approval/v1",
+  "sourceId": "private:writing/synastry/approved-next-ten-20261023",
+  "sourceUri": "thread:01a15c03-cf10-71e3-b5e9-798c9f87bd3b",
+  "sourceDate": "2026-10-23",
+  "approvalToolCall": "call_1cde9e68fd9b4d94a73fc0c522236b91",
+  "exactOwnerAnswer": "Approve these ten for publication",
+  "ownerStatementSha256": "e256ee8e7aff6957a781d8328f0f68e26996564c81fa458da59fbca2305138ad",
+  "sourceSha256": "f04356cdf5062f081fc6b5f7edd18bc6e79b39f1d8dff8a4d9dbf271be9a1f4e",
+  "voiceDesignationStatementSha256": "23407ae138f36b266e815677de0dbaa242622aedc0f34ceb1a8b1992b3f81659",
+  "references": [
+    {
+      "caseId": "sun__mercury__soft__body_they",
+      "textSha256": "02dd978977bd0c942eb967cc63cfe26440442f07320ec54049d9f8a5cfee8a25"
+    },
+    {
+      "caseId": "sun__mercury__soft__body_you",
+      "textSha256": "13526169100c3a28a80bcefff8b28a2beea7624666ce041d728b6efe90e88e1a"
+    },
+    {
+      "caseId": "sun__mercury__hard__body_they",
+      "textSha256": "89828b3d5f6a99e25f8315b5bbe1568dc886d519b4354a7efcb2b917ac55325b"
+    },
+    {
+      "caseId": "sun__mercury__hard__body_you",
+      "textSha256": "a50c59511596cc46538c9b6c3ab55891042432c96bd5aff6c97285c58cca459d"
+    },
+    {
+      "caseId": "moon__jupiter__soft__body_they",
+      "textSha256": "fc888f185b45b0a8686d22cc8eae98e3e347be81b7420dddfc7bdb241a5d7b24"
+    },
+    {
+      "caseId": "moon__jupiter__soft__body_you",
+      "textSha256": "d76df340ad46566e2f4111bcd3ebff0563bb95e24267bc20f8cb9cfb0514bdbb"
+    },
+    {
+      "caseId": "moon__jupiter__hard__body_they",
+      "textSha256": "58ce560a7022ac862d8b0826788fdbf62be196628c7d72bad3c8dfeb11ed5d9b"
+    },
+    {
+      "caseId": "moon__jupiter__hard__body_you",
+      "textSha256": "37c63484781a3b48f9cfc7894e2f1d35cb870c3759f0757d12cf5e8c48dc1930"
+    },
+    {
+      "caseId": "mercury__mars__soft__body_they",
+      "textSha256": "c8696b7b6238a393a39915277631f82e7d541167f2feeb64a2d1dbb6f3fe49b1"
+    },
+    {
+      "caseId": "mercury__mars__soft__body_you",
+      "textSha256": "93e5ef9dab2ba3154579e3f4d4d55c45c9830fd9ef26e2d17c49ae9ee9c55922"
+    }
+  ]
+}
