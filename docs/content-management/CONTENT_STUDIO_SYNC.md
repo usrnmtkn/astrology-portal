@@ -54,8 +54,9 @@ source bytes are restored even if export, validation or delivery fails.
 
 The app tries the public GitHub recovery snapshot when it needs fallback rows,
 then the packaged static snapshot if GitHub times out, is unavailable or returns
-invalid data. Both pass the same public-field, lifecycle and exact publication
-identity checks before installation. Existing atomic row/ledger installation,
+invalid data. Full public-field projection is verified by the trusted publisher
+before delivery. Both recovery sources pass structure, lifecycle and exact
+publication identity checks before installation. Existing atomic row/ledger installation,
 newer-version precedence and retirement protections apply to both sources.
 The packaged copy remains available independently of GitHub; an offline client
 can only use previously available rows and known retirements until reconnecting.

@@ -10,4 +10,4 @@ export interface RecoverySnapshot {
   rows: GeneratedContentRow[];
   publications: unknown[];
 }
-export function validateRecoverySnapshot(snapshot: unknown): RecoverySnapshot;
+export function validateRecoverySnapshot(snapshot: unknown, projectRow?: (row: unknown) => GeneratedContentRow | null): RecoverySnapshot;

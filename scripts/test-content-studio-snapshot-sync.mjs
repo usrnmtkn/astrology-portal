@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import assert from 'node:assert/strict';
+import { projectReaderRow } from '../apps/web/src/content/readerRowProjection.mjs';
 import { mkdtempSync, mkdirSync, readFileSync, writeFileSync, rmSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
@@ -42,7 +43,7 @@ await assert.rejects(readPublicationSnapshot({ supabaseUrl: 'https://example.inv
 const source = process.cwd();
 const original = readFileSync(snapshotPath, 'utf8');
 const snapshot = JSON.parse(original);
-validateRecoverySnapshot(snapshot);
+validateRecoverySnapshot(snapshot, projectReaderRow);
 for (const mutate of [
   s => { s.rows[0].status = 'DRAFT'; },
   s => { s.rows[0].privateWriterPayload = 'must never escape'; },
@@ -54,7 +55,7 @@ for (const mutate of [
   s => { s.privateFeedback = 'must never escape'; }
 ]) {
   const invalid = structuredClone(snapshot); mutate(invalid);
-  assert.throws(() => validateRecoverySnapshot(invalid), /Invalid public recovery snapshot/u);
+  assert.throws(() => validateRecoverySnapshot(invalid, projectReaderRow), /Invalid public recovery snapshot/u);
 }
 const directory = mkdtempSync(path.join(tmpdir(), 'studio-recovery-contract-'));
 const git = args => execFileSync('git', args, { maxBuffer: 128 * 1024 * 1024, encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }).trim();

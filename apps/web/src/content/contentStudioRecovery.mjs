@@ -1,5 +1,3 @@
-import { projectReaderRow } from './readerRowProjection.mjs';
-
 export const recoveryBranch = 'data/content-studio-recovery';
 export const recoverySnapshotPath = 'apps/web/public/content-studio-last-known-good.json';
 export const recoverySnapshotUrl = `https://raw.githubusercontent.com/usrnmtkn/astrology-portal/refs/heads/${recoveryBranch}/${recoverySnapshotPath}`;
@@ -10,7 +8,7 @@ const same = (a, b) => a === b || Boolean(a && b && typeof a === 'object' && typ
   && Object.keys(a).length === Object.keys(b).length && Object.keys(a).every(key => Object.hasOwn(b, key) && same(a[key], b[key])));
 
 // A recovery copy may contain public reader fields and publication identities only.
-export function validateRecoverySnapshot(snapshot) {
+export function validateRecoverySnapshot(snapshot, projectRow = null) {
   const fail = () => { throw new Error('Invalid public recovery snapshot.'); };
   if (!snapshot || snapshot.schema !== 'content-studio-last-known-good-v2' || !Array.isArray(snapshot.rows)
     || snapshot.rowCount !== snapshot.rows.length || snapshot.rowCount < 100 || !Array.isArray(snapshot.publications)
@@ -29,7 +27,7 @@ export function validateRecoverySnapshot(snapshot) {
   for (const row of snapshot.rows) {
     const record = publications.get(row?.content_key);
     if (!row || row.status !== 'LIVE' || row.lane !== 'serving' || row.review_state != null || row.target_date != null
-      || !Number.isFinite(Date.parse(row.updated_at)) || keys.has(row.content_key) || !same(row, projectReaderRow(row))
+      || !Number.isFinite(Date.parse(row.updated_at)) || keys.has(row.content_key) || (projectRow && !same(row, projectRow(row)))
       || record?.state !== 'live' || record.row_id !== row.id || timestamp(record.row_updated_at) !== timestamp(row.updated_at)) fail();
     keys.add(row.content_key);
     if (row.updated_at > latest) latest = row.updated_at;

@@ -22,7 +22,7 @@ for (const recovery of ['available', 'unavailable', 'invalid']) test(`the export
       : route.fulfill({ contentType: 'application/json', body: JSON.stringify(recovery === 'invalid'
         ? { ...snapshot, privateWriterPayload: 'must be rejected' } : snapshot) });
   });
-  if (recovery === 'available') await context.route('**/content-studio-last-known-good.json', route => route.abort('failed'));
+  if (recovery === 'available') await context.route(/^http:\/\/127\.0\.0\.1:\d+\/content-studio-last-known-good\.json$/u, route => route.abort('failed'));
   // Live content is unavailable; recover through GitHub or the freshly built static snapshot.
   await context.route('**/api/content-reader', route => route.abort('failed'));
   await context.route('**/rest/v1/**', route => route.abort('failed'));

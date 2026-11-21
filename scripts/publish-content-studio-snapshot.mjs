@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { projectReaderRow } from '../apps/web/src/content/readerRowProjection.mjs';
 import { execFileSync } from 'node:child_process';
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -37,13 +38,13 @@ export function publishContentStudioSnapshot({ run = execute, env = process.env 
         throw new Error('Unexpected recovery branch scope or deployment configuration.');
       }
       previous = run('git', ['show', `${previousHead}:${snapshotPath}`]);
-      validateRecoverySnapshot(JSON.parse(previous));
+      validateRecoverySnapshot(JSON.parse(previous), projectReaderRow);
       writeFileSync(snapshotPath, `${previous}\n`);
     }
     const refresh = ['scripts/refresh-content-studio-last-known-good.mjs'];
     if (env.GITHUB_EVENT_NAME === 'schedule') refresh.push('--if-changed');
     run(process.execPath, refresh);
-    validateRecoverySnapshot(JSON.parse(readFileSync(snapshotPath, 'utf8')));
+    validateRecoverySnapshot(JSON.parse(readFileSync(snapshotPath, 'utf8')), projectReaderRow);
     run(process.execPath, ['scripts/test-content-studio-last-known-good.mjs']);
     run(process.execPath, ['scripts/test-content-studio-snapshot-sync.mjs']);
     const changed = run('git', ['diff', '--name-only']).split('\n').filter(Boolean);
