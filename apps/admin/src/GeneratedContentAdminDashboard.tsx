@@ -151,8 +151,9 @@ import {
   skyPlacementFrameTemplateKey,
   skyFallbackWorkspace
 } from "./skyFallbackWorkspace";
-import { articleAppDestination, isAstro101ContentRow, isSkyWriteupContentRow } from "./articleWorkspace";
+import { articleAppDestination, isAstro101ContentRow, isNatalInsightContentRow, isSkyWriteupContentRow } from "./articleWorkspace";
 import { skyArticleTemplateKey } from "./skyArticleTemplateKeys";
+import type { NatalChartWritingView } from "./NatalPlacementSourceFinder";
 import {
   ASTRO_101_KIND_LABELS,
   ASTRO_101_KINDS,
@@ -288,6 +289,8 @@ const ConnectionTransitStudio = lazy(() => import("./ConnectionTransitStudio"));
 const WheelTooltipsStudio = lazy(() => import("./WheelTooltipsStudio"));
 const WheelTooltipDraftPreview = lazy(() => import("./WheelTooltipDraftPreview"));
 const SkyPlacementAspectBridgeStudio = lazy(() => import('./SkyPlacementAspectBridgeStudio'));
+const NatalReadingAuthoring = lazy(() => import("./NatalReadingAuthoring").then(module => ({ default: module.NatalReadingAuthoring })));
+const PersonalizedReadingEditor = lazy(() => import("./PersonalizedReadingEditor").then(module => ({ default: module.PersonalizedReadingEditor })));
 const CompositeReviewCard = lazy(() => import("./CompositeReviewCard"));
 const StudioCsvTools = lazy(() => import('./StudioCsvTools'));
 const TransitNatalReaderPreview = lazy(() => import("./TransitNatalReaderPreview"));
@@ -1345,7 +1348,7 @@ function isPassiveReferenceAdminRow(row: AdminGeneratedContentRow) {
 }
 
 function isArticleLibraryRow(row: AdminGeneratedContentRow, includeArchived = false) {
-  return Boolean(articleLibraryKind(row)) && !isAstro101ContentRow(row)
+  return Boolean(articleLibraryKind(row)) && !isAstro101ContentRow(row) && !isNatalInsightContentRow(row)
     && ((includeArchived && row.status === "ARCHIVED") || !isRetiredAdminRow(row));
 }
 
@@ -2720,6 +2723,8 @@ function contentCategoryForRow(row: AdminGeneratedContentRow | AdminReviewRecord
   const surface = "content_key" in row ? row.surface : row.surface;
   const blockType = "content_key" in row ? row.block_type : row.blockType;
 
+  if (isNatalInsightContentRow({ content_key: contentKey })) return "Natal Chart";
+
   if (isCalendarAspectContentRow(row)) return "Calendar Aspects";
 
   if (
@@ -3201,6 +3206,8 @@ export function GeneratedContentAdminDashboard() {
     return unsubscribe;
   }, []);
   const [userRows, setUserRows] = useState<AdminUserGeneratedContentRow[]>([]);
+  const [editingUserRowId, setEditingUserRowId] = useState<string | null>(null);
+  const personalizedEditorState = useRef({ dirty: false, busy: false });
   const [facts, setFacts] = useState<AdminContentFact[]>([]);
   const [message, setMessage] = useState("");
   const [loadState, setLoadState] = useState<AdminLoadState>("loading");
@@ -3254,6 +3261,7 @@ export function GeneratedContentAdminDashboard() {
   const [natalPlacementSign, setNatalPlacementSign] = useState<NatalPlacementSign | "">("");
   const [natalPlacementHouse, setNatalPlacementHouse] = useState<NatalPlacementHouse | "">("");
   const [natalPlacementMotion, setNatalPlacementMotion] = useState<NatalPlacementMotion>("direct");
+  const [natalChartWritingView, setNatalChartWritingView] = useState<NatalChartWritingView>("placements");
   const [natalSourcesLoading, setNatalSourcesLoading] = useState(false);
   const [natalAspectFirst, setNatalAspectFirst] = useState("");
   const [natalAspectName, setNatalAspectName] = useState("");
@@ -4472,6 +4480,7 @@ export function GeneratedContentAdminDashboard() {
     setNatalPlacementSign(page === "content" && natalSign && natalPlacementSigns.includes(natalSign) ? natalSign : "");
     setNatalPlacementHouse(page === "content" && natalHouse && natalPlacementHouses.includes(natalHouse) ? natalHouse : "");
     setNatalPlacementMotion(page === "content" && natalMotion && natalPlacementMotions.includes(natalMotion) ? natalMotion : "direct");
+    setNatalChartWritingView(page === "content" && (view === "empty-houses" || view === "deeper-insights" || view === "rulership" || view === "day-night") ? view : "placements");
     setNatalAspectFirst(page === "content" && category === "Natal Aspects" ? natalAspectFirstParam : "");
     setNatalAspectName(page === "content" && category === "Natal Aspects" ? natalAspectNameParam : "");
     setNatalAspectSecond(page === "content" && category === "Natal Aspects" ? natalAspectSecondParam : "");
@@ -4566,7 +4575,7 @@ export function GeneratedContentAdminDashboard() {
     // replacement/close guards and beforeunload warning protect that draft.
     // Related article panels unmount on departure, so their guards still apply.
     return Boolean(
-      wheelTooltipEditorRef.current?.hasUnsavedExcept(draft?.contentKey)
+      personalizedEditorState.current.dirty || wheelTooltipEditorRef.current?.hasUnsavedExcept(draft?.contentKey)
       || subscriptionEventDirtyRef.current || lunationWritingDirtyRef.current || moonHoroscopesDirtyRef.current || planetaryHoroscopesDirtyRef.current || dailyWritingDirtyRef.current
       || dailyGlanceNavigationStateRef.current
       || !retainPlacementWriting && (skyPlacementWorkspaceDirtyRef.current || skyPlacementWorkspaceBusyRef.current)
@@ -4606,6 +4615,10 @@ export function GeneratedContentAdminDashboard() {
 
   function closeEditor(options?: { retainPlacementWriting?: boolean }) {
     if (csvBusy) { setMessage('Finish the CSV operation before leaving this section.'); return false; }
+    if (personalizedEditorState.current.busy) {
+      setMessage("Finish saving the personalized reading before leaving this section.");
+      return false;
+    }
     if (houseTransitEditor && houseTransitCloseGuard.current && !houseTransitCloseGuard.current()) return false;
     const hasOpenEditor = Boolean(
       selectedRow
@@ -4639,6 +4652,8 @@ export function GeneratedContentAdminDashboard() {
     if ((hasUnsavedChanges || hasPendingArticleChanges(retainPlacementWriting)) && !confirmDiscardEditorChanges()) {
       return false;
     }
+    personalizedEditorState.current = { dirty: false, busy: false };
+    setEditingUserRowId(null);
     if (draft?.contentKey) transitExactDismissedKeysRef.current.add(draft.contentKey);
     if (dailyGlanceLoadingRequestRef.current === sourceOpenRequestRef.current) {
       dailyGlanceLoadingRequestRef.current = null;
@@ -6940,17 +6955,61 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
-  function openCmsStarter(
+  function natalInsightEditorParams(contentKey: string) {
+    const params = new URLSearchParams({ category: "Natal Chart", view: "deeper-insights" });
+    if (contentKey.startsWith("cms/natal-insight/complete/")) params.set("reading", contentKey);
+    return params;
+  }
+
+  async function openCmsStarter(
     surfaceItem: WritingSurfaceMapItem,
     starter: NonNullable<WritingSurfaceAdminAccess["cmsStarters"]>[number]
   ) {
-    navigateAdminPage("content", undefined, { keepEditorOpen: true });
+    if (!starter.contentKey.startsWith("cms/natal-insight/")) {
+      createCmsStarter(surfaceItem, starter);
+      return;
+    }
+    const requestId = ++sourceOpenRequestRef.current;
+    const originatingHash = window.location.hash;
+    setIsLoading(true);
+    try {
+      const result = await adminJsonRequest<{ rows: AdminGeneratedContentRow[] }>(
+        studioInventoryDocumentPath(starter.contentKey), secret);
+      if (!Array.isArray(result.rows) || result.rows.some(row => row.content_key !== starter.contentKey)) {
+        throw new Error("Could not load the saved section wording. Please try again.");
+      }
+      if (requestId !== sourceOpenRequestRef.current || originatingHash !== window.location.hash) return;
+      const existing = result.rows.find(row => row.status !== "ARCHIVED") ?? result.rows[0];
+      if (existing) {
+        if (!await openRow(existing)) return;
+        navigateAdminPage("content", natalInsightEditorParams(starter.contentKey), { keepEditorOpen: true });
+        setMessage("Opened the saved section wording. Save draft keeps your edits; Save & publish updates the app.");
+      } else {
+        createCmsStarter(surfaceItem, starter);
+      }
+    } catch (error) {
+      if (requestId === sourceOpenRequestRef.current && originatingHash === window.location.hash) setMessage(dashboardErrorMessage(error));
+    } finally {
+      if (requestId === sourceOpenRequestRef.current) setIsLoading(false);
+    }
+  }
+
+  function createCmsStarter(
+    surfaceItem: WritingSurfaceMapItem,
+    starter: NonNullable<WritingSurfaceAdminAccess["cmsStarters"]>[number]
+  ) {
+    const params = starter.contentKey.startsWith("cms/natal-insight/")
+      ? natalInsightEditorParams(starter.contentKey) : undefined;
+    if (!navigateAdminPage("content", params, { keepEditorOpen: true })) return;
     setSelectedRowId(null);
-    setDraft({
+    setEditorSourceRow(null);
+    setCompositionEditorContext(null);
+    setEditorSaveError("");
+    rememberSavedDraft({
       id: null,
       contentKey: starter.contentKey,
       surface: starter.surface,
-      mode: "card",
+      mode: starter.contentKey.startsWith("cms/natal-insight/") ? "article" : "card",
       status: "DRAFT",
       headline: starter.headline,
       summary: "",
@@ -6972,7 +7031,9 @@ export function GeneratedContentAdminDashboard() {
         allowedSlots: starter.allowedSlots
       }
     });
-    setMessage(`${starter.label} opened as a non-serving draft. Use only the listed calculated slots, then publish when the wording is approved.`);
+    setMessage(starter.contentKey.startsWith("cms/natal-insight/complete/")
+      ? "Complete reading opened as a blank draft. Write the full reading in Article body; Save draft keeps it unpublished."
+      : `${starter.label} opened as a non-serving draft. Use only the listed calculated slots, then publish when the wording is approved.`);
     scrollEditorToTop();
   }
 
@@ -8761,6 +8822,14 @@ export function GeneratedContentAdminDashboard() {
               </div>
               <span className="ui-pill admin-status">{userRows.length} user rows</span>
             </section>
+            <Suspense fallback={<PageLoading message="Loading natal writing tools…" />}><NatalReadingAuthoring secret={secret} beforeOpen={closeEditor} onOpen={saved => {
+              setUserRows(current => [saved as AdminUserGeneratedContentRow, ...current.filter(item => item.id !== saved.id)]);
+              setEditingUserRowId(saved.id);
+            }} />
+            {userRows.filter(row => row.id === editingUserRowId).map(row => <PersonalizedReadingEditor key={row.id} row={row} secret={secret}
+              onStateChange={state => { personalizedEditorState.current = state; }}
+              onSaved={saved => setUserRows(current => current.map(item => item.id === saved.id ? { ...item, ...saved, status: saved.status as GeneratedContentStatus } : item))}
+              onClose={() => setEditingUserRowId(null)} />)}</Suspense>
             <div className="admin-content-table-scroll">
               <AdminDataTable label="User content" columns={["Content", "User", "Subject", "Surface", "Status", "Updated"]} className="admin-user-content-table">
 
@@ -8769,11 +8838,12 @@ export function GeneratedContentAdminDashboard() {
                       <td className="admin-content-title-cell" data-label="Content">
                         <strong className="admin-content-row-title">{rowTitle(row)}</strong>
                         <code className="admin-content-row-key">{row.content_key}</code>
+                        <StudioButton onClick={() => { if (row.id !== editingUserRowId && closeEditor()) setEditingUserRowId(row.id); }}>Edit write-up</StudioButton>
                       </td>
                       <td data-label="User"><code>{row.user_id}</code></td>
                       <td className="admin-content-location" data-label="Subject"><strong>{row.subject_type}</strong><small>{row.subject_id}</small></td>
                       <td className="admin-content-location" data-label="Surface"><strong>{row.surface}</strong><small>{row.mode}</small></td>
-                      <td data-label="Status"><ContentLiveStatusBadge row={{ id: `user:${row.id}`, updated_at: row.updated_at }} /></td>
+                      <td data-label="Status"><span className="ui-pill admin-status">{row.status}</span></td>
                       <td data-label="Updated">{row.updated_at?.slice(0, 10) ?? row.created_at?.slice(0, 10) ?? "Local"}</td>
                     </tr>
                   ))}
@@ -8861,6 +8931,16 @@ export function GeneratedContentAdminDashboard() {
     return (
       <Suspense fallback={<PageLoading message="Loading natal placement finder…" />}>
         <NatalPlacementSourceFinder
+          view={natalChartWritingView}
+          onViewChange={view => {
+            const { params } = parseAdminHash();
+            params.set("category", "Natal Chart");
+            params.set("view", view);
+            navigateAdminPage("content", params);
+          }}
+          insightSurfaces={writingSurfaces}
+          insightAccess={writingSurfaceAccess}
+          onOpenInsight={(surface, starter) => void openCmsStarter(surface, starter)}
           house={natalPlacementHouse}
           isLoading={isLoading || natalSourcesLoading}
           motion={natalPlacementMotion}

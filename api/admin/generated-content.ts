@@ -230,7 +230,8 @@ function assertValidCmsTemplate({
 }) {
   const snapshot = isRecord(sourceSnapshot) ? sourceSnapshot : {};
   if (!contentKey?.startsWith("cms/") && snapshot.contentSystem !== "cms-surface-override") return;
-  const allowedSlots = libs().wheelTooltipField(contentKey ?? "")?.allowedSlots ?? libs().frictionFlowField(contentKey ?? "")?.allowedSlots ?? (Array.isArray(snapshot.allowedSlots)
+  const completeNatalReading = contentKey?.startsWith("cms/natal-insight/complete/");
+  const allowedSlots = libs().wheelTooltipField(contentKey ?? "")?.allowedSlots ?? libs().frictionFlowField(contentKey ?? "")?.allowedSlots ?? (completeNatalReading ? (contentKey?.startsWith("cms/natal-insight/complete/v1/they/") ? ["ownerName"] : []) : Array.isArray(snapshot.allowedSlots)
     ? snapshot.allowedSlots.filter((slot): slot is string => typeof slot === "string")
     : []);
   const validation = libs().validateCmsTemplate({
@@ -243,8 +244,11 @@ function assertValidCmsTemplate({
   validation.errors.push(...libs().skyDebilityTemplateErrors(contentKey ?? "", body ?? "", headline ?? ""));
   validation.errors.push(...libs().frictionFlowTemplateErrors(contentKey ?? "", body ?? ""));
   validation.errors.push(...libs().wheelTooltipTemplateErrors(contentKey ?? "", body ?? ""));
+  if (completeNatalReading && (!libs().isNatalInsightContentKey(contentKey) || !body?.trim())) validation.errors.push("A complete natal reading requires a valid combination and a complete body.");
   if (validation.errors.length > 0) {
-    throw new Error(`CMS template cannot be published: ${validation.errors.join(" ")}`);
+    const message = `CMS template cannot be published: ${validation.errors.join(" ")}`;
+    if (completeNatalReading) throw new GeneratedContentRequestError(message, 400);
+    throw new Error(message);
   }
 }
 
@@ -300,7 +304,8 @@ function isSampleOnlyRow(surface?: GeneratedContentSurface, contentKey?: string,
     && /^natal\.aspect\.sun\.(?:conjunction|sextile|square|trine|opposition|quincunx)\.moon$/u.test(contentKey ?? '')
     && isRecord(metadata?.sourceSnapshot) && metadata.sourceSnapshot.contentType === 'authored-natal-aspect'
     && metadata.sourceSnapshot.canonicalKey === contentKey;
-  return Boolean(surface && personalizedSampleSurfaces.has(surface)) && !reusableComposite && !reusableNatal && !reusableFrictionFlow && !reusableSunMoon;
+  const reusableInsight = surface === "natal" && libs().isNatalInsightContentKey(contentKey);
+  return !reusableInsight && Boolean(surface && personalizedSampleSurfaces.has(surface)) && !reusableComposite && !reusableNatal && !reusableFrictionFlow && !reusableSunMoon;
 }
 
 function normalizedGeneratedContentBlockType(blockType: unknown, surface?: GeneratedContentSurface, mode?: GeneratedContentWriteBody["mode"]) {

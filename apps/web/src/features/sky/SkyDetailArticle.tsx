@@ -1,3 +1,4 @@
+import { NatalReadingPage } from "../../components/charts/NatalReadingPage";
 import { NatalChartReadings } from "../../components/NatalChartReadings";
 import { ArticleAspectCard, NatalPlacementAspects, normalizeRelatedAspectRow } from "../../components/ArticleAspects";
 import { ArticleKeyDates, type ArticleKeyDate } from "../../components/ArticleKeyDates";
@@ -96,6 +97,7 @@ export type SkyPersonalizedPlacement = {
 
 export type SkyDetail = {
   natalPlacement?: boolean;
+  natalReading?: boolean;
   aspectType?: string;
   natalPlanetReading?: import("../../content/natalChartReadings").NatalPlanetReadingContext;
   previewLabel?: string;
@@ -571,6 +573,8 @@ export function SkyDetailArticle({
       </div>
     </section>
   ) : null;
+
+  if (detail.natalReading) return <NatalReadingPage audience="friend" title={detail.title} onClose={onClose} backLabel="Close detail">{detail.body}</NatalReadingPage>;
 
   return (
     <section

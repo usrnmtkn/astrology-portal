@@ -13,6 +13,7 @@ import { NatalInsightPage } from "../../components/NatalInsightPage";
 import { NatalSectPage } from "../../components/NatalSectPage";
 import { useNatalReadingRoute } from "../../hooks/useNatalReadingRoute";
 import { ViewportMenu } from "../../components/ViewportMenu";
+import { NatalReadingPage } from "../../components/charts/NatalReadingPage";
 import { FormattedProse } from "../../components/FormattedProse";
 import { ArticlePills, type ArticlePillData } from "../../components/ArticlePills";
 import { TransitFacts } from "../../components/ArticleFacts";
@@ -41,6 +42,7 @@ import { articleAspectGlyphPartsFromHeading, normalizedArticleAspectToneBucket a
 import { aspectGlyph, pointGlyph } from "../../components/charts/chartAssets";
 import type { WeeklyHoroscopeAssembly } from "../../services/weeklyHoroscope";
 import { updateYouTabUrl, youTabFromUrl, type YouTab } from "./youRouting";
+import { articleHistoryChangeEvent } from "../../services/articleNavigation";
 import { YouReportActions, type YouAccountRecovery } from "./YouReportActions";
 
 type NatalChartViewMode = "circle" | "table";
@@ -87,6 +89,9 @@ export type DailyHoroscopeAssembly = {
 export type YouTransitArticle = {
   natalPlacement?: boolean;
   natalPlanetReading?: import("../../content/natalChartReadings").NatalPlanetReadingContext;
+  readerBody?: ReactNode;
+  natalReading?: boolean;
+  requiresTransitSources?: boolean;
   pills?: ArticlePillData;
   transitDescription?: string;
   keyDates?: ArticleKeyDate[];
@@ -145,6 +150,7 @@ export type YouPageProps = {
   elementalSummaryLabel: string;
   elementalSummarySentence: string;
   emptyHouseRows: ReactNode[];
+  natalInsights?: ReactNode;
   hasSavedBirthDetails: boolean;
   hasSavedCurrentCity: boolean;
   natalSky: SkySnapshot | null;
@@ -459,6 +465,7 @@ function YouNatalTab({
   elementalSummaryLabel,
   elementalSummarySentence,
   emptyHouseRows,
+  natalInsights,
   natalAspectPatternItems,
   natalAspectPatternStatus,
   onOpenNatalAspectPatternDetail,
@@ -472,6 +479,7 @@ function YouNatalTab({
   elementalSummaryLabel: string;
   elementalSummarySentence: string;
   emptyHouseRows: ReactNode[];
+  natalInsights?: ReactNode;
   natalAspectPatternItems?: NatalAspectPatternReaderItem[];
   natalAspectPatternStatus?: NatalAspectPatternsSectionStatus;
   onOpenNatalAspectPatternDetail: (item: NatalAspectPatternReaderItem, nestedItems: NatalAspectPatternReaderItem[]) => void;
@@ -512,9 +520,8 @@ function YouNatalTab({
         </>
       )}
 
+      {natalInsights}
       <NatalPatternsInsights snapshot={natalSky} audience="you" items={natalAspectPatternItems} status={natalAspectPatternStatus} onOpenPattern={onOpenNatalAspectPatternDetail}/>
-
-
     </div>
   );
 }
@@ -981,6 +988,7 @@ function YouTransitArticlePage({
     ...group,
     sections: aspectSections.filter((section) => section.group === group.id)
   })).filter((group) => group.sections.length > 0);
+  const hasReadableBody = Boolean(displayArticle.readerBody || displaySummary || displayIntroParagraphs.length || sections.length);
   const passKeyDates = displayArticle.meta.filter((row) => (
     /^Pass \d+$/u.test(row.label)
     || displayArticle.id.startsWith("personal-aspect:") && ["Current contact", "Full transit series"].includes(row.label)
@@ -999,6 +1007,8 @@ function YouTransitArticlePage({
     })?.value || (readingPage ? displayArticle.pills?.durationLabel : "")
   );
   const keyDates = displayArticle.keyDates ?? passKeyDates.map(row => ({ date: cleanArticleText(row.value), label: row.label }));
+
+  if (displayArticle.natalReading) return <NatalReadingPage title={displayArticle.title} onClose={onClose} backLabel={backAriaLabel}>{displayArticle.readerBody}</NatalReadingPage>;
 
   return (
     <section
@@ -1039,9 +1049,10 @@ function YouTransitArticlePage({
 
           {sourceFeedback}
 
-          {displaySummary || displayIntroParagraphs.length || mainSections.length ? (
+          {displayArticle.readerBody || displaySummary || displayIntroParagraphs.length || mainSections.length ? (
           <div className="article-body-card sky-detail-body">
             <div className="article-body-inner">
+              {displayArticle.readerBody && <div className="article-section sky-detail-section sky-detail-plain-section">{displayArticle.readerBody}</div>}
               {displayArticle.lensHint ? (
                 <aside className="article-lens-hint" aria-label={displayArticle.lensHintLabel ?? "Placement lens"}>
                   {typeof displayArticle.lensHint === "string" ? <p>{cleanArticleText(displayArticle.lensHint)}</p> : displayArticle.lensHint}
@@ -1136,6 +1147,7 @@ export function YouPage({
   elementalSummaryLabel,
   elementalSummarySentence,
   emptyHouseRows,
+  natalInsights,
   hasSavedBirthDetails,
   hasSavedCurrentCity,
   natalAspectPatternItems,
@@ -1186,10 +1198,12 @@ export function YouPage({
 
     window.addEventListener("popstate", syncProfileTab);
     window.addEventListener("hashchange", syncProfileTab);
+    window.addEventListener(articleHistoryChangeEvent, syncProfileTab);
 
     return () => {
       window.removeEventListener("popstate", syncProfileTab);
       window.removeEventListener("hashchange", syncProfileTab);
+      window.removeEventListener(articleHistoryChangeEvent, syncProfileTab);
     };
   }, []);
 
@@ -1258,8 +1272,8 @@ export function YouPage({
         : <PageLoadError message="The natal reading could not load. Please try again." onRetry={onRetryNatalPlacementContent ?? (() => window.location.reload())} />);
       return <YouTransitArticlePage article={transitArticle} sourceFeedback={feedback} onClose={onCloseTransitArticle} />;
     }
-    if (transitSourceFeedback) return transitSourceFeedback;
-    return <YouTransitArticlePage article={transitArticle} onClose={onCloseTransitArticle} />;
+    if (transitSourceFeedback && transitArticle.requiresTransitSources !== false) return transitSourceFeedback;
+    return <YouTransitArticlePage article={transitArticle} onClose={onCloseTransitArticle} backAriaLabel={transitArticle.requiresTransitSources === false ? "Back to natal chart" : "Back to updates"} />;
   }
 
   return (
@@ -1319,6 +1333,7 @@ export function YouPage({
               elementalSummaryLabel={elementalSummaryLabel}
               elementalSummarySentence={elementalSummarySentence}
               emptyHouseRows={emptyHouseRows}
+              natalInsights={natalInsights}
               natalAspectPatternItems={natalAspectPatternItems}
               natalAspectPatternStatus={natalAspectPatternStatus}
               onOpenNatalAspectPatternDetail={(item, nestedItems) => {
