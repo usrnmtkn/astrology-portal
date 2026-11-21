@@ -3290,6 +3290,7 @@ export function GeneratedContentAdminDashboard() {
   const [skyWriteupSort, setSkyWriteupSort] = useState<ContentPlacementSort>("updated-desc");
   const [skyWriteupWorkspaceView, setSkyWriteupWorkspaceView] = useState<SkyWriteupWorkspaceView>("catalog");
   const isSkySummaryWorkspace = ["daily-summary", "detriment-fall"].includes(skyWriteupWorkspaceView);
+  const [skySummaryInlineEditing, setSkySummaryInlineEditing] = useState(true);
   const [focusSunSummaries, setFocusSunSummaries] = useState(false);
   const subscriptionEventDirtyRef = useRef(false);
   const dailyWritingDirtyRef = useRef(false);
@@ -4652,6 +4653,7 @@ export function GeneratedContentAdminDashboard() {
     setDraft(null);
     wheelTooltipEditorRef.current = null;
     wheelTooltipSourceRequestRef.current += 1;
+    setSkySummaryInlineEditing(true);
     setHouseTransitEditor(null);
     setHouseTransitOpening(false);
     houseTransitEditorDrafts.current.clear();
@@ -6881,42 +6883,30 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
-  async function openSkySummaryField(field: SkySummaryField, initialBody?: string) {
+  async function openSkySummaryField(field: SkySummaryField, initialBody?: string, inline = false) {
     if (hasChangedSavedDraft()
-      && !confirmDiscardEditorChanges()) return;
+      && !confirmDiscardEditorChanges()) return false;
+    const requestId = ++sourceOpenRequestRef.current;
+    const originatingHash = window.location.hash;
+    setSkySummaryInlineEditing(inline);
+    setEditorSaveError("");
     setIsLoading(true);
     try {
-      const { skySummaryCandidateReceipt, loadSkySummarySourceBank } = await import("./skySummarySourceBank");
-      const suppliedBank = initialBody !== undefined && /^cms\/sky-daily-summary\/(sun|moon)\//u.test(field.key)
-        ? await loadSkySummarySourceBank() : undefined;
-      const candidateReceipt = suppliedBank && initialBody !== undefined ? skySummaryCandidateReceipt(field.key, initialBody, suppliedBank) : undefined;
-      const result = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
-        studioInventoryDocumentPath(field.key), secret);
-      if (!Array.isArray(result.rows)) throw new Error("Could not load the saved summary wording. Please try again.");
-      const moonSource = /^cms\/sky-daily-summary\/moon\/[^/]+\/[^/]+$/u.test(field.key)
-        ? (await (await import("./skyMoonSummarySources")).loadSkyMoonSummarySources()).rows.find(row => row.key === field.key) : undefined;
-      let existing = result.rows.find(row => row.content_key === field.key);
-      if (!existing && field.key.startsWith("cms/sky-daily-summary/ingress/")) {
-        const { ingressTldrSourceKeys, publishedIngressTldr } = await import("./skyIngressTldrSources");
-        const [planet, sign] = field.label.split(" enters ");
-        const sources = await Promise.all(ingressTldrSourceKeys(planet, sign).map(async key => {
-          const response = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
-            studioInventoryDocumentPath(key), secret);
-          if (!Array.isArray(response.rows)) throw new Error("Could not check the existing ingress TLDR. Please try again.");
-          return response.rows;
-        }));
-        existing = publishedIngressTldr(sources.flat(), planet, sign);
-      }
+      const { loadSkySummaryEditingSource } = await import("./skySummaryEditingSource");
+      const { existing, candidateReceipt, moonSource } = await loadSkySummaryEditingSource(field, initialBody,
+        key => adminJsonRequest<{ rows: AdminGeneratedContentRow[] }>(studioInventoryDocumentPath(key), secret));
+      if (requestId !== sourceOpenRequestRef.current || window.location.hash !== originatingHash) return false;
       if (existing) {
         const current = { ...existing, body: currentSkySummaryWording(existing.content_key, existing.body ?? ""),
           source_snapshot: { ...existing.source_snapshot, allowedSlots: field.allowedSlots } };
         setRows(rows => [current, ...rows.filter(row => row.id !== current.id)]);
-        const opened = await openRow(current);
+        const opened = await openRow(current, null, undefined, undefined, true);
+        if (!opened || requestId !== sourceOpenRequestRef.current || window.location.hash !== originatingHash) return false;
         if (opened) setDraft(previous => previous ? { ...previous, ...(initialBody !== undefined ? { body: initialBody } : {}),
           sourceSnapshot: { ...previous.sourceSnapshot, allowedSlots: field.allowedSlots, ...(candidateReceipt ? { suppliedBank: candidateReceipt } : {}) }
         } : previous);
       } else {
-        const { newSkySummaryDraft } = await import("./skySummaryComposition");
+        const { newSkySummaryDraft } = await import("./skySummaryDraft");
         const nextDraft = newSkySummaryDraft(field,
           field.key.startsWith(SKY_DEBILITY_INTERPRETATION_PREFIX) ? "" : field.label,
           initialBody, candidateReceipt, moonSource);
@@ -6929,12 +6919,14 @@ export function GeneratedContentAdminDashboard() {
         setEditorSaveError("");
       }
       setSkySummaryEditorField(field);
-      setMessage(`Opened ${field.label}. Save & publish makes your edits live in one step.`);
-      scrollEditorToTop();
+      setMessage(inline ? "" : `Opened ${field.label}. Save draft keeps the wording unpublished.`);
+      if (!inline) scrollEditorToTop();
+      return true;
     } catch (error) {
-      setMessage(dashboardErrorMessage(error));
+      if (requestId === sourceOpenRequestRef.current) setMessage(dashboardErrorMessage(error));
+      return false;
     } finally {
-      setIsLoading(false);
+      if (requestId === sourceOpenRequestRef.current) setIsLoading(false);
     }
   }
 
@@ -7920,9 +7912,15 @@ export function GeneratedContentAdminDashboard() {
             ) : isSkySummaryWorkspace ? (
               <>
                 <Suspense fallback={<PageLoading message="Loading Sky Write-ups…" />}>
-                  <SkySummaryWorkspace daily={skyWriteupWorkspaceView === "daily-summary"} rows={rows} secret={secret} onOpenDraft={row => void openRow(row as AdminGeneratedContentRow)} onEdit={(field, initialBody) => void openSkySummaryField(field, initialBody)} busy={isLoading} focusSunSummaries={focusSunSummaries} />
+                  <SkySummaryWorkspace daily={skyWriteupWorkspaceView === "daily-summary"} rows={rows} secret={secret} onOpenDraft={row => void openRow(row as AdminGeneratedContentRow)} onEdit={(field, initialBody) => void openSkySummaryField(field, initialBody)} busy={isLoading} focusSunSummaries={focusSunSummaries}
+                    editingActions={{ active: skySummaryInlineEditing, error: editorSaveError,
+                      editing: draft, dirty: hasChangedSavedDraft(),
+                      onOpen: field => openSkySummaryField(field, undefined, true),
+                      onChange: body => setDraft(current => current ? invalidateContentStudioReview({ ...current, body }) : current),
+                      onSave: saveDraft
+                    }} />
                 </Suspense>
-                {renderEditor()}
+                {(skyWriteupWorkspaceView !== 'daily-summary' || !skySummaryInlineEditing) && renderEditor()}
               </>
             ) : skyWriteupWorkspaceView === 'house-aspect-bridges' ? (
               <>
