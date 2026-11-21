@@ -1,0 +1,294 @@
+{
+  "schema": "tldr-batch2-measured-cost-v1",
+  "scope": "One-time combined Batch 2: nine approved PRs, single-planet and Calendar/Sky/archive repairs, read-only writer readiness and required integration maintenance.",
+  "includedPrs": [
+    1358,
+    1414,
+    1508,
+    1510,
+    1518,
+    1521,
+    1523,
+    1524,
+    1528
+  ],
+  "excludedPrs": {
+    "1525": "draft hold",
+    "1536": "CI-only, not merged"
+  },
+  "candidateBeforeBudget": "93f039619f22486f747bd8196da17de3bef29901",
+  "treeBeforeBudget": "4a2e5261d597ea56778d80f923c78c0a053aa3aa",
+  "matchedControl": "3bbc73e3b73c8aea279a9fa836218afd2d44b790",
+  "runtimeMeasuredHead": "e997f4af29582fb8bf44c1fa0ed8b70994fba1ad",
+  "runtimeMeasuredTree": "5148b36a9087696d8343d3149a366c48f5282d80",
+  "measurementProfiles": {
+    "web-default": {
+      "failures": [
+        {
+          "metric": "appBootGzipBytes",
+          "value": 402268,
+          "limit": 401490,
+          "overage": 778,
+          "matchedControl": 400836
+        },
+        {
+          "metric": "readerBootGzipBytes",
+          "value": 461969,
+          "limit": 460887,
+          "overage": 1082,
+          "matchedControl": 460322
+        },
+        {
+          "metric": "totalCssGzipBytes",
+          "value": 153421,
+          "limit": 152094,
+          "overage": 1327,
+          "matchedControl": 151821
+        },
+        {
+          "metric": "totalJavaScriptGzipBytes",
+          "value": 3815849,
+          "limit": 3804341,
+          "overage": 11508,
+          "matchedControl": 3789291
+        },
+        {
+          "metric": "memoryGraphCssGzipBytes",
+          "value": 33200,
+          "limit": 33142,
+          "overage": 58,
+          "matchedControl": 33122
+        },
+        {
+          "metric": "horoscopeReaderChunkGzipBytes",
+          "value": 5880,
+          "limit": 5841,
+          "overage": 39,
+          "matchedControl": 5773
+        }
+      ],
+      "aggregate": {
+        "control": 3789291,
+        "candidate": 3815849,
+        "cost": 26558
+      }
+    },
+    "web-auth": {
+      "failures": [
+        {
+          "metric": "appBootGzipBytes",
+          "value": 402263,
+          "limit": 401490,
+          "overage": 773,
+          "matchedControl": 400814
+        },
+        {
+          "metric": "readerBootGzipBytes",
+          "value": 461964,
+          "limit": 460887,
+          "overage": 1077,
+          "matchedControl": 460300
+        },
+        {
+          "metric": "skyDetailChunkGzipBytes",
+          "value": 6985,
+          "limit": 6981,
+          "overage": 4,
+          "matchedControl": 6749
+        },
+        {
+          "metric": "totalCssGzipBytes",
+          "value": 153421,
+          "limit": 152094,
+          "overage": 1327,
+          "matchedControl": 151821
+        },
+        {
+          "metric": "totalJavaScriptGzipBytes",
+          "value": 3815838,
+          "limit": 3804341,
+          "overage": 11497,
+          "matchedControl": 3789144
+        },
+        {
+          "metric": "memoryGraphCssGzipBytes",
+          "value": 33200,
+          "limit": 33142,
+          "overage": 58,
+          "matchedControl": 33122
+        },
+        {
+          "metric": "horoscopeReaderChunkGzipBytes",
+          "value": 5880,
+          "limit": 5841,
+          "overage": 39,
+          "matchedControl": 5772
+        }
+      ],
+      "aggregate": {
+        "control": 3789144,
+        "candidate": 3815838,
+        "cost": 26694
+      }
+    },
+    "studio": {
+      "failures": [
+        {
+          "metric": "entryJavaScriptRawBytes",
+          "value": 846185,
+          "limit": 844786,
+          "overage": 1399,
+          "matchedControl": 844325
+        },
+        {
+          "metric": "largestJavaScriptRawBytes",
+          "value": 846185,
+          "limit": 844786,
+          "overage": 1399,
+          "matchedControl": 844325
+        },
+        {
+          "metric": "totalJavaScriptGzipBytes",
+          "value": 950927,
+          "limit": 936295,
+          "overage": 14632,
+          "matchedControl": 936118
+        }
+      ],
+      "aggregate": {
+        "control": 936118,
+        "candidate": 950927,
+        "cost": 14809
+      }
+    }
+  },
+  "approval": {
+    "kind": "explicit_owner_one_time_measured_cost",
+    "source": "thread:01a1efe7-84fd-7623-8559-23a770f86ad8",
+    "replyTurn": "01a1ff3c-ae16-70a1-b708-558b989143cb",
+    "question": "call_1355fc190c64428da965a9fef489118c",
+    "authorityVerified": "Direct human reply retrieved from the coordinator thread before applying this change.",
+    "broaderPolicyChange": false,
+    "futureAutomaticIncreases": false,
+    "decision": "approved_one_time_budget_update"
+  },
+  "changes": [
+    {
+      "guard": "Web startup JS, gzip",
+      "file": "scripts/web-bundle-budgets.json",
+      "fields": [
+        "appBootGzipBytes"
+      ],
+      "measured": 402268,
+      "oldLimit": 401490,
+      "proposedLimit": 402514,
+      "increase": 1024,
+      "remainingHeadroom": 246
+    },
+    {
+      "guard": "Reader startup JS, gzip",
+      "file": "scripts/web-bundle-budgets.json",
+      "fields": [
+        "readerBootGzipBytes"
+      ],
+      "measured": 461969,
+      "oldLimit": 460887,
+      "proposedLimit": 462935,
+      "increase": 2048,
+      "remainingHeadroom": 966
+    },
+    {
+      "guard": "Total Web JS, gzip",
+      "file": "scripts/web-bundle-budgets.json",
+      "fields": [
+        "totalJavaScriptGzipBytes"
+      ],
+      "measured": 3815849,
+      "oldLimit": 3804341,
+      "proposedLimit": 3816629,
+      "increase": 12288,
+      "remainingHeadroom": 780
+    },
+    {
+      "guard": "Total Web CSS, gzip",
+      "file": "scripts/web-bundle-budgets.json",
+      "fields": [
+        "totalCssGzipBytes"
+      ],
+      "measured": 153421,
+      "oldLimit": 152094,
+      "proposedLimit": 154142,
+      "increase": 2048,
+      "remainingHeadroom": 721
+    },
+    {
+      "guard": "Memory CSS, gzip",
+      "file": "scripts/web-bundle-budgets.json",
+      "fields": [
+        "memoryGraphCssGzipBytes"
+      ],
+      "measured": 33200,
+      "oldLimit": 33142,
+      "proposedLimit": 33270,
+      "increase": 128,
+      "remainingHeadroom": 70
+    },
+    {
+      "guard": "Horoscope reader JS, gzip",
+      "file": "scripts/web-bundle-budgets.json",
+      "fields": [
+        "horoscopeReaderChunkGzipBytes"
+      ],
+      "measured": 5880,
+      "oldLimit": 5841,
+      "proposedLimit": 5969,
+      "increase": 128,
+      "remainingHeadroom": 89
+    },
+    {
+      "guard": "Authenticated Sky detail JS, gzip",
+      "file": "scripts/web-bundle-budgets.json",
+      "fields": [
+        "skyDetailChunkGzipBytes"
+      ],
+      "measured": 6985,
+      "oldLimit": 6981,
+      "proposedLimit": 7109,
+      "increase": 128,
+      "remainingHeadroom": 124
+    },
+    {
+      "guard": "Studio entry/largest JS, raw",
+      "file": "scripts/admin-bundle-budgets.json",
+      "fields": [
+        "entryJavaScriptRawBytes",
+        "largestJavaScriptRawBytes"
+      ],
+      "measured": 846185,
+      "oldLimit": 844786,
+      "proposedLimit": 846834,
+      "increase": 2048,
+      "remainingHeadroom": 649
+    },
+    {
+      "guard": "Total Studio JS, gzip",
+      "file": "scripts/admin-bundle-budgets.json",
+      "fields": [
+        "totalJavaScriptGzipBytes"
+      ],
+      "measured": 950927,
+      "oldLimit": 936295,
+      "proposedLimit": 951655,
+      "increase": 15360,
+      "remainingHeadroom": 728
+    }
+  ],
+  "preserved": [
+    "All unlisted numeric limits and guard implementation remain unchanged.",
+    "Original failing measurements are retained; this is approved feature cost, not a performance improvement.",
+    "Fresh final canonical builds and every required exact-head hosted gate remain required.",
+    "Normal protected merge, main Git deployment, actual web production acceptance and required main CI remain required.",
+    "No paid generation, owner-content edits, publication or mobile implementation is authorized by this receipt."
+  ],
+  "sourceStability": "After runtime measurement only browser navigation assertions and a complete synthetic offline-recovery unit fixture changed; runtime source and locked dependencies remain unchanged."
+}
