@@ -1,4 +1,5 @@
 import {hasExactStudioOwnerApproval} from './_lib/studio-owner-publication.js';
+import {PLANETARY_HOROSCOPE_PREFIX,planetaryReaderReadings} from '../src/shared/planetaryHoroscopeIdentity.js';
 import { skyArticleCompiledHashMatches } from './_lib/sky-article-reader-integrity.js';
 import { articleLibraryPrefixes, articlePublicationIsDue } from "../src/shared/articleLibrary.js";
 import { createHash } from "node:crypto";
@@ -56,6 +57,7 @@ async function readQuery(req: IncomingMessage): Promise<Query> {
 }
 
 export function readerRowIsEligible(row: GeneratedContentRow) {
+  if(row.content_key.startsWith('studio-planetary-writing/'))return false;
   if ((row.sections as Record<string, any> | null)?.packageRecord?.content_boundary?.ownerPublishedWording === true && !hasExactStudioOwnerApproval(row)) return false;
   if (row.status !== 'LIVE' || row.lane !== 'serving' || row.review_state != null) return false;
   if (row.event_type === 'sky-article-edition' && !skyArticleCompiledHashMatches((row.sections as Record<string, unknown> | null)?.skyArticleEdition)) return false;
@@ -65,6 +67,7 @@ export function readerRowIsEligible(row: GeneratedContentRow) {
     || flag === 'BLOCKLIST_MATCH' && !hasExactStudioOwnerApproval(row))) return false;
   if (row.content_key.startsWith(SKY_SEASON_FALLBACK_PREFIX) && (row.source_snapshot?.ownerApproval as {copySha256?: string} | undefined)?.copySha256
     !== createHash('sha256').update(JSON.stringify([row.headline, row.summary, row.body])).digest('hex')) return false;
+  if(row.content_key.startsWith(PLANETARY_HOROSCOPE_PREFIX))return hasExactStudioOwnerApproval(row)&&Boolean(planetaryReaderReadings(row));
   if (row.content_key.startsWith('horoscope/')) return Boolean(horoscopeEditionFromRow(row));
   // Education publishes its saved article fields. Its packageRecord is the
   // original import descriptor, whose review label is not the Studio decision.

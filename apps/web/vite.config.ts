@@ -281,6 +281,7 @@ export default defineConfig(({ mode }) => {
             // transport instead of adding a preload and gzip header per identity.
             if (/\/content\/(?:bondEffectIdentity|transitWritingIdentity|skyPlacementAspectBridge|generatedContentEligibility|lunationStudioRevision)\.ts$/u.test(id)
               || id.endsWith("/src/shared/lunationHoroscopeIdentity.ts")
+              || id.endsWith("/src/shared/planetaryHoroscopeIdentity.ts")
               || id.endsWith("/src/shared/lunationTimingVariables.ts")
               || id.endsWith("/content/natalRetrogradeModifier.js")
               || id.endsWith("/services/templateInterpolation.ts")
@@ -304,7 +305,7 @@ export default defineConfig(({ mode }) => {
               || id.endsWith("/src/shared/lunationHoroscopeIdentities.ts")) return "sky-article-horoscopes";
             // Lunar writing modes share their optional workspace and controls.
             if (/apps\/admin\/src\/(?:LunationWritingStudio|ReusableLunationWritingStudio|DatedLunationWritingStudio)\.tsx$/u.test(id)) return "lunation-writing";
-            if (/apps\/admin\/src\/(?:FallbackCompositionCheck|FriendsTransitSectionFinder|LunationHoroscopeRelations|NatalPlacementSourceFinder|NatalPlacementReaderPreview|TemplateReaderDrilldown|TemplateVariableReviewPanels|TemplateVariablesRail|AspectPatternDiagnostics|AspectPatternWriteups|ReportFulfillmentAdminPanel|UnresolvedContentReview|HoroscopePublicationReview|StudioEditorReviewPanels|ReviewWorkflowPanel|DailyFallbackWorkspaceGuide|DailyGlanceStudio|PackagedHookCatalogResults|SkyV4StudioReviewPanel)\.tsx$/u.test(id)) return "studio-editor-tools";
+            if (/apps\/admin\/src\/(?:FallbackCompositionCheck|FriendsTransitSectionFinder|LunationHoroscopeRelations|NatalPlacementSourceFinder|NatalPlacementReaderPreview|TemplateReaderDrilldown|TemplateVariableReviewPanels|TemplateVariablesRail|AspectPatternDiagnostics|AspectPatternWriteups|ReportFulfillmentAdminPanel|UnresolvedContentReview|HoroscopePublicationReview|StudioEditorReviewPanels|ReviewWorkflowPanel|DailyFallbackWorkspaceGuide|DailyGlanceStudio|PackagedHookCatalogResults|SkyV4StudioReviewPanel|PlanetaryHoroscopesStudio)\.tsx$/u.test(id)) return "studio-editor-tools";
             // These reader helpers already load at startup. Share their chunk;
             // astronomy and protected passage data retain their separate lazy chunks.
             if (id.endsWith("/src/astrologyConfig.ts") || id.endsWith("/content/skyMotionLabels.ts")
