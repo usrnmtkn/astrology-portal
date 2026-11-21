@@ -5829,7 +5829,7 @@ test("an open Friends article survives an empty initial dashboard overlay", asyn
   }
 });
 
-for (const [width, theme] of [[390, "light"], [1440, "dark"]] as const) {
+for (const [width, theme] of [[390, "light"], [390, "dark"], [1440, "light"], [1440, "dark"]] as const) {
   for (const inverse of [false, true]) {
     for (const relationshipType of ["friend", "partner", "family"]) {
       test(`Venus Mars square interpretation ${width} ${theme} ${inverse ? "reverse" : "forward"} ${relationshipType}`, async ({ page }) => {
@@ -5850,6 +5850,18 @@ for (const [width, theme] of [[390, "light"], [1440, "dark"]] as const) {
         if (relationshipType !== "family") {
           await expect(compatibility.getByRole("heading", { name: title, exact: true })).toBeVisible();
           await expect(compatibility).toContainText(copy);
+          const dynamics = page.getByRole("region", { name: "Compatibility dynamics", exact: true });
+          for (const paragraph of await dynamics.locator("p").all()) {
+            await expect(paragraph).not.toBeEmpty();
+          }
+          const headingStyle = (element: Element) => {
+            const style = getComputedStyle(element);
+            return [style.fontFamily, style.fontSize, style.fontWeight, style.lineHeight, style.letterSpacing,
+              style.marginTop, style.marginBottom, style.textTransform, style.textAlign];
+          };
+          expect(await dynamics.getByRole("heading", { name: "Challenges", level: 2, exact: true }).evaluate(headingStyle))
+            .toEqual(await page.getByRole("heading", { name: "Planet by planet", level: 2, exact: true }).evaluate(headingStyle));
+          await dynamics.screenshot({ path: `test-results/venus-mars-compatibility-${width}-${theme}-${inverse}-${relationshipType}.png` });
         } else {
           await expect(compatibility).not.toContainText(copy);
         }
@@ -5862,11 +5874,13 @@ for (const [width, theme] of [[390, "light"], [1440, "dark"]] as const) {
         await selectFriendDetailTab(page, "Synastry");
         const synastry = page.getByRole("button", { name: `Open full entry for ${title}`, exact: true });
         if (relationshipType === "family") {
-          await expect(synastry).toHaveCount(0);
-          await expect(page.locator(".friend-tab-pane")).not.toContainText(copy);
+          // The current Synastry design retains calculated contact facts when
+          // interpretation copy is unavailable. Family must exclude the prose.
+          await expect(synastry.locator(".reading-story-card__preview")).toHaveCount(0);
+          await expect(page.locator(".friend-synastry-stage")).not.toContainText(copy);
           return;
         }
-        await expect(synastry.locator(".synastry-contact-description")).toHaveText(copy);
+        await expect(synastry).toContainText(copy);
         await synastry.scrollIntoViewIfNeeded();
         await page.screenshot({ path: `test-results/venus-mars-square-${width}-${theme}-${inverse}-${relationshipType}.png` });
         await synastry.click();

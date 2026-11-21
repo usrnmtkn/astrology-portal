@@ -8201,7 +8201,7 @@ for (const theme of ['dark', 'light'] as const) {
       await expect(status).toContainText('Ready. 4 primary style references, 28 supporting references, and 20 detailed meaning sources verified.');
       await expect(status).toContainText('Current feedback verified. Provider configured. No generation performed.');
       await expect(page.getByLabel('Verified deployed revision', { exact: true })).toHaveValue(revision);
-      await expect(page.getByRole('heading', { name: 'Connection', exact: true })).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'Connection', exact: true, level: 2 })).toBeVisible();
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
       await page.screenshot({ path: `test-results/synastry-writer-readiness-${theme}-${width}.png` });
       for (let failed = 0; failed < 3; failed++) {

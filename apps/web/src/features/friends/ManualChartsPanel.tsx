@@ -1200,6 +1200,17 @@ export function ManualChartsPanel({
     selectedFriendReadyNatalChart,
     selectedRelationshipContextType
   ]);
+  const selectedCompatibilityDynamics = useMemo(() => {
+    if (!friendProfileWork.compatibility || !relationshipComparisonIsSelf || !selectedChart) return [];
+    return selectedSynastryContacts.flatMap(contact => {
+      // Only this existing two-direction passage was approved for restoration
+      // in Compatibility. Other contacts retain the current Synastry layout.
+      if (contact.aspect !== "square" || [contact.yourPoint.name, contact.friendPoint.name].sort().join("/") !== "Mars/Venus") return [];
+      const rendered = renderFriendSynastryContact(contact, selectedChart.displayName, selectedChart.pronouns, selectedRelationshipContextType);
+      return rendered ? [{ id: contact.id, title: rendered.headline, summary: rendered.body,
+        glyphs: `${contact.yourPoint.glyph} ${aspectGlyph(contact.aspect)} ${contact.friendPoint.glyph}` }] : [];
+    });
+  }, [friendProfileWork.compatibility, relationshipComparisonIsSelf, selectedChart, selectedRelationshipContextType, selectedSynastryContacts]);
   const selectedCompatibilityIsLoading = Boolean(
     friendProfileWork.compatibility
     && selectedChart
@@ -3037,6 +3048,7 @@ export function ManualChartsPanel({
             ) : selectedCompatibilityCards.length > 0 ? (
               <CompatibilityTab
                 cards={selectedCompatibilityCards}
+                dynamics={selectedCompatibilityDynamics}
                 daily={selectedPairDaily}
                 friendName={selectedChart.displayName}
                 onOpenCard={openFriendCompatibilityCardDetail}
