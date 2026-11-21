@@ -36,7 +36,8 @@ globalThis.fetch = async input => {
   requests.push(String(input));
   if (String(input).startsWith("https://raw.githubusercontent.com/")) {
     if (recoveryMode === "unavailable") return new Response(null, { status: 503 });
-    if (recoveryMode === "invalid") return Response.json({ ...servedSnapshot, privateFeedback: "forbidden" });
+    if (recoveryMode === "invalid") return Response.json({ ...servedSnapshot,
+      rows: servedSnapshot.rows.map((r: any, i: number) => i === 1 ? servedSnapshot.rows[0] : r) });
   } else assert.equal(String(input), "/content-studio-last-known-good.json");
   return Response.json(servedSnapshot);
 };
@@ -73,7 +74,7 @@ try {
   await qa.loadContentStudioLastKnownGoodRows();
   assert.equal(qa.transitSynastryFallbackRendererV3.renderWeeklyMoon({ sign: "taurus", variant: 4 }).body, snapshotRow.body,
     "An older snapshot must preserve a newer previously verified offline passage");
-  assert.equal(requests[1], "/content-studio-last-known-good.json", "A malformed GitHub snapshot falls back to shipped data");
+  assert.equal(requests[1], "/content-studio-last-known-good.json", "Duplicate published rows reject the GitHub snapshot and fall back to shipped data");
   const newer = { ...row.sections.packageRecord, contentKey: key, content_role: "full_copy", review_status: "approved",
     body: "QA newer published passage.", publicationRowId: "newer-moon-row", publicationRowUpdatedAt: updatedAt };
   qa.installFallbackArchitectureV3Bundle({ transitLib: { authoredCards: [newer] }, templatesFile: { templates: [] }, rowsFile: { hookRows: [], vocabularyRows: [] } });
