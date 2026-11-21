@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { studioBuildAsset } from '../helpers/studio-build-assets';
 
 // The standalone Studio document paints before its React entry has downloaded.
 for (const choice of ['system', 'on', 'off'] as const) test(`Studio startup uses the ${choice} moon preference before hydration`, async ({ page }) => {
@@ -6,7 +7,8 @@ for (const choice of ['system', 'on', 'off'] as const) test(`Studio startup uses
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   let release!: () => void;
   const held = new Promise<void>(resolve => { release = resolve; });
-  await page.route(/\/assets\/index-[^/]+\.js$/, async route => {
+  const entry = studioBuildAsset('index.html');
+  await page.route(url => url.pathname === entry, async route => {
     await held;
     await route.continue().catch(() => {});
   });

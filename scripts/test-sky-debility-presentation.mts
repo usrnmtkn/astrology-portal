@@ -10,6 +10,8 @@ import { skyDebilityPhraseSets } from "../apps/web/src/content/skyDebilityPhrase
 import { buildSkyDebilityComposition } from "../apps/admin/src/skyDebilityComposition.ts";
 import { presentSkyDebilityParts, skyDebilityPlacementLinks, skyDebilityTemplateParts, type SkyDebilityDisplayPart } from "../apps/web/src/content/skyDebilityPresentation.ts";
 import { DIGNITY_SIGNS, TRADITIONAL_DIGNITY_PLANETS, planetSignDebilities, traditionalSkyDebilities } from "../apps/web/src/services/planetSignDignity.mjs";
+import { skyDebilityInterpretationKey } from "../apps/web/src/content/skyDebilityIdentity.mjs";
+import type { LiveGeneratedContent } from "../apps/web/src/services/generatedContent.ts";
 import { linkedThreePlanetContext, highlightedCountStatement } from "../tests/fixtures/sky-effort-short.ts";
 
 // Compile the real web component with Vite's env boundary; use the same React
@@ -131,4 +133,40 @@ assert(!html.includes('<mark class="content-highlight"'));
 assert(html.includes("Saturn retrograde in Aries</a>"));
 assert.equal(renderToStaticMarkup(createElement(SkyDebilityCard, { positions: positions({}) })), "");
 assert.equal(renderToStaticMarkup(createElement(SkyDebilityCard, { positions: original.slice(1) })), "");
-console.log(JSON.stringify({ result: "passed", combinations, directAndRetrogradePresentations: presentations, countCoverage: [...countCoverage].sort(), headingOnlyCoverage: [...headingOnlyCoverage].sort(), exactOwnerDisplay: true, inlineLinksAndCalculatedCards: true, sourceMapParity: true }, null, 2));
+const publishedSingleCases = [
+  { planet: "Saturn", sign: "Aries", motion: "retrograde", expected: "Saturn retrograde in Aries" },
+  { planet: "Venus", sign: "Scorpio", motion: "direct", expected: "Venus in Scorpio" },
+  { planet: "Saturn", sign: "Aries", motion: "direct", expected: "Saturn in Aries" },
+  { planet: "Mercury", sign: "Pisces", motion: "direct", expected: "Mercury in Pisces" }
+] as const;
+for (const fixture of publishedSingleCases) {
+  const input = positions({ [fixture.planet]: fixture.sign }).map(row => ({
+    ...row, motion: row.planet === fixture.planet ? fixture.motion : row.motion
+  }));
+  const key = skyDebilityInterpretationKey(input)!;
+  const row: LiveGeneratedContent = {
+    id: "synthetic-single-reading", contentKey: key, surface: "sky", mode: "card",
+    status: "LIVE", headline: "Synthetic single-planet heading", summary: null,
+    body: "Synthetic complete opening.\n\n{planetList} stays in its exact reading.\n\nSynthetic complete ending.",
+    eventType: null, targetDate: null, sections: null, model: null,
+    updatedAt: "2026-11-18T12:00:00.000Z"
+  };
+  const markup = renderToStaticMarkup(createElement(SkyDebilityCard, {
+    positions: input, generatedContent: new Map([[key, row]])
+  }));
+  assert(markup.includes("<h3>" + row.headline + "</h3>"), "A published exact one-planet reading must be visible");
+  assert(markup.includes("Synthetic complete opening."));
+  assert(markup.includes("Synthetic complete ending."));
+  assert(markup.includes(fixture.expected + "</a>"));
+  assert.equal((markup.match(/class="sky-debility-card"/gu) ?? []).length, 1);
+  assert.equal((markup.match(/<p>/gu) ?? []).length, 3);
+  for (const status of ["DRAFT", "REVIEWED", "ARCHIVED"] as const) {
+    assert.equal(renderToStaticMarkup(createElement(SkyDebilityCard, {
+      positions: input, generatedContent: new Map([[key, { ...row, status }]])
+    })), "", "Unpublished one-planet copy must remain hidden");
+  }
+  assert.equal(renderToStaticMarkup(createElement(SkyDebilityCard, {
+    positions: input, generatedContent: new Map([[key, { ...row, body: "" }]])
+  })), "", "Unavailable exact wording must remain hidden");
+}
+console.log(JSON.stringify({ result: "passed", combinations, directAndRetrogradePresentations: presentations, countCoverage: [...countCoverage].sort(), headingOnlyCoverage: [...headingOnlyCoverage].sort(), publishedSingleReadings: publishedSingleCases.length, exactOwnerDisplay: true, inlineLinksAndCalculatedCards: true, sourceMapParity: true }, null, 2));

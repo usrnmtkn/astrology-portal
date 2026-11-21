@@ -1,4 +1,5 @@
 import type { TemplateVariableReference } from "./templateVariableReference";
+import { natalInsightTopics, natalInsightTemplateKey, natalInsightSlotGroups } from "../../web/src/content/natalInsightCatalog.ts";
 
 // These prefixes mirror the keys requested by the fallback resolvers. They let
 // Content Studio take an editor from a template slot to the saved writing that
@@ -76,12 +77,18 @@ const resolverSourceFamilies: Record<string, string[]> = {
 };
 
 const templateSourceContracts: Record<string, Record<string, string[]>> = {
+  ...Object.fromEntries(natalInsightTopics.flatMap(topic => (["you", "friend"] as const).flatMap(audience => (topic.id === "approach" ? [false, true] : [false]).map(untimed => [
+    natalInsightTemplateKey(topic.id, audience, untimed), Object.fromEntries(Object.entries(natalInsightSlotGroups(topic.id, untimed, audience)).map(([slot, group]) => [slot, [`cms/natal-insight/passage/${group}/`]]))
+  ])))),
   "fallback-template/transit.retrograde-article": {
     articleHeadline: ["fallback-hook/transit-retro-article/"],
     articleBody: ["fallback-hook/transit-retro-article/"]
   },
   "fallback-template/synastry.aspect-v3": {
     pairSentences: ["fallback-hook/synastry-pair/"]
+  },
+  "fallback-template/natal.aspect": {
+    pairSentences: ["fallback-hook/aspect-pair/"]
   },
   "fallback-template/compat.cross-sign": {
     elementPattern: ["fallback-hook/element-pattern/"]

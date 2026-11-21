@@ -27,7 +27,15 @@ for(const [width,theme] of [[390,'dark'],[1440,'light']] as const)test(`AI sign 
   return route.fulfill({json:{ok:true,body:generated,source:{id:initial.id,updatedAt:initial.updated_at,sign:'gemini',compiledHash:draft.sections.skyArticleEdition.compiledHash,startsAt:draft.sections.skyArticleEdition.transitStartInstant,endsAt:draft.sections.skyArticleEdition.transitEndInstant},generation:{provider:'synthetic',model:'synthetic-model',responseId:'synthetic-response'},saved:false,published:false}});
  });
  try{
-  await page.goto(`${process.env.STUDIO_PRODUCTION_ENTRY==='1'?'/admin/content':'/'}#sky-writeups?planet=mercury&sign=scorpio`);
+  await page.goto(`${process.env.STUDIO_PRODUCTION_ENTRY==='1'?'/admin/content':'/'}#horoscopes`);
+  const referenceDate=page.getByLabel('Reference date',{exact:true});await referenceDate.fill('2026-11-18');
+  const planetaryLink=page.getByRole('link',{name:'Planetary horoscopes',exact:true});
+  await expect(planetaryLink).toHaveAttribute('href','#sky-writeups');await planetaryLink.focus();await page.keyboard.press('Enter');
+  await expect(page.getByLabel('Sky placement planet or point',{exact:true})).toBeVisible();
+  expect(calls).toBe(0);expect(previews).toBe(0);
+  await page.goBack();await expect(referenceDate).toHaveValue('2026-11-18');
+  await planetaryLink.click();await page.getByLabel('Sky placement planet or point',{exact:true}).selectOption('mercury');
+  await page.getByLabel('Sky placement zodiac sign',{exact:true}).selectOption('scorpio');
   const workspace=page.getByRole('region',{name:'Mercury in Scorpio workspace',exact:true});await workspace.getByRole('button',{name:'Edit',exact:true}).click();await workspace.getByRole('button',{name:'Related horoscope editions',exact:true}).click();await page.getByRole('dialog',{name:'Horoscopes',exact:true}).getByRole('button',{name:'Write planetary horoscopes',exact:true}).click();
   const panel=page.getByRole('dialog',{name:'Planetary horoscopes',exact:true});await chooseSign(panel,'gemini');await panel.getByRole('button',{name:'Write with AI',exact:true}).click();
   await panel.getByLabel('Horoscope draft direction').fill('Synthetic owner direction.');

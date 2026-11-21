@@ -1,3 +1,4 @@
+import { skyAspectPackageCandidates } from "./skyAspectReaderFacts";
 import { getSkyPlacementTransitFacts } from "./ephemeris";
 import {
   skyPlacementInSignAspectSections,
@@ -54,8 +55,11 @@ export async function skyPlacementResidencyAspectSections(
     timeZone: request.timeZone
   });
 
-  const { approvedExactSkyAspectCopy } = await import("../content/skyRegistry");
-  const built = skyPlacementInSignAspectSections(facts.rankedEventsDuringTransit, facts.timeZone, undefined, approvedExactSkyAspectCopy);
+  const { approvedExactSkyAspectCopy, skyCalendarComposedCard } = await import("../content/skyRegistry");
+  const { transitSynastryFallbackRendererV3, SourceGapError } = await import("../content/fallbackArchitectureV3Runtime");
+  const built = skyPlacementInSignAspectSections(facts.rankedEventsDuringTransit, facts.timeZone, undefined, approvedExactSkyAspectCopy,
+    { composedLookup: skyCalendarComposedCard,
+      phrasebook: input => skyAspectPackageCandidates(input, transitSynastryFallbackRendererV3.renderSkyAspectCard, SourceGapError) });
   return {
     status: "resolved",
     ...built

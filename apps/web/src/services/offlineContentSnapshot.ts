@@ -1,7 +1,8 @@
-import { isContentRetired, contentPublicationRecords, installContentPublications, mergeContentPublications, publicationAllowsContent } from "../content/contentPublicationState";
+import { isContentRetired, contentPublicationRecords, installContentPublications, mergeContentPublications, publicationAllowsContent, publicationLedgerKey, type ContentPublication } from "../content/contentPublicationState";
 import { updateLastKnownGoodFallbackArchitectureV3Bundle, loadFallbackArchitectureV3BundledCoreManifest, loadFallbackArchitectureV3BundledSkyPlacementManifest } from "../content/fallbackArchitectureV3Runtime";
 import { packageFallbackArchitectureV3CoreRows } from "./fallbackArchitectureV3CorePackaging";
 import type { GeneratedContentRow } from "./generatedContent";
+import { recoverySnapshotUrl } from "../content/contentStudioRecovery.mjs";
 
 export async function installOfflineContentSnapshot(rows: GeneratedContentRow[], publications: unknown[]) {
   // Reuse the shipped partitions instead of downloading a duplicate full index.
@@ -34,15 +35,29 @@ export async function loadOfflineContentRows(): Promise<GeneratedContentRow[]> {
     contentStudioLastKnownGoodLoadedAt = Date.now();
     contentStudioLastKnownGoodRowsPromise = (async () => {
       try {
-        const response = await fetch("/content-studio-last-known-good.json", { cache: "no-cache", signal: AbortSignal.timeout(8000) });
-        if (!response.ok) return [];
-        const snapshot = await response.json() as { schema?: unknown; rowCount?: unknown; rows?: unknown; publications?: unknown };
-        if (snapshot.schema !== "content-studio-last-known-good-v2" || !Array.isArray(snapshot.rows)
-          || snapshot.rowCount !== snapshot.rows.length) return [];
-        if (Array.isArray(snapshot.publications)) {
-          await installOfflineContentSnapshot(snapshot.rows, snapshot.publications);
+        // Try the independent GitHub recovery copy, then retain the shipped fallback.
+        for (const url of [recoverySnapshotUrl, "/content-studio-last-known-good.json"]) {
+          try {
+            const response = await fetch(url, { cache: "no-cache", signal: AbortSignal.timeout(url === recoverySnapshotUrl ? 3000 : 8000) });
+            if (!response.ok) continue;
+            const snapshot = await response.json();
+            if (snapshot?.schema !== "content-studio-last-known-good-v2" || typeof snapshot.sourceRevision !== "string"
+              || Object.keys(snapshot).length !== 5 || !Array.isArray(snapshot.rows) || snapshot.rowCount < 100
+              || snapshot.rowCount !== snapshot.rows.length || !Array.isArray(snapshot.publications)) continue;
+            const publications = new Map<string, ContentPublication>();
+            // The merger drops invalid records; equal size also proves uniqueness.
+            mergeContentPublications(publications, snapshot.publications);
+            // Consume each matching key so duplicate rows fail without another index.
+            if (publications.size !== snapshot.publications.length || !publications.has(publicationLedgerKey)
+              || !snapshot.rows.every((row: GeneratedContentRow) => row.status === "LIVE" && row.lane === "serving"
+                && row.review_state == null && row.target_date == null
+                && publicationAllowsContent(row.content_key, row.id, row.updated_at, null, publications)
+                && publications.delete(row.content_key))) continue;
+            await installOfflineContentSnapshot(snapshot.rows, snapshot.publications);
+            return snapshot.rows as GeneratedContentRow[];
+          } catch { /* A failed recovery host must not disable the packaged copy. */ }
         }
-        return snapshot.rows as GeneratedContentRow[];
+        return [];
       } catch {
         return [];
       }

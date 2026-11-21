@@ -19,7 +19,7 @@
 .you-chart-page[data-profile-view="transits"] .you-report-actions { grid-column: 1 / -1; grid-row: 3; }
 .you-transit-details { grid-column: 1 / -1; display: grid; min-width: 0; gap: var(--space-7); }
 .you-transit-group { display: grid; gap: var(--space-4); min-width: 0; }
-.you-transit-group__header { display: flex; justify-content: space-between; align-items: center; gap: var(--space-4); }
+.you-transit-group__header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-4); }
 .you-transit-group__header h2 { margin: 0; font-family: var(--font-ui); font-size: var(--type-section-emphasis-size); font-weight: var(--weight-semibold); line-height: var(--leading-section-heading); }
 .you-transit-group__toggle { display: inline-flex; flex: none; align-items: center; justify-content: center; gap: var(--space-2); padding: var(--space-2) var(--space-4); border: 0; border-radius: var(--radius-pill); background: var(--surface); color: var(--accent); font-family: var(--font-ui); font-size: var(--text-button-size); font-weight: var(--weight-semibold); line-height: var(--leading-label); }
 .updates-aspect-list.you-transit-grid:not(.lunation-transit__personal) { grid-template-columns: var(--layout-card-columns); gap: var(--space-6); }

@@ -438,6 +438,12 @@
   pointer-events: none;
 }
 
+/* Native SVG tinting also paints correctly in WebKit, which can ignore CSS
+   color filters on SVG image elements. Keep the complete source silhouette. */
+.wheel-planet-glyph feFlood { flood-color: var(--chart-glyph); }
+.inner-planet-labels .wheel-planet-glyph feFlood { flood-color: var(--synastry-inner-glyph); }
+.transit-planet-labels .wheel-planet-glyph feFlood { flood-color: var(--transit-wheel-glyph); }
+
 .planet-degree {
   fill: var(--chart-degree-label);
   font-family: var(--font-body);
@@ -1220,7 +1226,7 @@
 .sky-wheel--handoff .wheel-surface--inner-planets { fill: var(--surface-2); stroke: var(--chart-ring-line); }
 .sky-wheel--handoff .synastry-house-labels text { font-family: var(--font-ui); font-size: var(--chart-house-label-size); font-weight: var(--weight-semibold); fill: var(--ink-2); }
 
-.chart-fullscreen-close > svg { width: var(--size-2); height: var(--size-2); flex: none; }
+.chart-fullscreen-close > svg { width: var(--size-3); height: var(--size-3); flex: none; }
 
 /* Reserve the drawing and house-caption geometry before the lazy wheel arrives. */
 .wheel-loading { display: grid; width: 100%; gap: var(--lunar-space-14); }

@@ -20,6 +20,7 @@
 .natal-big-three .placement-table-row { padding: var(--space-6); border-radius: var(--card-radius-sm); background: var(--surface); }
 .natal-placement-sections { display: grid; grid-column: 1 / -1; grid-template-columns: var(--layout-natal-columns); align-items: start; gap: var(--space-7) var(--space-6); }
 .natal-placement-section { min-width: 0; }
+.natal-insights-section > h2,
 .natal-placement-section > h2,
 .natal-readings--insights > h2 { font-family: var(--font-ui); font-size: var(--type-small-display-size); font-weight: var(--weight-semibold); line-height: var(--leading-section-heading); margin: 0 0 var(--space-4); }
 .natal-traditional { grid-column: 1; grid-row: 1; }

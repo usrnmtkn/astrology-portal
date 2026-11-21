@@ -7,6 +7,10 @@ import { isNatalRetrogradeModifierKey } from './content/natalRetrogradeModifier.
 import { comparePersonalDailyTransits, personalDailyPriority, personalDailyPeakLabel, precisePersonalOrb, personalTransitCopySeed, type PersonalDailyPeak } from "./services/personalDailyTransits";
 import { usePersonalDailyPeaks, usePersonalTransitSeries } from "./services/usePersonalDailyTransits";
 import { compositeReaderRelationshipCopy } from "./content/compositeRelationshipCopy";
+import { DeferredNatalInsightReading as NatalInsightReading } from "./components/charts/DeferredNatalInsightReading";
+import { natalInsightFromHash, natalInsightBirthTimeKnown } from "./services/natalInsightNavigation";
+import type { NatalInsightId } from "./content/natalInsightCatalog";
+import { natalInsightTitle } from "./content/natalInsightTitle";
 import { CalendarDaySkeleton } from "./features/calendar/CalendarDaySkeleton";
 import { skyIngressEssayPublicationKeys, skyIngressEssayReaderSection } from "./content/skyIngressEssayReader";
 import {
@@ -31,10 +35,7 @@ import { isContentRetired, publicationRestoresBaseline, contentPublication, cont
 import { personalTransitPublicationIdentity } from "./services/personalTransitPublication";
 import { installPersonalTransitFallbackArchitectureV3Bundle } from "./content/fallbackArchitectureV3Runtime";
 import { prefetchColdSkyPlacementSources, prepareSkyPlacementSources, skyPlacementPublicationIdentity } from "./services/skyPlacementHydration";
-import {
-  skyPlacementInSignAspectContentKeys,
-  skyPlacementInSignAspectSections
-} from "./services/skyPlacementInSignAspectSections";
+import { skyPlacementInSignAspectContentKeys } from "./services/skyPlacementAspectContentKeys";
 import {
   dateRangeContainedInWindow,
   filterPlacementTimelineEvents,
@@ -74,6 +75,7 @@ import {
   ChevronRight,
   LogOut,
   MapPin,
+  Maximize2,
   Moon,
   Settings,
   Sparkles,
@@ -312,12 +314,8 @@ import {
   cmsSurfaceKeys,
   resolveCmsSurfaceOverride
 } from "./content/cmsSurfaceOverrides";
-import { isSkyAspectRetired, resolveSkyAspectContentStudioExact, resolveSkyAspectGeneratedContent, resolveSkyAspectOwnerAuthoredSigned, skyAspectGeneratedContentKeys } from "./services/skyAspectContent";
 import { eligibleSkyDetailContent, loadSkyDetailContent, prefetchSkyPlacementAspectContent, skyDetailRequiredAspectKeys, skySnapshotAspectContentKeys, type ColdSkyAspectRead } from "./services/skyDetailContent";
-import {
-  resolveApprovedExactSkyAspectCopy,
-  selectSkyAspectCopyByPrecedence
-} from "./services/skyAspectRouting";
+import { skyAspectReadingDateLine, skyAspectPackageCandidates } from "./services/skyAspectReaderFacts";
 import { localDateParts as eventCalendarParts, skyAspectDateRange, skyAspectNarrativeTimingLines, timingGroupLabel } from "./services/skyAspectTiming";
 import { transitArticleDescription } from "./services/transitArticleDescription";
 import { natalTransitGeometry, natalTransitWindowDays } from "./services/natalTransitGeometry";
@@ -776,6 +774,9 @@ export type YouTransitArticle = {
   natalPlacement?: boolean;
   personalTransit?: { aspect: string; planet: string };
   natalPlanetReading?: import("./content/natalChartReadings").NatalPlanetReadingContext;
+  readerBody?: ReactNode;
+  natalReading?: boolean;
+  requiresTransitSources?: boolean;
   pills?: ArticlePillData;
   transitDescription?: string;
   keyDates?: ReturnType<typeof articleTransitKeyDates>;
@@ -827,7 +828,7 @@ type LazyContentRegistry = Pick<
   | "placementContentId"
   | "skyPlacementContentId"
   | "natalPlacementContentId"
-> & Partial<Pick<typeof import("./content/skyRegistry"), "approvedExactSkyAspectCopy">>;
+> & Partial<Pick<typeof import("./content/skyRegistry"), "approvedExactSkyAspectCopy" | "skyCalendarComposedCard" | "skyPlacementInSignAspectSections" | "resolveSkyAspectReading">>;
 
 type ContentFallback = {
   bundle: ContentBundle;
@@ -1307,35 +1308,6 @@ function aspectTemplateSlots(
     planetB: secondPoint,
     planetBTopic: variant === "friend" ? relationshipPlanetTopicSlot(secondPoint, variant) : planetTopicSlot(secondPoint, variant),
     ...(person ? genericPersonReferenceSlots(person) : {})
-  };
-}
-
-function skyAspectSign(aspect: SkySnapshot["aspects"][number], point: string, positions?: PlanetPosition[]) {
-  const signedAspect = aspect as SkySnapshot["aspects"][number] & { fromSign?: string; toSign?: string };
-
-  if (point === aspect.from && signedAspect.fromSign) {
-    return signedAspect.fromSign;
-  }
-
-  if (point === aspect.to && signedAspect.toSign) {
-    return signedAspect.toSign;
-  }
-
-  return (point === aspect.from ? aspect.fromSign : aspect.toSign) ?? skyAspectPosition(point, positions)?.sign ?? "";
-}
-
-function skyAspectTemplateSlots(aspect: SkySnapshot["aspects"][number], positions?: PlanetPosition[]): TemplateSlotValues {
-  const signA = skyAspectSign(aspect, aspect.from, positions);
-  const signB = skyAspectSign(aspect, aspect.to, positions);
-
-  return {
-    ...aspectTemplateSlots(aspect.from, aspect.type, aspect.to, "sky"),
-    signA,
-    signAStyle: signA ? signStyleSlot(signA) : "",
-    signAStyleShort: signA ? signStyleShortPhrase(signA) : "",
-    signB,
-    signBStyle: signB ? signStyleSlot(signB) : "",
-    signBStyleShort: signB ? signStyleShortPhrase(signB) : ""
   };
 }
 
@@ -2467,7 +2439,7 @@ function portalModeFromHashPath(path: string): PortalMode | null {
         return "member";
       }
 
-      if (path.startsWith("you/placement/")) {
+      if (path.startsWith("you/placement/") || path.startsWith("you/insight/")) {
         return "profile";
       }
 
@@ -4225,6 +4197,7 @@ function natalAspectDetailArticle(
   const resolvedSummary = resolvedBody[0] ?? "";
 
   return {
+    requiresTransitSources: false,
     id: contentKey,
     title,
     glyph: pointGlyph(aspect.from),
@@ -4253,162 +4226,6 @@ function skyAspectDisplayTitle(aspect: SkySnapshot["aspects"][number]) {
   return `${aspect.from} ${titleCase(aspect.type)} ${aspect.to}`;
 }
 
-function generatedSkyAspectWritingSection(
-  aspect: SkySnapshot["aspects"][number],
-  generatedContent?: GeneratedContentMap,
-  positions?: PlanetPosition[],
-  generatedAt?: string,
-  timeZone = "UTC"
-): NormalizedSkyAspectSection | null {
-  if (!generatedContent) {
-    return null;
-  }
-
-  const firstSign = aspect.fromSign ?? skyAspectPosition(aspect.from, positions)?.sign;
-  const secondSign = aspect.toSign ?? skyAspectPosition(aspect.to, positions)?.sign;
-
-  if (!firstSign || !secondSign) {
-    return null;
-  }
-
-  const resolved = resolveSkyAspectGeneratedContent({
-    generatedContent,
-    first: aspect.from,
-    second: aspect.to,
-    aspect: aspect.type,
-    firstSign,
-    secondSign,
-    firstMotion: skyAspectPosition(aspect.from, positions)?.motion,
-    secondMotion: skyAspectPosition(aspect.to, positions)?.motion,
-    targetDate: generatedAt ? skyCivilDate(timeZone, new Date(generatedAt)) : undefined
-  });
-
-  if (!resolved) {
-    return null;
-  }
-
-  return {
-    slot: "meaning",
-    required: true,
-    layer: "generated",
-    tier: "generated-sky-aspect-lint-v1",
-    sourceKeys: [resolved.content.contentKey, resolved.pairSource],
-    heading: resolved.content.headline || skyAspectDisplayTitle(aspect),
-    body: resolved.body
-  };
-}
-
-function approvedExactSkyAspectWritingSection(
-  aspect: SkySnapshot["aspects"][number],
-  positions?: PlanetPosition[],
-  generatedContent?: GeneratedContentMap
-): NormalizedSkyAspectSection | null {
-  const firstSign = aspect.fromSign ?? skyAspectPosition(aspect.from, positions)?.sign;
-  const secondSign = aspect.toSign ?? skyAspectPosition(aspect.to, positions)?.sign;
-  const options = generatedContent && firstSign && secondSign
-    ? {
-        generatedContent,
-        first: aspect.from,
-        second: aspect.to,
-        aspect: aspect.type,
-        firstSign,
-        secondSign,
-        firstMotion: skyAspectPosition(aspect.from, positions)?.motion,
-        secondMotion: skyAspectPosition(aspect.to, positions)?.motion
-      }
-    : null;
-  const signedStudio = options ? resolveSkyAspectOwnerAuthoredSigned(options) : null;
-  const studio = signedStudio ?? (options ? resolveSkyAspectContentStudioExact(options) : null);
-
-  if (studio) {
-    return {
-      slot: "meaning",
-      required: true,
-      layer: "authored",
-      tier: signedStudio ? "content-studio-signed-sky-aspect-v1" : "content-studio-exact-sky-aspect-v1",
-      sourceKeys: [studio.content.contentKey],
-      heading: studio.content.headline || skyAspectDisplayTitle(aspect),
-      body: studio.body
-    };
-  }
-
-  const registry = contentRegistryFor("sky");
-
-  if (!registry) {
-    void loadContentRegistry("sky");
-    return null;
-  }
-
-  const resolved = resolveApprovedExactSkyAspectCopy({
-    aspect: aspect.type,
-    first: aspect.from,
-    heading: skyAspectDisplayTitle(aspect),
-    lookup: registry.approvedExactSkyAspectCopy,
-    second: aspect.to,
-    slots: skyAspectTemplateSlots(aspect, positions)
-  });
-
-  if (!resolved) {
-    return null;
-  }
-
-  return {
-    slot: "meaning",
-    required: true,
-    ...resolved
-  };
-}
-
-function reviewedSkyAspectWritingSection(
-  aspect: SkySnapshot["aspects"][number],
-  positions: PlanetPosition[] | undefined,
-  scope: "sign-aware" | "generic"
-): NormalizedSkyAspectSection | null {
-  const firstSign = aspect.fromSign ?? skyAspectPosition(aspect.from, positions)?.sign;
-  const secondSign = aspect.toSign ?? skyAspectPosition(aspect.to, positions)?.sign;
-
-  try {
-    const rendered = transitSynastryFallbackRendererV3.renderSkyAspectCard({
-      a: normalizeContentIdPart(aspect.from),
-      b: normalizeContentIdPart(aspect.to),
-      aspect: normalizeContentIdPart(aspect.type),
-      aSign: firstSign ? normalizeContentIdPart(firstSign) : undefined,
-      bSign: secondSign ? normalizeContentIdPart(secondSign) : undefined
-    });
-
-    if (!rendered.contentKey?.startsWith("fallback-hook/sky-aspect-")) {
-      return null;
-    }
-
-    const isSignAware = rendered.contentKey.startsWith("fallback-hook/sky-aspect-sign/");
-    if ((scope === "sign-aware") !== isSignAware) {
-      return null;
-    }
-
-    const body = fullDetailReaderFacingCopy(rendered.parts) ?? "";
-
-    if (!body || !isReaderFacingCopy(body)) {
-      return null;
-    }
-
-    return {
-      slot: "meaning",
-      required: true,
-      layer: "fallback",
-      tier: "reviewed-sky-aspect-phrasebook-v1",
-      sourceKeys: [rendered.contentKey],
-      heading: rendered.headline || skyAspectDisplayTitle(aspect),
-      body
-    };
-  } catch (error) {
-    if (error instanceof FallbackV3SourceGapError) {
-      return null;
-    }
-
-    throw error;
-  }
-}
-
 type SkyWritingAspectBeat = {
   aspect: string;
   applying?: boolean;
@@ -4429,18 +4246,31 @@ function normalizeSkyAspectSurface(
   generatedAt?: string,
   timeZone = "UTC"
 ): NormalizedSkyAspectArticle {
-  if (isSkyAspectRetired(aspect.from, aspect.type, aspect.to)) return { surface: "sky-aspect", status: "not-servable", sections: [] };
-  const signAwareSection = reviewedSkyAspectWritingSection(aspect, positions, "sign-aware");
-  const authoredSection = approvedExactSkyAspectWritingSection(aspect, positions, generatedContent);
-  const reviewedSection = reviewedSkyAspectWritingSection(aspect, positions, "generic");
-  const generatedSection = generatedSkyAspectWritingSection(aspect, generatedContent, positions, generatedAt, timeZone);
-  const selectedSection = selectSkyAspectCopyByPrecedence({
-    signSpecific: signAwareSection,
-    exact: authoredSection,
-    phrasebook: reviewedSection,
-    generated: generatedSection
+  const registry = contentRegistryFor("sky");
+  if (!registry) void loadContentRegistry("sky");
+  const first = skyAspectPosition(aspect.from, positions);
+  const second = skyAspectPosition(aspect.to, positions);
+  const firstSign = aspect.fromSign ?? first?.sign ?? "";
+  const secondSign = aspect.toSign ?? second?.sign ?? "";
+  const dateLine = generatedAt ? skyAspectReadingDateLine(generatedAt, timeZone) : "Today";
+  const selected = registry?.resolveSkyAspectReading?.({
+    generatedContent: generatedContent ?? new Map(),
+    first: aspect.from, second: aspect.to, aspect: aspect.type,
+    firstSign, secondSign,
+    firstMotion: aspect.fromMotion ?? first?.motion,
+    secondMotion: aspect.toMotion ?? second?.motion,
+    targetDate: generatedAt ? skyCivilDate(timeZone, new Date(generatedAt)) : undefined,
+    dateLine,
+    exactLookup: registry?.approvedExactSkyAspectCopy,
+    composedLookup: registry?.skyCalendarComposedCard,
+    ...skyAspectPackageCandidates({ first: aspect.from, second: aspect.to, aspect: aspect.type, firstSign, secondSign,
+      dateLine },
+      transitSynastryFallbackRendererV3.renderSkyAspectCard, FallbackV3SourceGapError)
   });
-  const sections = selectedSection ? [selectedSection] : [];
+  const sections: NormalizedSkyAspectSection[] = selected ? [{ ...selected,
+    slot: "meaning", required: true, heading: skyAspectDisplayTitle(aspect),
+    body: [selected.body, selected.details].filter(Boolean).join("\n\n")
+  }] : [];
 
   return {
     surface: "sky-aspect",
@@ -5328,13 +5158,16 @@ function currentSkyPlacementDetailArticle({
     ? filterPlacementTimelineEvents(matchingAspectFacts.inSign, timelineWindow)
       .filter(event => !savedArticlePeriod || Date.parse(event.occursAt) < Date.parse(savedArticlePeriod.endsAt))
     : [];
+  const skyRegistry = contentRegistryFor("sky");
   const inSignAspectSections = articleMode === "archive" && matchingAspectFacts
-    ? skyPlacementInSignAspectSections(
+    ? skyRegistry?.skyPlacementInSignAspectSections?.(
       timelineAspectEvents,
       matchingAspectFacts.timeZone,
       generatedContent,
-      contentRegistryFor("sky")?.approvedExactSkyAspectCopy
-    ).sections
+      skyRegistry?.approvedExactSkyAspectCopy,
+      { composedLookup: skyRegistry?.skyCalendarComposedCard,
+        phrasebook: facts => skyAspectPackageCandidates(facts, transitSynastryFallbackRendererV3.renderSkyAspectCard, FallbackV3SourceGapError) }
+    ).sections ?? []
     : [];
   const articleSections = (placementSection?.articleSections ?? []).map((section) => ({
     heading: section.heading,
@@ -5595,18 +5428,13 @@ function skyDetailFromRoutePath(
     const position = displayPositions.find((candidate) => skyRoutePartMatches(candidate.planet, firstPart));
     const routeSign = zodiacSigns.find((candidate) => skyRoutePartMatches(candidate, secondPart));
     const articleKey = `sky-article/${firstPart}/${secondPart}/${thirdPart}`;
-    const routedPosition = position && routeSign
-      ? {
-          ...position,
-          sign: routeSign,
-          signGlyph: signGlyph(routeSign)
-        }
-      : null;
+    const routedPosition = position && routeSign && skyRoutePartMatches(position.sign, secondPart) ? position : null;
 
     return routedPosition ? currentSkyPlacementDetailArticle({
       aspects: [],
       articleKey,
       articleMode: "archive",
+      aspectFacts: sky.placementAspectFacts,
       generatedAt: sky.generatedAt,
       generatedContent,
       locationLatitude: sky.location.latitude,
@@ -7328,6 +7156,7 @@ function emptyHouseDetailArticle(
   });
 
   return {
+    requiresTransitSources: false,
     id: `empty-house-${house}-${normalizeContentIdPart(sign || "unknown")}`,
     title,
     glyph: sign ? zodiacSignGlyphs[sign] ?? "○" : "○",
@@ -10921,7 +10750,7 @@ async function prepareSkyPlacementArticleContent(
     position ? skyPlacementArticleTimelineWindow(position, placementSky.generatedAt, "current") : null);
   const activeAspectKeys = skySnapshotAspectContentKeys({ ...placementSky, aspects: placementSky.aspects.filter(aspect =>
     skyRoutePartMatches(aspect.from, planet) || skyRoutePartMatches(aspect.to, planet)) });
-  const aspectKeys = [...new Set([...skyPlacementInSignAspectContentKeys(events), ...activeAspectKeys])];
+  const aspectKeys = [...new Set([...skyPlacementInSignAspectContentKeys(events, placementSky.location.timeZone), ...activeAspectKeys])];
   const required = new Set([...ingressKeys, ...aspectKeys]);
   const early = readEarly();
   const handoff = early?.handoff();
@@ -10958,7 +10787,7 @@ async function prepareSkyPlacementArticleContent(
   if (savedPeriod) {
     const fullEvents = (placementSky.placementAspectFacts?.inSign ?? []).filter(event =>
       Date.parse(event.occursAt) >= Date.parse(savedPeriod.startsAt) && Date.parse(event.occursAt) < Date.parse(savedPeriod.endsAt));
-    const fullKeys = [...new Set([...skyPlacementInSignAspectContentKeys(fullEvents), ...activeAspectKeys])];
+    const fullKeys = [...new Set([...skyPlacementInSignAspectContentKeys(fullEvents, placementSky.location.timeZone), ...activeAspectKeys])];
     if (fullKeys.some(key => !required.has(key))) {
       const fullRequired = new Set([...ingressKeys, ...fullKeys]);
       const retained = [...eligibleSkyDetailContent(completedCandidates)].filter(([key]) => fullRequired.has(key));
@@ -12318,6 +12147,8 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       return () => { cancelled = true; };
     }
 
+    if (routeType === "archive" && skyPlacementFallbackStatus !== "ready") return;
+
     const storedCalendarEvent = selectedCalendarTransitEventRef.current;
     const calendarEvent = storedCalendarEvent?.event.type === "aspect"
       && storedCalendarEvent.event.planets && storedCalendarEvent.event.aspect
@@ -12326,7 +12157,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     const routePosition = sky && routePlanet && skyNodeDisplayPositions(sky.positions).find(position => skyRoutePartMatches(position.planet, routePlanet));
     const placementSign = routeType === "retrograde" ? (routePosition ? routePosition.sign : undefined) : routeSign;
     const canLoadPlacementArticle = Boolean(
-      !calendarEvent && ["placement", "retrograde"].includes(routeType) && placementSign
+      !calendarEvent && ["placement", "retrograde", "archive"].includes(routeType) && placementSign
       && routePlanet && (routePosition || initial) && zodiacSigns.some(sign => skyRoutePartMatches(sign, placementSign))
     );
     // Reuse initial direct-route preparation at the captured instant after the
@@ -12337,11 +12168,14 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
         && skyArticlePreparationRef.current.initialRefreshVersion !== contentRefreshVersion)
       || skyArticlePreparationRef.current.generation !== contentPublicationGeneration)) {
       skyArticlePreparationRef.current?.early?.discard();
-      const snapshot = requestSkyPlacementArticleSnapshot(articleLocation, routePlanet, placementSign!, skyDate, initial?.date);
+      const archive = routeType === "archive" ? import("./services/skyPlacementInSignAspectSections")
+        .then(reader => reader.loadSkyPlacementArchiveReading(`sky-article/${routePlanet}/${routeSign}/${routeOther}`, articleLocation, availableDetailContent)) : null;
+      const snapshot = archive ? archive.then(value => value.placementSky)
+        : requestSkyPlacementArticleSnapshot(articleLocation, routePlanet, placementSign!, skyDate, initial?.date);
       const preparation: SkyArticlePreparation = { key: preparationKey, snapshot,
         refreshVersion: contentRefreshVersion, generation: contentPublicationGeneration,
         initialPublication: !contentPublicationsResolved(),
-        request: prepareSkyPlacementArticleContent(snapshot, routePlanet, placementSign!, availableDetailContent, () => preparation.early) };
+        request: archive ?? prepareSkyPlacementArticleContent(snapshot, routePlanet, placementSign!, availableDetailContent, () => preparation.early) };
       skyArticlePreparationRef.current = preparation;
       // An unchanged or unavailable first ledger emits no publication event.
       // Its completion must still close the one-use admission window.
@@ -12353,7 +12187,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     }
     const coldGuest = !sky && isSettledGuestReader() && !readCachedFallbackArchitectureV3Bundle("sky-article");
     const preparation = skyArticlePreparationRef.current;
-    if (coldGuest && canLoadPlacementArticle && preparation?.key === preparationKey && !preparation.early) {
+    if (coldGuest && routeType !== "archive" && canLoadPlacementArticle && preparation?.key === preparationKey && !preparation.early) {
       prefetchColdSkyPlacementSources(placementSelection || undefined);
       preparation.early = prefetchSkyPlacementAspectContent(routePlanet, availableDetailContent, refreshContentPublications(),
         preparation.snapshot, prefetchColdSkyContentForKeys, () => {
@@ -12384,7 +12218,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     // resolve before a first paint that would otherwise show bundled copy
     // and then replace it. In-sign Studio keys join that same commit so the
     // article body is not painted twice.
-    if (["placement", "retrograde"].includes(routeType)
+    if (["placement", "retrograde", "archive"].includes(routeType)
       && (skyPlacementFallbackStatus !== "ready" || personalTransitSourcesNeeded && personalTransitSourceStatus !== "ready")) return;
     // Every placement timeline includes exact aspects, even when the author
     // has not used an aspect token in the article.
@@ -12416,7 +12250,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
             skyPlacementPersonalizationTransits, skyDate));
         };
         const articlePosition = placementSky.positions.find(position => skyRoutePartMatches(position.planet, routePlanet));
-        const currentIngressKeys = articlePosition && placementSign ? skyIngressEssayPublicationKeys(contentPublicationRecords(), {
+        const currentIngressKeys = routeType !== "archive" && articlePosition && placementSign ? skyIngressEssayPublicationKeys(contentPublicationRecords(), {
           planet: normalizeContentIdPart(articlePosition.planet), sign: normalizeContentIdPart(placementSign)
         }) : [];
         await renderPlacement(await loadSkyDetailContent(placementSky,
@@ -14610,7 +14444,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
               aria-label="TLDR Astro home"
               onClick={() => navigateToPortalMode(userProfile ? "member" : "guest")}
             >
-              TLDR Astro
+              <span>TLDR<span className="brand-word__suffix"> Astro</span></span>
             </button>
 
             <nav className="site-nav" aria-label="Primary navigation">
@@ -14845,7 +14679,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       {!isSignupMode && <EphemerisStatus retainedAt={skyStatus === "stale" && !sky?.cacheState ? sky?.generatedAt : undefined} timeZone={sky?.location.timeZone} />}
       <PageLoadBoundary resetKey={`${mode}:${skyDetailRoutePath ?? ""}`}>
       <Suspense fallback={<PageLoading message={mode === "calendar" ? "Loading calendar…" : mode === "friends" ? "Loading Friends…" : mode === "profile" ? "Loading your profile…" : "Loading page…"} />}>
-      {routeIssue ? <ReaderUnavailable kind={routeIssue} /> : skyDetailRoutePath && skyDetailUnavailableRoute === skyDetailRoutePath ? <ReaderUnavailable kind="sky-event" /> : selectedSkyDetail && !connectionDetail && (!/^sky\/(?:placement|retrograde)\//u.test(skyDetailRoutePath ?? "")
+      {routeIssue ? <ReaderUnavailable kind={routeIssue} /> : skyDetailRoutePath && skyDetailUnavailableRoute === skyDetailRoutePath ? <ReaderUnavailable kind="sky-event" /> : selectedSkyDetail && !connectionDetail && (!/^sky\/(?:placement|retrograde|archive)\//u.test(skyDetailRoutePath ?? "")
         || skyPlacementFallbackStatus === "ready" && skyDetailResolvedIdentity === skyPlacementResolvedIdentity)
         && (!skyDetailRoutePath?.startsWith("sky/event/") || calendarSkyEventReader?.calendarSkyEventDetailIsCurrent(calendarEventPublicationRef.current, skyDetailRoutePath))
         && (!selectedDetailNeedsPersonalTransitSources || personalTransitSourceStatus === "ready") ? (
@@ -14856,7 +14690,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
         personalTransitSourcesNeeded && personalTransitSourceStatus === "error"
           ? <PageLoadError message="The transit readings could not load. Please try again." onRetry={retryPersonalTransitSources} />
           : skyStatus === "error" ? <PageLoadError scope="page" what="The current sky" cause={skyLoadError} onRetry={() => setSkyRefreshKey(value => value + 1)} />
-          : skyPlacementFallbackStatus === "error" && /^sky\/(?:placement|retrograde)\//u.test(skyDetailRoutePath)
+          : skyPlacementFallbackStatus === "error" && /^sky\/(?:placement|retrograde|archive)\//u.test(skyDetailRoutePath)
             ? <PageLoadError scope="page" what="This placement" onRetry={() => setSkyPlacementFallbackRetryKey(value => value + 1)} />
             : skyDetailReadError === skyDetailRoutePath
               ? <PageLoadError scope="page" what="This placement" onRetry={() => setSkyDetailRetry(value => value + 1)} />
@@ -14928,7 +14762,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
                           setCityPickerOpenedFromMobileControls(false);
                           setMobileSkyControlsOpen(false);
                           setSkyFullChartOpen(true);
-                        }}><span aria-hidden="true">⛶</span></button>
+                        }}><Maximize2 size={24} aria-hidden="true" /></button>
               </section>
             )}
             {!isSignupMode && !usesFullPageLayout && isSkyLoading && (
@@ -15914,6 +15748,7 @@ function natalPlacementDetailArticle(
     : [];
 
   return {
+    requiresTransitSources: false,
     id: natalPlacementRouteId(position),
     natalPlacement: true,
     natalPlanetReading: natalSky && ownerContext?.ownerKind !== "chart" ? {
@@ -16906,17 +16741,17 @@ function ProfileView({
   useEffect(() => {
     const identity = personalTransitPublicationIdentity();
     if (identity !== articlePublicationIdentity.current) {
-      // Includes house and weekly articles, whose IDs are not individual transits.
-      // Reopening resolves the current source rather than retaining a retired body.
+      // Includes house and weekly transit articles, whose IDs are not individual
+      // transits. Natal readings resolve their own sources and must stay open.
       articlePublicationIdentity.current = identity;
-      setTransitArticle(null);
+      setTransitArticle(current => current?.requiresTransitSources === false ? current : null);
     }
   }, [fallbackArchitectureV3Version, transitCopyLoading]);
 
   useEffect(() => {
     // Natal placement facts do not change when today's sky finishes loading.
     // Keep their reader mounted; its route effect refreshes the natal sources.
-    if (!placementRouteIdFromUrl()) setTransitArticle(null);
+    if (!placementRouteIdFromUrl()) setTransitArticle(current => current?.requiresTransitSources === false ? current : null);
   }, [targetDate, currentSky?.location.timeZone]);
 
   const [activePlacementRouteId, setActivePlacementRouteId] = useState<string | null>(null);
@@ -17221,8 +17056,28 @@ function ProfileView({
       updatePlacementRouteUrl(placementId, historyMode);
     });
   };
+  const insightArticle = (id: NatalInsightId): YouTransitArticle => ({
+    id: `natal-insight-${id}`, requiresTransitSources: false, natalReading: true,
+    title: natalInsightTitle(id, "you", generatedContent, profile.name, natalInsightBirthTimeKnown(natalSky, !unknownBirthTime)),
+    subtitle: "", summary: "", sections: [], meta: [], plainBody: true,
+    readerBody: natalSky ? <NatalInsightReading key={`${profile.id}/${id}`} topic={id} sky={natalSky} birthTimeKnown={!unknownBirthTime} subjectId={profile.id} /> : null
+  });
+  const openNatalInsight = (id: NatalInsightId) => transitionPage(() => {
+    setActivePlacementRouteId(null);
+    setTransitArticle(insightArticle(id));
+    const url = new URL(window.location.href);
+    url.hash = `you/insight/${id}`;
+    pushArticleUrl(url);
+  });
   useEffect(() => {
     function syncPlacementRoute() {
+      const topic = natalInsightFromHash(window.location.hash);
+      if (topic && natalSky) {
+        setActivePlacementRouteId(null);
+        setTransitArticle(insightArticle(topic));
+        return;
+      }
+      setTransitArticle(current => current?.id.startsWith("natal-insight-") ? null : current);
       const routeId = placementRouteIdFromUrl();
       const routePosition = placementPositionByRouteId(routeId);
 
@@ -18074,6 +17929,7 @@ function ProfileView({
         elementalSummaryLabel={elementalSummary.label}
         elementalSummarySentence={elementalSummary.sentence}
         emptyHouseRows={emptyHouseRows}
+        natalInsights={natalSky ? { birthTimeKnown: natalInsightBirthTimeKnown(natalSky, !unknownBirthTime), generatedContent, ownerName: profile.name, onOpenTopic: openNatalInsight } : undefined}
         hasSavedBirthDetails={hasSavedBirthDetails}
         hasSavedCurrentCity={hasSavedCurrentCity}
         currentSky={currentSky}
@@ -18090,9 +17946,16 @@ function ProfileView({
         onCloseTransitArticle={() => {
           if (returnToArticleParent()) return;
           transitionPage(() => {
+            const natalArticle = transitArticle?.requiresTransitSources === false;
             setActivePlacementRouteId(null);
             setTransitArticle(null);
             updatePortalModeUrl("profile", "push");
+            if (natalArticle) {
+              const url = new URL(window.location.href);
+              url.hash = "you?tab=chart";
+              window.history.replaceState(window.history.state, "", url);
+              window.dispatchEvent(new Event(articleHistoryChangeEvent));
+            }
           });
         }}
         personalTimingSummary={personalTimingSummary}

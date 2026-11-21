@@ -67,6 +67,15 @@ html[data-scrolled] .topbar {
   padding-top: var(--top-control-top);
 }
 
+html[data-scrolled] .topbar::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 calc(-1 * var(--space-5));
+  z-index: -1;
+  background: var(--navigation-scroll-surface);
+  pointer-events: none;
+}
+
 .nav-pill {
   pointer-events: auto;
   display: flex;

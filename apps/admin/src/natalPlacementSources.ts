@@ -70,6 +70,7 @@ export type NatalPlacementSource = {
   key: string;
   label: string;
   scope: string;
+  existingOnly?: boolean;
 };
 
 export type NatalPlacementSourceGroup = {
@@ -156,8 +157,17 @@ export function natalPlacementSourceGroups(
       { key: `fallback-vocab/sign-adverb/${sign}`, label: `${signLabel} style phrase`, scope: `Used by every natal placement in ${signLabel}.` },
       { key: `fallback-vocab/sign-need/${sign}`, label: `${signLabel} need`, scope: `Used by every natal placement in ${signLabel}.` },
       { key: `fallback-hook/placement-sentence/${planet}/${sign}`, label: `${planetLabel} in ${signLabel} passage`, scope: `Used for ${planetLabel} in ${signLabel}, across every house.` },
+      ...Array.from({ length: 8 }, (_, index) => ({ key: `fallback-vocab/placement-gerund/${planet}/${sign}/${index}`, label: `${planetLabel} in ${signLabel} day-to-day phrase ${index + 1}`, scope: "Used in the day-to-day sentence for this planet and sign.", existingOnly: true })),
       { key: `fallback-vocab/planet-excess/${planet}`, label: `${planetLabel} challenge`, scope: `Used by every natal ${planetLabel} placement.` },
-      { key: `fallback-hook/planet-best/${planet}`, label: `${planetLabel} strength`, scope: `Used by every natal ${planetLabel} placement.` }
+      { key: `fallback-hook/planet-best/${planet}`, label: `${planetLabel} strength`, scope: `Used by every natal ${planetLabel} placement.` },
+      ...["planet-topic", "planet-core", "planet-productive"].map(family => ({ key: `fallback-vocab/${family}/${planet}`, label: `${planetLabel} ${family.replace("planet-", "")} phrase`, scope: `Shared wording available to the ${planetLabel} template.`, existingOnly: true })),
+      { key: `fallback-vocab/sign-style/${sign}`, label: `${signLabel} style`, scope: `Shared wording available to templates for ${signLabel}.`, existingOnly: true },
+      ...(["north-node", "south-node"].includes(planet) ? [
+        { key: `fallback-hook/node-journey/${planet}`, label: `${planetLabel} journey`, scope: `Used by every ${planetLabel} sign placement.` },
+        { key: `fallback-vocab/node-direction/${natalPlacementSigns[(natalPlacementSigns.indexOf(sign as NatalPlacementSign) + 6) % 12]}`, label: "Opposite sign direction", scope: "Used inside the node journey for the selected sign." }
+      ] : []),
+      { key: `fallback-hook/placement-sign-lived/${planet}/${sign}`, label: `${planetLabel} in ${signLabel} authored passage`, scope: "Used when no complete sign override is published.", existingOnly: true },
+      { key: `fallback-hook/sign-lived/${sign}`, label: `${signLabel} fallback passage`, scope: "Used only when the sign template cannot render.", existingOnly: true }
     ]
   };
   const signStructure: NatalPlacementSource = {
@@ -215,7 +225,9 @@ export function natalPlacementSourceGroups(
       sources: [
         { key: `fallback-hook/natal-you-placement-house-final/${planet}/${house}`, label: `Complete ${planetLabel} in the ${houseLabel} house passage`, scope: `Replaces the You house paragraph across every sign.` },
         { key: `fallback-hook/house-meaning/${house}`, label: `${houseLabel} house meaning`, scope: `Used by every natal placement in the ${houseLabel} house.` },
-        { key: `fallback-hook/placement-house-sentence/${planet}/${house}`, label: `${planetLabel} in the ${houseLabel} house passage`, scope: `Used for ${planetLabel} in the ${houseLabel} house, across every zodiac sign.` }
+        { key: `fallback-hook/placement-house-sentence/${planet}/${house}`, label: `${planetLabel} in the ${houseLabel} house passage`, scope: `Used for ${planetLabel} in the ${houseLabel} house, across every zodiac sign.` },
+        { key: `fallback-hook/placement-house-lived/${planet}/${house}`, label: `${planetLabel} in the ${houseLabel} house authored passage`, scope: "Used when no complete house override is published.", existingOnly: true },
+        { key: `fallback-hook/house-lived/${house}`, label: `${houseLabel} house fallback passage`, scope: "Used only when the house template cannot render.", existingOnly: true }
       ]
     },
     structureGroup(true)

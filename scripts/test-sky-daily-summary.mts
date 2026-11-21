@@ -209,6 +209,13 @@ installContentPublications(["sun/libra", "moon/aries/regular"].map(key => ({ con
 const fallback = skyDailySummaryParts({ sun: { sign: "Libra", degree: 15 }, moon: { sign: "Aries", degree: 29 }, moonIsVoid: false });
 assert.equal(fallback.map(part => part.text).join(""), "The Sun is in Libra at 15°. The Moon moves through Aries at 29°.");
 assert.ok(fallback.filter(part => part.emphasis).every(part => part.action));
+const previewSunKey = "cms/sky-daily-summary/sun/libra";
+const previewReplacement = new Map([[previewSunKey, { id: "scoped-preview-fixture", contentKey: previewSunKey, body: "The {sunPlacement} uses the complete synthetic replacement.", status: "LIVE" } as any]]);
+const previewFacts = { sun: { sign: "Libra", degree: 15 }, moon: { sign: "Aries", degree: 29 }, moonIsVoid: false };
+const selectivePreview = skyDailySummaryParts(previewFacts, previewReplacement, { editorialPreviewKeys: [previewSunKey] }).map(part => part.text).join("");
+assert.equal(selectivePreview, "The Sun in Libra at 15° uses the complete synthetic replacement. The Moon moves through Aries at 29°.", "Previewing one retired source must retain retirement rules for the other sources.");
+assert.equal(skyDailySummaryParts(previewFacts, previewReplacement).map(part => part.text).join(""), fallback.map(part => part.text).join(""), "The selected-source preview must never change normal reader selection.");
+
 assert.ok(!text(facts).includes("Talk your way") && !text(facts).includes("Give the feeling"));
 console.log("Sky summary: 144 sign pairs, full-clause and facts-only states, article links, timing, retrogrades, and eclipse labels passed.");
 

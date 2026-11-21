@@ -31,7 +31,9 @@ test("Calendar renders complete collective passages after Studio hydration and r
 test("Calendar serves the owner's published Saturn revision with incomplete event metadata", async ({ page }) => {
   const snapshot = JSON.parse(fs.readFileSync("apps/web/public/content-studio-last-known-good.json", "utf8"));
   const row = snapshot.rows.find((row: { content_key: string }) => row.content_key === "sky.aspect.saturn.square.lilith");
-  expect(row?.body).toContain("A rule stops making sense");
+  expect(row?.body).toBeTruthy();
+  expect(snapshot.publications.find((publication: { content_key: string }) => publication.content_key === row.content_key))
+    .toMatchObject({ state: "live", row_id: row.id, row_updated_at: row.updated_at });
   await page.route("**/rest/v1/**", route => route.fulfill({ json: [] }));
   await page.route("**/rest/v1/content_publications?**", route => route.fulfill({ json: snapshot.publications }));
   const requested = new Set<string>();

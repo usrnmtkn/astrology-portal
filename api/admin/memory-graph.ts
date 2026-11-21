@@ -6,6 +6,9 @@ import { isContentAdminAuthorized, contentAdminVerificationUnavailable } from '.
 import { loadLocalWebEnv } from '../_lib/local-env.js';
 import { activeStudioFeedback, studioFeedbackEnabled } from '../_lib/studio-memory-feedback.js';
 import { withStudioFeedback } from '../_lib/studio-memory-graph.js';
+import { readLiveWritingRulebook } from '../_lib/writing-rulebook-live.js';
+// @ts-ignore Shared dependency-free repository projection.
+import { buildWritingRulebook } from '../_lib/writing-rulebook.mjs';
 // @ts-ignore Shared dependency-free server and CLI module.
 import { buildMemoryIndex, queryMemory, memoryDetail, recallMemory, visualMemoryGraph, sha256 } from '../_lib/agent-memory.mjs';
 
@@ -32,7 +35,8 @@ export async function authorizeMemoryRequest(req: IncomingMessage) {
 }
 
 export function createMemoryGraphHandler(authorize = authorizeMemoryRequest,
-  readStandard = () => readFileSync(path.join(root, writingStandardPath), 'utf8')) {
+  readStandard = () => readFileSync(path.join(root, writingStandardPath), 'utf8'),
+  readLiveRules = readLiveWritingRulebook) {
 return async function handler(req: IncomingMessage, res: ServerResponse) {
   if (req.method !== 'GET') { res.setHeader('Allow', 'GET'); send(res, 405, { ok: false, error: 'Use GET.' }); return; }
   const hasCredential = ['authorization', 'x-content-admin-session', 'x-content-generation-secret'].some(name => {
@@ -52,8 +56,13 @@ return async function handler(req: IncomingMessage, res: ServerResponse) {
   try {
     const url = new URL(req.url ?? '/', 'http://localhost');
     const mode = url.searchParams.get('mode') ?? 'graph';
-    if (!['graph', 'detail', 'recall', 'visual', 'standard'].includes(mode)) { send(res, 400, { ok: false, error: 'Unknown memory request.' }); return; }
+    if (!['graph', 'detail', 'recall', 'visual', 'standard', 'rules', 'live-rules'].includes(mode)) { send(res, 400, { ok: false, error: 'Unknown memory request.' }); return; }
+    if (mode === 'live-rules') { send(res, 200, {ok:true, live:await readLiveRules()}); return; }
     if (!cached || process.env.NODE_ENV !== 'production') cached = buildMemoryIndex({ root, revision: process.env.VERCEL_GIT_COMMIT_SHA ?? null });
+    if (mode === 'rules') {
+      const rulebook = buildWritingRulebook(cached, (name: string) => readFileSync(path.join(root,name),'utf8'));
+      send(res,200,{ok:true,rulebook}); return;
+    }
     if (mode === 'standard') {
       // This is one fixed, packaged repository document, never a requested file path
       // or a projection of private feedback. Authorize before reading it.

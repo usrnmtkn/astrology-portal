@@ -17,6 +17,10 @@ import { useNatalReadingRoute } from "../../hooks/useNatalReadingRoute";
 import { NatalInsightPage } from "../../components/NatalInsightPage";
 import { NatalSectPage } from "../../components/NatalSectPage";
 import { PortalVisibility } from "../../components/portalVisibility";
+import { DeferredNatalInsightReading as NatalInsightReading } from "../../components/charts/DeferredNatalInsightReading";
+import { natalInsightTopics, type NatalInsightId } from "../../content/natalInsightCatalog";
+import { natalInsightTitle } from "../../content/natalInsightTitle";
+import { natalInsightBirthTimeKnown } from "../../services/natalInsightNavigation";
 import { transitArticleDescription } from "../../services/transitArticleDescription";
 import { connectionTransitContext } from "../../services/connectionTransitContext";
 import { ConnectionTransitDisclosure } from "./ConnectionTransitDisclosure";
@@ -853,6 +857,24 @@ export function ManualChartsPanel({
     });
   }
 
+  function renderFriendSynastryContact(
+    contact: SynastryContact,
+    friendName: string,
+    otherPronouns?: PronounChoice | null,
+    relationshipType?: string | null
+  ) {
+    const friendVenusMarsSquare = relationshipType != null
+      && normalizeRelationshipContextKey(relationshipType) === "friend"
+      && contact.aspect === "square"
+      && [contact.yourPoint.name, contact.friendPoint.name].sort().join("/") === "Mars/Venus";
+    return renderReaderDirectedSynastryContact(contact, friendName, {
+      otherPronouns,
+      relationshipType,
+      romanticAllowed: isExplicitRomanticRelationship(relationshipType) || friendVenusMarsSquare
+    });
+  }
+
+
   function compositeAspectSummary(
     aspect: { from: string; to: string; type: string; orb: number },
     generatedContent?: GeneratedContentMap
@@ -1137,7 +1159,7 @@ export function ManualChartsPanel({
   const selectedSynastryViewGroups = useMemo<FriendSynastryAspectGroup[]>(() => (
     selectedSynastryAspectGroups.map((group) => ({
       contacts: group.aspects.map((contact) => {
-        const rendered = renderReaderDirectedSynastryContact(contact, selectedChart?.displayName ?? "Friend");
+        const rendered = renderFriendSynastryContact(contact, selectedChart?.displayName ?? "Friend", selectedChart?.pronouns, selectedRelationshipContextType);
 
         return {
           id: contact.id,
@@ -1150,7 +1172,7 @@ export function ManualChartsPanel({
         };
       })
     }))
-  ), [selectedChart?.displayName, selectedSynastryAspectGroups]);
+  ), [selectedChart?.displayName, selectedChart?.pronouns, selectedRelationshipContextType, selectedSynastryAspectGroups]);
   const selectedCompatibilityCards = useMemo(() => {
     if (!friendProfileWork.compatibility || !selectedChart || !selectedFriendReadyNatalChart || selectedChartIsEvent) {
       return [];
@@ -1178,6 +1200,17 @@ export function ManualChartsPanel({
     selectedFriendReadyNatalChart,
     selectedRelationshipContextType
   ]);
+  const selectedCompatibilityDynamics = useMemo(() => {
+    if (!friendProfileWork.compatibility || !relationshipComparisonIsSelf || !selectedChart) return [];
+    return selectedSynastryContacts.flatMap(contact => {
+      // Only this existing two-direction passage was approved for restoration
+      // in Compatibility. Other contacts retain the current Synastry layout.
+      if (contact.aspect !== "square" || [contact.yourPoint.name, contact.friendPoint.name].sort().join("/") !== "Mars/Venus") return [];
+      const rendered = renderFriendSynastryContact(contact, selectedChart.displayName, selectedChart.pronouns, selectedRelationshipContextType);
+      return rendered ? [{ id: contact.id, title: rendered.headline, summary: rendered.body,
+        glyphs: `${contact.yourPoint.glyph} ${aspectGlyph(contact.aspect)} ${contact.friendPoint.glyph}` }] : [];
+    });
+  }, [friendProfileWork.compatibility, relationshipComparisonIsSelf, selectedChart, selectedRelationshipContextType, selectedSynastryContacts]);
   const selectedCompatibilityIsLoading = Boolean(
     friendProfileWork.compatibility
     && selectedChart
@@ -1192,6 +1225,7 @@ export function ManualChartsPanel({
     )
     && profileNatalCalculationStatus !== "error"
   );
+
   const selectedSynastryAspectLines = useMemo<InterChartAspectLine[]>(() => (
     (friendProfileWork.compatibility || friendProfileWork.synastry) && selectedChart && selectedFriendReadyNatalChart && !selectedChartIsEvent
       ? synastryWheelAspectLines(relationshipComparisonSky, selectedChart)
@@ -2092,6 +2126,23 @@ export function ManualChartsPanel({
       sections: detailSections
     });
   };
+  const openFriendNatalInsight = (id: NatalInsightId) => {
+    if (!selectedChart || !selectedFriendReadyNatalChart) return;
+    openFriendDetail({
+      routePath: friendDetailRoutePath(selectedChart.id, "natal", `natal-insight-${id}`),
+      natalReading: true,
+      glyph: "", kicker: "", title: natalInsightTitle(id, "friend", natalGeneratedContent, selectedChart.displayName, natalInsightBirthTimeKnown(selectedFriendReadyNatalChart, !selectedChart.birthTimeUnknown)),
+      meta: "", plainBody: true, suppressTldr: true,
+      body: [<NatalInsightReading key={`${selectedChart.id}/${id}`} topic={id} sky={selectedFriendReadyNatalChart}
+        birthTimeKnown={!selectedChart.birthTimeUnknown} subjectId={selectedChart.id} ownerName={selectedChart.displayName} audience="friend" />]
+    });
+  };
+  useEffect(() => {
+    const route = friendsRouteStateFromUrl();
+    if (route?.chartId !== selectedChart?.id || route?.view !== "natal") return;
+    const topic = natalInsightTopics.find(item => route.detail === `natal-insight-${item.id}`);
+    if (topic) openFriendNatalInsight(topic.id);
+  }, [selectedChart?.id, selectedFriendReadyNatalChart]);
   const openFriendNatalPlacementDetail = (row: SocialPlacementRow) => {
     if (!selectedChart || !selectedFriendReadyNatalChart) {
       return;
@@ -2338,7 +2389,7 @@ export function ManualChartsPanel({
       return;
     }
 
-    const rendered = renderReaderDirectedSynastryContact(contact, selectedChart.displayName);
+    const rendered = renderFriendSynastryContact(contact, selectedChart.displayName, selectedChart.pronouns, selectedRelationshipContextType);
     const title = rendered?.headline ?? `Your ${contact.yourPoint.name} ${contact.aspect} ${selectedChart.displayName}'s ${contact.friendPoint.name}`;
     const subtitle = rendered?.tag ?? relationshipThemeTitle(contact.yourPoint.name, contact.friendPoint.name, contact.aspect);
 
@@ -2359,11 +2410,11 @@ export function ManualChartsPanel({
     if (!route?.detail || route.view !== "synastry" || route.chartId !== selectedChart?.id) return;
     const contact = selectedSynastryContacts.find(candidate => `synastry-${candidate.id}` === route.detail);
     if (!contact) return;
-    const refreshKey = `synastry:${connectionNavigation}:${route.chartId}:${route.detail}:${fallbackArchitectureV3Version}`;
+    const refreshKey = `synastry:${connectionNavigation}:${route.chartId}:${route.detail}:${fallbackArchitectureV3Version}:${selectedRelationshipContextType}:${selectedChart?.pronouns}`;
     if (friendRouteDetailRefreshKeyRef.current === refreshKey) return;
     friendRouteDetailRefreshKeyRef.current = refreshKey;
     openFriendSynastryContactDetail(contact.id);
-  }, [connectionNavigation, selectedChart?.id, selectedSynastryContacts, fallbackArchitectureV3Version]);
+  }, [connectionNavigation, selectedChart?.id, selectedChart?.pronouns, selectedRelationshipContextType, selectedSynastryContacts, fallbackArchitectureV3Version]);
   const openFriendTransitDetail = (transit: TransitItem) => {
     if (!currentSky || !selectedChart) {
       return;
@@ -2997,6 +3048,7 @@ export function ManualChartsPanel({
             ) : selectedCompatibilityCards.length > 0 ? (
               <CompatibilityTab
                 cards={selectedCompatibilityCards}
+                dynamics={selectedCompatibilityDynamics}
                 daily={selectedPairDaily}
                 friendName={selectedChart.displayName}
                 onOpenCard={openFriendCompatibilityCardDetail}
@@ -3018,8 +3070,9 @@ export function ManualChartsPanel({
             <FriendNatalTab
               chartId={selectedChart.id}
               natalSky={selectedFriendReadyNatalChart}
+              generatedContent={friendGeneratedContent}
               bigThreeRows={selectedFriendBigThreeDisplayRows}
-              birthTimeUnknown={selectedChart.birthTimeUnknown}
+              birthTimeUnknown={!natalInsightBirthTimeKnown(selectedFriendReadyNatalChart, !selectedChart.birthTimeUnknown)}
               emptyHouseRows={selectedFriendEmptyHouseViewRows}
               friendName={selectedChart.displayName}
               hasNatalChart={Boolean(selectedFriendReadyNatalChart)}
@@ -3028,6 +3081,7 @@ export function ManualChartsPanel({
               onOpenEmptyHouse={openFriendEmptyHouseDetail}
               onOpenPattern={openFriendNatalAspectPatternDetail}
               onOpenPlacement={openFriendNatalPlacementDetail}
+              onOpenInsight={openFriendNatalInsight}
               patternItems={selectedFriendNatalAspectPatternItems}
               patternStatus={selectedFriendNatalAspectPatternStatus}
               patternTitle={`Patterns in ${possessiveLabel(selectedChart.displayName)} chart`}

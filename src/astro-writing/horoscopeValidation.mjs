@@ -13,8 +13,8 @@ const bodies='Sun|Moon|Mercury|Venus|Mars|Jupiter|Saturn|Uranus|Neptune|Pluto';
 const signs=HOROSCOPE_SIGNS.join('|');
 const ordinals=['first','second','third','fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth'];
 
-export function validateHoroscopeReading(passage,brief,{ownerCorrections=[]}={}) {
-  const planet=brief.window.period==='daily'?'moon':'sun';
+export function validateHoroscopeReading(passage,brief,{ownerCorrections=[],anchorPlanet=brief.window.period==='daily'?'moon':'sun'}={}) {
+  const planet=anchorPlanet;
   const anchor=brief.positions.find(p=>p.planet.toLowerCase()===planet);
   if(!anchor)throw new Error('Calculated horoscope anchor is missing.');
   const events=horoscopeEventsInWindow(brief);

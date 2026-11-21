@@ -17,3 +17,7 @@ export const {
   skyPlacementContentId,
   natalPlacementContentId
 } = createDomainRegistry(skyKnowledge);
+
+export { skyPlacementInSignAspectSections } from "../services/skyPlacementInSignAspectSections";
+
+export { resolveSkyAspectReading } from "../services/skyAspectReading";

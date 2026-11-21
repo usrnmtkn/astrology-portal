@@ -288,6 +288,28 @@ assert.equal(contextualNatalSegments.find((segment) => segment.name === "signTit
 assert.equal(contextualNatalSegments.find((segment) => segment.name === "signAdverb")?.kind, "phrase", "Matched vocabulary should retain its reusable-phrase color group.");
 assert.equal(contextualNatalSegments.find((segment) => segment.name === "placementSentences")?.kind, "hook", "Matched placement passages should retain their authored-hook color group.");
 
+const natalWordingTemplate: CompositionMapRow = {...baseRow, content_key:'fallback-template/natal.planet-in-sign', sections:{packageRecord:{
+  content_role:'template',body_you:'{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{#placementGerundText}}{{placementGerundText}}{{/placementGerundText}}{{#modifierSentences}} {{.}}{{/modifierSentences}}',
+  body_they:'Friend: {{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{#placementGerundText}}{{placementGerundText}}{{/placementGerundText}}'
+}}};
+const natalSource = (key:string, you:string, they=you):CompositionMapRow=>({...baseRow,id:key,content_key:key,body:you,sections:{packageRecord:{body_you:you,body_they:they}}});
+const natalWording = buildCompositionTemplate(natalWordingTemplate,[
+  natalSource('fallback-hook/natal/planet-intro/sun','Wrong planet opening.'),
+  natalSource('fallback-hook/natal/planet-intro/saturn','Complete Saturn opening.','Complete Friend opening.'),
+  natalSource('fallback-vocab/placement-gerund/saturn/virgo/1','second phrase','second friend phrase'),
+  natalSource('fallback-vocab/placement-gerund/saturn/virgo/0','first phrase','first friend phrase'),
+  natalSource('fallback-vocab/placement-gerund/saturn/aries/0','Wrong sign phrase.'),
+  natalSource('fallback-template/natal.modifier.sect-day','Unselected chart condition.')
+],{natalPlacement:{planetTitle:'Saturn',signTitle:'Virgo'},includeOptionalSources:true});
+for (const [field,opening,first,second] of [['body_you','Complete Saturn opening.','first phrase','second phrase'],['body_they','Complete Friend opening.','first friend phrase','second friend phrase']]) {
+  const preview=natalWording.preview.fields.find(candidate=>candidate.key===field)!;
+  assert.equal(preview.rendered,`${field==='body_they'?'Friend: ':''}${opening} ${first}, or ${second}`);
+  assert.equal(preview.paragraphs.flat().find(segment=>segment.name==='planetIntro')?.source?.row.content_key,'fallback-hook/natal/planet-intro/saturn');
+  assert.deepEqual(preview.paragraphs.flat().filter(segment=>segment.name==='placementGerundText').map(segment=>segment.source?.row.content_key),[
+    'fallback-vocab/placement-gerund/saturn/virgo/0','fallback-vocab/placement-gerund/saturn/virgo/1'
+  ],'Every day-to-day phrase must open its own saved source in reading order.');
+}
+
 const retroArticleMap = buildCompositionMap([
   {
     ...baseRow,

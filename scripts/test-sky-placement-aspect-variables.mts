@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { getSkyPlacementSnapshot, getAstrodienstSky } from '../apps/web/src/services/ephemeris';
+import { getSkyPlacementSnapshot, getAstrodienstSky, getSkyPlacementTransitFacts } from '../apps/web/src/services/ephemeris';
 import { skyPlacementVariableFacts } from '../apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementVariables.mjs';
 const location = { label: 'Test', latitude: 40.7, longitude: -74, timeZone: 'America/New_York' };
 const degrees: Record<string, number> = { conjunction: 0, sextile: 60, square: 90, trine: 120, opposition: 180 };
@@ -24,10 +24,22 @@ for (const [planet, sign, date] of [['Mercury', 'Cancer', '2026-07-10'], ['Venus
    const direct = await getAstrodienstSky(location, new Date(event.occursAt));
    const first = direct.positions.find(p => p.planet === planet)!;
    const second = direct.positions.find(p => p.planet === event.otherPlanet)!;
+   assert.equal(event.fromSign, first.sign, `${date}: retained subject sign`);
+   assert.equal(event.toSign, second.sign, `${date}: retained counterpart sign`);
+   assert.equal(event.fromMotion, first.motion, `${date}: retained subject motion`);
+   assert.equal(event.toMotion, second.motion, `${date}: retained counterpart motion`);
    const separation = Math.abs(((first.longitude! - second.longitude! + 540) % 360) - 180);
    assert(Math.abs(separation - degrees[event.aspect]) < 0.001, `${date}: direct ephemeris ${event.id}`);
    if (scope === 'sign') assert.equal(first.sign, sign); else assert.equal(first.motion, 'retrograde');
   }
+ }
+ const ranked = await getSkyPlacementTransitFacts({ planet, sign, referenceDate: new Date(`${date}T12:00:00Z`), timeZone: location.timeZone });
+ for (const event of ranked.rankedEventsDuringTransit.slice(0, 2)) {
+  const exact = await getAstrodienstSky(location, new Date(event.occursAt), { includeTransitWindows: false });
+  const subject = exact.positions.find(p => p.planet === planet)!;
+  const counterpart = exact.positions.find(p => p.planet === event.otherPlanet)!;
+  assert.deepEqual([event.fromSign, event.toSign, event.fromMotion, event.toMotion],
+   [subject.sign, counterpart.sign, subject.motion, counterpart.motion], 'Ranked events retain facts in subject order, including reversed Calendar pairs.');
  }
  const filled = skyPlacementVariableFacts({ planet, sign, isRetrograde: true, aspectFacts: facts });
  assert.equal(Number(filled.aspectsInSignCount), new Set(facts.inSign.map(e => e.id)).size);

@@ -128,6 +128,13 @@ export async function readGeneratedContentRows(path: string, secret: string, sig
   return rows;
 }
 
+/** One requested page only; large combination libraries must not eagerly drain cursors. */
+export async function readGeneratedContentPage(path: string, secret: string, signal?: AbortSignal) {
+  const payload = await request(path, secret, { signal });
+  if (payload.nextCursor != null && typeof payload.nextCursor !== "string") throw new Error("Invalid inventory cursor.");
+  return { rows: rowsFromPayload(payload), nextCursor: payload.nextCursor as string | null | undefined };
+}
+
 function submittedDraftFields(draftSections: Record<string, unknown>) {
   return Object.fromEntries(Object.entries(draftSections).filter(([key]) => key === "packageDraft" || key === "skyFallbackVariantFamilyDraft"));
 }
