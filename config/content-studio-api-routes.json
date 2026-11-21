@@ -320,6 +320,14 @@
       "access": "owner"
     },
     {
+      "path": "/api/admin/synastry-writer-status",
+      "file": "api/admin/synastry-writer-status.ts",
+      "methods": [
+        "GET"
+      ],
+      "access": "owner"
+    },
+    {
       "path": "/api/admin/transit-natal-preview",
       "file": "api/admin/transit-natal-preview.ts",
       "methods": [
