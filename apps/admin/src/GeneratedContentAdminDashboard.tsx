@@ -286,6 +286,7 @@ const SkyPlacementUnwiredNotice = lazy(() => import("./SkyPlacementCompanions").
 const ArticleBlockStyleFields = lazy(() => import("./ArticleBlockStyleFields").then(module => ({default:module.ArticleBlockStyleFields})));
 const ArticlePublicationField = lazy(() => import("./ArticlePublicationField").then(module => ({ default: module.ArticlePublicationField })));
 const ConnectionTransitStudio = lazy(() => import("./ConnectionTransitStudio"));
+const SynastryWriterReadiness = lazy(() => import("./SynastryWriterReadiness"));
 const WheelTooltipsStudio = lazy(() => import("./WheelTooltipsStudio"));
 const WheelTooltipDraftPreview = lazy(() => import("./WheelTooltipDraftPreview"));
 const SkyPlacementAspectBridgeStudio = lazy(() => import('./SkyPlacementAspectBridgeStudio'));
@@ -8791,6 +8792,9 @@ export function GeneratedContentAdminDashboard() {
                 placeholder="Paste secret value or CONTENT_GENERATION_SECRET=value"
               />
             </label>
+            <Suspense fallback={<PageLoading message="Loading writer readiness check…" />}>
+              <SynastryWriterReadiness secret={secret} />
+            </Suspense>
           </section>
         )}
 

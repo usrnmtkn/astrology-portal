@@ -192,6 +192,7 @@ const expectedDynamicEntries = [
   "src/StudioFormattingEditor.tsx",
   "src/HoroscopeEditionsStudio.tsx",
   "src/PlanetaryHoroscopesStudio.tsx",
+  "src/SynastryWriterReadiness.tsx",
   "src/SeasonArticleWorkspace.tsx",
   "src/CompositionMapWorkspace.tsx",
   "src/SkyPlacementComposition.tsx",

@@ -8169,6 +8169,58 @@ test.describe('Content Dashboard shared text roles', () => {
 
 for (const theme of ['dark', 'light'] as const) {
   for (const width of [1440, 390]) {
+    test(`read-only Synastry writer readiness ${theme} ${width}`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1000 });
+      await seedAdminApi(page);
+      await page.addInitScript(value => localStorage.setItem('tldrastro:studio-theme', value), theme);
+      let calls = 0;
+      let releaseFirst: (() => void) | undefined;
+      const firstResponse = new Promise<void>(resolve => { releaseFirst = resolve; });
+      const revision = 'a'.repeat(40);
+      await page.route('**/api/admin/synastry-writer-status', async route => {
+        expect(route.request().method()).toBe('GET');
+        expect(route.request().headers()['x-content-generation-secret']).toBe('qa-secret');
+        calls++;
+        if (calls === 1) await firstResponse;
+        const ready = { ok: true, status: 'ready', editorialVersion: 'synastry-aspect/v16-2026-10-25', revision,
+          primaryStyleReferenceCount: 4, supportingReferenceCount: 28, detailedKnowledgeSourceCount: 20,
+          currentFeedback: 'verified', providerConfigured: true, generationPerformed: false };
+        await route.fulfill({ status: calls === 2 ? 503 : calls === 3 ? 401 : 200,
+          contentType: 'application/json', body: JSON.stringify(calls === 2 || calls === 3
+            ? { ok: false, error: 'private-fixture-error-must-not-render' }
+            : calls === 4 ? { ...ready, generationPerformed: true } : ready) });
+      });
+      await expectAdminRouteLoads(page, '/admin/content#connection');
+      const check = page.getByRole('button', { name: 'Check Synastry writer readiness', exact: true });
+      await expect(check).toBeVisible();
+      expect(calls).toBe(0);
+      await check.click();
+      await expect(page.getByRole('button', { name: 'Checking Synastry writer…', exact: true })).toBeDisabled();
+      releaseFirst!();
+      const status = page.getByRole('status', { name: 'Synastry writer readiness', exact: true });
+      await expect(status).toContainText('Ready. 4 primary style references, 28 supporting references, and 20 detailed meaning sources verified.');
+      await expect(status).toContainText('Current feedback verified. Provider configured. No generation performed.');
+      await expect(page.getByLabel('Verified deployed revision', { exact: true })).toHaveValue(revision);
+      await expect(page.getByRole('heading', { name: 'Connection', exact: true })).toBeVisible();
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+      await page.screenshot({ path: `test-results/synastry-writer-readiness-${theme}-${width}.png` });
+      for (let failed = 0; failed < 3; failed++) {
+        await check.click();
+        await expect(status).toContainText('The deployed writer could not be verified.');
+        await expect(page.getByLabel('Verified deployed revision', { exact: true })).toHaveCount(0);
+        await expect(status).not.toContainText('private-fixture-error');
+      }
+      expect(calls).toBe(4);
+      await page.reload();
+      await expect(check).toBeVisible();
+      await expect(status).toBeEmpty();
+      expect(calls).toBe(4);
+    });
+  }
+}
+
+for (const theme of ['dark', 'light'] as const) {
+  for (const width of [1440, 390]) {
     test(`Studio typography inventory ${theme} ${width}`, async ({ page }) => {
       await page.setViewportSize({ width, height: 1000 });
       await seedAdminApi(page);
