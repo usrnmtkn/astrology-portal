@@ -1245,7 +1245,7 @@
 }
 
 @media (max-width: 520px) {
-  .app-shell:has(.floating-back-button) .brand-word {
+  .app-shell:has(.floating-back-button) .brand-word__suffix {
     display: none;
   }
 

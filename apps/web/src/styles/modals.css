@@ -79,4 +79,4 @@
 }
 @media (prefers-reduced-motion: reduce) { .modal-panel.modal-dialog { animation-name: modal-dialog-fade; } }
 
-:is(.modal-close, .picker-close) > svg { width: var(--size-2); height: var(--size-2); flex: none; stroke: currentColor; }
+:is(.modal-close, .picker-close) > svg { width: var(--size-3); height: var(--size-3); flex: none; stroke: currentColor; }

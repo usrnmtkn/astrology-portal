@@ -91,7 +91,7 @@ export function ReportTopNavigation({
           <Asterisk size={18} aria-hidden="true" />
         </button>
         <button className="brand-word" type="button" onClick={() => goToAppRoute("sky")}>
-          TLDR Astro
+          <span>TLDR<span className="brand-word__suffix"> Astro</span></span>
         </button>
         <nav className="site-nav" aria-label="Primary navigation">
           <button type="button" onClick={() => goToAppRoute("sky")}>

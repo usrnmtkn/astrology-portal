@@ -98,7 +98,7 @@ test('Mobile parity: chart forms, close icons, connection sheet and badge center
   expect((await dialog.locator(input).boundingBox())!.width).toBeGreaterThan(Math.min(250,page.viewportSize()!.width-100));
  }
  const close=dialog.getByRole('button',{name:'Close',exact:true});
- await expect(close.locator('svg')).toHaveCSS('width','16px');await expect(close.locator('svg')).toHaveCSS('height','16px');
+ await expect(close.locator('svg')).toHaveCSS('width','24px');await expect(close.locator('svg')).toHaveCSS('height','24px');
  await expect(close).toHaveCSS('padding','0px');
  await dialog.getByRole('button',{name:'Save chart',exact:true}).scrollIntoViewIfNeeded();
  await expect(dialog.getByRole('button',{name:'Save chart',exact:true})).toBeInViewport();

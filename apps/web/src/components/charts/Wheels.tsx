@@ -305,21 +305,31 @@ function wheelPlanetIconFile(position: PlanetPosition) {
 }
 
 export function WheelPlanetGlyph({ position, yOffset = -4, size }: { position: PlanetPosition; yOffset?: number; size?: number }) {
+  const tintId = `wheel-glyph-${useId().replace(/:/g, "")}`;
   const iconHref = zodiacAssetHref(wheelPlanetIconFile(position));
   const iconSize = size ?? (position.planet === "Sun" ? sunIconSize : planetIconSize);
 
   if (iconHref) {
     return (
-      <image
-        href={iconHref}
-        x={-iconSize / 2}
-        y={-iconSize / 2 + yOffset}
-        width={iconSize}
-        height={iconSize}
-        className="planet-glyph planet-glyph-image wheel-placement__glyph"
-        aria-hidden="true"
-        preserveAspectRatio="xMidYMid meet"
-      />
+      <g className="wheel-planet-glyph">
+        <defs>
+          <filter id={tintId} colorInterpolationFilters="sRGB">
+            <feFlood floodColor="currentColor" />
+            <feComposite in2="SourceAlpha" operator="in" />
+          </filter>
+        </defs>
+        <image
+          href={iconHref}
+          x={-iconSize / 2}
+          y={-iconSize / 2 + yOffset}
+          width={iconSize}
+          height={iconSize}
+          className="planet-glyph planet-glyph-image wheel-placement__glyph"
+          style={{ filter: `url(#${tintId})` }}
+          aria-hidden="true"
+          preserveAspectRatio="xMidYMid meet"
+        />
+      </g>
     );
   }
 
