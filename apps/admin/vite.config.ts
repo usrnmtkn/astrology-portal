@@ -169,7 +169,7 @@ export default defineConfig(({ command, mode }) => {
           // Short URLs avoid repeating editor source names in every preload map.
           // Manifest source keys and the independently deferred entries are retained.
           chunkFileNames(chunk) {
-            return /^(?:MemoryGraphDashboard|HoroscopeWritingStudio|HoroscopeSaveRecovery)$/u.test(chunk.name)
+            return /^(?:MemoryGraphDashboard|HoroscopeWritingStudio|HoroscopeSaveRecovery|admin-calendar-workspace)$/u.test(chunk.name)
               ? "assets/[name]-[hash].js" : "assets/[hash].js";
           },
           onlyExplicitManualChunks: true,
@@ -248,9 +248,8 @@ export default defineConfig(({ command, mode }) => {
         ecma: 2020,
         compress: {
           passes: 5,
-          // Retaining shared functions compresses better across the Studio chunks.
-          inline: 1,
-          reduce_funcs: false
+          // Let Terser simplify the now-shared deferred helpers across call sites.
+          inline: 3
         },
         format: {
           comments: false,
