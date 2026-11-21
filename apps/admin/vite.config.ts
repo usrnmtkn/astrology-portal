@@ -174,7 +174,8 @@ export default defineConfig(({ command, mode }) => {
               ? "assets/[name]-[hash].js" : "assets/[hash].js";
           },
           onlyExplicitManualChunks: true,
-          experimentalMinChunkSize: 8192,
+          // Coalesce compatible shared leaves; explicit editor entry boundaries stay separate.
+          experimentalMinChunkSize: 16384,
           manualChunks(id, { getModuleInfo }) {
             // Keep source-only helpers deferred even when their unused exports are imported statically.
             if (!startupModules) {
