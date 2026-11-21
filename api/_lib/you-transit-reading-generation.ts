@@ -67,7 +67,11 @@ export function validateGeneratedReading(
     register: "second_person"
   });
   if (!writingValidation.passed) issues.push(`You report failed writing validation: ${writingValidation.violations.map((issue: { category?: string; detail?: string }) => `${issue.category ?? "rule"}: ${issue.detail ?? "failed"}`).join("; ")}`);
-  return issues.length ? { passed: false, message: issues.join("\n") } : { passed: true };
+  if (!issues.length) return { passed: true };
+  const violations = writingValidation.violations as Array<{ category: string; detail: string }>;
+  const bodyRepairTerms = brief.window === "week" && factLock.passed && violations.length
+    && violations.every(v => v.category === "banned_language") ? violations.map(v => v.detail) : undefined;
+  return { passed: false, message: issues.join("\n"), bodyRepairTerms };
 }
 
 function productionInputForLocked(locked: ReturnType<typeof youTransitReadingRequestLock>): TransitReadingProductionInput {
