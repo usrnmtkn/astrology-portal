@@ -27,7 +27,7 @@ jobs:
         with:
           node-version: 22
       - name: Verify the monitor itself before trusting its verdict
-        run: node scripts/test-calculation-service-monitor.mjs
+        run: node scripts/test-calculation-service-monitor.mjs && node scripts/test-ephemeris-watchdog.mjs
       - name: Check the calculation service through production health
         id: availability
         run: node scripts/monitor-calculation-service.mjs
