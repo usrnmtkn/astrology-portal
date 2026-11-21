@@ -239,9 +239,17 @@ function articleTitleSign(title: string) {
 
 function articlePlacementGlyphs(title: string, meta = "") {
   const source = `${title} ${meta}`;
-  // Phase names use the supplied lunar icon through the fallback below.
+  if (/^(?:(?:Full|New|(?:First|Last|Third)\s+Quarter|(?:Waxing|Waning)\s+(?:Crescent|Gibbous))\s+Moon|(?:Lunar|Solar)\s+Eclipse)\b/i.test(title)) {
+    const house = articleTitleHouseToken(title, meta);
+    return uniqueArticleGlyphs([
+      textArticleGlyph(pointGlyph("Moon"), "Moon"),
+      signArticleGlyph(articleTitleSign(source) ?? ""),
+      house ? { key: `house-${house}`, label: house, text: house, house: true } : null
+    ]);
+  }
+
   const match = source.match(
-    /^(?!(?:Full|New)\s+Moon\s+in\b)(\w[\w\s]*?)(\s+Rx)?\s+in\s+(\w+)(?:\s+in\s+the\s+(\d+)(?:st|nd|rd|th)\s+house)?/i
+    /^(\w[\w\s]*?)(\s+Rx)?\s+in\s+(\w+)(?:\s+in\s+the\s+(\d+)(?:st|nd|rd|th)\s+house)?/i
   );
 
   if (!match) {
