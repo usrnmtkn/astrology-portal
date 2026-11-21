@@ -134,11 +134,20 @@ async function updateUserGeneratedContent(req: IncomingMessage) {
     if (body[field] !== undefined && typeof body[field] !== "string") throw new AdminHttpError(400, `${field} must be a string.`);
   }
 
-  if (body.status === "LIVE") {
-    const existing = await readPrivateRows("user_generated_interpretations", new URLSearchParams({ select: "id,content_key,body", id: `eq.${body.id}`, limit: "1" }));
-    if (existing[0]?.content_key?.startsWith("natal-insight/") && !(body.body ?? existing[0].body ?? "").trim()) throw new AdminHttpError(400, "Write the complete reading before publishing it.");
+  let draftingIssue: string | null = null;
+  try { assertCleanReaderCopy(body); } catch (error) { draftingIssue = (error as Error).message; }
+  if (body.status === "LIVE" || draftingIssue) {
+    const metadata: unknown = await readPrivateRows("user_generated_interpretations", new URLSearchParams({ select: "id,content_key,body,updated_at", id: `eq.${body.id}`, limit: "1" }));
+    assertStoredRows(metadata);
+    if (metadata.length > 1 || metadata.some(row => row.id.toLowerCase() !== body.id!.toLowerCase())) throw new AdminHttpError(502, "Storage returned an unexpected personalized row.");
+    const existing = metadata[0] as { content_key?: unknown; body?: unknown } | undefined;
+    // The new natal authoring boundary must not censor existing personalized
+    // writing in other surfaces. Classify using storage, never a caller's key.
+    if (typeof existing?.content_key === "string" && existing.content_key.startsWith("natal-insight/")) {
+      if (body.status === "LIVE" && !(body.body ?? (typeof existing.body === "string" ? existing.body : "")).trim()) throw new AdminHttpError(400, "Write the complete reading before publishing it.");
+      if (draftingIssue) throw new AdminHttpError(400, draftingIssue);
+    }
   }
-  try { assertCleanReaderCopy(body); } catch (error) { throw new AdminHttpError(400, (error as Error).message); }
   const row: Record<string, unknown> = { updated_at: new Date().toISOString() };
   if (body.status) row.status = body.status;
   if (body.headline !== undefined) row.headline = body.headline;

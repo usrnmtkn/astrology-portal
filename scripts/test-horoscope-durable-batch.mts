@@ -24,7 +24,17 @@ async function approve(id:string){
  const plan=await action(id,'prepare',{writerChoice:'gemini'});assert.equal(plan.status,200,JSON.stringify(plan.payload));
  const start=await action(id,'start-batch',{approvedPlanHash:plan.payload.plan.planHash});assert.equal(start.status,202,JSON.stringify(start.payload));await runWeeklyHoroscopeBatch(id,{maxSteps:2,wait:async()=>{}});assert.equal(latest(id).source_snapshot.horoscopeGeneration.weeklyEditorial.plan.status,'passed');return plan.payload.plan.planHash;
 }
-const worker=(id:string,maxSteps=100)=>runWeeklyHoroscopeBatch(id,{maxSteps,wait:async()=>{}});
+const worker=async(id:string,maxSteps?:number)=>{
+ if(maxSteps!==undefined)return runWeeklyHoroscopeBatch(id,{maxSteps,wait:async()=>{}});
+ // A durable batch may span cron invocations. Keep the full retained history
+ // and real production deadlines; do not require one host-speed-dependent
+ // invocation to finish all twelve signs.
+ for(let invocation=0;invocation<100;invocation++){
+  const result=await runWeeklyHoroscopeBatch(id,{maxSteps:2,wait:async()=>{}});
+  if(result.state!=='running')return result;
+ }
+ throw new Error('Synthetic durable batch did not finish within 100 bounded workers');
+};
 const id=await create('2026-10-05');
 // Reproduce an old edition's nested history before running the real handlers.
 // Generation, editor retrieval, manual saves and reload must see the full text;
