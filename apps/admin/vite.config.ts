@@ -189,7 +189,7 @@ export default defineConfig(({ command, mode }) => {
             }
             if (startupModules.has(id)) return "index";
             // Preserve independently opened panels while coalescing small shared leaves.
-            if (/apps\/admin\/src\/(?:NatalSectPlacementComparison|LunationWritingStudio|ReusableLunationWritingStudio|DatedLunationWritingStudio|SeasonArticleWorkspace|CalendarSubscriptionEvents|CalendarPlanetaryWorkspace|StudioMemoryFeedback|studioRevisionPublication|contentLibraryNavigation|wheelTooltipEditorSession)\.(?:tsx|ts)$/u.test(id)) {
+            if (/apps\/admin\/src\/(?:NatalSectPlacementComparison|SkyDebilityDatePreview|LunationWritingStudio|ReusableLunationWritingStudio|DatedLunationWritingStudio|SeasonArticleWorkspace|CalendarSubscriptionEvents|CalendarPlanetaryWorkspace|StudioMemoryFeedback|studioRevisionPublication|contentLibraryNavigation|wheelTooltipEditorSession)\.(?:tsx|ts)$/u.test(id)) {
               return id.slice(id.lastIndexOf('/') + 1).replace(/\.(?:tsx|ts)$/u, '');
             }
             // Coalesce small shared chunks without pulling deferred source models into startup.
