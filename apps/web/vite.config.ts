@@ -268,6 +268,12 @@ export default defineConfig(({ mode }) => {
           initialSkyBootstrap: resolve(__dirname, "src/initialSkyBootstrap.ts")
         },
         output: {
+          chunkFileNames(chunk) {
+            return /^(?:PlanetaryHoroscope|PlanetaryHoroscopeCards|usePlanetaryHoroscopeSources)$/u.test(chunk.name)
+              ? "assets/planet-[hash].js"
+              : /^(?:HoroscopeContext|HoroscopeSigns)$/u.test(chunk.name)
+                ? "assets/horoscope-[hash].js" : "assets/[name]-[hash].js";
+          },
           manualChunks(id) {
             // Shared natal identities and traditional rulers must never inherit
             // Studio's lazy editor workspace through its combination selectors.
