@@ -103,7 +103,7 @@ for (const [width, theme] of [[1440, "light"], [390, "dark"]] as const) {
       await editor.getByLabel("Article title", { exact: true }).fill("Synthetic deployment recovery guide");
       await body.fill(copy);
       const mountedEditor = await editor.elementHandle();
-      const formattingAsset = studioBuildAsset('src/StudioFormattingEditor.tsx');
+      const formattingAsset = await studioBuildAsset('src/StudioFormattingEditor.tsx');
       expect(requested.some(url => new URL(url).pathname === formattingAsset)).toBe(false);
       replaced = true;
       const count = requested.length;
