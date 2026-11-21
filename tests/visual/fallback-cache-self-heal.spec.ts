@@ -1,12 +1,19 @@
 import { expect, test } from "@playwright/test";
+import { readFileSync } from "node:fs";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import skyHandler from "../../api/sky";
 
 const cacheKey = "tldrastro:fallbackArchitectureV3:dashboardBundle";
 const versionKey = "tldrastro:fallbackArchitectureV3:dashboardBundleVersion";
 const staleJupiterHook = "Someone just took the stage without asking if they were invited.";
-const currentJupiterArticle = "With Jupiter moving through Leo, confidence, visibility, recognition, and the desire to make something larger all increase";
-const currentJupiterEnding = "Building the whole plan around being seen is where expansion starts needing an audience to keep itself alive.";
+// Recovery follows the exact published snapshot, which may supersede the
+// original bundled article. Preserve the complete opening and final paragraph.
+const publishedSnapshot = JSON.parse(readFileSync("apps/web/public/content-studio-last-known-good.json", "utf8"));
+const publishedJupiter = publishedSnapshot.rows.find((row: any) => row.content_key === "sky-placement/article/jupiter/leo");
+if (!publishedJupiter?.body) throw new Error("The published Jupiter recovery passage is missing.");
+const jupiterParagraphs = publishedJupiter.body.split(/\n\s*\n/u).map((paragraph: string) => paragraph.trim()).filter(Boolean);
+const currentJupiterArticle = jupiterParagraphs[0];
+const currentJupiterEnding = jupiterParagraphs.at(-1);
 
 for (const width of [390, 1440]) test(`an old Jupiter/Lilith package cache self-heals and survives reload at ${width}`, async ({ page }) => {
   await page.setViewportSize({ width, height: 1000 });
