@@ -1,4 +1,4 @@
-import { isContentRetired, contentPublicationRecords, installContentPublications, mergeContentPublications, publicationAllowsContent, type ContentPublication } from "../content/contentPublicationState";
+import { isContentRetired, contentPublicationRecords, installContentPublications, mergeContentPublications, publicationAllowsContent, publicationLedgerKey, type ContentPublication } from "../content/contentPublicationState";
 import { updateLastKnownGoodFallbackArchitectureV3Bundle, loadFallbackArchitectureV3BundledCoreManifest, loadFallbackArchitectureV3BundledSkyPlacementManifest } from "../content/fallbackArchitectureV3Runtime";
 import { packageFallbackArchitectureV3CoreRows } from "./fallbackArchitectureV3CorePackaging";
 import type { GeneratedContentRow } from "./generatedContent";
@@ -47,11 +47,12 @@ export async function loadOfflineContentRows(): Promise<GeneratedContentRow[]> {
             const publications = new Map<string, ContentPublication>();
             // The merger drops invalid records; equal size also proves uniqueness.
             mergeContentPublications(publications, snapshot.publications);
-            if (publications.size !== snapshot.publications.length || !publications.has("__content-publication-ledger/v1")
-              || new Set(snapshot.rows.map((row: GeneratedContentRow) => row.content_key)).size !== snapshot.rows.length
+            // Consume each matching key so duplicate rows fail without another index.
+            if (publications.size !== snapshot.publications.length || !publications.has(publicationLedgerKey)
               || !snapshot.rows.every((row: GeneratedContentRow) => row.status === "LIVE" && row.lane === "serving"
                 && row.review_state == null && row.target_date == null
-                && publicationAllowsContent(row.content_key, row.id, row.updated_at, null, publications))) continue;
+                && publicationAllowsContent(row.content_key, row.id, row.updated_at, null, publications)
+                && publications.delete(row.content_key))) continue;
             await installOfflineContentSnapshot(snapshot.rows, snapshot.publications);
             return snapshot.rows as GeneratedContentRow[];
           } catch { /* A failed recovery host must not disable the packaged copy. */ }
