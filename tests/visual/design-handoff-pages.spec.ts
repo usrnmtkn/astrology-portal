@@ -2143,7 +2143,9 @@ for(const width of [390,1440])for(const theme of ['light','dark'])for(const audi
     const assertClean=await inspectMemberSourceFailures(page);
     const fixture=await patternInsightFixtures(page,theme,{cachedSources:true});
       const route=audience==='you'?'/#you?tab=chart':'/#friends?tab=charts&chart=fixture-friend&view=natal';
-      const reads:ReadonlyArray<readonly [string,string]>=[['GET','/rest/v1/social_profiles'],['POST','/rest/v1/rpc/list_social_friend_requests'],...(audience==='they'?[['POST','/rest/v1/rpc/list_social_friends']] as const:[])];
+      // You deliberately defers its current-sky request until after first paint.
+      // Finish that calculation before this fast journey navigates or reloads.
+      const reads:ReadonlyArray<readonly [string,string]>=[['GET','/rest/v1/social_profiles'],['POST','/rest/v1/rpc/list_social_friend_requests'],...(audience==='they'?[['POST','/rest/v1/rpc/list_social_friends']] as const:[['GET','/api/sky']] as const)];
       await withFinishedSocialReads(page,`${audience}-initial`,()=>page.goto(route),reads);
       await expect(page.getByRole('heading',{level:1,name:audience==='you'?'Fixture Reader':'Fixture Friend',exact:true})).toBeVisible();
       const section=page.getByRole('region',{name:'Patterns & Insights',exact:true});
