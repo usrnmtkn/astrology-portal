@@ -3418,6 +3418,7 @@ export function GeneratedContentAdminDashboard() {
   const guidedReviewOpenedRef = useRef("");
   const sourceOpenRequestRef = useRef(0);
   const dailyGlanceLoadingRequestRef = useRef<number | null>(null);
+  const skySummaryLoadingRequestRef = useRef<number | null>(null);
   const editorLoadRef = useRef<AbortController | null>(null);
   useEffect(() => () => editorLoadRef.current?.abort(), []);
   const openExactTransitNatalSourceRef = useRef<(selection: TransitNatalContact & Partial<Pick<TransitNatalSelection, "sign" | "transitHouse" | "natalHouse">>) => Promise<void>>(async () => {});
@@ -4658,6 +4659,10 @@ export function GeneratedContentAdminDashboard() {
     if (draft?.contentKey) transitExactDismissedKeysRef.current.add(draft.contentKey);
     if (dailyGlanceLoadingRequestRef.current === sourceOpenRequestRef.current) {
       dailyGlanceLoadingRequestRef.current = null;
+      setIsLoading(false);
+    }
+    if (skySummaryLoadingRequestRef.current === sourceOpenRequestRef.current) {
+      skySummaryLoadingRequestRef.current = null;
       setIsLoading(false);
     }
     sourceOpenRequestRef.current += 1;
@@ -6913,6 +6918,7 @@ export function GeneratedContentAdminDashboard() {
     if (hasChangedSavedDraft()
       && !confirmDiscardEditorChanges()) return false;
     const requestId = ++sourceOpenRequestRef.current;
+    skySummaryLoadingRequestRef.current = requestId;
     const originatingHash = window.location.hash;
     setSkySummaryInlineEditing(inline);
     setEditorSaveError("");
@@ -6952,7 +6958,10 @@ export function GeneratedContentAdminDashboard() {
       if (requestId === sourceOpenRequestRef.current) setMessage(dashboardErrorMessage(error));
       return false;
     } finally {
-      if (requestId === sourceOpenRequestRef.current) setIsLoading(false);
+      if (skySummaryLoadingRequestRef.current === requestId) {
+        skySummaryLoadingRequestRef.current = null;
+        if (requestId === sourceOpenRequestRef.current) setIsLoading(false);
+      }
     }
   }
 
