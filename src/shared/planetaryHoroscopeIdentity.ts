@@ -18,33 +18,29 @@ export function planetaryEventKey(event:PlanetaryEvent) {
   return `${PLANETARY_HOROSCOPE_PREFIX}${event.planet}/${event.sign}/${event.startsAt.slice(0,10)}`;
 }
 export const planetaryReadingsBody=(readings:PlanetaryReadings)=>readings.passages.map(p=>`## ${horoscopeSignLabel(p.sign)} / ${horoscopeSignLabel(p.sign)} Rising\n\n${p.headline}\n\n${p.body}`).join('\n\n');
-export function validatePlanetaryReadings(value:any,event:PlanetaryEvent,complete=false):PlanetaryReadings {
-  assertPlanetaryEvent(event);
-  if(value?.schema!=='planetary-horoscopes/v1'||Object.keys(value).some(k=>!['schema','passages'].includes(k))||!Array.isArray(value.passages)||value.passages.length!==12)throw new Error('Keep all twelve sign readings.');
+export function planetaryReadingsIssue(value:any,event:PlanetaryEvent,complete=false) {
+  if(value?.schema!=='planetary-horoscopes/v1'||Object.keys(value).some(k=>!['schema','passages'].includes(k))||!Array.isArray(value.passages)||value.passages.length!==12)return 1;
   const seen=new Set();
   for(const p of value.passages){
     if(!p||!HOROSCOPE_SIGNS.includes(p.sign)||seen.has(p.sign)||p.house!==planetaryHouse(event.sign,p.sign)
       ||typeof p.headline!=='string'||p.headline.length>200||typeof p.body!=='string'||p.body.length>20000
-      ||Object.keys(p).some(k=>!['sign','house','headline','body'].includes(k)))throw new Error('Each sign needs its own complete reading and calculated house.');
-    if(complete&&(!p.headline.trim()||!p.body.trim()||/\{\{|\}\}/u.test(p.headline+p.body)))throw new Error('Finish all twelve headlines and readings before publishing.');
+      ||Object.keys(p).some(k=>!['sign','house','headline','body'].includes(k)))return 2;
+    if(complete&&(!p.headline.trim()||!p.body.trim()||/\{\{|\}\}/u.test(p.headline+p.body)))return 3;
     seen.add(p.sign);
   }
-  return {schema:'planetary-horoscopes/v1',passages:HOROSCOPE_SIGNS.map(sign=>({...value.passages.find((p:any)=>p.sign===sign)}))};
+  return 0;
 }
-export function assertPlanetaryHoroscopeRow(row:any,complete=row.status==='LIVE') {
-  const event=row.facts?.planetaryEvent?.event;
-  assertPlanetaryEvent(event);
-  const revision=row.mode==='studio-draft'&&row.event_type==='horoscope-edition-revision'&&row.status!=='LIVE'&&row.lane==='reference'
-    &&row.source_snapshot?.targetRowId&&row.source_snapshot?.targetRowUpdatedAt&&row.source_snapshot?.targetContentKey===row.content_key;
-  const readings=validatePlanetaryReadings(row.sections?.planetaryHoroscopes,event,complete);
-  if(row.content_key!==planetaryEventKey(event)||row.surface!=='sky'||!revision&&(row.mode!=='article'||row.event_type!=='planetary-horoscopes')
-    ||row.target_date!=null||row.body!==planetaryReadingsBody(readings))throw new Error('Keep the calculated event identity and all twelve complete readings.');
-  return readings;
+export function normalizedPlanetaryReadings(value:PlanetaryReadings):PlanetaryReadings {
+  return {schema:'planetary-horoscopes/v1',passages:HOROSCOPE_SIGNS.map(sign=>({...value.passages.find(p=>p.sign===sign)!}))};
 }
 export function planetaryReaderReadings(row:any) {
   try{
-    if(row.status!=='LIVE'||row.lane!=='serving'||row.review_state||row.mode!=='article')return null;
-    return assertPlanetaryHoroscopeRow(row,true);
+    if(row.status!=='LIVE'||row.lane!=='serving'||row.review_state||row.mode!=='article'||row.surface!=='sky'
+      ||row.event_type!=='planetary-horoscopes'||row.target_date!=null)return null;
+    const event=row.facts?.planetaryEvent?.event;assertPlanetaryEvent(event);
+    if(planetaryReadingsIssue(row.sections?.planetaryHoroscopes,event,true)||row.content_key!==planetaryEventKey(event))return null;
+    const readings=normalizedPlanetaryReadings(row.sections.planetaryHoroscopes);
+    return row.body===planetaryReadingsBody(readings)?readings:null;
   }catch{return null;}
 }
 export {HOROSCOPE_SIGNS,horoscopeCanonicalJson};

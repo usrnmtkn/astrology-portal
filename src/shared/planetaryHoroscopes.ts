@@ -1,5 +1,6 @@
 import {assertCleanReaderCopy} from '../../apps/web/src/content/editorialCopyBoundary.mjs';
-import {validatePlanetaryReadings as validateStructure,assertPlanetaryHoroscopeRow as assertRowStructure,type PlanetaryEvent} from './planetaryHoroscopeIdentity.js';
+import {type PlanetaryEvent} from './planetaryHoroscopeIdentity.js';
+import {validatePlanetaryReadings as validateStructure,assertPlanetaryHoroscopeRow as assertRowStructure} from './planetaryHoroscopeEditor.js';
 export * from './planetaryHoroscopeIdentity.js';
 export * from './planetaryHoroscopeVisit.js';
 export * from './planetaryHoroscopeEditor.js';
