@@ -5846,8 +5846,19 @@ for (const [width, theme] of [[390, "light"], [1440, "dark"]] as const) {
         await expectClientRouteLoads(page, "/#friends?tab=charts&chart=friend-batch4&view=compatibility");
         await expect(page.getByRole("heading", { name: "Planet by planet", exact: true })).toBeVisible();
         await expect(page.locator(".compatibility-dynamic-row")).toHaveCount(0);
+        const compatibility = page.locator(".friend-compatibility-stage");
+        if (relationshipType !== "family") {
+          await expect(compatibility.getByRole("heading", { name: title, exact: true })).toBeVisible();
+          await expect(compatibility).toContainText(copy);
+        } else {
+          await expect(compatibility).not.toContainText(copy);
+        }
         await page.reload();
         await expect(page.getByRole("heading", { name: "Planet by planet", exact: true })).toBeVisible();
+        if (relationshipType !== "family") {
+          await expect(compatibility.getByRole("heading", { name: title, exact: true })).toBeVisible();
+          await expect(compatibility).toContainText(copy);
+        }
         await selectFriendDetailTab(page, "Synastry");
         const synastry = page.getByRole("button", { name: `Open full entry for ${title}`, exact: true });
         if (relationshipType === "family") {
