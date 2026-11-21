@@ -4040,7 +4040,7 @@ export function GeneratedContentAdminDashboard() {
     const params = new URLSearchParams({ status: "all", visibility: "all", limit: "200" });
     natalPlacementResolverDependencyKeys(natalPlacementPlanet, natalPlacementSign, natalPlacementHouse, natalPlacementMotion)
       .forEach((key) => params.append("contentKeys", key));
-    void adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(`/api/admin/generated-content-inventory?${params}`, secret, { signal: controller.signal })
+    void adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(`/api/admin/generated-content?${params}`, secret, { signal: controller.signal })
       .then((payload) => {
         if (controller.signal.aborted) return;
         setRows((current) => {
@@ -6268,6 +6268,7 @@ export function GeneratedContentAdminDashboard() {
           return;
         }
         await openPackagedFallbackSource(payload.packageSource, contentKey, label, fieldPath);
+        if (openTemplatePreview) setTemplateVariableReferenceOpen(true);
         return;
       }
       if (!row) {
@@ -10768,7 +10769,7 @@ export function GeneratedContentAdminDashboard() {
       source_snapshot: currentDraft.sourceSnapshot
     } : null;
     const hasNatalTemplatePreviewContext = categoryFilter === "Natal Chart"
-      && Boolean(natalPlacementPlanet && natalPlacementSign)
+      && Boolean(natalPlacementPlanet && (natalPlacementSign || natalPlacementHouse))
       && (currentDraft.contentKey === `fallback-template/natal.planet-in-sign/${natalPlacementPlanet}`
         || /^fallback-(?:template\/natal\.(?:planet-in-sign|node-in-sign|angle-in-sign|modifier\.retrograde|house-context)|hook\/house-meaning\/(?:[1-9]|1[0-2]))$/u.test(currentDraft.contentKey));
     const natalTemplatePreviewOptions = hasNatalTemplatePreviewContext ? {

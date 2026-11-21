@@ -201,7 +201,7 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
 
   const renderSource = (source: ReturnType<typeof natalPlacementSourceGroups>[number]["sources"][number], previewTemplate = false) => {
     if (source.key.startsWith("fallback-template/natal.planet-in-sign/") && !rows.some((row) => row.content_key === source.key)) {
-      source = { ...source, key: "fallback-template/natal.planet-in-sign" };
+      source = { ...source, key: ["north-node", "south-node"].includes(planet) ? "fallback-template/natal.node-in-sign" : "fallback-template/natal.planet-in-sign" };
     }
     if (source.key.includes("/natal-you-placement-house-final/")) {
       const preferredKey = source.key.replace("/natal-you-placement-house-final/", "/placement-house-lived/");
@@ -209,6 +209,9 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
       if (!rows.some((row) => row.content_key === source.key)) return null;
     }
     const savedRow = editableSource(rows, source.key);
+    if (source.existingOnly && !savedRow) return null;
+    if (source.existingOnly && source.key.includes("/placement-house-lived/")
+      && !rows.some(row => row.content_key === source.key.replace("/placement-house-lived/", "/natal-you-placement-house-final/"))) return null;
     const isRetrogradeModifier = isNatalRetrogradeModifierKey(source.key);
     const isOptionalExactOverride = source.key.startsWith("fallback-hook/natal-you-placement-complete-final/") || source.key.startsWith("fallback-hook/natal-you-placement-sign-final/");
     const preview = previewFromRow(savedRow, source.key);
