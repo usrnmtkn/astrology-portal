@@ -166,6 +166,12 @@ export default defineConfig(({ command, mode }) => {
       manifest: true,
       rollupOptions: {
         output: {
+          // Short URLs avoid repeating editor source names in every preload map.
+          // Manifest source keys and the independently deferred entries are retained.
+          chunkFileNames(chunk) {
+            return /^(?:MemoryGraphDashboard|HoroscopeWritingStudio|HoroscopeSaveRecovery)$/u.test(chunk.name)
+              ? "assets/[name]-[hash].js" : "assets/[hash].js";
+          },
           onlyExplicitManualChunks: true,
           experimentalMinChunkSize: 8192,
           manualChunks(id, { getModuleInfo }) {
@@ -181,7 +187,7 @@ export default defineConfig(({ command, mode }) => {
             }
             if (startupModules.has(id)) return "index";
             // Preserve independently opened panels while coalescing small shared leaves.
-            if (/apps\/admin\/src\/(?:NatalSectPlacementComparison|CalendarSubscriptionEvents|StudioMemoryFeedback|studioRevisionPublication|contentLibraryNavigation|wheelTooltipEditorSession)\.(?:tsx|ts)$/u.test(id)) {
+            if (/apps\/admin\/src\/(?:NatalSectPlacementComparison|LunationWritingStudio|ReusableLunationWritingStudio|DatedLunationWritingStudio|SeasonArticleWorkspace|CalendarSubscriptionEvents|CalendarPlanetaryWorkspace|StudioMemoryFeedback|studioRevisionPublication|contentLibraryNavigation|wheelTooltipEditorSession)\.(?:tsx|ts)$/u.test(id)) {
               return id.slice(id.lastIndexOf('/') + 1).replace(/\.(?:tsx|ts)$/u, '');
             }
             // Coalesce small shared chunks without pulling deferred source models into startup.
@@ -189,20 +195,24 @@ export default defineConfig(({ command, mode }) => {
               if (/\/(?:skyArticleHoroscopes\.mjs|skyPlacementAspectBridge\.ts|studioMemoryIdentity\.ts)$/u.test(id)) return "admin-source-drafts";
               return id.slice(id.lastIndexOf('/') + 1).replace(/\.(?:mjs|tsx|ts)$/u, '');
             }
+            // Pure validation and draft identities share their deferred source transport.
+            if (/src\/shared\/planetaryHoroscope(?:Identity|Editor|s)\.ts$/u.test(id)
+              || /apps\/admin\/src\/moonHoroscopeDraft\.ts$/u.test(id)
+              || /apps\/web\/src\/content\/(?:editorialCopyBoundary\.mjs|bondEffectIdentity\.ts)$/u.test(id)) return "admin-source-drafts";
+            if (id.endsWith("/apps/web/src/services/generatedContentKeys.ts")) return "admin-source-drafts";
+            // Calendar assembly and its UI are used in the same deferred workspace.
+            if (/apps\/admin\/src\/calendarPassageWorkspace\.ts$/u.test(id)) return "admin-calendar-workspace";
             // Required edition helpers share one leaf chunk. The editor keeps
             // its source entry and optional writing/recovery panels stay separate.
             if (/apps\/admin\/src\/HoroscopeSavedEditions\.tsx$/u.test(id)
               || /apps\/admin\/src\/(?:horoscopeEditionDraft|horoscopeEditionDeletion)\.ts$/u.test(id)
               || /apps\/web\/src\/content\/horoscopeEditions\.mjs$/u.test(id)
               || /src\/shared\/features\/horoscopes\/HoroscopeLocation\.tsx$/u.test(id)
-              || /src\/astro-writing\/horoscopeWriterCatalog\.mjs$/u.test(id)) return "review";
-            if (/apps\/admin\/src\/(?:HoroscopeWritingStudio|HoroscopeSaveRecovery|PlanetaryHoroscopesStudio)\.tsx$/u.test(id)
-              || /src\/shared\/planetaryHoroscopeEditor\.ts$/u.test(id)) return "review";
+              || /src\/astro-writing\/horoscopeWriterCatalog\.mjs$/u.test(id)) return "horoscopeEditionManagement";
+            if (/apps\/admin\/src\/(?:HoroscopeWritingStudio|HoroscopeSaveRecovery)\.tsx$/u.test(id)) return "HoroscopeWritingStudio";
             // Profile metadata and reconciliation load with their editing panels.
-            if (/apps\/admin\/src\/(?:MoonHoroscopesStudio|LunationWritingStudio|ReusableLunationWritingStudio|DatedLunationWritingStudio|SeasonArticleWorkspace|CalendarPlanetaryWorkspace)\.tsx$/u.test(id)
-              || id.endsWith('/src/shared/lunationTimingVariables.ts')) return "review";
             if (/src\/astro-writing\/(?:horoscopeWritingProfiles|monthlyHoroscopeGuidance|seasonalComposition|horoscopeStreamCheckpoint)\.mjs$/u.test(id)
-              || /apps\/admin\/src\/horoscopeEditReconciliation\.ts$/u.test(id)) return "review";
+              || /apps\/admin\/src\/horoscopeEditReconciliation\.ts$/u.test(id)) return "HoroscopeWritingStudio";
             // The same summary workspaces use these two small source loaders.
             // Share their transport without moving the complete JSON artifacts.
             if (/apps\/admin\/src\/(?:skySummarySourceBank|skyMoonSummarySources)\.ts$/u.test(id)) return "admin-sky-summary-workspace";

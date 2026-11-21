@@ -270,7 +270,9 @@ export default defineConfig(({ mode }) => {
         output: {
           chunkFileNames(chunk) {
             return /^(?:PlanetaryHoroscope|PlanetaryHoroscopeCards|usePlanetaryHoroscopeSources)$/u.test(chunk.name)
-              ? "assets/planet-[hash].js" : "assets/[name]-[hash].js";
+              ? "assets/planet-[hash].js"
+              : /^(?:HoroscopeContext|HoroscopeSigns)$/u.test(chunk.name)
+                ? "assets/horoscope-[hash].js" : "assets/[name]-[hash].js";
           },
           manualChunks(id) {
             // Natal source identities are shared with Studio but load on article intent.
