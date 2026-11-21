@@ -8,7 +8,7 @@ import { PageLoading } from '../../../src/shared/components/PageLoading';
 import { adminSecretStorageKey, normalizeAdminSecret } from './adminSecret';
 import { loadOwnerSessionAccessToken, ownerSessionStorageKey } from './ownerSession';
 import { readMemoryGraph } from './ownerSessionRequest';
-import StandardDocument, { type WritingStandard } from './WritingStandardDocument';
+import StandardDocument, { type WritingStandard, type LiveWritingRules } from './WritingStandardDocument';
 
 const standardView = new URLSearchParams(window.location.search).get('view') === 'writing-standard';
 
@@ -42,6 +42,9 @@ export default function MemoryGraphDashboard() {
   const [refresh, setRefresh] = useState(0);
   const [documents, setDocuments] = useState<DocumentWithMemories[] | null>(null);
   const [standard, setStandard] = useState<WritingStandard | null>(null);
+  const [liveRules, setLiveRules] = useState<LiveWritingRules | null>(null);
+  const [liveError, setLiveError] = useState('');
+  const [liveRefresh, setLiveRefresh] = useState(0);
   const [payload, setPayload] = useState<Graph | null>(null);
   const [detail, setDetail] = useState<Detail | null>(null);
   const [selectedId, setSelectedId] = useState('');
@@ -71,11 +74,11 @@ export default function MemoryGraphDashboard() {
 
   const graph = useMemo(() => documents?.length ? <div className="memory-reference-root"><MemoryGraph documents={documents} variant="console" showSpacesSelector={false} autoLoadOnViewport={false} legendId="memory-reference-legend" /></div> : null, [documents]);
 
-  function readMemory(params: string, signal: AbortSignal) {
+  function readMemory(params: string, signal: AbortSignal, onError = setError) {
     return readMemoryGraph(params, credential, signal).catch(error => {
       if (!signal.aborted) {
         if ((error as { status?: number }).status === 401) { rejectedCredential.current = credential; emergencyCredential.current = ''; setCredential(''); }
-        setError(error.message);
+        onError(error.message);
       }
       return null;
     });
@@ -85,9 +88,9 @@ export default function MemoryGraphDashboard() {
     if (!credential) return;
     const controller = new AbortController();
     setError('');
-    void readMemory(standardView ? 'mode=standard' : 'mode=visual', controller.signal).then(body => {
-      if (!body) return;
-      if (standardView) setStandard(body.standard); else setDocuments(body.documents);
+    void readMemory(standardView ? 'mode=rules' : 'mode=visual', controller.signal).then(body => {
+      if (!body || controller.signal.aborted) return;
+      if (standardView) setStandard(body.rulebook); else setDocuments(body.documents);
       setCheckedAt(body.freshness?.checkedAt ?? '');
       if (emergencyCredential.current === credential) {
         try { window.localStorage.setItem(adminSecretStorageKey, credential); } catch { /* Keep access usable when storage is unavailable. */ }
@@ -95,6 +98,15 @@ export default function MemoryGraphDashboard() {
     });
     return () => controller.abort();
   }, [credential, refresh]);
+  useEffect(() => {
+    setLiveRules(null); setLiveError('');
+    if (!credential || !standardView) return;
+    const controller = new AbortController();
+    void readMemory('mode=live-rules',controller.signal,setLiveError).then(body => {
+      if (body && !controller.signal.aborted) setLiveRules(body.live);
+    });
+    return () => controller.abort();
+  },[credential,refresh,liveRefresh]);
   useEffect(() => {
     const timer = setTimeout(() => { setSearch(query.trim().length >= 3 ? query.trim() : ''); setOffset(0); }, 200);
     return () => clearTimeout(timer);
@@ -145,7 +157,7 @@ export default function MemoryGraphDashboard() {
   if (standardView) return <main className="admin-dashboard studio-standalone writing-standard-page" {...studioShellAttributes()}><div className="admin-main">
     <nav className="admin-toolbar-actions" aria-label="Writing standard navigation">{back}<a className="admin-page-link" href="/admin/content/memory">Memory graph</a></nav>
     {error && <div role="alert"><p>{error}</p><StudioButton onClick={() => setRefresh(value => value + 1)}>Try again</StudioButton></div>}
-    {standard ? <StandardDocument standard={standard} /> : <><h1>Writing standard</h1>{!error && <PageLoading message="Loading writing standard…" />}</>}
+    {standard ? <StandardDocument standard={standard} live={liveRules} liveError={liveError} onRetryLive={() => setLiveRefresh(value=>value+1)} /> : <><h1>Writing standard</h1>{!error && <PageLoading message="Loading writing standard…" />}</>}
   </div></main>;
   return <main className="admin-dashboard memory-is-open studio-standalone" {...studioShellAttributes()}>
     <h1 className="memory-sr-only">Memory graph</h1>
