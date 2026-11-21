@@ -61,8 +61,10 @@ The repository's prose package is:
 
 Package source files include original imports and historical source material.
 They do not override newer saved Studio writing. GitHub's generated
-`apps/web/public/content-studio-last-known-good.json` records reader-safe published
-versions for recovery; it is not an editable editorial store. See
+`apps/web/public/content-studio-last-known-good.json` on the deployment-disabled
+`data/content-studio-recovery` branch tracks reader-safe published versions
+automatically. Main's copy remains the packaged release baseline. Neither is an
+editable editorial store. See
 [Studio synchronization](CONTENT_STUDIO_SYNC.md) for ownership, export scope and
 delivery verification.
 

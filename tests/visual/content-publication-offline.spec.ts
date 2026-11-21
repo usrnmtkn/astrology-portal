@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 import { build } from 'esbuild';
 import { readFileSync } from 'node:fs';
 
-test('the exported Chiron publication renders its complete current wording from the recovery snapshot', async ({ page, context }) => {
+for (const recovery of ['available', 'unavailable', 'invalid']) test(`the exported Chiron publication renders complete wording when GitHub recovery is ${recovery}`, async ({ page, context }) => {
   const snapshot = JSON.parse(readFileSync('apps/web/public/content-studio-last-known-good.json', 'utf8'));
   const key = 'fallback-hook/natal-aspect-lived/lilith/trine/chiron';
   const source = snapshot.rows.find((row: any) => row.content_key === key);
@@ -15,7 +15,15 @@ test('the exported Chiron publication renders its complete current wording from 
   `, resolveDir: process.cwd() }, bundle: true, format: 'esm', write: false, define: { 'import.meta.env': '{}' }, logLevel: 'silent' });
   await context.route('**/chiron-snapshot-qa', route => route.fulfill({ contentType: 'text/html', body: '<html><body><article></article><script type="module">import * as qa from "/chiron-snapshot-qa.js";window.qa=qa;</script></body></html>' }));
   await context.route('**/chiron-snapshot-qa.js', route => route.fulfill({ contentType: 'text/javascript', body: compiled.outputFiles[0].text }));
-  // Live content is unavailable; use the actual freshly built static snapshot.
+  let recoveryRequests = 0;
+  await context.route('https://raw.githubusercontent.com/**', route => {
+    recoveryRequests += 1;
+    return recovery === 'unavailable' ? route.abort('failed')
+      : route.fulfill({ contentType: 'application/json', body: JSON.stringify(recovery === 'invalid'
+        ? { ...snapshot, privateWriterPayload: 'must be rejected' } : snapshot) });
+  });
+  if (recovery === 'available') await context.route('**/content-studio-last-known-good.json', route => route.abort('failed'));
+  // Live content is unavailable; recover through GitHub or the freshly built static snapshot.
   await context.route('**/api/content-reader', route => route.abort('failed'));
   await context.route('**/rest/v1/**', route => route.abort('failed'));
   await page.goto('/chiron-snapshot-qa');
@@ -27,6 +35,7 @@ test('the exported Chiron publication renders its complete current wording from 
     document.querySelector('article')!.textContent = body;
     return body;
   }, key);
+  expect(recoveryRequests).toBe(1);
   expect(actual).toBe(source.body);
   expect(await page.locator('article').textContent()).toBe(source.body);
   expect(actual.startsWith(source.body.split('\n')[0])).toBe(true);

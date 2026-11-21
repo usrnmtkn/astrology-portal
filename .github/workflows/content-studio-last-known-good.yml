@@ -7,7 +7,6 @@ on:
 
 permissions:
   contents: write
-  pull-requests: write
 
 concurrency:
   group: content-studio-last-known-good
@@ -21,12 +20,12 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
-          ref: main
+          ref: ${{ github.sha }}
           fetch-depth: 0
       - uses: actions/setup-node@v6
         with:
           node-version: 22
-      - name: Prepare published snapshot for the release queue
+      - name: Synchronize validated published recovery data
         env:
           PROJECT_PRIVACY_POLICY: ${{ secrets.PROJECT_PRIVACY_POLICY }}
           GH_TOKEN: ${{ github.token }}

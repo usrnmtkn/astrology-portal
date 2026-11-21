@@ -27,11 +27,17 @@ const qa = await import(pathToFileURL(file).href);
 const originalFetch = globalThis.fetch;
 const originalNow = Date.now;
 let now = originalNow();
-const originalSnapshot = { schema: snapshot.schema, rowCount: 1, rows: [row], publications: [publication] };
+const originalSnapshot = snapshot;
+const requests: string[] = [];
+let recoveryMode = "unavailable";
 let servedSnapshot = originalSnapshot;
 Date.now = () => now;
 globalThis.fetch = async input => {
-  assert.equal(String(input), "/content-studio-last-known-good.json");
+  requests.push(String(input));
+  if (String(input).startsWith("https://raw.githubusercontent.com/")) {
+    if (recoveryMode === "unavailable") return new Response(null, { status: 503 });
+    if (recoveryMode === "invalid") return Response.json({ ...servedSnapshot, privateFeedback: "forbidden" });
+  } else assert.equal(String(input), "/content-studio-last-known-good.json");
   return Response.json(servedSnapshot);
 };
 try {
@@ -43,21 +49,31 @@ try {
   });
   await qa.loadContentStudioLastKnownGoodRows();
   stop();
+  assert.ok(requests[0].startsWith("https://raw.githubusercontent.com/"));
+  assert.equal(requests[1], "/content-studio-last-known-good.json");
+  recoveryMode = "valid";
+  requests.length = 0;
   assert.deepEqual(observed, [row.body], "Publication listeners must see the matching snapshot passage immediately");
   assert.equal(qa.transitSynastryFallbackRendererV3.renderWeeklyMoon({ sign: "taurus", variant: 4 }).body, row.body);
 
-  const updatedAt = "2026-09-11T12:00:00.000Z";
+  const updatedAt = "2026-12-01T12:00:00.000Z";
   const snapshotRow = { ...row, id: "newer-offline-row", updated_at: updatedAt, body: "QA newer offline passage." };
-  servedSnapshot = { ...originalSnapshot, rows: [snapshotRow], publications: [{ ...publication,
-    revision: publication.revision + 1, row_id: snapshotRow.id, row_updated_at: updatedAt, updated_at: updatedAt }] };
+  servedSnapshot = { ...originalSnapshot, sourceRevision: updatedAt,
+    rows: snapshot.rows.map((r: any) => r.content_key === key ? snapshotRow : r),
+    publications: snapshot.publications.map((p: any) => p.content_key === key ? { ...publication,
+      revision: publication.revision + 1, row_id: snapshotRow.id, row_updated_at: updatedAt, updated_at: updatedAt } : p) };
   now += 360_000;
   await qa.loadContentStudioLastKnownGoodRows();
   assert.equal(qa.transitSynastryFallbackRendererV3.renderWeeklyMoon({ sign: "taurus", variant: 4 }).body, snapshotRow.body);
+  assert.equal(requests.length, 1, "A valid independent recovery copy needs no packaged fetch");
+  recoveryMode = "invalid";
+  requests.length = 0;
   servedSnapshot = originalSnapshot;
   now += 360_000;
   await qa.loadContentStudioLastKnownGoodRows();
   assert.equal(qa.transitSynastryFallbackRendererV3.renderWeeklyMoon({ sign: "taurus", variant: 4 }).body, snapshotRow.body,
     "An older snapshot must preserve a newer previously verified offline passage");
+  assert.equal(requests[1], "/content-studio-last-known-good.json", "A malformed GitHub snapshot falls back to shipped data");
   const newer = { ...row.sections.packageRecord, contentKey: key, content_role: "full_copy", review_status: "approved",
     body: "QA newer published passage.", publicationRowId: "newer-moon-row", publicationRowUpdatedAt: updatedAt };
   qa.installFallbackArchitectureV3Bundle({ transitLib: { authoredCards: [newer] }, templatesFile: { templates: [] }, rowsFile: { hookRows: [], vocabularyRows: [] } });
