@@ -1,23 +1,18 @@
 import type { AspectToneBucket, SkyDetailSection } from "../features/sky/SkyDetailArticle";
-import { isReaderFacingCopy } from "../content/readerSafety";
 import { normalizedArticleAspectToneBucket } from "../utils/articleAspects";
 import type { LiveGeneratedContent } from "./generatedContent";
-import { contentStudioExactSkyAspectKeys, resolveSkyAspectContentStudioExact } from "./skyAspectContent";
+import { resolveSkyAspectReading } from "./skyAspectReading";
+import { skyAspectReadingDateLine, type skyAspectPackageCandidates } from "./skyAspectRouting";
+import type { ApprovedExactSkyAspectLookup, SkyCalendarComposedCardLookup } from "./skyAspectRouting";
+import type { SkyPlacementAspectEvent } from "../types";
+import { placementAspectIdentity } from "./skyPlacementAspectContentKeys";
+export { skyPlacementInSignAspectContentKeys } from "./skyPlacementAspectContentKeys";
 
-/** The caller supplies the approved-copy lookup from the Sky registry it already loaded. Importing
- * the registry here put the whole Sky knowledge payload in the startup graph. */
-export type ApprovedExactSkyAspectLookup = (
-  planet: string,
-  aspect: string,
-  otherPlanet: string
-) => { body?: string; contentId: string; sourceId: string } | null;
-
-export type SkyPlacementInSignAspectEvent = {
-  id: string;
-  occursAt: string;
-  planet: string;
-  aspect: string;
-  otherPlanet: string;
+export type { ApprovedExactSkyAspectLookup } from "./skyAspectRouting";
+export type SkyPlacementInSignAspectEvent = SkyPlacementAspectEvent;
+type ReadingSources = {
+  composedLookup?: SkyCalendarComposedCardLookup | null;
+  phrasebook?: (facts: Parameters<typeof skyAspectPackageCandidates>[0]) => ReturnType<typeof skyAspectPackageCandidates>;
 };
 
 export type SkyPlacementInSignAspectAuditEvent = {
@@ -79,22 +74,20 @@ function aspectRoutePath(first: string, aspect: string, second: string, occursAt
 
 function exactAspectSection({
   aspect,
-  contentId,
   date,
   body,
   first,
   firstOccursAt,
   second,
-  sourceId
+  sourceKeys
 }: {
   aspect: string;
-  contentId: string | null;
   date: string;
   body: string;
   first: string;
   firstOccursAt: string;
   second: string;
-  sourceId: string | null;
+  sourceKeys: string[];
 }): SkyDetailSection {
   return {
     heading: `${first} ${titleCase(aspect)} ${second}`,
@@ -103,50 +96,24 @@ function exactAspectSection({
     role: "aspect",
     aspectType: aspect,
     group: normalizedArticleAspectToneBucket(aspect) as AspectToneBucket,
-    sourceKeys: contentId && sourceId
-      ? [contentId, sourceId === "content-studio-exact" ? contentId : `packages/astro-knowledge/data/transits/${sourceId}.json`]
-      : []
+    sourceKeys
   };
 }
 
-function eventCopy(
-  event: SkyPlacementInSignAspectEvent,
-  generatedContent?: Map<string, LiveGeneratedContent>,
-  approvedExactSkyAspectCopy?: ApprovedExactSkyAspectLookup
-) {
-  const studio = generatedContent
-    ? resolveSkyAspectContentStudioExact({
-        generatedContent,
-        first: event.planet,
-        second: event.otherPlanet,
-        aspect: event.aspect,
-        firstSign: "",
-        secondSign: ""
-      })
-    : null;
-  if (studio?.body) {
-    return {
-      body: studio.body.trim(),
-      contentId: studio.content.contentKey,
-      sourceId: "content-studio-exact"
-    };
-  }
-
-  const copy = approvedExactSkyAspectCopy?.(event.planet, event.aspect, event.otherPlanet);
-  const body = copy?.body?.trim() ?? "";
-  const copyHasSlots = /\{\{[^}]+\}\}/u.test(body);
-  if (!copy || !body || copyHasSlots || !isReaderFacingCopy(body)) {
-    return { body: "", contentId: null as string | null, sourceId: null as string | null };
-  }
-  return {
-    body,
-    contentId: copy.contentId,
-    sourceId: copy.sourceId
-  };
-}
-
-export function skyPlacementInSignAspectContentKeys(events: SkyPlacementInSignAspectEvent[]) {
-  return [...new Set(events.flatMap((event) => contentStudioExactSkyAspectKeys(event.planet, event.aspect, event.otherPlanet)))];
+function eventCopy(event: SkyPlacementInSignAspectEvent, timeZone: string,
+  generatedContent: Map<string, LiveGeneratedContent> | undefined,
+  exactLookup: ApprovedExactSkyAspectLookup | undefined, sources: ReadingSources) {
+  const identity = placementAspectIdentity(event, timeZone);
+  const dateLine = skyAspectReadingDateLine(event.occursAt, timeZone);
+  const reading = resolveSkyAspectReading({ ...identity, generatedContent: generatedContent ?? new Map(),
+    dateLine,
+    exactLookup, composedLookup: sources.composedLookup,
+    ...sources.phrasebook?.({ ...identity, dateLine }) });
+  const sourceKeys = reading?.sourceKeys ?? [];
+  const corpus = sourceKeys.find(key => key.startsWith("packages/astro-knowledge/data/transits/"));
+  return { body: reading ? [reading.body, reading.details].filter(Boolean).join("\n\n") : "",
+    contentId: sourceKeys[0] ?? null,
+    sourceId: corpus ? corpus.split("/").at(-1)!.replace(/\.json$/u, "") : reading?.tier ?? null, sourceKeys };
 }
 
 /** One Gifts/Lessons card per exact in-sign contact, matching Key dates.
@@ -156,7 +123,8 @@ export function skyPlacementInSignAspectSections(
   events: SkyPlacementInSignAspectEvent[],
   timeZone: string,
   generatedContent?: Map<string, LiveGeneratedContent>,
-  approvedExactSkyAspectCopy?: ApprovedExactSkyAspectLookup
+  approvedExactSkyAspectCopy?: ApprovedExactSkyAspectLookup,
+  sources: ReadingSources = {}
 ): SkyPlacementInSignAspectResult {
   const ordered = [...events].sort((first, second) => first.occursAt.localeCompare(second.occursAt));
   const seen = new Set<string>();
@@ -169,6 +137,7 @@ export function skyPlacementInSignAspectSections(
     firstOccursAt: string;
     second: string;
     sourceId: string | null;
+    sourceKeys: string[];
   }>();
   const auditEvents: SkyPlacementInSignAspectAuditEvent[] = [];
   const unresolvedEventIds: string[] = [];
@@ -177,7 +146,7 @@ export function skyPlacementInSignAspectSections(
     if (seen.has(event.id)) continue;
     seen.add(event.id);
 
-    const copy = eventCopy(event, generatedContent, approvedExactSkyAspectCopy);
+    const copy = eventCopy(event, timeZone, generatedContent, approvedExactSkyAspectCopy, sources);
     const eventDateLine = dateLine(event.occursAt, timeZone);
     const heading = `${event.planet} ${titleCase(event.aspect)} ${event.otherPlanet}`;
     const resolved = Boolean(copy.body);
@@ -216,7 +185,8 @@ export function skyPlacementInSignAspectSections(
       first: event.planet,
       firstOccursAt: event.occursAt,
       second: event.otherPlanet,
-      sourceId: resolved ? copy.sourceId : null
+      sourceId: resolved ? copy.sourceId : null,
+      sourceKeys: copy.sourceKeys
     });
   }
 
@@ -224,14 +194,15 @@ export function skyPlacementInSignAspectSections(
     .sort((first, second) => first.firstOccursAt.localeCompare(second.firstOccursAt))
     .map((section) => exactAspectSection({
       aspect: section.aspect,
-      contentId: section.contentId,
       date: joinedExactDateLines(section.dateLines),
       body: section.body,
       first: section.first,
       firstOccursAt: section.firstOccursAt,
       second: section.second,
-      sourceId: section.sourceId
+      sourceKeys: section.sourceKeys
     }));
 
   return { sections, events: auditEvents, unresolvedEventIds };
 }
+
+export { loadSkyPlacementArchiveReading } from "./skyPlacementArchiveReading";

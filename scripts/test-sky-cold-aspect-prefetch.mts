@@ -159,7 +159,7 @@ for (const notification of [false, true]) {
   const ledger = deferred(), calculation = deferred();
   const context = vm.createContext({
     canLoadPlacementArticle: true, skyArticlePreparationRef: { current: null as any }, preparationKey: 'synthetic-route',
-    contentRefreshVersion: 0, contentPublicationGeneration: 0, articleLocation: {}, routePlanet: 'Sun', placementSign: 'Virgo',
+    contentRefreshVersion: 0, contentPublicationGeneration: 0, routeType: 'placement', articleLocation: {}, routePlanet: 'Sun', placementSign: 'Virgo',
     skyDate: '2026-09-13', initial: null, availableDetailContent: new Map(),
     contentPublicationsResolved: () => false, refreshContentPublications: () => ledger.promise,
     requestSkyPlacementArticleSnapshot: () => calculation.promise, prepareSkyPlacementArticleContent: () => calculation.promise
@@ -222,7 +222,7 @@ for (const scenario of ['overlap', 'late-auth', 'retirement', 'revision', 'trans
     }
   });
   vm.runInContext(transpile(prepare.getText(ast)), context);
-  const snapshot = { positions: [{ planet: 'Sun' }], aspects: [], generatedAt: stamp, placementAspectFacts: { inSign: [] } };
+  const snapshot = { location: selectedLocation, positions: [{ planet: 'Sun' }], aspects: [], generatedAt: stamp, placementAspectFacts: { inSign: [] } };
   let early: any, cancelled = false, detached = false;
   const pending = context.prepareSkyPlacementArticleContent(facts.promise, 'sun', 'libra', new Map(), () => early);
   let settled = false;
@@ -314,7 +314,7 @@ for (const scenario of ['completed-before-facts', 'complete-after-facts', 'parti
     }
   });
   vm.runInContext(transpile(prepare.getText(ast)), context);
-  const snapshot = { positions: [{ planet: 'Sun' }], aspects: [], generatedAt: stamp, placementAspectFacts: { inSign: [] } };
+  const snapshot = { location: selectedLocation, positions: [{ planet: 'Sun' }], aspects: [], generatedAt: stamp, placementAspectFacts: { inSign: [] } };
   const pending = context.prepareSkyPlacementArticleContent(facts.promise, 'sun', 'libra', new Map(), () => early);
   void pending.then(() => { settled = true; });
   early = qa.prefetchSkyPlacementAspectContent('sun', new Map(), publications.promise, facts.promise,
@@ -381,7 +381,7 @@ for (const changed of approved && prewarmed ? ['none', 'newer', 'retired'] : ['n
     { id: 'initial-chapter', planet: 'Sun', aspect: 'trine', otherPlanet: 'Mars', occursAt: '2026-10-12T12:00:00Z' },
     { id: 'outside-saved-period', planet: 'Sun', aspect: 'sextile', otherPlanet: 'Saturn', occursAt: '2026-11-01T12:00:00Z' }
   ];
-  const snapshot = { positions: [{ planet: 'Sun', sign: 'Libra' }], aspects: [], generatedAt: stamp, placementAspectFacts: { inSign: events } };
+  const snapshot = { location: selectedLocation, positions: [{ planet: 'Sun', sign: 'Libra' }], aspects: [], generatedAt: stamp, placementAspectFacts: { inSign: events } };
   const requests: string[][] = [];
   const available = new Map([[article.contentKey, article], [selected, row(selected)], [unused, row(unused)], [outsideKey, row(outsideKey)]]);
   const newerStamp = '2026-10-16T07:00:00.000002Z';
@@ -432,7 +432,7 @@ for (const changed of approved && prewarmed ? ['none', 'newer', 'retired'] : ['n
   const [unrelatedKey] = qa.contentStudioExactSkyAspectKeys('Venus', 'square', 'Mars');
   publish([activeKey, unrelatedKey]);
   const requests: string[][] = [];
-  const snapshot = { generatedAt: stamp, positions: [{ planet: 'Sun', sign: 'Libra' }, { planet: 'Mercury', sign: 'Leo' }],
+  const snapshot = { location: selectedLocation, generatedAt: stamp, positions: [{ planet: 'Sun', sign: 'Libra' }, { planet: 'Mercury', sign: 'Leo' }],
     aspects: [
       { from: 'Sun', to: 'Mercury', type: 'sextile', fromSign: 'Libra', toSign: 'Leo' },
       { from: 'Venus', to: 'Mars', type: 'square', fromSign: 'Aries', toSign: 'Cancer' }

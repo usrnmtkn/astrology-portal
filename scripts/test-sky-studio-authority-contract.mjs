@@ -3,41 +3,31 @@ import fs from 'node:fs';
 import ts from 'typescript';
 import { assertSkyStudioAuthority } from './lib/assert-sky-studio-authority.mjs';
 
-const app = fs.readFileSync('apps/web/src/App.tsx', 'utf8');
-const calendar = fs.readFileSync('apps/web/src/features/calendar/LunarCalendar.tsx', 'utf8');
-assertSkyStudioAuthority(app, calendar);
+const sources = {
+  app: fs.readFileSync('apps/web/src/App.tsx', 'utf8'),
+  calendar: fs.readFileSync('apps/web/src/features/calendar/LunarCalendar.tsx', 'utf8'),
+  shared: fs.readFileSync('apps/web/src/services/skyAspectReading.ts', 'utf8')
+};
+assertSkyStudioAuthority(sources.app, sources.calendar, sources.shared);
 const mutations = [
-  ['Sky signed priority', 'app', 'signedStudio ?? (options ? resolveSkyAspectContentStudioExact(options) : null)', '(options ? resolveSkyAspectContentStudioExact(options) : null) ?? signedStudio'],
-  ['Sky signed tier', 'app', 'tier: signedStudio ? "content-studio-signed-sky-aspect-v1" : "content-studio-exact-sky-aspect-v1"', 'tier: "content-studio-exact-sky-aspect-v1"'],
-  ['Sky canonical precedence', 'app', '  if (studio) {', '  if (studio) {'],
-  ['Calendar signed priority', 'calendar', 'exact: signedStudio ?? studioExact ?? exact', 'exact: studioExact ?? signedStudio ?? exact'],
-  ['Calendar canonical priority', 'calendar', 'exact: signedStudio ?? studioExact ?? exact', 'exact: exact ?? signedStudio ?? studioExact'],
-  ['Calendar signed provenance', 'calendar', 'contentType === "owner-authored-sky-aspect"', 'contentType === "unverified"'],
-  ['Calendar exact tier', 'calendar', 'tier: "content-studio-exact-sky-aspect-v1"', 'tier: "canonical"']
+  ['Sky shared selection', 'app', 'const selected = registry?.resolveSkyAspectReading?.({', 'const selected = registry?.otherReading?.({'],
+  ['Calendar shared selection', 'calendar', 'const selected = resolveSkyAspectReading({', 'const selected = otherReading({'],
+  ['Shared signed priority', 'shared', 'const studioSelected = signed ?? studio', 'const studioSelected = studio ?? signed'],
+  ['Shared canonical priority', 'shared', 'const exact: SkyAspectReading | null = studioSelected', 'const exact: SkyAspectReading | null = null'],
+  ['Shared signed tier', 'shared', 'tier: signed ? "content-studio-signed-sky-aspect-v1" : "content-studio-exact-sky-aspect-v1"', 'tier: "canonical"'],
+  ['Shared full passage', 'shared', 'body: studioSelected.body', 'body: studioSelected.body.slice(0, 10)'],
+  ['Shared source identity', 'shared', 'sourceKeys: [studioSelected.content.contentKey]', 'sourceKeys: ["unverified"]']
 ];
 for (const [label, target, before, after] of mutations) {
-  const source = target === 'app' ? app : calendar;
+  const source = sources[target];
   assert.ok(source.includes(before), `${label}: mutation must change actual source`);
-  const start = source.indexOf(target === 'app' ? 'function approvedExactSkyAspectWritingSection(' : 'export function normalizeCalendarEventSurface(');
-  const prefix = source.slice(0, start);
-  const scoped = source.slice(start);
-  assert.ok(scoped.includes(before), `${label}: mutation must reach the authority builder`);
-  let changed = prefix + scoped.replace(before, after);
-  if (label === 'Sky canonical precedence') {
-    const studioStart = source.indexOf('  if (studio) {', start);
-    const canonicalStart = source.indexOf('  const registry = contentRegistryFor("sky");', studioStart);
-    const builderEnd = source.indexOf('\n}\n\nfunction reviewedSkyAspectWritingSection(', canonicalStart);
-    assert.ok(studioStart > start && canonicalStart > studioStart && builderEnd > canonicalStart);
-    changed = source.slice(0, studioStart) + source.slice(canonicalStart, builderEnd)
-      + '\n\n' + source.slice(studioStart, canonicalStart) + source.slice(builderEnd);
-  }
-  assert.notEqual(changed, source, `${label}: source must change`);
-  const end = changed.indexOf(target === 'app' ? '\nfunction reviewedSkyAspectWritingSection(' : '\nfunction calendarCanonicalEventDateLine(', start);
-  const syntax = ts.transpileModule(changed.slice(start, end), {
+  const changed = source.replace(before, after);
+  const syntax = ts.transpileModule(changed, {
     compilerOptions: { target: ts.ScriptTarget.ES2022, jsx: ts.JsxEmit.ReactJSX },
     fileName: 'authority-mutant.tsx', reportDiagnostics: true
   });
   assert.deepEqual(syntax.diagnostics.filter(item => item.category === ts.DiagnosticCategory.Error), [], `${label}: mutant must be syntactically valid TypeScript`);
-  assert.throws(() => assertSkyStudioAuthority(target === 'app' ? changed : app, target === 'calendar' ? changed : calendar), { name: 'AssertionError' }, label);
+  const mutant = { ...sources, [target]: changed };
+  assert.throws(() => assertSkyStudioAuthority(mutant.app, mutant.calendar, mutant.shared), { name: 'AssertionError' }, label);
 }
-console.log(`Sky/Calendar authority builders passed; ${mutations.length} precedence/tier/provenance mutations rejected.`);
+console.log(`Sky/Calendar shared authority passed; ${mutations.length} selection/tier/provenance mutations rejected.`);

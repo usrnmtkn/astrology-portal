@@ -13,9 +13,9 @@ import { isGovernedReaderEligible } from "../../apps/web/src/content/fallbackArc
 import { publicationAllowsContent, type ContentPublication } from "../../apps/web/src/content/contentPublicationState.js";
 import { createDomainRegistry } from "../../apps/web/src/content/domainRegistry.js";
 import { isReaderFacingCopy } from "../../apps/web/src/content/readerSafety.js";
-import { resolveApprovedExactSkyAspectCopy, resolveComposedSkyCalendarCard, selectSkyAspectCopyByPrecedence } from "../../apps/web/src/services/skyAspectRouting.js";
-import { resolveCalendarAspectPublication } from "../../apps/web/src/features/calendar/calendarAspectPublication.js";
-import { canonicalContentStudioExactSkyPoint, contentStudioExactSkyAspectKeys, contentStudioExactRow, resolveSkyAspectContentStudioExact, resolveSkyAspectOwnerAuthoredSigned, resolveSkyAspectGeneratedContent } from "../../apps/web/src/services/skyAspectContent.js";
+import { resolveSkyAspectReading } from "../../apps/web/src/services/skyAspectReading.js";
+import { skyAspectPackageCandidates } from "../../apps/web/src/services/skyAspectRouting.js";
+import { canonicalContentStudioExactSkyPoint } from "../../apps/web/src/services/skyAspectContent.js";
 import { fromRow, isReaderServableGeneratedContent } from "../../apps/web/src/services/generatedContentRendering.js";
 import type { GeneratedContentRow, LiveGeneratedContent } from "../../apps/web/src/services/generatedContent.js";
 import { moonSignTransitionForPair, moonSignTransitionKey } from "../../apps/web/src/features/calendar/moonSignTransitions.js";
@@ -106,31 +106,11 @@ export function calendarFeedCopyReader(publications: ReadonlyMap<string, Content
         const generatedContent = publishedContentForDate(event.dateKey);
         const lunar = resolveCalendarLunationAspectReading(event, generatedContent, publications);
         if (lunar) return safe(lunar.body);
-        const slots = { dateLine, planetA: first, planetB: second, signA: event.fromSign, signB: event.toSign, aspect: slug(event.aspect) };
-        const composed = resolveComposedSkyCalendarCard({ first, second, aspect: event.aspect, heading: event.title, slots, lookup: registry.skyCalendarComposedCard });
         const options = { generatedContent, first, second, aspect: event.aspect,
           firstSign: event.fromSign ?? "", secondSign: event.toSign ?? "", firstMotion: event.fromMotion, secondMotion: event.toMotion, targetDate: event.dateKey };
-        const publication = resolveCalendarAspectPublication(options);
-        const signed = resolveSkyAspectOwnerAuthoredSigned(options);
-        const studio = resolveSkyAspectContentStudioExact(options);
-        const pinnedExactKeys = publication || signed || composed && composed.sourceKeys.every(allowed)
-          ? [] : contentStudioExactSkyAspectKeys(first, event.aspect, second);
-        for (const key of pinnedExactKeys) {
-          const pin = publications.get(key);
-          const [, , a, aspect, b] = key.split(".");
-          if (pin?.state === "live" && (pin.row_id || pin.row_updated_at) && !contentStudioExactRow(options.generatedContent, { a, aspect, b })) return "";
-        }
-        const exact = resolveApprovedExactSkyAspectCopy({ first, second, aspect: event.aspect, heading: event.title, slots, lookup: registry.approvedExactSkyAspectCopy });
-        let rendered;
-        try { rendered = renderer.renderSkyAspectCard({ a: slug(first), b: slug(second), aspect: slug(event.aspect), aSign: event.fromSign && slug(event.fromSign), bSign: event.toSign && slug(event.toSign), dateLine }); }
-        catch (error) { if (!(error instanceof SourceGapError)) throw error; }
-        const specific = rendered?.contentKey?.startsWith("fallback-hook/sky-aspect-") ? { body: rendered.parts.join("\n\n") } : null;
-        const selected = selectSkyAspectCopyByPrecedence<{ body: string; details?: string }>({
-          composed: publication ? { body: publication.body, details: composed?.details } : composed && composed.sourceKeys.every(allowed) ? composed : null,
-          exact: signed ?? studio ?? (exact?.sourceKeys.every(allowed) ? exact : null),
-          signSpecific: rendered?.contentKey?.startsWith("fallback-hook/sky-aspect-sign/") ? specific : null,
-          phrasebook: specific,
-          generated: resolveSkyAspectGeneratedContent(options)
+        const selected = resolveSkyAspectReading({ ...options, dateLine, publications,
+          exactLookup: registry.approvedExactSkyAspectCopy, composedLookup: registry.skyCalendarComposedCard,
+          ...skyAspectPackageCandidates({ ...options, dateLine }, renderer.renderSkyAspectCard, SourceGapError)
         });
         return safe([selected?.body, selected?.details].filter(Boolean).join("\n\n"));
       }
