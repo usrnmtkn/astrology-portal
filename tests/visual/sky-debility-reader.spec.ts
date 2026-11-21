@@ -8,6 +8,67 @@ import { skyDebilityInterpretationSlots } from "../../apps/web/src/content/skyDe
 // The paired configuration serves Studio at 4297 and the reader at 4298.
 test.use({ baseURL: "http://127.0.0.1:4298" });
 
+for (const width of [390, 1440]) for (const theme of ["light", "dark"]) test("published single-planet reading " + width + " " + theme, async ({ page }) => {
+  await page.setViewportSize({ width, height: 1000 });
+  await page.clock.setFixedTime(new Date("2026-11-18T18:00:00.000Z"));
+  await page.addInitScript(value => localStorage.setItem("tldrastro:theme", value), theme);
+  await bundledPublications(page);
+  const row = {
+    id: "single-planet-fixture", content_key: "cms/sky-debility/reading/saturn-aries-retrograde",
+    surface: "sky", mode: "card", event_type: "essay", block_type: "essay",
+    status: "LIVE", lane: "serving", review_state: null,
+    headline: "Synthetic single-planet reading", summary: "", sections: {},
+    updated_at: "2026-11-18T12:00:00.000Z",
+    source_snapshot: { contentSystem: "cms-surface-override", contentType: "mustache-template", allowedSlots: skyDebilityInterpretationSlots },
+    body: "Synthetic complete opening.\n\n{planetList} has a complete single-planet reading.\n\nSynthetic complete ending."
+  };
+  let rows: typeof row[] = [];
+  let state = "live";
+  let revision = 1;
+  let publishedVersion = row.updated_at;
+  let installed = false;
+  const publications = () => installed ? [{
+    content_key: row.content_key, state, revision, row_id: row.id,
+    row_updated_at: publishedVersion, updated_at: publishedVersion
+  }] : [];
+  await page.route("**/content-studio-last-known-good.json", route => route.fulfill({
+    json: { schema: "content-studio-last-known-good-v2", rowCount: rows.length, rows, publications: publications() }
+  }));
+  await page.route("**/api/content-reader", route => route.fulfill({ json: readerResponse(rows, publications()) }));
+  await page.route("**/api/calendar?**", route => route.fulfill({ json: { ok: true, calendar: { days: [] } } }));
+  await page.goto("/#sky");
+  const placement = page.getByRole("button", { name: "Read more about Saturn Rx in Aries", exact: true });
+  await expect(placement).toBeVisible({ timeout: 60_000 });
+  await expect(page.locator(".sky-debility-ledger")).toHaveCount(0);
+  rows = [row]; installed = true;
+  await page.reload();
+  const card = page.locator(".sky-debility-ledger:visible").first();
+  const paragraphs = card.locator(".sky-today-ledger__copy > p");
+  const expected = [
+    "Synthetic complete opening.",
+    "Saturn retrograde in Aries has a complete single-planet reading.",
+    "Synthetic complete ending."
+  ];
+  await expect(card.getByRole("heading", { level: 3 })).toHaveText(row.headline, { timeout: 60_000 });
+  await expect(paragraphs).toHaveText(expected);
+  await expect(card.locator(".sky-debility-card")).toHaveCount(1);
+  await expect(card.locator(".sky-today-ledger__copy").getByRole("link")).toHaveText("Saturn retrograde in Aries");
+  await expectEffortCardSpacing(card);
+  expect(await card.evaluate(el => el.scrollWidth - el.clientWidth)).toBeLessThanOrEqual(1);
+  await card.screenshot({ path: "test-results/effort-single-" + width + "-" + theme + ".png" });
+  await page.reload();
+  await expect(paragraphs).toHaveText(expected, { timeout: 60_000 });
+  rows = [{ ...row, updated_at: "2026-11-17T12:00:00.000Z" }];
+  publishedVersion = "2026-11-18T13:00:00.000Z"; revision++;
+  await page.reload();
+  await expect(placement).toBeVisible({ timeout: 60_000 });
+  await expect(page.locator(".sky-debility-ledger")).toHaveCount(0);
+  rows = []; state = "retired"; revision++;
+  await page.reload();
+  await expect(placement).toBeVisible({ timeout: 60_000 });
+  await expect(page.locator(".sky-debility-ledger")).toHaveCount(0);
+});
+
 // Historical witnesses exercise the actual ephemeris without publishing fixture facts.
 for (const fixture of [
   {date: "2009-10-15", key: "sun-libra-direct__mars-cancer-direct",
