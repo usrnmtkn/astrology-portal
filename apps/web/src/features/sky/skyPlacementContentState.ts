@@ -18,7 +18,7 @@ export function shouldLoadSkyPlacementContent({
 }) {
   const isSkyPlacementList = mode === "guest" || mode === "member";
   const isSkyPlacementDetail = Boolean(
-    detailRoutePath && /^sky\/(?:placement|retrograde|lunation)\//u.test(detailRoutePath)
+    detailRoutePath && /^sky\/(?:placement|retrograde|lunation|archive)\//u.test(detailRoutePath)
   );
 
   return isSkyPlacementList || isSkyPlacementDetail || connectionRecovery;

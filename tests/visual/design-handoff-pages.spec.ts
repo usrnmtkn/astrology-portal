@@ -2220,7 +2220,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     await checkNoDividers();
     await article.locator('.article-related-aspect-row').first().click();
     await expect(article.locator('h1')).not.toHaveText(title!);
-    await page.getByRole('button', { name: 'Back to updates', exact: true }).click();
+    await page.getByRole('button', { name: 'Back to natal chart', exact: true }).click();
     await expect(article.locator('h1')).toHaveText(title!);
     await checkNoDividers();
   });

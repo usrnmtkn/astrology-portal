@@ -384,7 +384,8 @@
 /* Credential and verified-own-chart stages share the same responsive dialog. */
 .modal-panel.auth-dialog { width: min(var(--container-auth-dialog), 100%); max-height: var(--dialog-max-height); padding: 0; overflow-y: auto; border: 0; border-radius: var(--card-radius); background: var(--surface); }
 .auth-page.auth-flow-v2 { --font-body: var(--font-ui); --text-body: var(--type-ui-copy-size); --leading-body: var(--leading-placement-ui); overflow-wrap: anywhere; position: relative; display: block; min-height: 0; padding: var(--space-8); background: var(--surface); color: var(--ink); }
-.auth-flow-close { position: absolute; top: var(--space-6); right: var(--space-6); display: grid; place-items: center; width: var(--size-5); height: var(--size-5); border: 0; border-radius: var(--radius-circle); background: var(--surface-2); color: var(--ink); }
+.auth-flow-close { position: absolute; top: var(--space-6); right: var(--space-6); display: grid; place-items: center; width: var(--size-6); height: var(--size-6); padding: 0; border: 0; border-radius: var(--radius-circle); background: var(--surface-2); color: var(--ink); }
+.auth-flow-close > svg { width: var(--size-3); height: var(--size-3); flex: none; }
 .auth-flow-content { display: grid; gap: var(--space-6); width: 100%; max-width: var(--container-form); margin-inline: auto; }
 .auth-flow-heading { display: grid; gap: var(--space-2); padding-right: var(--space-9); }
 .auth-flow-heading h1 { margin: 0; font-family: var(--font-display); font-size: var(--type-modal-title-size); font-weight: var(--weight-regular); line-height: var(--leading-placement-title); letter-spacing: var(--tracking-dialog-title); }

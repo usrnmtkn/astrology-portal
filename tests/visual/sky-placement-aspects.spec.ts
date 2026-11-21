@@ -1,5 +1,9 @@
 import { expect, test } from '@playwright/test';
 import { bundledPublications } from '../helpers/bundled-publications';
+import { readFileSync } from 'node:fs';
+const approvedAspect = JSON.parse(readFileSync(new URL('../../packages/astro-knowledge/data/sky-calendar/composed-cards-v1.json', import.meta.url), 'utf8'))
+  .cards.find((row: {id: string}) => row.id === 'sky-card/neptune/aries/sextile/pluto/aquarius');
+if (!approvedAspect?.ownerApproved || !approvedAspect.servingAuthorized) throw new Error('The complete approved sign-specific Neptune–Pluto reading must exist');
 test.beforeEach(async ({ page }) => bundledPublications(page));
 for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
   test(`aspects live inside placements ${width} ${theme}`, async ({ page }) => {
@@ -22,11 +26,12 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     const card = page.getByRole('region', { name: 'Gifts', exact: true })
       .getByRole('link', {name:/^Read more about Neptune(?: Rx)? Sextile Pluto(?: Rx)?$/});
     await expect(card).toBeVisible({timeout:60000});
-    const section = card.locator('..');
+    const section = card;
     await expect(section).toContainText('Building through September 15.');
     await expect(section).not.toContainText('July 25');
-    await expect(section).toContainText('Strong feeling can become more trustworthy');
-    await expect(section).toContainText('the story that was easiest to sell.');
+    // The approved sign-specific reading precedes the generic pair fallback.
+    // Assert both complete paragraphs against its independent source record.
+    await expect(section.locator('p')).toHaveText([`On Tuesday, September 8, ${approvedAspect.forecast}`, approvedAspect.details]);
     const destination = (await card.getAttribute('href'))!;
     const prefix = '#sky/aspect/neptune/sextile/pluto/at/';
     expect(destination).toMatch(/^#sky\/aspect\/neptune\/sextile\/pluto\/at\//);

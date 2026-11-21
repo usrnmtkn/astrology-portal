@@ -1,5 +1,6 @@
 import {hasStudioOwnerWording} from "./studioOwnerWording.mjs";
 import {isMoonHoroscopeReaderRow,MOON_HOROSCOPE_PREFIX} from '../../../../src/shared/datedMoonIdentity.mjs';
+import {PLANETARY_HOROSCOPE_PREFIX,planetaryReaderReadings} from '../../../../src/shared/planetaryHoroscopeIdentity.js';
 import { isReaderFacingCopy } from "./readerSafety.js";
 import { horoscopeEditionFromRow } from './horoscopeEditions.mjs';
 import { skyArticleEditionRecord, hasExactSkyArticleOwnerApproval } from "./skyArticleTemplateCompiler.js";
@@ -99,6 +100,13 @@ function readerSourceMetadata(row: Pick<GeneratedContentRow, "content_key" | "so
 }) {
   const snapshot = row.source_snapshot ?? {};
   if (row.status !== 'LIVE' || row.lane !== 'serving' || row.review_state) return snapshot;
+  if (row.content_key.startsWith('cms/natal-insight/')) {
+    const metadata = { ...snapshot };
+    // Saved source documents and previous revisions are audit history, not
+    // the current guide's serving controls. Keep all active metadata intact.
+    for (const field of ['editorialImport', 'previousGuideRevision', 'previousFullRulesVersion']) delete metadata[field];
+    return metadata;
+  }
   if (!/^cms\/lunation-article\/\d{4}-\d{2}-\d{2}\/(?:new-moon|full-moon)\/[a-z]+$/u.test(row.content_key)) return snapshot;
   const metadata = { ...snapshot };
   for (const field of ['lunationPublicationCheck', 'lunationWorkspace']) {
@@ -126,6 +134,7 @@ export function isReaderServableGeneratedContentRow(
 ) {
   const normalizedContentKey = row.content_key.trim().toLowerCase();
   if(normalizedContentKey.startsWith(MOON_HOROSCOPE_PREFIX))return isMoonHoroscopeReaderRow(row);
+  if(normalizedContentKey.startsWith(PLANETARY_HOROSCOPE_PREFIX))return Boolean(planetaryReaderReadings(row));
   if (normalizedContentKey.startsWith('horoscope/')) return Boolean(horoscopeEditionFromRow(row));
   if (normalizedContentKey.startsWith("sky/article-template/") || normalizedContentKey.startsWith("sky-article-template/")) {
     return false;

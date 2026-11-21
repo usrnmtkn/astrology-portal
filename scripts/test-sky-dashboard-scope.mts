@@ -6,6 +6,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { build } from 'esbuild';
+import { recoverySnapshot } from '../tests/helpers/recovery-snapshot.mjs';
 
 const file = join(mkdtempSync(join(tmpdir(), 'sky-dashboard-scope-')), 'reader.mjs');
 await build({ stdin: { resolveDir: process.cwd(), contents: `
@@ -611,11 +612,12 @@ try {
   // A cold client has no per-row browser cache. The verified offline snapshot
   // must satisfy its exact ledger while the live reader continues returning 503.
   globalThis.fetch = async input => String(input) === '/content-studio-last-known-good.json'
-    ? Response.json({ schema: 'content-studio-last-known-good-v2', rowCount: 2, rows: [virgin, libra],
-        publications: [publication(virgin, 4), publication(libra, 4), { content_key: '__content-publication-ledger/v1', state: 'live', revision: 1,
-          row_id: null, row_updated_at: null, updated_at: virgin.updated_at }] })
+    ? Response.json(recoverySnapshot([virgin, libra], [publication(virgin, 4), publication(libra, 4)]))
     : new Response('offline', { status: 503 });
-  assert.equal((await qa.loadContentStudioLastKnownGoodRows()).length, 2, "Verified recovery snapshot must load");
+  const recoveredInventory = await qa.loadContentStudioLastKnownGoodRows();
+  assert.equal(recoveredInventory.length, 100, 'The complete verified recovery inventory must load');
+  assert.deepEqual(recoveredInventory.filter((row: any) => [virgin.content_key, libra.content_key].includes(row.content_key))
+    .map((row: any) => row.id), [virgin.id, libra.id], 'Both selected complete publication versions survive admission');
   const recovered = await qa.loadFallbackArchitectureV3SkyPlacementDashboardBundle('sun/virgo');
   assert.equal(recovered.rowsFile.hookRows[0].publicationRowId, virgin.id, 'Cold recovery uses the exact already-loaded offline row');
   assert.deepEqual(JSON.parse(storage.get('tldrastro:sky-publication-rows:v2')!).map((row: any) => row.content_key), [virgin.content_key],

@@ -1,8 +1,8 @@
 {
-  "entryJavaScriptRawBytes": 844786,
+  "entryJavaScriptRawBytes": 846834,
   "entryJavaScriptGzipBytes": 245898,
-  "largestJavaScriptRawBytes": 844786,
-  "totalJavaScriptGzipBytes": 936295,
+  "largestJavaScriptRawBytes": 846834,
+  "totalJavaScriptGzipBytes": 951655,
   "_rationale": {
     "natalCompleteEditor20261120": {
       "receipt": "docs/qa/natal-complete-editor-bundle-cost-2026-11-20.json",
