@@ -5600,7 +5600,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"] as const)
         await article.screenshot({ path: `test-results/natal-pattern-${planet.toLowerCase()}-${width}-${theme}.png` });
         await page.reload(); await expect(houseHeading).toBeVisible();
       }
-      await page.getByRole("button", { name: "Back to updates", exact: true }).click();
+      await page.getByRole("button", { name: "Back to natal chart", exact: true }).click();
       await selectYouNatalTab(page);
     }
   });
