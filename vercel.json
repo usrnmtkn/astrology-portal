@@ -1,6 +1,7 @@
 {
   "git": {
     "deploymentEnabled": {
+      "data/content-studio-recovery": false,
       "codex/ephemeris-health-20261116": false
     }
   },

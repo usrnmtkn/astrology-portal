@@ -21,6 +21,8 @@ The short version:
   exact activation and editable bridge sources, without borrowing bond openings.
 - [Reader-facing content contract](../../CONTENT-CONTRACT.md): the governing
   rules for complete fields, author-final copy, and refusal behavior.
+- [Studio synchronization](./CONTENT_STUDIO_SYNC.md): editorial authority,
+  published GitHub snapshots, exact-head checks and recovery.
 - [Content architecture](./ARCHITECTURE.md): ownership, runtime flow, surface
   wiring, dashboard hydration, and worked examples.
 - [Sky writing systems](./SKY_WRITING_SYSTEMS.md): current contracts, independent
