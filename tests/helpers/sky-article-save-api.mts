@@ -43,6 +43,7 @@ const matches = (row: any, params: URLSearchParams) => [...params].every(([field
  }
  if(field==='source_snapshot->horoscopeGeneration->batch->>status')return row.source_snapshot?.horoscopeGeneration?.batch?.status===value.slice(3);
  if (value === 'is.null') return row[field] == null;
+ if (value.startsWith('not.')) return matchesStoredInventory(row, new URLSearchParams([[field, value]]));
  if (value.startsWith('like.')) return String(row[field] ?? '').startsWith(value.slice(5).replace(/\*$/u, ''));
  if (value.startsWith('eq.')) return String(row[field] ?? '') === value.slice(3);
  if (value.startsWith('neq.')) return String(row[field] ?? '') !== value.slice(4);
