@@ -1055,9 +1055,7 @@ function adminPageTitle(activePage: AdminDashboardPage) {
     case "variables": return "Variables";
     case "aiWriting": return "AI Writing";
     case "horoscopes": return "Horoscopes";
-    case "horoscopeFallbacks": return "Fallback horoscopes";
-    case "moonHoroscopes": return "New & Full Moon horoscopes";
-    case "planetaryHoroscopes": return "Planetary horoscopes";
+    case "horoscopeFallbacks": case "moonHoroscopes": case "planetaryHoroscopes": return horoscopeWorkspaceTabs.find(([page])=>page===activePage)![1];
     case "slotDictionary": return "Slots";
     case "knowledge": return "Fallback Articles & Passages";
     case "templates": return "Templates";
@@ -1094,9 +1092,7 @@ function adminPageBreadcrumbItems(activePage: AdminDashboardPage): AdminBreadcru
     case "vocabulary": return [{ label: "Admin", page: "reviewQueue" }, { label: "Composition", page: "compositionMap" }, { label: "Vocabulary & phrases" }];
     case "variables": return [{ label: "Admin", page: "reviewQueue" }, { label: "Variables" }];
     case "horoscopes": return [{ label: "Admin", page: "reviewQueue" }, { label: "Horoscopes" }];
-    case "horoscopeFallbacks": return [{ label: "Admin", page: "reviewQueue" }, { label: "Horoscopes", page: "horoscopes" }, { label: "Fallback horoscopes" }];
-    case "moonHoroscopes": return [{ label: "Admin", page: "reviewQueue" }, { label: "Horoscopes", page: "horoscopes" }, { label: "New & Full Moon horoscopes" }];
-    case "planetaryHoroscopes": return [{ label: "Admin", page: "reviewQueue" }, { label: "Horoscopes", page: "horoscopes" }, { label: "Planetary horoscopes" }];
+    case "horoscopeFallbacks": case "moonHoroscopes": case "planetaryHoroscopes": return [{label:"Admin",page:"reviewQueue"},{label:"Horoscopes",page:"horoscopes"},{label:horoscopeWorkspaceTabs.find(([page])=>page===activePage)![1]}];
     case "aiWriting": return [{ label: "Admin", page: "reviewQueue" }, { label: "AI Writing" }];
     case "slotDictionary": return [{ label: "Admin", page: "reviewQueue" }, { label: "Composition", page: "compositionMap" }, { label: "Slots" }];
     case "knowledge": return [{ label: "Admin", page: "reviewQueue" }, { label: "Composition", page: "compositionMap" }, { label: "Fallback articles & passages" }];
@@ -3181,10 +3177,10 @@ export function GeneratedContentAdminDashboard() {
   }, [secret]);
   const [activePage, setActivePage] = useState<AdminDashboardPage>(() => parseAdminHash().page);
   const [requestedEditionId, setRequestedEditionId] = useState(() => parseAdminHash().page === "horoscopes" ? parseAdminHash().params.get("edition") : null);
+  const datedWritingDirtyRef=useRef(false);
   const [requestedDatedDraftId,setRequestedDatedDraftId]=useState(()=>parseAdminHash().params.get('draft'));
   const [readerEntry, setReaderEntry] = useState(() => parseCalendarPassageReview(window.location.hash));
   const [hasOpenedHoroscopes, setHasOpenedHoroscopes] = useState(() => parseAdminHash().page === "horoscopes");
-  const planetaryHoroscopesDirtyRef=useRef(false);
   useEffect(() => { if (activePage === "horoscopes") setHasOpenedHoroscopes(true); }, [activePage]);
   const [hasOpenedAiWriting, setHasOpenedAiWriting] = useState(() => parseAdminHash().page === "aiWriting");
   useEffect(() => { if (activePage === "aiWriting") setHasOpenedAiWriting(true); }, [activePage]);
@@ -3319,8 +3315,6 @@ export function GeneratedContentAdminDashboard() {
   const trackCustomVariableDraft = useCallback((dirty: boolean, busy: boolean) => {
     customVariableDirtyRef.current = dirty; customVariableBusyRef.current = busy;
   }, []);
-  const lunationWritingDirtyRef = useRef(false);
-  const moonHoroscopesDirtyRef = useRef(false);
   const [calendarWriteupWorkspaceView, setCalendarWriteupWorkspaceView] = useState<CalendarWriteupWorkspaceView>("daily-sky");
   const [transitReadingContext, setTransitReadingContext] = useState<import("./transitNatalSources").TransitNatalReadingContext>({});
   const [transitNatalPlanet, setTransitNatalPlanet] = useState<TransitNatalPlanet | "">("");
@@ -4565,7 +4559,7 @@ export function GeneratedContentAdminDashboard() {
     // Related article panels unmount on departure, so their guards still apply.
     return Boolean(
       wheelTooltipEditorRef.current?.hasUnsavedExcept(draft?.contentKey)
-      || subscriptionEventDirtyRef.current || lunationWritingDirtyRef.current || moonHoroscopesDirtyRef.current || planetaryHoroscopesDirtyRef.current || dailyWritingDirtyRef.current
+      || subscriptionEventDirtyRef.current || datedWritingDirtyRef.current || dailyWritingDirtyRef.current
       || dailyGlanceNavigationStateRef.current
       || !retainPlacementWriting && (skyPlacementWorkspaceDirtyRef.current || skyPlacementWorkspaceBusyRef.current)
       || aspectPatternDirtyRef.current || aspectPatternBusyRef.current || customVariableDirtyRef.current || customVariableBusyRef.current
@@ -7616,8 +7610,8 @@ export function GeneratedContentAdminDashboard() {
         {activePage === "variables" && <><Suspense fallback={<PageLoading message="Loading variables…" />}><StudioVariables secret={secret} customVariables={customVariableLibrary.variables} onCustomChange={customVariableLibrary.setVariables} customError={customVariableLibrary.error} customLoading={customVariableLibrary.loading} customLoaded={customVariableLibrary.loaded} initialVariableName={parseAdminHash().params.get('editVariable') ?? undefined} onReloadCustom={customVariableLibrary.reload} createRequest={variableCreateRequest} onCreateHandled={() => setVariableCreateRequest(0)} onDirty={trackCustomVariableDraft} onOpenSource={(key, _label, field) => void openRow(rows.find(row => row.content_key === key) ?? { id: `package:${key}`, content_key: key, inventory_only: true } as AdminGeneratedContentRow, null, field)} /></Suspense>{renderEditor()}</>}
 
         {hasOpenedHoroscopes && <div hidden={activePage !== "horoscopes"}><Suspense fallback={<PageLoading message="Loading horoscope editions…" />}><HoroscopeEditionsStudio sidePanel active={activePage === "horoscopes"} secret={secret} requestedEditionId={requestedEditionId} onEditionChange={setRequestedEditionId} onStateChange={state => { horoscopeEditionStateRef.current = state; }} /></Suspense></div>}
-        {activePage === "moonHoroscopes" && <Suspense fallback={<PageLoading message="Loading Moon horoscopes…" />}><MoonHoroscopesStudio key={requestedDatedDraftId??'new'} secret={secret} dirtyRef={moonHoroscopesDirtyRef} requestedDraftId={requestedDatedDraftId}/></Suspense>}
-        {activePage === "planetaryHoroscopes" && <Suspense fallback={<PageLoading message="Loading planetary horoscopes…" />}><PlanetaryHoroscopesStudio key={requestedDatedDraftId??'new'} secret={secret} dirtyRef={planetaryHoroscopesDirtyRef} requestedDraftId={requestedDatedDraftId}/></Suspense>}
+        {activePage === "moonHoroscopes" && <Suspense fallback={<PageLoading message="Loading Moon horoscopes…" />}><MoonHoroscopesStudio key={requestedDatedDraftId??'new'} secret={secret} dirtyRef={datedWritingDirtyRef} requestedDraftId={requestedDatedDraftId}/></Suspense>}
+        {activePage === "planetaryHoroscopes" && <Suspense fallback={<PageLoading message="Loading planetary horoscopes…" />}><PlanetaryHoroscopesStudio key={requestedDatedDraftId??'new'} secret={secret} dirtyRef={datedWritingDirtyRef} requestedDraftId={requestedDatedDraftId}/></Suspense>}
         {activePage === "horoscopeFallbacks" && <><Suspense fallback={<PageLoading message="Loading fallback horoscopes…" />}>
           <FallbackHoroscopeStudio rows={rows} credential={secret}
             onLoadCatalog={signal => retryStudioRead(async () => {
@@ -7867,7 +7861,7 @@ export function GeneratedContentAdminDashboard() {
               onValueChange={view => navigateAdminPage("calendarWriteups", new URLSearchParams({ view }))}>
               {calendarWriteupWorkspaceView === "daily-writing" && <Suspense fallback={<PageLoading message="Loading daily writing…" />}><CalendarDailyWritingStudio secret={secret} dirtyRef={dailyWritingDirtyRef} onReviewDraft={params=>navigateAdminPage('calendarWriteups',params)} /></Suspense>}
               {calendarWriteupWorkspaceView === "subscription-events" && <Suspense fallback={<PageLoading message="Loading subscription events…" />}><CalendarSubscriptionEvents secret={secret} dirtyRef={subscriptionEventDirtyRef} /></Suspense>}
-              {calendarWriteupWorkspaceView === "lunation-writing" && <Suspense fallback={<PageLoading message="Loading lunar writing…" />}><LunationWritingStudio key={requestedDatedDraftId ?? "lunar-workspace"} secret={secret} dirtyRef={lunationWritingDirtyRef} requestedDraftId={requestedDatedDraftId}
+              {calendarWriteupWorkspaceView === "lunation-writing" && <Suspense fallback={<PageLoading message="Loading lunar writing…" />}><LunationWritingStudio key={requestedDatedDraftId ?? "lunar-workspace"} secret={secret} dirtyRef={datedWritingDirtyRef} requestedDraftId={requestedDatedDraftId}
                 library={<LunarCalendarWorkspace scope="lunations" rows={rows} query={query} onQuery={setQuery} isLoading={isLoading || loadState !== "loaded"}
                   editor={null} onEdit={row => openCalendarWritingSource(row as AdminGeneratedContentRow)}
                   loadRows={loadCalendarPreviewRows} onLoad={row => hydrateGeneratedContentRow(row as AdminGeneratedContentRow)} onCreate={() => {}} />}

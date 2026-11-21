@@ -23,8 +23,6 @@ const HoroscopeContext=lazy(()=>import('./HoroscopeContext'));
 const PlanetaryHoroscope=lazy(()=>import('./PlanetaryHoroscope'));
 const PlanetaryHoroscopeCards=lazy(()=>import('./PlanetaryHoroscopeCards'));
 const HoroscopeSigns=lazy(()=>import('./HoroscopeSigns'));
-const planetaryLoading=<PageLoading message="Loading planetary horoscope…"/>;
-const planetCardsLoading=<ContentLoading layout="placements" message="Loading planet readings…"/>;
 
 const periodNames={daily:'Daily',weekly:'Weekly',monthly:'Monthly',seasonal:'Seasonal'};
 type LocationPreference=LocationInput|'device'|null;
@@ -120,7 +118,6 @@ export default function HoroscopeReader({defaultSign,sunSign,location,sky,onLoca
   const previousAt = currentEdition ? new Date(Date.parse(currentEdition.window.startsAt) - 1).toISOString()
     : selection.period === 'seasonal' && namedSeason ? new Date(Date.parse(namedSeason.startsAt) - 1).toISOString() : adjacentHoroscopeReference(selection.period, reference, timeZone, -1);
   const nextAt = currentEdition?.window.endsAt ?? adjacentHoroscopeReference(selection.period, reference, timeZone, 1);
-  const showPlanetaryList=()=>select({...selection,planet:null,placement:null});
   return <div className="learn-page horoscope-page">
     <h1 className="sr-only">Horoscopes</h1>
     <div className="horoscope-periods" role="group" aria-label="Horoscope period">
@@ -128,10 +125,10 @@ export default function HoroscopeReader({defaultSign,sunSign,location,sky,onLoca
       <button type="button" aria-pressed={selection.view==='planets'} onClick={()=>select({...selection,view:'planets',planet:null,placement:null})}>Planets</button>
     </div>
     {selection.view==='planets' ? selection.planet ? <>
-      {!sky?planetaryLoading:planetPosition?<Suspense fallback={planetaryLoading}><PlanetaryHoroscope position={planetPosition} generatedAt={sky.generatedAt} sign={selection.sign} timeZone={planetPosition.transitTimeZone??sky.location.timeZone??timeZone} previous={planetPositions[planetIndex-1]} next={planetPositions[planetIndex+1]} onBack={showPlanetaryList} onPlanet={position=>select(planetSelection(position))}/></Suspense>:<ReaderUnavailable kind="horoscope" onAction={showPlanetaryList}/>}
+      {!sky?<PageLoading message="Loading planetary horoscope…"/>:planetPosition?<Suspense fallback={<PageLoading message="Loading planetary horoscope…"/>}><PlanetaryHoroscope position={planetPosition} generatedAt={sky.generatedAt} sign={selection.sign} timeZone={planetPosition.transitTimeZone??sky.location.timeZone??timeZone} previous={planetPositions[planetIndex-1]} next={planetPositions[planetIndex+1]} onBack={()=>select({...selection,planet:null,placement:null})} onPlanet={position=>select(planetSelection(position))}/></Suspense>:<ReaderUnavailable kind="horoscope" onAction={()=>select({...selection,planet:null,placement:null})}/>}
       {planetPosition&&signs}
     </> : <section className="horoscope-planet-view" aria-label="Planet readings"><h2>Planets</h2>
-      {sky ? <Suspense fallback={planetCardsLoading}><PlanetaryHoroscopeCards sky={sky} sign={selection.sign} href={position=>href(planetSelection(position))}/></Suspense> : planetCardsLoading}
+      {sky ? <Suspense fallback={<ContentLoading layout="placements" message="Loading planet readings…"/>}><PlanetaryHoroscopeCards sky={sky} sign={selection.sign} href={position=>href(planetSelection(position))}/></Suspense> : <ContentLoading layout="placements" message="Loading planet readings…"/>}
     </section> : <>
     <PageLoadState key={`${selection.period}:${selection.sign}:${selection.at ?? ""}`} scope="page" what={selection.period==='daily'?"Today's horoscope":"This horoscope"} cause={error} failed={Boolean(error)} pending={loading} onRetry={refresh}>
     {holdingReading?<PageLoading message="Loading your horoscope…"/>:currentEdition&&passage?<>{selection.period==='seasonal'&&overview&&<article className="learn-sheet horoscope-reading" aria-label="Season introduction"><p className="learn-kicker">For everyone · {namedSeason?horoscopeOverviewHeadline(namedSeason):'Seasonal'}</p><h2>{overview.headline}</h2><p className="horoscope-date">{horoscopeWindowLabel(currentEdition.window)} · {currentEdition.window.timeZone}</p><div className="horoscope-prose"><FormattedProse text={overview.body}/></div></article>}<article className="learn-sheet horoscope-reading" aria-label={selection.period==='monthly'?'Monthly overview':`${horoscopeSignLabel(selection.sign)} horoscope`}>

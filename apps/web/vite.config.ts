@@ -268,6 +268,10 @@ export default defineConfig(({ mode }) => {
           initialSkyBootstrap: resolve(__dirname, "src/initialSkyBootstrap.ts")
         },
         output: {
+          chunkFileNames(chunk) {
+            return /^(?:PlanetaryHoroscope|PlanetaryHoroscopeCards|usePlanetaryHoroscopeSources)$/u.test(chunk.name)
+              ? "assets/planet-[hash].js" : "assets/[name]-[hash].js";
+          },
           manualChunks(id) {
             // Natal source identities are shared with Studio but load on article intent.
             if (id.endsWith('/content/natalPlacementSourceKeys.ts')) return 'natal-placement-keys';

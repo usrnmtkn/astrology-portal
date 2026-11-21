@@ -181,7 +181,7 @@ export default defineConfig(({ command, mode }) => {
             }
             if (startupModules.has(id)) return "index";
             // Preserve independently opened panels while coalescing small shared leaves.
-            if (/apps\/admin\/src\/(?:NatalSectPlacementComparison|LunationWritingStudio|ReusableLunationWritingStudio|DatedLunationWritingStudio|SeasonArticleWorkspace|CalendarSubscriptionEvents|CalendarPlanetaryWorkspace|StudioMemoryFeedback|studioRevisionPublication|contentLibraryNavigation|wheelTooltipEditorSession)\.(?:tsx|ts)$/u.test(id)) {
+            if (/apps\/admin\/src\/(?:NatalSectPlacementComparison|CalendarSubscriptionEvents|StudioMemoryFeedback|studioRevisionPublication|contentLibraryNavigation|wheelTooltipEditorSession)\.(?:tsx|ts)$/u.test(id)) {
               return id.slice(id.lastIndexOf('/') + 1).replace(/\.(?:tsx|ts)$/u, '');
             }
             // Coalesce small shared chunks without pulling deferred source models into startup.
@@ -199,6 +199,8 @@ export default defineConfig(({ command, mode }) => {
             if (/apps\/admin\/src\/(?:HoroscopeWritingStudio|HoroscopeSaveRecovery|PlanetaryHoroscopesStudio)\.tsx$/u.test(id)
               || /src\/shared\/planetaryHoroscopeEditor\.ts$/u.test(id)) return "review";
             // Profile metadata and reconciliation load with their editing panels.
+            if (/apps\/admin\/src\/(?:MoonHoroscopesStudio|LunationWritingStudio|ReusableLunationWritingStudio|DatedLunationWritingStudio|SeasonArticleWorkspace|CalendarPlanetaryWorkspace)\.tsx$/u.test(id)
+              || id.endsWith('/src/shared/lunationTimingVariables.ts')) return "review";
             if (/src\/astro-writing\/(?:horoscopeWritingProfiles|monthlyHoroscopeGuidance|seasonalComposition|horoscopeStreamCheckpoint)\.mjs$/u.test(id)
               || /apps\/admin\/src\/horoscopeEditReconciliation\.ts$/u.test(id)) return "review";
             // The same summary workspaces use these two small source loaders.

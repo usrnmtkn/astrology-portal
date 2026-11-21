@@ -96,7 +96,7 @@ if (!moonSourceFile?.endsWith(".json") || !fs.existsSync(path.join(distRoot, moo
 }
 
 // Lunar editors receive the effective guidance through the authenticated API.
-if (javaScriptFiles.filter(item => /\/ReusableLunationWritingStudio-/.test(item.file)).some(item =>
+if (javaScriptFiles.some(item =>
   fs.readFileSync(path.join(distRoot, item.file), 'utf8').includes('ATMOSPHERIC AND EMOTIONAL FILLER'))) {
   failures.push('Lunar editor identity must not bundle server editorial policy.');
 }
