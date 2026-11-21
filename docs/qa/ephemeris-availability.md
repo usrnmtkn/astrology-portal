@@ -56,7 +56,8 @@ before declaring an incident, preserves JSON observations as run artifacts,
 and assigns/mentions the existing configured alert recipients. It creates or
 reopens one incident on an outage, closes it on recovery, and avoids issue
 writes during unchanged states. Feature-branch dispatches cannot publish an
-incident. No Codex automation or external notification service is added.
+incident. The independent local watchdog and repair-agent procedure are in
+[ephemeris automatic repair](ephemeris-automatic-repair.md).
 
 For an incident, inspect the latest run and its JSON observation, identify the
 failed dependency/code, and reproduce the failing path with synthetic inputs.
