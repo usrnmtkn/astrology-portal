@@ -315,7 +315,7 @@ assert.throws(
 
 const productionSource = fs.readFileSync(path.join(root, "api/_lib/content-generation.ts"), "utf8");
 const openAiCalls = [...productionSource.matchAll(/callOpenAIResponses\(\{/gu)];
-assert.equal(openAiCalls.length, 6, "all production OpenAI call sites must remain enumerated");
+assert.equal(openAiCalls.length, 7, "all production OpenAI call sites, including the gated body-only writer, must remain enumerated");
 for (const match of openAiCalls) {
   const prefix = productionSource.slice(Math.max(0, match.index - 900), match.index);
   assert.match(prefix, /assertProductionRoleGate\(/u, "an OpenAI call lacks an immediately preceding production gate");

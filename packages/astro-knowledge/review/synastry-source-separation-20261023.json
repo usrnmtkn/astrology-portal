@@ -1,0 +1,1441 @@
+{
+  "schema": "synastry-source-separation/v1",
+  "scope": "Unapproved neutral draft knowledge only. No approved reader copy or voice evidence changed.",
+  "method": "Move complete trailing source commands and mixed advice sentences to the advice field, preserving their exact wording. Move the four Sun\u2013Moon supportive maintenance cautions to advice. Interpretation remains in plainTranslation. Original files remain recoverable through Git and exact hashes.",
+  "ownerProseApproval": false,
+  "changes": [
+    {
+      "id": "A-mars_B-mars_conjunction",
+      "originalFileSha256": "e8e007956afd4f7d66490fa61973dc8aaf013eed8e8db6fbe7a8887f243d4c16",
+      "updatedFileSha256": "926c77762e5733f1069906e8ecce0175b13453602fbc21dd0361dd8bf7db607b",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "6951684e650d95fd4825b2d8798df88ab43d46b093264b29b62f81923f29b221"
+        }
+      ],
+      "originalPlainTranslationSha256": "3b9fd38108f98925fe9fa26a80903c8373d8ba7bf017be972264cd45ff17a0fb",
+      "retainedPlainTranslationSha256": "e625948fe18215cff9176f81256d2fa1e69324dc2f3c167dfb9f07d527c1ad36",
+      "originalAdviceSha256": "4f28c86b803bb34cc3544b70293abda3be4f43757417488dea8c306d1e3af3f9",
+      "updatedAdviceSha256": "937f0e3453f0d0afa9ee5b1786eb0284a6935b7f8ac94c587a3902b8f807fbd0"
+    },
+    {
+      "id": "A-mars_B-mars_opposition",
+      "originalFileSha256": "cb61198ba2bb689f5cb9f19edc8b183c81270b50811bf3fcbe5468c88dcceff7",
+      "updatedFileSha256": "9fecd2eb8a04ab7fc4eb2bea6f0609167dd72e1b41423b3ed0a5dc03a4e85d8f",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "c02d73428257e65f9c67a81e00ca52ca7562414532b3dd3c8d68b6b0a66f29fe"
+        }
+      ],
+      "originalPlainTranslationSha256": "095ac2feceae9fcb619edafc1b8bfc23f0dfeacd3489e104ca100c64a4789ce7",
+      "retainedPlainTranslationSha256": "11c1fb9359ce4a775fdbd341d793b6599f9b457e42395195d9139d1095d3d161",
+      "originalAdviceSha256": "bd12f4d51108063b48a6c8b451ba37965b3bd3ffdcfa9dd81efbfbec9bf033c9",
+      "updatedAdviceSha256": "d08560b2fc6731cfa2fe8d265f4d431f7ddb8e04e74c56489a3ba5040c00d459"
+    },
+    {
+      "id": "A-mars_B-mars_sextile",
+      "originalFileSha256": "8800732166541d67a22fa0c0ec3ef7ca6ddeb20e00bbea3ae0dc0a823c9ee082",
+      "updatedFileSha256": "fd99d54cb21c522f4c36c70a0cb5cb11e6e368691bb3796e1c0e8c412b57cf88",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "b0f970b14ec3abe85e012105770869ea7dad48aaa8e4a01b12df630665434c00"
+        }
+      ],
+      "originalPlainTranslationSha256": "ac5b99ee3e6492eec283ba3d7c38d992a2dccab6b467c5133eb773d09e7e56a2",
+      "retainedPlainTranslationSha256": "3d92ee72f2d02ddf976a91da572569b41f15f3ce4a6b7a9b7793d4e7dd9bb8a8",
+      "originalAdviceSha256": "7324ba88a3231815a24904109329670168067c51b605f1573646c61cc8fb0570",
+      "updatedAdviceSha256": "6c4fa6fc4987eaf19045bd81a71fdbbef5feb72324273d02563a2fe7fde4e39a"
+    },
+    {
+      "id": "A-mars_B-mars_square",
+      "originalFileSha256": "e16107c21b72d4248abf8045e14e7cb693e8c0726b164a2b499b4dbdd8ae5a6e",
+      "updatedFileSha256": "b41d5e8d55072cc3282851dbec980a5fcec70b5200d1389c624a936c0920a710",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "8559844f6de4acd13b4d1af5e50ed89e06aaf615685bcac66d1c6dc870dac3da"
+        }
+      ],
+      "originalPlainTranslationSha256": "d18ac8d1d5981f25813bd21b664501233abd9f83066ec173b038e3474cee0273",
+      "retainedPlainTranslationSha256": "b6304676cff90fb82b429ad36c7dd5df1be2be451e5edc0a78a130d142615f84",
+      "originalAdviceSha256": "241889e4ef12aa74e53519ac6c0577f09a8e49636b26d19a018886945195756e",
+      "updatedAdviceSha256": "2e87468ea27fceeded82ad7f3033734f70b272a9a7d0a870e82024a8baeaeaa5"
+    },
+    {
+      "id": "A-mars_B-mars_trine",
+      "originalFileSha256": "2cfafa85ebc04ec728fd18a59957761e7babf1aa74f62d2827bb33e1997c09ee",
+      "updatedFileSha256": "3d1e10b1833e1630e38ad7db9a032389f884fc67920a15a8be15a630dcaa4e0c",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "7bb57d99727a74dc1fa6c5bf35c053fd469ae3cb7497b210d8e22e38bdc01412"
+        }
+      ],
+      "originalPlainTranslationSha256": "95095f0a5bfa6eaf1aa8c2e692be4fe8ebda541d2fd463825164bd1df65b73d4",
+      "retainedPlainTranslationSha256": "2efc89db37d11b3b64bc037846373c843440b44e1c8459bd7db19d3b87a67a19",
+      "originalAdviceSha256": "ee3965e974d0b53d7fc86acfb3937eb155a3bac09c579f43a09b6364c340d8aa",
+      "updatedAdviceSha256": "d3e89a1f98884e22aada3c360db13db020cab12ccc6dc53a6c35b8e125d77465"
+    },
+    {
+      "id": "A-mars_B-saturn_conjunction",
+      "originalFileSha256": "c1715ea60f61cc5de41f5c5ea538ce756f0b714c44021cbabd4e7c8149c3aee5",
+      "updatedFileSha256": "70aa08c1da9754d8cb2fabb5e7af2f6fd371a0dce36394cd10c2f8a77829a4c6",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "1df7fbdc8142307b6ab373ee4e3d55a9c74262d2fb69aacdea3be30a3580b968"
+        }
+      ],
+      "originalPlainTranslationSha256": "b89d21a2e14d5c8ea1fb6252bfd49690d869fe890c826720a0b32ba71b64c0a5",
+      "retainedPlainTranslationSha256": "7d5ce55df8ea73fe50854a8d72c44c019c51763138cbb31f096f4feb23580676",
+      "originalAdviceSha256": "cc5ab76a1d0c4d4a2fb8b198eda544846ffcee8a86e0085cd72924ca3ed86763",
+      "updatedAdviceSha256": "180d1a08bd77ceade3a6b7b60c6e46baaabb24f78f33fb203671aa77f8095793"
+    },
+    {
+      "id": "A-mars_B-saturn_opposition",
+      "originalFileSha256": "4393f19e6bed9ba085078cdb7f6fa4e042c47e9af84874217e04ee7ae28eb7f3",
+      "updatedFileSha256": "7fd53cf7c47d5562bbccd52c35647a755d2d9f8e783acea81b8d210bb54e428e",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "5d5c36fed4cac4738aba15704ecbeff5008c82a90cc5668407c43f572ac9f157"
+        }
+      ],
+      "originalPlainTranslationSha256": "d430adecb1a356b5a60f15d8c55193dfeb07e22326e7cc1cf9f3ae03a293f047",
+      "retainedPlainTranslationSha256": "3236e06c049faa6f670718efed4041b663acb49739636146d4a3b3cbc89b991b",
+      "originalAdviceSha256": "6fadf7b2e6f0a495cd1b93c115b5b2aa6deeeee6cdd952847bbeb7134182d760",
+      "updatedAdviceSha256": "b6129caf1bae253a1c5ae5c15e7c48deebfdd2ca92986d280b8f4b00dbf9d322"
+    },
+    {
+      "id": "A-mars_B-saturn_square",
+      "originalFileSha256": "0964e3545710e4b50f2b777a1ee5d64d88a19b2ef8a9807407bee8bd0aba7cb5",
+      "updatedFileSha256": "6a5f3e31473379b5d7834ad5380146cdcb3e534c2d6f3d8ab1cb6c9bd4c6661d",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "d5beafdd2fd85d08a4499227fe10ef1c6e5172ec84cdf0648f5d3e82762cd20d"
+        }
+      ],
+      "originalPlainTranslationSha256": "712dec777754a36d8b3b9fa332e20825b561a1f5471c0b6e0b09a8a4b24503a5",
+      "retainedPlainTranslationSha256": "274e0462e217957d0c943a99ff6738caf5d658fc85f964a38f7beb760e3f1087",
+      "originalAdviceSha256": "f491b2d245a5f908a2c68f6f043b65906e7cd8c177be87ebee4e8c55aa712181",
+      "updatedAdviceSha256": "2ef5cb6533691ec03ecf863a33da093cfd45b2a19ceb4e7567733d4329ad75c3"
+    },
+    {
+      "id": "A-mars_B-venus_opposition",
+      "originalFileSha256": "353d3727f48b5ad0a8904e19d99aac1aaf2107c2fc67a8ca8a3c5fd529e935a2",
+      "updatedFileSha256": "808c44a79b3f9f5b435d69c536ad4de509276e14da108f3d036e0cfbd3a368e6",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "335f2310bb789444cb3cfb845b8fd82582e6473b3f34817737f8cf51e89c032c"
+        }
+      ],
+      "originalPlainTranslationSha256": "3ebb3d3de5805787058f694d66a95e0cf1e0d37ea3d04d149a6ffa4fa9f72ab1",
+      "retainedPlainTranslationSha256": "028d6299c775a08e9dfd3d289178569c889d37113f27b9c613e85ddeae1c9c90",
+      "originalAdviceSha256": "b9e5b18f7bb4f1ae0d5c9f399638818785216d5fc520f86add8d60dfa1a042d1",
+      "updatedAdviceSha256": "04cb1eb5e321357c74dd49791c1f964430e8d9a03023b9f49473fdda9554dab0"
+    },
+    {
+      "id": "A-mars_B-venus_sextile",
+      "originalFileSha256": "f83db3afd2d135f78b2873d92da3e295fe3956e288b481e8505f0ec78749e2a8",
+      "updatedFileSha256": "3e2213f26b879a13ec9d5ad427a637e24313c2627de3703c5bf29da7cf773d79",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "ed5f60561b3e73351a014c3776a919cc013e76a781b4047c7926ef33d32948bc"
+        }
+      ],
+      "originalPlainTranslationSha256": "35e48bf3653c70642f1b32bbb24a19f23ae7db05960a553b156cb2e81c9e5a60",
+      "retainedPlainTranslationSha256": "9b4a3b01e013960eaf03d1cb17462bf26157b63b8eeebdeb2dd83d57e007395d",
+      "originalAdviceSha256": "9f8439e66ee37a85fbba698f888b0ac09fa619a1abb877a276490220a061efc7",
+      "updatedAdviceSha256": "4a6e8593cb7b33b4f10fee354df802402917c8bd334376bc6f344b8eb81411cf"
+    },
+    {
+      "id": "A-mars_B-venus_square",
+      "originalFileSha256": "d7e2df24e91828016907af5ea673c6e43d72e77a41d429297c52a18d5103bd83",
+      "updatedFileSha256": "d6417ecdd129c75d55e6e5b868eda9436b19357d4d78483fec0eac402c7e1dd9",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "994c8d784fa094cbc0a8090d7eae7acc4f39554a2502ebaa68b5b1773f57dc6b"
+        }
+      ],
+      "originalPlainTranslationSha256": "1e997d3ebb38e6df45965e6cbf6677e763478950d75a67bfd2bce6808d5e94c8",
+      "retainedPlainTranslationSha256": "a074bef6b1739907b8cedefa775421e1363501cc07d5b4ea165ff671058c8709",
+      "originalAdviceSha256": "98b51323235bc387047d4a161ce570bcbad8eaaa29357f2dbbf656f267e45ac4",
+      "updatedAdviceSha256": "d6774154e0ae33726f7f001771d934c5b68d5fd5b5c563363c372279e3b31137"
+    },
+    {
+      "id": "A-mars_B-venus_trine",
+      "originalFileSha256": "6228c9a3ad7594bed1e2d4abd4257a84a1786d8d78aefcbaf0cd9e7558bf00dc",
+      "updatedFileSha256": "240ec4791382b4194ca70012dc4eaad1f513c85890d97fd41d52bea9c32ebf9b",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "04845b4cc934576965a1bc9160ee4eed8ab485ca5f602387277d3a247ecb0185"
+        }
+      ],
+      "originalPlainTranslationSha256": "d5270fed2b1510bbf77a366ca2e5b7886973f7a46fa935737f4fa84b0a866513",
+      "retainedPlainTranslationSha256": "14d2df96b8ce0dfbc81f3907136eccc223d63334a3158ce756caa7c023d3c8b0",
+      "originalAdviceSha256": "7f21b5c56f521143cae96fe4ca0611186a8cb59cca8f33d435e96a5562bf4e77",
+      "updatedAdviceSha256": "9a30403ba87ae64f3832f7247ed193e6b8c7ab26fa51d9e59a7decdc2e5195e6"
+    },
+    {
+      "id": "A-mercury_B-mars_conjunction",
+      "originalFileSha256": "5e59a0960efe2eb28f01f9523b5441d8993022a595c1f81d316823c851f76daf",
+      "updatedFileSha256": "2cca2a64952dd4b085fe7ada92c56c768db9f2ec1e5359fb4afeaf1ea815501b",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "c6cac47b507a96927c0b8b64d02b4942893602527ecd1399a46183a3bdfe9848"
+        }
+      ],
+      "originalPlainTranslationSha256": "4baac4801d4e6454040697cfe446397b7e6f50215d4a91f0bea54c2510185ac2",
+      "retainedPlainTranslationSha256": "a8861b2bed3a060d13c2fcdd791d2f894dfcc1897264970063e53e4711d04110",
+      "originalAdviceSha256": "9344702c389a88e70cd45fdee91a9f5bcbfe64c6b14821a545e034bc3f6130d7",
+      "updatedAdviceSha256": "aee7dc0e1c93fb261c48b2fe26f7a2bc1d62dec304f7edfc35e9a9fce089e452"
+    },
+    {
+      "id": "A-mercury_B-mars_opposition",
+      "originalFileSha256": "116f51b5a54e723e7f85782cdcecd3c88f798491cf87efb3c7f50ad2d4915c59",
+      "updatedFileSha256": "e48cbd09ed9a3615829e2498bb0a6f83efbdec1ee943a4516004a186b8ad175c",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "f30394b9df31af5b7a637fa8e6cd092d5d37660bf745fe2214b5a26c6d1e30d7"
+        }
+      ],
+      "originalPlainTranslationSha256": "a36f398e4bdaec8172c0634942c955bcea48ef3734caff0399fc4c61b235e247",
+      "retainedPlainTranslationSha256": "c349babd7d2e7ffce6a4d92672bfeb35fcdf55ccf9ae0be2e070c9e8b35c9c15",
+      "originalAdviceSha256": "b2a4c63ec0a8145e9e4fe636aa4aa555a3223aea065126db76f582912f389de7",
+      "updatedAdviceSha256": "e97673654a64e4682095d0fb60c1e380a5592dd5e036c3390d990a37750fb595"
+    },
+    {
+      "id": "A-mercury_B-mars_sextile",
+      "originalFileSha256": "cad06aecc752801511e47da27d52dfd0f8fba7b156229708e6ead119b0fdc7d3",
+      "updatedFileSha256": "23a2d1b67b8fb7aac5056d1f98abe3bfa96a271a74ed5c8c193d5a41b563d5d5",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "98bd074d55636ff413b33eb8f8ac1888190815fcced236086b44de84aa8de708"
+        }
+      ],
+      "originalPlainTranslationSha256": "8d0bcd2d8c12fbe3a830fcee52a3d07a7b687b50ab040bfd7fc0a6f081abe533",
+      "retainedPlainTranslationSha256": "91ce2d7333663a997c85de27170a3e1d7ac904760fe6d14202d67a2a7853e591",
+      "originalAdviceSha256": "5b7aa3549dfbc27cfec836b1a49b0857fdf49f5b3ec299a8e19903cc29c0270a",
+      "updatedAdviceSha256": "a5ccdf074cb288884c98b4658a59805320c24625b806d6ad7b54eed739fc15f4"
+    },
+    {
+      "id": "A-mercury_B-mars_square",
+      "originalFileSha256": "6298e3edc3fce8bdf224aac0f4c0cd68e012e325a3616fbd1b34de0d9192f0f4",
+      "updatedFileSha256": "2a300d325083fcfcf73ccf487c8e946c3253dbb456d117b9904a0308f1f9b87c",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "1156a85d52165da5aeb8ef786dec2da4ab567273169ac9c16168793f65bdd942"
+        }
+      ],
+      "originalPlainTranslationSha256": "e842610164a27eb19a3200d2837dd3a73f2bf99f7e3801f37d4926012289b60e",
+      "retainedPlainTranslationSha256": "018a99e508e8d65aeb170618c0f1e38dd16691fbc96aacd6f2eec79fff8431d2",
+      "originalAdviceSha256": "ac047974da4f762ccd29b67933a786cb63dd424e6d8a4c116e297fd6d043dfaa",
+      "updatedAdviceSha256": "529652d46afd1b172547583a50a3e2369cb763be58f3042ee78ae461f07f6227"
+    },
+    {
+      "id": "A-mercury_B-saturn_conjunction",
+      "originalFileSha256": "e01826059a682149a9526209ad230247a92babd50141dc0f1a2304b7e9a48fad",
+      "updatedFileSha256": "d50cc24487caee502e6c4fc9dbe228670c383900fe4386d447981e74b1188cdd",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "d157cfdd29a6976ef8c5a307cd9db73ac5a2f20bb873f59f7a27ff3e9454b729"
+        }
+      ],
+      "originalPlainTranslationSha256": "4fa86a05e39de5eb08e8b1e01324f16aa3efc1228eb58870c505168ddb5a5b6f",
+      "retainedPlainTranslationSha256": "af05d1eea8748a00966ba48ac8636010283b4149251e842aa872e56edf735d1e",
+      "originalAdviceSha256": "7de0c9358d3b2975f7d356558c0d04910c7ff85d03f99b2a63aa77fc59838927",
+      "updatedAdviceSha256": "d642b1140b32d85740bdc054cd1510595772a4267c094ce9a20205cba59c0332"
+    },
+    {
+      "id": "A-mercury_B-saturn_opposition",
+      "originalFileSha256": "29b0f90a5f6565509ca04d6fe3baab2feeb7f9297c8b8da6407665b436582ebf",
+      "updatedFileSha256": "3a3f744ea5a5ca58c488dce5043d3a5662f7c429888be183e7b95b507dd7f778",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "4c0e4a1cfee01c2bedb841efad127a9e933c81612be3b623143d813c4f796e4a"
+        }
+      ],
+      "originalPlainTranslationSha256": "001f909c7e1a59ec0948607c765db9ee1d5be309bbc38e0ce7b401b3eafc3506",
+      "retainedPlainTranslationSha256": "cee1eae0bd5a93cbc8237e87a64f0f0c7492801f744844b970eaa37f16296d75",
+      "originalAdviceSha256": "997f0f8420b1fefe91785faa42a7817b30dba72b6c514136589d5ff2cda0a6e1",
+      "updatedAdviceSha256": "6b61ffdf6f9847ea801722dfa47176cd4ba0c9280e22c2f59b199f24420179f3"
+    },
+    {
+      "id": "A-mercury_B-saturn_sextile",
+      "originalFileSha256": "30db34395cd84d47358a39d43722617199be17487e145c6cd7addfcc49fceb92",
+      "updatedFileSha256": "0639a4c7f7a2f5c677d06e3f92e2bfa9f4a6daf985d2b069bf0de89cbd3f17bf",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "3f0ee7ecc403ab09b2fbc92099bda5cc48ba549d807377aea1ff1054f9d5b8d5"
+        }
+      ],
+      "originalPlainTranslationSha256": "fdee55e0fc33cba77f43e86c4466c26f1c33862d057e9a428f3ec237926a2a45",
+      "retainedPlainTranslationSha256": "2a58d2237a200d29dfbcbefbf2e180bdbf041669c130ae94174169c1c02c3632",
+      "originalAdviceSha256": "3eed6cb62e643052f76da1dd05a6ab25b5c9222b6c7edc07ce751b38d368d869",
+      "updatedAdviceSha256": "9bd0739ace74b2265dff9f6b0c6ab876f34dd08f4f79bd2c131edede88b5ab7e"
+    },
+    {
+      "id": "A-mercury_B-saturn_trine",
+      "originalFileSha256": "b43ca3d6dd9d22b49067b807de00ac17ca6e25be028725f19e989000232fb5e9",
+      "updatedFileSha256": "e42d60c75d8cb8f765c9f5274c5ef75e0462db3fca6305dfa5a56af793a5be6e",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "70d46c7a6b0b1fbc7c1a95cd67ec99a82ee3cf9c626c90b32def876da831de59"
+        }
+      ],
+      "originalPlainTranslationSha256": "4d2bde9539e6392d641a90078f1f2ba79734dbe232c97065d2658dfc701776a2",
+      "retainedPlainTranslationSha256": "78310371931b444cc41c1ac3643cb775e52eb8f0adee3d35c13dae2de5a7a418",
+      "originalAdviceSha256": "3128d37d2cbf988ec787bf568318e5f639c6ad44a92b1f5be335fbe894010764",
+      "updatedAdviceSha256": "d09d359a9c57e170e076c2bf1fb45d424e243f30f03393790be9abee5ceb5da2"
+    },
+    {
+      "id": "A-moon_B-moon_conjunction",
+      "originalFileSha256": "e7b383f68002dd654167be46a0759dc0fd36a005ee9ea33b2bb7cdfe275b340b",
+      "updatedFileSha256": "32c9d037c376175aa0a7a492b743e950db5993a9babd32426dbf66a6976136e3",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "8de4bbf98c419baeac66cbcb6c5da7e028f23e0fc4db5f543caf4778378d13de"
+        }
+      ],
+      "originalPlainTranslationSha256": "2a31a9668fa374de57a36e0a41cd36afc3243d755d4cb72c5cc8fa19733af313",
+      "retainedPlainTranslationSha256": "e8e350eef8e2693f0ece54ad558ed33b5e8c730a2e1f8b8471544bc252e144f8",
+      "originalAdviceSha256": "dca7959dd7cffb70f53552be783f93f6d68af2011e502ece9c665e57a926c250",
+      "updatedAdviceSha256": "d5a173eb7e3e24024a2047d15948c840a3d8970e93b44e47bb01f79eadbb23ac"
+    },
+    {
+      "id": "A-moon_B-moon_opposition",
+      "originalFileSha256": "3627f83110fc4e6e4fe85c9c83e21d5903697ec046c5eb8600ec985a760b0bd5",
+      "updatedFileSha256": "cf18f4d5ba8ca49eacfdb4ff3f3fab81cd1dd1f11e24cc5e395caae488cc12e5",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "87552b546568c4f2d9cec24f6ce0e8df49f7e928af71322fd265c681dc6067bd"
+        }
+      ],
+      "originalPlainTranslationSha256": "cdb70357770954d795272b00890151b52c3202761a02861c470aaa8965813fe5",
+      "retainedPlainTranslationSha256": "6841a825b28b38054a6afa1d5eab6424e5f81ca8ad2542b2c4eda279aa95e408",
+      "originalAdviceSha256": "1654fce9dcbd74cedf9f52468ac9c5bf11759fd22df75ccf0b0ddd603b4ec7b4",
+      "updatedAdviceSha256": "4561a7d062d52e00cf423cf11da461f8752d9a7937aa2cc7b678f8d1fc821e7e"
+    },
+    {
+      "id": "A-moon_B-moon_sextile",
+      "originalFileSha256": "7ac2e317d0a3bfd7e1b41c4fe43021aad521a043eebca98622151d3126fbcb24",
+      "updatedFileSha256": "9097c517b66b77a6ffec98b2cddd324f40c653cf45ab2f80d34e12ab65aaabf6",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "f46372e1a65e82306634529a5575ac6d8f7eb4aabcb1a024a6ec1b26d80f350b"
+        }
+      ],
+      "originalPlainTranslationSha256": "dbbb414f6dd212cb37ae8b72423271f4f2247cc1e93266b3672121ec79324227",
+      "retainedPlainTranslationSha256": "f0cc27d91305607ec7ca8e7e31c16f70251a0fb24342697fd740a56be9ee9a10",
+      "originalAdviceSha256": "6a157df63a07c8b0cd5e4a11e28e1b721bb34a90ff5ac00574d1d54de94f22f7",
+      "updatedAdviceSha256": "2bed8eda01adaf0719ada46905edc33dc03d09d5959064d6ccf2e948d5d12cdc"
+    },
+    {
+      "id": "A-moon_B-moon_square",
+      "originalFileSha256": "9f41fa5e22771133ee17ff8b12d14a09a07d25bec38577f5b77c96f81fb9c074",
+      "updatedFileSha256": "d88aefd4b42f815658b88265d15e1478b921ff407bed3d93f84860734f5235fe",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "7c97c560600f4cef1898189da7759b910626b2756306ce47537384f74dc9031e"
+        }
+      ],
+      "originalPlainTranslationSha256": "57988431b7bc65bc5e649cc2cab95f4483d53bf36e9c8bdbc756f90424a8775e",
+      "retainedPlainTranslationSha256": "41e9dbb4e58c3aa3d92087cc6b3add3ade8f35ccaa61f9f6eb9c82c29852f1eb",
+      "originalAdviceSha256": "33d1171867076ece897a43353e4ba99fa1718e1982c88e1bc887aa4217495cae",
+      "updatedAdviceSha256": "94e301e41ea238341ccec05d0ba3b2b17c7dd7815c4162d75c50d9dfa2002e7c"
+    },
+    {
+      "id": "A-moon_B-moon_trine",
+      "originalFileSha256": "3875859ba7ab690cbf729d40a4baf0b76f5f924b8ed141ecfd0ac7cef5c887bd",
+      "updatedFileSha256": "7e9945ed1cfd46e0339b24d6fe12838fe39b2cb2c8c56ef87601acd8c5d54eb4",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "1f5b7bbdc0754935e6e9b07e838beb169846b433c1a70d9e086048706fd5139e"
+        }
+      ],
+      "originalPlainTranslationSha256": "957e7233a9ab4336ec48ea165f716a2014c00394e0ed9c6805a131e7f6d48e6b",
+      "retainedPlainTranslationSha256": "37d952b853f00debff0f5d80d1166de4878df40ecf83c3665fb41ff42286e2f6",
+      "originalAdviceSha256": "d396fb537ed2f910798bb1d5cddc582de26d48f8b80bd5b6275af90c946984ef",
+      "updatedAdviceSha256": "b30abff5ecba392fafc0ee806e6600c83ed4c2997bee65a2b8231258b5126258"
+    },
+    {
+      "id": "A-moon_B-saturn_conjunction",
+      "originalFileSha256": "5e885116661a8f1679db388e9bc37230c20a5e6e11f0a6dd788d56416c2c3ee6",
+      "updatedFileSha256": "2268648b72d88fc99f4d291bd7c32cf418dc8cdb3727916c7d977318752d0d60",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "abff83285a10357de62da3fe6417c37dcd1effb5d5accac471effe835e53e0dc"
+        }
+      ],
+      "originalPlainTranslationSha256": "4ebec17df070db3b40b78c46818329a6c8c23fd85c3c17fb24ad4b40c82ae0ca",
+      "retainedPlainTranslationSha256": "46883134b0d5c03522e7bd37c035dc58b13996338472fbb720a8644807f6ed02",
+      "originalAdviceSha256": "35f01ad689538015fbda3014fcd05a3859ebc0e9583832d16dfe62ae1862cf10",
+      "updatedAdviceSha256": "522ab246d5a46c60c0402d7604154bccc974b660b3795898627ffbdf56e6d742"
+    },
+    {
+      "id": "A-moon_B-saturn_opposition",
+      "originalFileSha256": "6bf83f75105b7af56757b25b03cd006b60a6ff9364da8336dd418be8915a798f",
+      "updatedFileSha256": "2b0a75b0106cfd5f3698da0962579a5e27e082f45128384c5c2b37bd01c2db30",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "44fb9d050213813a4e37c1f120f4bcbefe65d1e27435b7f66e3b6707c6d38523"
+        }
+      ],
+      "originalPlainTranslationSha256": "cfc30f997ed7816fc6505843a16c482422849697ef15a83cfdb1562d0e1e11ea",
+      "retainedPlainTranslationSha256": "eaa9a91296a23781dc8a9c81f98802fec392477b801cb688e557cf9c1d5b531d",
+      "originalAdviceSha256": "029b75f105e38aeb340d8b35d2e8a94bbff069aef882a90ec36f6df363ede84f",
+      "updatedAdviceSha256": "d45b0f8fa7b88b6a7dc6532a598552d7a2ccfc2e49b86e7d71130eaac72f75c8"
+    },
+    {
+      "id": "A-moon_B-saturn_trine",
+      "originalFileSha256": "47a4f60af2d81251db5429eb00dc986f94597cbc2e11c17b7786bf9a291a52b8",
+      "updatedFileSha256": "29d6bee2edacf64fe763f4ad81a0cd2149338c2a7b0c3e22f364e215008ee636",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "a76f120b7999929ac060821bb22f8f3b10649bd6f3ff63be2771cd9602bc5f61"
+        }
+      ],
+      "originalPlainTranslationSha256": "2df75a60c37dde74767240cf89f9a86712c62d6e56c2f828974f6ead4e6baa6f",
+      "retainedPlainTranslationSha256": "6ff4c7cddb1e3fd6afe547be4b1d1414e6e8dd9150aa4490ad6b17a87033a82a",
+      "originalAdviceSha256": "642902e8edc2fe86e4eca6777ac5fd72742918709cae3f61e0ce3713424d667a",
+      "updatedAdviceSha256": "6d909183ea9b0f03e2d6b289f909c939677548ec1daedc82cc0aab8a4a23e887"
+    },
+    {
+      "id": "A-moon_B-sun_sextile",
+      "originalFileSha256": "d98c88c0f6397591876eebdc8c253901a0256093326b7d1c42a9e7356ae354bf",
+      "updatedFileSha256": "239e18d7d21e917d56a437969a105f6e6b855ea623cae48e487d76402b68516d",
+      "moved": [
+        {
+          "from": "tension",
+          "to": "advice",
+          "textSha256": "af694a01c74502a0b00aef26b9e8ba5e77e4fa77309a071932f6f9b7b5d9ff8b"
+        }
+      ],
+      "originalPlainTranslationSha256": "c004b45fcfbed3950f1675baed60fbaf9477e90fe8237f4f9d8ed59aab19e930",
+      "retainedPlainTranslationSha256": "c004b45fcfbed3950f1675baed60fbaf9477e90fe8237f4f9d8ed59aab19e930",
+      "originalAdviceSha256": "95323f53ffaaa4e31b74da5ae114a25bf92749e00cf10c75c62b1f8d7366f66f",
+      "updatedAdviceSha256": "37357873c6b897c718bf87f4dd80c42821089c1a5ecc4c95210bf6bdab55c696"
+    },
+    {
+      "id": "A-moon_B-sun_trine",
+      "originalFileSha256": "2b711941d62e40d0ec85e7f61cbd0a46042d1f8f0752fb7b5030373a59b05424",
+      "updatedFileSha256": "32f640396e152000f42345bc7bff131955917b4ffd43fe54e08d5ddf363622a5",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "99d618fbdb514fe3b3bbb36169c57a403edcf3c8dc57413e5c82fd29313001dd"
+        },
+        {
+          "from": "tension",
+          "to": "advice",
+          "textSha256": "6d92ce721ab02b97dcf9e58a0f46e27ca40a49dd27b610a8b1f1b9d974fa608b"
+        }
+      ],
+      "originalPlainTranslationSha256": "0ccc9157074e4e69077729ba21a9f3a083f9a57345a4d368d27a1aca22a2bd03",
+      "retainedPlainTranslationSha256": "cd85e060f98ef49e6a17680d3301da48a6f646f587805e0292be1c4a7b2c5f07",
+      "originalAdviceSha256": "4363a64afb7324705bc91c7aa96f3da8798b8fe2648f3b9ff984014f861468f5",
+      "updatedAdviceSha256": "45f55e74df226a7097009215be9f4f060d79d1b8c0e26212080f7a01ac332fcb"
+    },
+    {
+      "id": "A-moon_B-venus_conjunction",
+      "originalFileSha256": "b5f4bdc6b17a9f385d53ddb29d7c6f762946b6483ea053ff09c1c724df785206",
+      "updatedFileSha256": "010787efec036f47b97de7f44e45cbd8f58d1cd35687f799f9bf565792e3d792",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "e801deaa6c2b8b0c6d2730ce17ddb9a962daacc50b34c67100c971c1b1540e46"
+        }
+      ],
+      "originalPlainTranslationSha256": "918bf719836ff204e758dbbbb94876a9938214bccd9951db6513585873d4fbb6",
+      "retainedPlainTranslationSha256": "4d420a7f4b5fba697e94022b825e48d9a494205f4f454e29f7cab436b1ba59e0",
+      "originalAdviceSha256": "003130110956b83faa85b61276e7ab64de2d2ad9501e12a2b02f7e291e258f6f",
+      "updatedAdviceSha256": "a102b7906c5ebccfb1fcac02994ffb3fc943f5908718356bfb1a9cfb9026a3ed"
+    },
+    {
+      "id": "A-moon_B-venus_opposition",
+      "originalFileSha256": "238cde85ea497a653c42453ba01259c938792a5ec5ab827d65392c9d6a574d92",
+      "updatedFileSha256": "8872ba8a6b2cfd199c00a5f07969dbb3d758c554edde07e0dfb11fa6cc8bfaba",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "ab65d9954e51917277b8bdc329cf18a2bce48020e0be03aa931e7a9f688ac732"
+        }
+      ],
+      "originalPlainTranslationSha256": "f4cb6751422415e17a100b10e529ca266e417a31ce58d77ef3ec811a3cd52bb9",
+      "retainedPlainTranslationSha256": "632e81f082f787eb382d00f36b10c88b2fd9baaade44fecd7dc3830e76f159fc",
+      "originalAdviceSha256": "fc423fe96a5ce022d40e4d2f17c124a42c2bea80956e828b7995d00341657bb6",
+      "updatedAdviceSha256": "805c2a2266178f12ab65c15e112d5282b3744c06c46e8cac77730e7fee85df79"
+    },
+    {
+      "id": "A-moon_B-venus_sextile",
+      "originalFileSha256": "45720f4501cd08456458da9336dc60581b588f54a450566db0c36d56ad8e081d",
+      "updatedFileSha256": "643605897970e19c76a5834cf431d51f3b789a071582ceb9064ed98c4c8ef741",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "42842964a90e15a8fd56dcafc4fbf8c17408272b1e8cb450c134cd1c9b969375"
+        }
+      ],
+      "originalPlainTranslationSha256": "88da8a166f68143e77ff2e6560ea4d1b4b29a90060b380ef7290f39e3fe961ca",
+      "retainedPlainTranslationSha256": "4a4bb5f501a9479fb39dcc4f634dbdea5a45f05505d67862f63338cf32c2965e",
+      "originalAdviceSha256": "99707cb559deea495fc30c0160b9201e4962b57a1eae387a6afffdeaba4914f1",
+      "updatedAdviceSha256": "40e43ac8c304fc8e6338712c2099869df6d1bb935fc1350ce22520376f426863"
+    },
+    {
+      "id": "A-moon_B-venus_square",
+      "originalFileSha256": "bb692781fad5a97260763269fbfb4fe8236c672ea52c9846039aae5fca976941",
+      "updatedFileSha256": "37c5153c1dfd288f0217acc1dda28bb0b79ee27524b05f1505a04bb12ceb562f",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "352ffedcc82f7dd271ad4fbeb5c13e11c7e2971342b3a095a6acc8fc139fbbd4"
+        }
+      ],
+      "originalPlainTranslationSha256": "400ab075f5f34d6543de6dc957b6dfc3887f75c7fe998bc0fb11930b386a5d17",
+      "retainedPlainTranslationSha256": "6dd3e29e5f29b88954f128e064fe77de2c52943d77fea0b5c4bb27a94f96fe20",
+      "originalAdviceSha256": "c7a623789db4b4bf8feaf85a5552ec7ed16c3fd011708c4bcaf2a73567ee9abf",
+      "updatedAdviceSha256": "b25e9a3004654df2aa1621348947591fa6112db2e611b8fbaa46618d7b85e9c7"
+    },
+    {
+      "id": "A-moon_B-venus_trine",
+      "originalFileSha256": "eefe8b4b13f141a7bc7816c6baf4a33a9b9316cab5738434565a12907cf83c03",
+      "updatedFileSha256": "77ebe58094ce0f9a616d5f00465114c79f466b7cb8141b0c1afa37393f0fd0a5",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "ce5e9334cb36aa66a2cf28453d428df80d80e2aeb964d9146efe36baca24dfae"
+        }
+      ],
+      "originalPlainTranslationSha256": "70ee363577d74919a0697661c2e60cd3c238e306dbb46f3bb37489a307fe7411",
+      "retainedPlainTranslationSha256": "99a09b47c4912b80a98a738cafeaa91671a34737dc5817b8c45f055cdab97196",
+      "originalAdviceSha256": "762e6bafdd8b186bc860ceac9bb0734f5c237b8fc27e936ba35cec4d0f05cc2b",
+      "updatedAdviceSha256": "1c9b89da45beef561853ddb741c7d1fbcd092c222a19a429e672a70ff5cbc679"
+    },
+    {
+      "id": "A-neptune_B-mars_conjunction",
+      "originalFileSha256": "19a7dc7d14189f03cb2eb2c427fa77c19c884b15fe9b9d65978be7768aed4aa8",
+      "updatedFileSha256": "51e8b925f429ecf0dbd58945dae052065bb0c293f97a6e11767bdacf6a64996f",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "4c7d077b8a71573b4f491eac6b5731a30f30b94c7a1c6ad6805e1c83dfab5a21"
+        }
+      ],
+      "originalPlainTranslationSha256": "c562a86959e81bc0ec492246a59a5a06ee1b9a0ed027c4eedc15d72adc3826aa",
+      "retainedPlainTranslationSha256": "89ffb02efb52a4b686b01205a4a8bf6b0849ac74022fa803fdf6f27737b6f58d",
+      "originalAdviceSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "updatedAdviceSha256": "4c7d077b8a71573b4f491eac6b5731a30f30b94c7a1c6ad6805e1c83dfab5a21"
+    },
+    {
+      "id": "A-neptune_B-mars_square",
+      "originalFileSha256": "165d3757be1e66ce62c796793925134fe4b27996c7e1105564e00d496cf58112",
+      "updatedFileSha256": "3d62170a0156c427530a85972f8264758bd0e2d33e1c95c15585abdef8a3919f",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "519d4ac5398992210328bb1720789389ea67d1b5ac699d7a28894bdcf7a80df6"
+        }
+      ],
+      "originalPlainTranslationSha256": "73bc147c8a6b78db093acb0d7e8d5ace2682f6d469c5a33d150439499721e22e",
+      "retainedPlainTranslationSha256": "4964183a0e77df2e050642816efe44183ce145f24a0bf331ad7ca8969459a4a6",
+      "originalAdviceSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "updatedAdviceSha256": "519d4ac5398992210328bb1720789389ea67d1b5ac699d7a28894bdcf7a80df6"
+    },
+    {
+      "id": "A-neptune_B-sun_conjunction",
+      "originalFileSha256": "57e497de9e7082c4985c15859f0c5297b0abf676ef2d9f6ed60424fa36af0f1d",
+      "updatedFileSha256": "2279280d629588e76fafeb31c3415f1dd6d2577db9480573cf4be25a51a3658c",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "60cb362ac09e756ab3234f599db09750241e71f72218d90e20e0441d4c12b164"
+        }
+      ],
+      "originalPlainTranslationSha256": "657ea221843cdb72eade46ba979b53ff66ba4b059be140a300404ac01fcbad2b",
+      "retainedPlainTranslationSha256": "6e88d5bdbd421521ea65c49a929cecca142fded73453664d49b41b937885c007",
+      "originalAdviceSha256": "f3ca3a23899d9562f43a9ee3dfe90ec0fbf6e5e2df9d855b9dba4f7a7d31aec0",
+      "updatedAdviceSha256": "7bfa7697dfa62e407058c04e74331a2d8c6590850cf4a9e11f23ca686eacea63"
+    },
+    {
+      "id": "A-neptune_B-sun_square",
+      "originalFileSha256": "acb9f652ae1fb677f423707a44f9c9e86a59cdc7b7fed4e3f7ffe01039763ba3",
+      "updatedFileSha256": "f8210e0c52922e20efebc14af04df37a6c3266411ba7a458ddfbd6f3c82bfc28",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "07e7e207102e02f86ce5e86b7552cf9d896a7883806ba2863c344c448f381b33"
+        }
+      ],
+      "originalPlainTranslationSha256": "661734f7ea24dadd27b2cc3989689129247ca2ca68519d6eed99920d1f56caa6",
+      "retainedPlainTranslationSha256": "32d537b806524b640df214cb3f8007c9ddd54c7fda596b3005fd9229027d2d52",
+      "originalAdviceSha256": "03075a1beceb89da307fbc9815253b3c505bfcb6ccfe8fdfd018cc6416b170e6",
+      "updatedAdviceSha256": "981fdf3e15e45dad4454837d4142822eb87d6d851d54740666030f33ead865a4"
+    },
+    {
+      "id": "A-neptune_B-venus_square",
+      "originalFileSha256": "518ef405a84d9a71a2ebdb62a57a6add8640658cf95f26462ad1f4270e50f03b",
+      "updatedFileSha256": "7fcff7ed4e98a119eba2ddd1204fdae5b9149dd5b2976bff365f221fd8ace6aa",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "7299eba23726046f03df9f8fc795d2568846127e3e46556081185a70047629f4"
+        }
+      ],
+      "originalPlainTranslationSha256": "8d6dce79061b45695b6d1a8e78d260e53e718446486ba35085ad6df210f50b3a",
+      "retainedPlainTranslationSha256": "97718ed388f78fc03919da07b9324f5077a2c5cef33231bfd72388c9c6c7d9bc",
+      "originalAdviceSha256": "7fc7e4b678fe0b6b3d1e14bd58dc459cfe98c7242c75cfba4e5c247462adeae3",
+      "updatedAdviceSha256": "cdb33fd566b8a97ff6769335d53512bd8345dfcc5d487b908d496eee77c069b6"
+    },
+    {
+      "id": "A-pluto_B-moon_conjunction",
+      "originalFileSha256": "e69d37c2670f2913615e4647c21bd1576eeadf25903219277d705e583dec88f5",
+      "updatedFileSha256": "b84addb3e5015d48c8d4008bfd3be41db28fd58f34ea0abededa97f3ca0e3e5a",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "f0ead3997cc86fc9c80440f46f2531b4a78c7b2077bb07701b56e96901ce8dd9"
+        }
+      ],
+      "originalPlainTranslationSha256": "c9bac0bc242cba80be1398542ca79d44bd771ab5ee249981276cd402550ca9d4",
+      "retainedPlainTranslationSha256": "ccfe684bad72b69cf48b8608342bb7613cab0e39de20ce67aaf50ad73fd0f927",
+      "originalAdviceSha256": "432d3195b1bbdb50cc833da1721abf033a1c8242c1445b533c6911f13627df5a",
+      "updatedAdviceSha256": "48aed5f1153a1ca846916ae3f7561b8e1ea3b985001907c4d6bdac7e795f203b"
+    },
+    {
+      "id": "A-pluto_B-moon_opposition",
+      "originalFileSha256": "519b46dfc3a028daf971a535dcf9178e5637def1dae555b08f22ee8c6b388a31",
+      "updatedFileSha256": "c46774cc13e2eb4f6a4ac0eba9ea8eae75cc5092b2464cd0c5e9776fe1472b25",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "7b47cc6af3d2d71170f557aea34b21b3d4882d46efb14648665fd7f7fcfb3a5a"
+        }
+      ],
+      "originalPlainTranslationSha256": "1109788cafaeda02d395809ca2e3cd0542eafb2c1facb6775ccebaddb6e2f362",
+      "retainedPlainTranslationSha256": "fb6a9412146bb92cb961da565edf47eb1c21caa3d5ff884746da0a322a4a936e",
+      "originalAdviceSha256": "7b3a3a856d0732ac3e44a21c1ba067a8570a095e8fb73f2b1c45e66ea93a2b85",
+      "updatedAdviceSha256": "8becac63a039c19fa926a724045eac916af3ac7e42724145ac6120f54a333357"
+    },
+    {
+      "id": "A-pluto_B-moon_sextile",
+      "originalFileSha256": "7e235606cbdc5fe99c95a41c0bcf0537dca870bbf862e8c8b5a4f2f570b6e04c",
+      "updatedFileSha256": "9b53327e2eaff80b1c23b2e0e49ea6ef1c8d520c2d2f8e76f7b4894cb344be75",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "43c718ef94bd9579f522e2c51e83f892b692cd224bfbc4ce001aa2327a88e83a"
+        }
+      ],
+      "originalPlainTranslationSha256": "d45b0d695ba64182ec12980c9a4e7478b3b369ff11ae989957f2cf9ab57bc8e7",
+      "retainedPlainTranslationSha256": "48129b9c9d9c5e866eb3006e44b99d55340dc9712037d7c53e8cab02ebf5bd3a",
+      "originalAdviceSha256": "3a7c9307671b3599ff3349aa843357eda24826caac504e06d0972f4a6caae33e",
+      "updatedAdviceSha256": "fdeb13ff6633443e659ac1a0504a50d554c12da1193a9541546fa42d20466974"
+    },
+    {
+      "id": "A-pluto_B-moon_square",
+      "originalFileSha256": "7a8885f399784a0a8cc5cd9bb75351a834d3da92fb42c840b5a1faa7ba257747",
+      "updatedFileSha256": "a2433c57a7876778b4066372a773f00d21fc60f3f764144de61c0a94f23311b7",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "74a632a04b26614a0cfb0a35819ebed78be82cb2eb4da9031820a6bf6624feb3"
+        }
+      ],
+      "originalPlainTranslationSha256": "760bcb2d10ed0dbb09c2d18a2d6f856fe3b6291d364be1d0dd2c961b0a3d6d1f",
+      "retainedPlainTranslationSha256": "0e389cac521e534b8ecc56d29e432ddd7e19a283cd546b1429728300fde26da7",
+      "originalAdviceSha256": "b0fca25e62d37ff81496f1622ca911e0c687bb87e8c692ce2cd64654562676e5",
+      "updatedAdviceSha256": "a3d43dae6ecf7829c52eb01d7cfbd93ca4806df00dc310af2be090ed59f0a3b6"
+    },
+    {
+      "id": "A-pluto_B-moon_trine",
+      "originalFileSha256": "2a2165398813feb0a1ba6b7a685b9717bd1b93135ddadec51b0e4c76f39bfcee",
+      "updatedFileSha256": "cb43e3ced3643e74ff861b3839f41a9127229e5a6b50916c56c249fdd751de7f",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "59ade21b2bf8e4bd1925c742852430924b5703770f5fdf74f331e1dff9ab6dfd"
+        }
+      ],
+      "originalPlainTranslationSha256": "6f1c9cbc644edff0965f9ebb308e63ed27c3bc79ff905e3bcc46e2b6510ded5c",
+      "retainedPlainTranslationSha256": "ec0b25a25c49ca87b009f9939cd3ae97d75799322c8d400efb4f9f52a16f937a",
+      "originalAdviceSha256": "1e7d6dbfce60f3946160c9dd0b822828f9f2b99244bcae4f546f5e69c42d53f7",
+      "updatedAdviceSha256": "f0003964d67078efb7de6d9e8df6fedf078bddc8ad92710bf8b06ceeafc8b80b"
+    },
+    {
+      "id": "A-pluto_B-sun_conjunction",
+      "originalFileSha256": "390f9b907e858e0854de63464d689a272859bd50d7fdb1d9ac7f255b53d6c2c7",
+      "updatedFileSha256": "2084c31015687587a83d4f1da124d9cd2e53a478b91202c37b1af68127277c42",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "e7dd399418359ed0dcb2f8259e2bcab82189aecc8292bb211a4c217c9b7f2350"
+        }
+      ],
+      "originalPlainTranslationSha256": "4b861cbc1bfd16a462ef3a46c679a8385621ebe01282f8a0b56c87f36ce16034",
+      "retainedPlainTranslationSha256": "1fdf33fff8efe8737caa07668c9c703a013da06f7fe7536d14c0c6b9fb2289c2",
+      "originalAdviceSha256": "5c8ac2e394751df13ae92fc113b8c9f5fd8fc3493c4617906e546ed89b4ff2af",
+      "updatedAdviceSha256": "a362e61afdb647563626cc8598f7cee485c3e7c6c1b2b3927843d58a174b615f"
+    },
+    {
+      "id": "A-pluto_B-sun_opposition",
+      "originalFileSha256": "eb831b76bdb327cbc9179b6cc4f00aaeed5dee7d671af89c5cde767af68cf812",
+      "updatedFileSha256": "c88a01e165340957b23ee38ba2ad4ea656aaae37151500fc91b2c708035fe3f3",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "14fec8c4c261b7c96a6f0fcd4c8b829600bbc95b222909de95e4be53966bf13f"
+        }
+      ],
+      "originalPlainTranslationSha256": "a25b64a791c2c7c63ea5e5b05b8684b71b1da7b8fe7a224b24819e5eb77bbc4d",
+      "retainedPlainTranslationSha256": "869d1f5c20b07b0a9f979906f174381c10c6493483f80c3f1a004292de1f10af",
+      "originalAdviceSha256": "375ef9b1509664b839970a917f7ea93b12991deed441b3b1cf04f8a501278260",
+      "updatedAdviceSha256": "44306f020909502a2439fcf496d9965d92878747b33289f063661e5969897ec8"
+    },
+    {
+      "id": "A-pluto_B-sun_sextile",
+      "originalFileSha256": "87763699fbb562e0876b8eed8625e5c30fc01f9da7f8b9987d441ba50d15aa77",
+      "updatedFileSha256": "29add0916679ffd860e1b3c76aef8d0cd77b1ed07653fa2f91e4ec7f38dba948",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "b2a43c4f70c04935697b96994b1567f28727df3e51aec018cd6d89675bb3db3d"
+        }
+      ],
+      "originalPlainTranslationSha256": "02ef4cb23110bd17ed07a66d7f440f82ec2813d6b246c760f2dedc6b2190853b",
+      "retainedPlainTranslationSha256": "db25ce50955adb2317e5b7df8c438e853c73196a620e506c2d8eb9d286b64db7",
+      "originalAdviceSha256": "820e2c099a225ed0935b6a2032a13fde45ab15a80d431498ed43dc27484898c2",
+      "updatedAdviceSha256": "bb6384cb225d19c4a3812cd4592d0722d2a874d4c0a28706771415b3881579d7"
+    },
+    {
+      "id": "A-pluto_B-sun_square",
+      "originalFileSha256": "2f027338119c75ca88c00af63c9378045ad2750481f22ef4923dd7e09f3f1b68",
+      "updatedFileSha256": "e88bba7f751944df1d1a3f89bbd47e0067113b249572e25c67b2921336ab2917",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "38dc6e8e55cac4fcc8f3181d7111a425262b689de52f97872acebed168168f9d"
+        }
+      ],
+      "originalPlainTranslationSha256": "ca439704fe0564fb9d6663e0d8e7686ba40cd95ba3afe014739031e3fd144407",
+      "retainedPlainTranslationSha256": "90619fc6070033f9b033943fc3b945ce6de12ca2c3ddfca7e13b799afe85e5bd",
+      "originalAdviceSha256": "fc2bd145c1e7defe2697b41824dd9d1c121ef3b81ef7f035be5d6dac63fb5f44",
+      "updatedAdviceSha256": "7b81e279f4507103bb0de88b139721cc97593f7d097f819a55fa84af9c70d3d2"
+    },
+    {
+      "id": "A-pluto_B-sun_trine",
+      "originalFileSha256": "410b3ac0264228dce10ce60542a27c275ff81477820334e93b315f8cd6a8c858",
+      "updatedFileSha256": "2483f909acaa35acb9c903e028847c5a4f0c59695ac1e785b40fb2bdf37ab11a",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "9d99548ca915653bc635014fea6e2878f3bcffa46a381ca72bc1f7e33f0288d9"
+        }
+      ],
+      "originalPlainTranslationSha256": "5489d8a1366ce7592138d2c1100140b3971e8b8e5cd86481ccb9146650797baf",
+      "retainedPlainTranslationSha256": "3052ceec7dc720a94c37f506e479245ecff07ae4823244e79f82d06fe8982124",
+      "originalAdviceSha256": "4c8bc6feb9a89f3b1476ba17b30f29bc7ebb29c9fadaeae37b48d1036759ad19",
+      "updatedAdviceSha256": "6fa69d2ee7fdd2efc7edc74267fb303de1a00bf819dfad52208b161c1cac6b68"
+    },
+    {
+      "id": "A-pluto_B-venus_conjunction",
+      "originalFileSha256": "2e34f595510af61b60dfcbb4d4fe8311074c055455b979416932a4691f084f12",
+      "updatedFileSha256": "b1703b881e045ae1ac8e97537f2b745cf4a9b1b88e3787dccf21d0142164f331",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "0562702e0735c9390dcbc766031567b0d58446ca12c7c7300c4e37e8495c0e13"
+        }
+      ],
+      "originalPlainTranslationSha256": "7602b86cd0cb7578f56b2c780c3115006c4f3cd675733d990b9c9144eb185cb0",
+      "retainedPlainTranslationSha256": "dbb92ad4b52a19beb18e483ed2dba8f780eb1abc2d442c5ca217e2993bff344f",
+      "originalAdviceSha256": "e48c74e7b5db07886e17669e82cd81ea6e667a492958698eaeda9848370e38a6",
+      "updatedAdviceSha256": "5323701ad573662640d012406c18fa9140e017bbcfade8b423cd65b3b30c1264"
+    },
+    {
+      "id": "A-pluto_B-venus_opposition",
+      "originalFileSha256": "30883f4b32b5e81723f60727349c6a054ca35431ce25886e8bf2546d75f95b65",
+      "updatedFileSha256": "3acfa46049b3ac84bd989c48e3911b4defa1979595860d4bbe1570b73a1049ff",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "873cd26e660e1ff6d39fc1b674a7bf14b4201c6564dd5417ee6ffdcbfcf96a16"
+        }
+      ],
+      "originalPlainTranslationSha256": "abbb76a1fae1c87a85bed42cd59ca52fdef0d33589a20e402cff693201ff0665",
+      "retainedPlainTranslationSha256": "1240b024364700eb209d1f8a9c3c49daa7ff4811b84180624b9123c863687e2c",
+      "originalAdviceSha256": "3b0a8a917ca17faf7cabd981e32738a86a06a015c2a9e510fd80e46660581b79",
+      "updatedAdviceSha256": "7a54c5eb2ffe6e054388edaf022753d38e2663e21614acb63e2bfbe4ded792e6"
+    },
+    {
+      "id": "A-pluto_B-venus_sextile",
+      "originalFileSha256": "0d88cd9bc47dd0f9bb26d7163b94d2a895b673ddaa480696f72bed09f411a802",
+      "updatedFileSha256": "803ae4410788ae5c0cc6b5c67655727377700ecde72d422b5b409d6f00113047",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "6ad4d5f959ebbfb1615cf8e56ed4650e2f46a83df482c66f0f3ddd3744ec3ab5"
+        }
+      ],
+      "originalPlainTranslationSha256": "35d7dd3810643f7d664edc82a6fd951d77e846eb6cf0c28bb510ca166f1b03b7",
+      "retainedPlainTranslationSha256": "7951b166169813f93c75910783115aa63bff39cde9b00cbdbaf387bc0061c7da",
+      "originalAdviceSha256": "b272e2d48321ea7bdce8e70fc5cfe3bea473b896f1da1b76f4e118c93300e1f6",
+      "updatedAdviceSha256": "f838aebf9a74458d697ec908db43a0606fbff4b19392f9c1710e0568dbc092df"
+    },
+    {
+      "id": "A-pluto_B-venus_trine",
+      "originalFileSha256": "62efea192e2bb8aeca36be861bf043ab588604d2293efe5a8999d5f3d11f674c",
+      "updatedFileSha256": "927d2b0cb6a1037794628d213189afd398884f8a19d61f2e71f44fc0660b20fc",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "ccc8df959f03950321f3fe932b9256ef18770e0a8b8b2fc6161b8802a39ce05c"
+        }
+      ],
+      "originalPlainTranslationSha256": "d702caa144e8bd9a58dcecede961f71c9ea53ec1ae512f7eb6b5284416f41c1f",
+      "retainedPlainTranslationSha256": "fdd92c2da6628db62271acb7951b36cfe6f43a16fc38328c9c24b6a3d250a63e",
+      "originalAdviceSha256": "11425617404f70a49c64594c86b21c6b4eaa9506f72bfbe0caa3a1dccefe1f47",
+      "updatedAdviceSha256": "ef72b61270d60158f81955f974685b4ca3e79c5e1fb1a2a0b3d5721f85bfd6cd"
+    },
+    {
+      "id": "A-saturn_B-moon_trine",
+      "originalFileSha256": "fdf4497c10e6687029704e75f695e88f77769485f43f9aadbb175d69635385fd",
+      "updatedFileSha256": "6b01e198ed66c9770ccba17bd2685ebd5d52f1da373171bc332a57e1a31d0788",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "5c2b3d5be25c50c3886cbd28a10ab03f3f73057c7400d9e9abb40da25666da31"
+        }
+      ],
+      "originalPlainTranslationSha256": "af1f37ca3aa3ca7bd7e884f74127644d3a30631e0cec5b7993216bdd93192c22",
+      "retainedPlainTranslationSha256": "be8a4b4a9efd5d8b2cae6f856f61bc4e3700acf2af9b783d691c0a82147ccb2b",
+      "originalAdviceSha256": "642902e8edc2fe86e4eca6777ac5fd72742918709cae3f61e0ce3713424d667a",
+      "updatedAdviceSha256": "a2e9784203b502644568e2b5ec59064e1df5924b73d6e25e2b1a2bce5b6d3234"
+    },
+    {
+      "id": "A-saturn_B-sun_opposition",
+      "originalFileSha256": "53778af81f5893072ccb806f5eaac9363496e6385ec9bdc9107d805c005f8136",
+      "updatedFileSha256": "edcafad7a611678da2fc9b2e417f472d2f9658b133b050ca3e3da07a0ca45b2d",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "0c2d11d8d5cef8beeb323f5884cf8e4186d848b20f2fe0008e52832e856f9dd3"
+        }
+      ],
+      "originalPlainTranslationSha256": "46907fd643b6625531856dd7bc9fa63fe959b4e22556dbe558c0ae19e057e5a2",
+      "retainedPlainTranslationSha256": "b3ff4fdbfb21089013fa939831529ca6d123f7c5a60d0e6d9197350528f12cb9",
+      "originalAdviceSha256": "8e12a15e05cf44c662fe569df5439e5f84f1dcb52b51b64a2c27a8515df64a24",
+      "updatedAdviceSha256": "6893a6d9b109fe3a5b21fe938ba3fb5740f77d152156086c4d848e3a0ca9e096"
+    },
+    {
+      "id": "A-saturn_B-venus_square",
+      "originalFileSha256": "44f234962b23a0b153d9853baa454b4b077e3324108fe5ddd40ab52ae1ed2304",
+      "updatedFileSha256": "6d11b35aeee7cac679c0234341a379fc2a5799dfb3740bebb6f248c6aea4bd6b",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "54dd49a74704009d648e1b861a61a26cfbc356b760b590003dde809c0b119f4b"
+        }
+      ],
+      "originalPlainTranslationSha256": "e24e89f2ea0437292fc9bf629a193640bcdf21e440318ce00d5d32eaf6d7a710",
+      "retainedPlainTranslationSha256": "2e317133bd4e8bf88f50e3cd9c97b4402fe665fd8a889ba7ffb8826bf3e0880d",
+      "originalAdviceSha256": "b96ac9e3751d623857e51eb2cb9cf4d86a54cc5eec786ca24d6f1b4fe871f169",
+      "updatedAdviceSha256": "0c8c101401f684d17025d91f1ed491b8114c492a8f9678441e556a81a9676320"
+    },
+    {
+      "id": "A-saturn_B-venus_trine",
+      "originalFileSha256": "80cc1c236118535dc751a9e27f39b5ec184726dfced18d166446f73da2a1649c",
+      "updatedFileSha256": "94091c99e230467851c17f7bf979e03d956e6c92163ba1d015975b594beb9bd3",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "a4c6cbcef4b166298cb404789f87367ca6ab82ef4437ae6949a91e807c35a27e"
+        }
+      ],
+      "originalPlainTranslationSha256": "a1d54021d49881d543842e05ab103874798093ceab982605883faa57e503b355",
+      "retainedPlainTranslationSha256": "a50b3702cf86931695edbff2f1c0c361cb75b63ce674646e0b9e6e46ae7814ed",
+      "originalAdviceSha256": "7166d4edb7b6f4f398de0696126836c53d428bf58b6bf87afa711c180a9ee3c6",
+      "updatedAdviceSha256": "9221d6d6a92d08ed7dbea41b7b8aed6bde282952f691d63512a6b103bae3029d"
+    },
+    {
+      "id": "A-sun_B-moon_conjunction",
+      "originalFileSha256": "4137c936f4213980d0ca0cbcab44be37286cfe8b7b44cb14480c749b01c3328c",
+      "updatedFileSha256": "09eeb377b6a83d0a1591b9cf43afe86013690295b514a4e27de227972705d415",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "f1cce52d5f7474604290a53078fe5c2ba46cb9bd4a8cdff3fbde1b2958ee89dc"
+        }
+      ],
+      "originalPlainTranslationSha256": "ca75957742e92cc6f1ea3b2e9793006db1258e04e31c02315f94a193458f2adf",
+      "retainedPlainTranslationSha256": "8d88f950a66ca4520e54f8660bcedb069736a246f34ad684ca206be9e5c86207",
+      "originalAdviceSha256": "106d0bcc78659f2b6745ce96e3f5a7119b49880d083b3b8e552b92c040ac6d9d",
+      "updatedAdviceSha256": "8745a9264846853b14de53e3e21aecc6002c370bfb5202c1b83856c1de8c565a"
+    },
+    {
+      "id": "A-sun_B-moon_opposition",
+      "originalFileSha256": "52c5eec9a541da268800b7ec9a3afb612fcbeca3c710e4a6ea3040e4b617e803",
+      "updatedFileSha256": "10919efbca1aa691c0d173fb6b78218faeac4b1ba3e2065ac8b2f1f581b034df",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "ef46d30dfdeeeb545fe6ee4dd8f6204059f368fcecb197a3b499647e41907158"
+        }
+      ],
+      "originalPlainTranslationSha256": "0a7450237ad3750ba4c1222edc08bfb81150c4501ee8aa4d954a273d1ded7e2a",
+      "retainedPlainTranslationSha256": "c0b9bd809e1ceaf82fb43011f9dd9cd2017ff3590674ad8724b1db97c2399bbc",
+      "originalAdviceSha256": "9f1b06df49c8d35d38319c794ea965d3651c6869b4bea01f3a52dfa73726ed27",
+      "updatedAdviceSha256": "94645543ba79bca91dab855b7ab5d91970b6a13e29807cd7805d99a30d23dfd0"
+    },
+    {
+      "id": "A-sun_B-moon_sextile",
+      "originalFileSha256": "c824d33fc89affb96808405d9d76b4690f5c6336a7772c1fa2d4b4c970dd49ef",
+      "updatedFileSha256": "9077bb2a1c8f5d336904e961ab896061583b0147a541c03d08be41c598005b93",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "a17474c0ba361a3b6809e576e4ebcffaaffd70c9d98d2cbd46d0337f493bcd1a"
+        },
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "c3199c3b9e4e7a1cea0386bd323c6d643d4b604feab3550505ff9b9a6f2691e0"
+        },
+        {
+          "from": "tension",
+          "to": "advice",
+          "textSha256": "af694a01c74502a0b00aef26b9e8ba5e77e4fa77309a071932f6f9b7b5d9ff8b"
+        }
+      ],
+      "originalPlainTranslationSha256": "eb86ffb6010a6debeb1efc6303e72bcca93e691ef64ad693a2497b40f59b42d7",
+      "retainedPlainTranslationSha256": "02bd71f2ef83999c2791fa025f3c8b9200774c1c653d39be897fc2421e441485",
+      "originalAdviceSha256": "95323f53ffaaa4e31b74da5ae114a25bf92749e00cf10c75c62b1f8d7366f66f",
+      "updatedAdviceSha256": "4565c29df8392ff3ff884032c1b22736804a91330a865e6a88ba8568733d4c24"
+    },
+    {
+      "id": "A-sun_B-moon_square",
+      "originalFileSha256": "04544829dd157a484d1f4fdecfb5c892bb397f3d4a7ca843f34f871099009b9a",
+      "updatedFileSha256": "efd64392842cfc4b555504bbf0cb36d98deadfa08122cd2565ddf181f94b74de",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "47de3d05bebeae3492f94b2b60f4298ea2e2a0a72773492f4aa6e951f5c61b41"
+        }
+      ],
+      "originalPlainTranslationSha256": "509bab19458df9b0bf7ef54d37e70640c9aaf7367c129e67484c334803723969",
+      "retainedPlainTranslationSha256": "68ddd93b402ac44df5d5da99e44d286e1c511f0b6bcca59adcd8be4acff423b3",
+      "originalAdviceSha256": "4fccea8b51ed085e804eeea5963a561daf690c4dbd0a95ca806b26e1c1676944",
+      "updatedAdviceSha256": "1a41a731d3a0392d1382070b02be5bbaebd671c9004c63ffb6199073fbd07869"
+    },
+    {
+      "id": "A-sun_B-moon_trine",
+      "originalFileSha256": "f250ba46915978b5cb63e8c6d4fcabf5b0ae0e2dcc0b541c0f8edc1661390cad",
+      "updatedFileSha256": "ce387e976a48adff2faf2292d214f931608e912a1297b8bea9bc1a06b09d2f60",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "d3b10e6e982cefa5bbebd02e7a4418c55aa8a3d5c3c8dafb29529d6fa1ce5726"
+        },
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "ceeee6dc2619af13a57a53059b5b0f6874713783a50c64eff6addb11bf9debae"
+        },
+        {
+          "from": "tension",
+          "to": "advice",
+          "textSha256": "6d92ce721ab02b97dcf9e58a0f46e27ca40a49dd27b610a8b1f1b9d974fa608b"
+        }
+      ],
+      "originalPlainTranslationSha256": "30cf49d69aab98379e83110b33e8b37a7c329b7b25644164994b728f179c66a8",
+      "retainedPlainTranslationSha256": "0b1b2b5652e6fb387073f7700bdf441966749c7d8df6d05763ffdb61ba45a25c",
+      "originalAdviceSha256": "4363a64afb7324705bc91c7aa96f3da8798b8fe2648f3b9ff984014f861468f5",
+      "updatedAdviceSha256": "1a6a30f6458f6cb05fe5eb2706b3546edacacfd9aae075cd25fc13b329dd2125"
+    },
+    {
+      "id": "A-sun_B-saturn_conjunction",
+      "originalFileSha256": "f65a1755988aa89e82df4eebf9f9067e7e7a5e45b39a394cf9d2dd29beb9dac1",
+      "updatedFileSha256": "3e514a37a940150678c2f81783081d6eada209b9a6274d4a1ceaa2d391b31d64",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "335223129cf7d3493e24f22f9fbae157f8d0726a8207c235839bf6485b243cca"
+        }
+      ],
+      "originalPlainTranslationSha256": "2eed5d2fc20e57fa42df101fdc4cd2a1f3b098f3650c7b72e00bfa23f4b1a8c6",
+      "retainedPlainTranslationSha256": "c82afd658eaf22dcc5e345e1b0aeb88b167b5de4f956ced1a0ef5efb35680503",
+      "originalAdviceSha256": "44d468630ea963ede8d21b803649b27d0c4d3a84171b5f29694bf719d736ab0d",
+      "updatedAdviceSha256": "26e02218abb9a979bf8160ad95bb8e7075f11fb38a08bc4d04eefbd1dabbf098"
+    },
+    {
+      "id": "A-sun_B-saturn_opposition",
+      "originalFileSha256": "6d6c951497cfd56e53892f0c01d77af9153b1f2179663d6caf7ff35afb1aba91",
+      "updatedFileSha256": "07d3ebf40d3e2ab5d7ebe4a6337963aabb407b82ebc6a4c779ca4a437a4481a0",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "3ab093bdeb9821f2b0ab662dea0486ebd1cee4b57caede7162d52f07f0b35e32"
+        }
+      ],
+      "originalPlainTranslationSha256": "8e67a6871e569a2d03500e924265e4ea50a5c6741e862373b768e26a4b22d4b1",
+      "retainedPlainTranslationSha256": "33d81cc75ee46bc96d7bb654fbf03798846ae5b87f96dac826425a9c5145738c",
+      "originalAdviceSha256": "8e12a15e05cf44c662fe569df5439e5f84f1dcb52b51b64a2c27a8515df64a24",
+      "updatedAdviceSha256": "bbebacb1dcf3d64eb1f2b064a2a10a1243ea1b2c7a4ff8a1e2442900206db1fa"
+    },
+    {
+      "id": "A-sun_B-saturn_sextile",
+      "originalFileSha256": "fc83f040adde383820854162ea644c7668fa2ed4848c41db981862cce6a7bf4f",
+      "updatedFileSha256": "8394bbe00455ca5d134bc3083adb289ca231f1536f25fd8ed5f7af3aaf7cd50e",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "a69e48e673bdb79843daa4fc2aa76085ee79e0ba473303ea2c2ed69e8d904ed1"
+        }
+      ],
+      "originalPlainTranslationSha256": "b8b86d908a6586de1667660a6bc9a87565e96c8e9db3177812fdeb59d964910b",
+      "retainedPlainTranslationSha256": "1c2005d012b20e5cf567d97f40803b5f97e8c82a6011e347fd4fdcda7cd22f06",
+      "originalAdviceSha256": "9039c74f62d0cf67ff6d43a3a452b2ca9ed2a6b8368e183c67fd1eb03b567ce4",
+      "updatedAdviceSha256": "bdc456f93b800cbb53e96d33048d21ac6e3f108584f1afaa0d4ab1fb838488dd"
+    },
+    {
+      "id": "A-sun_B-saturn_square",
+      "originalFileSha256": "bb4d6b30d1ab823358b7c94c78108f1c5693757906d91d61e9764ad65dbb0732",
+      "updatedFileSha256": "12e53cebb316bca21400304094f1d051541f879c82077634ba1cc783e6063f45",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "8cc220a23b4258dc5c141e146350e6496f83c4af4a8a18164b42c0ee2484439e"
+        }
+      ],
+      "originalPlainTranslationSha256": "2dda82177040206c0953b8849eb12cd0b9be5c5d8f80c862509559c0749fbba7",
+      "retainedPlainTranslationSha256": "c172b3ebfdb50a5f6e0d608d8c80d9e15dc4ea49917ddfc7f8068620a7f84097",
+      "originalAdviceSha256": "1956edf2c2c509eca39a49506f10891b218a613625f1782fd2b3fab9e50f3362",
+      "updatedAdviceSha256": "18de5f69c8c83b4c2a4bc109ff236cea3079ba1535ad2044339150866f25d37f"
+    },
+    {
+      "id": "A-sun_B-saturn_trine",
+      "originalFileSha256": "0d0490d6cb8321d5cfb8d520f9dfc94967395c3c536465c9ea03ba6a218d180e",
+      "updatedFileSha256": "a95d18d53fa0c85ac06f8d709144904054a4625de26755e77f1036bc9757e1aa",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "27a75b4726f82352b1e28e8ad69e708ee8936bc403f5568bbf2946337f106cb2"
+        }
+      ],
+      "originalPlainTranslationSha256": "e172534d4a1f0d3d08a2575bfb8fa44c941cae034423a820b232c401617b5d2a",
+      "retainedPlainTranslationSha256": "a2d64c15cc401e1db46de6db2d7adb880718d2e4c7523cfc34910d56f0a0ccfb",
+      "originalAdviceSha256": "cc486450661a748cadddb57a456bc436604bec336d375a7a0c3960f9106e79a7",
+      "updatedAdviceSha256": "bddbd46ad020cae29801e42d41a911c84662f8527610c1357512c0aa3531fe4a"
+    },
+    {
+      "id": "A-sun_B-venus_conjunction",
+      "originalFileSha256": "b29335674352d66f27ea9977ba2b041b640d350f953811062d27285d01317763",
+      "updatedFileSha256": "4aef2deab8c54e4fedd796ed9f067bbb783d4f47b86df3d1b6d4c613f6c7ef8d",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "0d68229aff964630607f780d81b6c07594e1cc23460d8678935c507a2a60dae3"
+        }
+      ],
+      "originalPlainTranslationSha256": "ad792b918ebc63b3a98d66db912af4d6b15806ffca5d7932a0d4995d68dfc3f0",
+      "retainedPlainTranslationSha256": "65e23a982b83b41b3303fc9929a9c333529fbf9e77d3b674bace615249bc2b4e",
+      "originalAdviceSha256": "e981143a3a2498d269f78d67a42fbe4c70b1d9192d7dc1ba7b6d15493bab0fd1",
+      "updatedAdviceSha256": "c17c87a9d1ef866c87519aab4cacfc9db29f9f0c452fc4a38fd2c3072d69f24f"
+    },
+    {
+      "id": "A-sun_B-venus_opposition",
+      "originalFileSha256": "be59655a4af35864194ad7dbeb8b812625f77500005f79b76315b0be2bfb3904",
+      "updatedFileSha256": "31602f1f4408bd2e57499799c425da711e1be7b6b292aef458637b037d215476",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "0ffb08a83f6b9ad85e36a371e37ae30cbbddc8053b6f1b23edef162829ea7a7c"
+        }
+      ],
+      "originalPlainTranslationSha256": "af51ca323768e79daf2de48afa7fd1f6a239e5bc5623efbf89bf68d4b6cee3c4",
+      "retainedPlainTranslationSha256": "a7ae81e15128a2aa523d1ba17d34486f1953c83212c69df38b1722ffa9913204",
+      "originalAdviceSha256": "02f357fe3fc87d8177af05f4bd7cf578fa5d0371a2397b55cb3441ffb9bab06f",
+      "updatedAdviceSha256": "1e94e3005032d0dfe217e6f3c40183208198c21da201635bdd6f0d92211723fe"
+    },
+    {
+      "id": "A-sun_B-venus_sextile",
+      "originalFileSha256": "85ee388ed45a2d2ded58df6541e8c45864013941a2398efa6d21a7d8fd193ff9",
+      "updatedFileSha256": "3bbbab16b48d2d3418da86ee72f3c75e185668910e04a4bb1919243bd2985fcf",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "f7b50627986a6592ee3f7724a2035da8eee2f992ca29e02bb1c2e88c2fe1e4f9"
+        }
+      ],
+      "originalPlainTranslationSha256": "ada45aedff22338f64644ebe41cc9a582daba7929f1258b5c0cf6c53741bf997",
+      "retainedPlainTranslationSha256": "5571b571f7130df7ed3bf6f5915f0fbf022fda62e9949972a199f1f037dbf81c",
+      "originalAdviceSha256": "18c7c4798ae40e4be27c4e18704d6d9584a051093ff4fbd9ec48daf60e496042",
+      "updatedAdviceSha256": "d44bbccb68c38b85afab0f7e298ebff4c34f77eece6a72e316ff37e4a78a6395"
+    },
+    {
+      "id": "A-sun_B-venus_square",
+      "originalFileSha256": "8fd514991d27b1e48a5fc69062401587f28b1191a1f380b7faf7cbafa9bc0340",
+      "updatedFileSha256": "faed804632797ccc14c7da6bdeea84718031111c86438f5355e374fb54f47ad7",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "ae3801725c71cf07504370982cc13850acda6fd52df870534c8926c0efbb89b8"
+        }
+      ],
+      "originalPlainTranslationSha256": "ceda8cdf6f370e0af5435953cb0dcc2c3545fa10cb69c507b50637e6501f97c0",
+      "retainedPlainTranslationSha256": "d07285a376d5ec1843bb1f7de5109b00f5a46a8e59f67ba4759e08bf83417d81",
+      "originalAdviceSha256": "fba5ac9dd240b567405888c09965dfd46a41940047b0e07d2eba1a1f90d484df",
+      "updatedAdviceSha256": "b9eba46ff6adaa860788789329a176fc6b24235f54374c42a3c60828c7e062d9"
+    },
+    {
+      "id": "A-sun_B-venus_trine",
+      "originalFileSha256": "54ddd9043c07a3bbedc2140c602f1ad15e50c476e3ae95d549e25f8a024faf24",
+      "updatedFileSha256": "43ebd7ce8b73eb9f3f22ce37406adfc5cb2effb79b24cf3a93bafcabe799a4bd",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "02aaad82c74a2155addea7c98f7c54be3b233f2cbb09e51ade0c2b45443b0f53"
+        }
+      ],
+      "originalPlainTranslationSha256": "02a5cb9c7e9e0ede2e9537708e6590ff2c04fc041a80c75624e703e9e5f32650",
+      "retainedPlainTranslationSha256": "7876128ee81df0fe15a5609928366ce2f88d4dddad7398ec88b68010996cd581",
+      "originalAdviceSha256": "4599fd1aacb5c9195f0a3827fbbba4eda2aea76f6d98fc9be9a4a4a734e0ec32",
+      "updatedAdviceSha256": "47445f3bc044d1e998165fbda93fd3f23d865dd6283ca772975bc031307b8bce"
+    },
+    {
+      "id": "A-venus_B-mars_conjunction",
+      "originalFileSha256": "506125b9899e8b81281e3350863e1c9423162a96056c22ec4f39575a7f1b2650",
+      "updatedFileSha256": "a9e8206418baf50b824dac7365a325e93a0bddf8d805e4aa5870859e956a531b",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "62c7e3daae81f9046c97b579462e2c4c047c949fd123910847b4100bda2a4a54"
+        }
+      ],
+      "originalPlainTranslationSha256": "81d378256ace2d4ab5edf29d72f14934b29a4f1d9ac714405571a2b64183ccd2",
+      "retainedPlainTranslationSha256": "cfadf1ed0791418033bc3b5d5ff93587d5c0f9c5cb191e2e5f3846a366d8df49",
+      "originalAdviceSha256": "4cc11c04ecd00062164d789b4bd40bc4f5e8864bbf954a0aa2ffb9fff2d4baa1",
+      "updatedAdviceSha256": "4a510c83c29296f319c27d896ab665af8b1350d893a50db35d70dcd0b59bbe38"
+    },
+    {
+      "id": "A-venus_B-mars_opposition",
+      "originalFileSha256": "ac64106939de76e7b4be597146ec7a1c5f60f400e811198744cf61b0e1e2ad18",
+      "updatedFileSha256": "8118a5da9d5b2f43786d125c2073760432065136402097aec9686da28e64e6b3",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "865950eddbcacfae8efda1978e29ee65dfbe14f5afda8c371917f60b0166d55d"
+        }
+      ],
+      "originalPlainTranslationSha256": "86395af14712298aaa50729665692f7d177a161ec52f29c255c968d4cdd4dd0f",
+      "retainedPlainTranslationSha256": "c1887494919a7108518bf2fcbabbe141e1e95b42e44950433ef91a572a81b5a2",
+      "originalAdviceSha256": "b9e5b18f7bb4f1ae0d5c9f399638818785216d5fc520f86add8d60dfa1a042d1",
+      "updatedAdviceSha256": "0f1eeb198c44713ae608383c653a755bd5496f3d7befcf46ee4a152b64e11c06"
+    },
+    {
+      "id": "A-venus_B-mars_sextile",
+      "originalFileSha256": "7f7077587932b777ee4b68d9691afa87698fd18856e6e4d9a538d2ab4af522f0",
+      "updatedFileSha256": "4007d6819bdecf91b900af72cf4291e5f397ee1be952f59b9d23c2318f13fce1",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "c174330453faba0f685828fa3b1414782925b3165120b27fe86e76318e0b7cb4"
+        }
+      ],
+      "originalPlainTranslationSha256": "80f5ef5dcca22eebfc99d0a8734f33b611fadbf0537c02ebd8789710017b9271",
+      "retainedPlainTranslationSha256": "3f300268f20b4f59388d18e1642cfe6ed41700e952cac2fafd427f16c8816b83",
+      "originalAdviceSha256": "9f8439e66ee37a85fbba698f888b0ac09fa619a1abb877a276490220a061efc7",
+      "updatedAdviceSha256": "27e26d17464db564890b3206a6455b65bf9a53852e862704da95e7d9c5cdd7b1"
+    },
+    {
+      "id": "A-venus_B-mars_square",
+      "originalFileSha256": "0689a7034d6d580bf3d7b28b5c22eedc2d59124cd2b0a9e882cb39bcc04e7165",
+      "updatedFileSha256": "5d2654fec3c50eb6e7a218cbf11c09fa0792cb7150ab405498581fdef2a94ca2",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "192869d1de39dd74d5fdb886b0bd5674c764b42078c23d8803714d61ec0e666a"
+        }
+      ],
+      "originalPlainTranslationSha256": "7a39ad00ef341ff6e09628934934b79c2d7780eaf5ee3c3a4f8fe795497080ca",
+      "retainedPlainTranslationSha256": "8e3ba9919a7b4ae15c021203b1e39debebd56841967ec2999c4009b3db42b48b",
+      "originalAdviceSha256": "98b51323235bc387047d4a161ce570bcbad8eaaa29357f2dbbf656f267e45ac4",
+      "updatedAdviceSha256": "0dd453e51fd69478bc7c93a04c8547c8b139fb3524b2ad0eac592ae8ccabb3d6"
+    },
+    {
+      "id": "A-venus_B-mars_trine",
+      "originalFileSha256": "122a074f15bd80cfbe36e392afcdc440aafeeb57c9e3050c07cabcc27add8605",
+      "updatedFileSha256": "784fa4482143608357ac3493450d3a92ccbdff7ce008f3ae5d775a0c72dbf3bb",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "f8556cb0ee2c685e57dc7d14256991ee6fd7bb9d748c1e67fc6208d583829791"
+        }
+      ],
+      "originalPlainTranslationSha256": "f790b4ffacd21e8861197ce2eee6b948738572fc05d40b3b0d712e6e31cb3075",
+      "retainedPlainTranslationSha256": "abb1bc85fdf24afebd583014d5544dcdbf71680e1463b5472fef7167d7a9d0f6",
+      "originalAdviceSha256": "7f21b5c56f521143cae96fe4ca0611186a8cb59cca8f33d435e96a5562bf4e77",
+      "updatedAdviceSha256": "d8281edea8f4a28ce1fb5bae7ee01d060995bc1ec6f84030e4d76abd5dc6e3b1"
+    },
+    {
+      "id": "A-venus_B-saturn_conjunction",
+      "originalFileSha256": "53644c783f1c396fb97f656987f566f5c74fe858fb9e2c5741c161cc0d9fcadd",
+      "updatedFileSha256": "84ad6ecd351c0d1480131b2a64e464208abdae99c0277c52cef6b34e210df84e",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "0addec7fb5c8e814486d5f0201ff3c50baaf9eb5f7b1bbeced913c4cf46ddc33"
+        }
+      ],
+      "originalPlainTranslationSha256": "a1bb8befac121a720615f39992fad8d6c4bb586444f11959566aeb689b90d436",
+      "retainedPlainTranslationSha256": "fed03ce9f74f0b201f57cbac4c32b41d2d6aa01daf5fa3aa1ac7fe1cc68395a4",
+      "originalAdviceSha256": "5e87cde87f0ecf18e1319e6348a33f607a095921797f1cd3f542de9e4d60da56",
+      "updatedAdviceSha256": "f93483b8a37580721e036a4c6a8cc7ea97b85dc1521ece292078f812046b1171"
+    },
+    {
+      "id": "A-venus_B-saturn_opposition",
+      "originalFileSha256": "1934688b1936a3773026e1a324e357aca9a62b215d5379f143aa1930faaee0e2",
+      "updatedFileSha256": "c568f6a5e5e70673f79603c578859dc5e9852be38c9f5e443f491e2e18e2669b",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "0ce48a62335840523443cb7740c81d8c2e6448b1d57b1209da774f87bf571d12"
+        }
+      ],
+      "originalPlainTranslationSha256": "f11857016b37cb9ab1352ce6941f972f6350b3b5491b76ea336aa848257e0236",
+      "retainedPlainTranslationSha256": "24d00f20cb791987eb4499be8e65a5b276a8114d607cf4c8a2b00ca6323e1dd8",
+      "originalAdviceSha256": "22efe8ad5e5260df0b01d761c1988d2ae5a217c696127edfe7f446baac277dec",
+      "updatedAdviceSha256": "f9a6749a3e3e5426beeb21276924c5e226ebb1138777357b998ff1b676d7201e"
+    },
+    {
+      "id": "A-venus_B-saturn_sextile",
+      "originalFileSha256": "5393cab5a3aaa3f9cce43cd2c2c9fde7d408709445ecafb019738e3dd0845d5e",
+      "updatedFileSha256": "507557256a14893abbde12a0713c6006071636afb6cc0e05f99a5142889f4c30",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "417258c503fce690a8d81bb0916148352609a9ebcaf625a6b7600d1d3500dd9f"
+        }
+      ],
+      "originalPlainTranslationSha256": "06e3e8d425b15a198a1d8c1b2129e65a3946335a160f30e040ac2cd8b71e42f5",
+      "retainedPlainTranslationSha256": "3092efc43f94d4d16279bf764020a16f9cdb6179b050f4f139b19e684c2bc425",
+      "originalAdviceSha256": "aa6219f7f4007e54b070db31c57b58d496a6b60b2a1748015954c556aeaea199",
+      "updatedAdviceSha256": "55cff136e6220d808727c996791d1ed1f71f5c90e4aadad8a0ea53cc94bfeec7"
+    },
+    {
+      "id": "A-venus_B-saturn_square",
+      "originalFileSha256": "ce31529f7353da98076a39a2a7aec6750cfd0d423472e4de195a13f0ded18be1",
+      "updatedFileSha256": "632e68c44f3c2722037deee603aeede2515d8718e6cd51c1caea8bd7b94d5c44",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "72813ae11ba8f8d4d26b2cb50498d99b24e05a75c16268fe1e1fc7b445d34bcc"
+        }
+      ],
+      "originalPlainTranslationSha256": "f3ed98824c0c1d9e000fdf83192cefc547551a8527c8549a45ae5f714bdf3fb0",
+      "retainedPlainTranslationSha256": "edac9d51d37965ef70cdcf75e3b245f2ac450da242e9adaa376871fcec60b44b",
+      "originalAdviceSha256": "b96ac9e3751d623857e51eb2cb9cf4d86a54cc5eec786ca24d6f1b4fe871f169",
+      "updatedAdviceSha256": "e836a07acb92ea1875aa3c66d66e7aca53aacc964959a548070c7027a260ab9f"
+    },
+    {
+      "id": "A-venus_B-saturn_trine",
+      "originalFileSha256": "5f15fd3e43c795ef51a709284858840d9590cd2862e6eacfa4e6915c3ae18d6d",
+      "updatedFileSha256": "7a16b8e6d36258020f3051b2f69e4145f69ca5bc119bcaafc92c881fc5239f61",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "5bac4a002b0973f5bc8ef45af046558d642566cd2bec646277ff44a9ad759a00"
+        }
+      ],
+      "originalPlainTranslationSha256": "f30114c0e80653374fd76ddbd56f4c31732dd6721cf8271002ab23ff4b1080c3",
+      "retainedPlainTranslationSha256": "1da483432e41dfdce9617df2c58530bdc7721fcfb2060a28cdeabffd577755c0",
+      "originalAdviceSha256": "7166d4edb7b6f4f398de0696126836c53d428bf58b6bf87afa711c180a9ee3c6",
+      "updatedAdviceSha256": "30f87da42f920e3cc41c0648131b3ea880003e28cfda6c5cf11398eb2e1fa081"
+    },
+    {
+      "id": "A-venus_B-venus_conjunction",
+      "originalFileSha256": "acc236fe6c723ed42eba79f95b93094907705b9ae35dcb6ba4078fb21b05683d",
+      "updatedFileSha256": "0759e02822a85e72612314cd045e73153204a531bccb6997f54ac9ce4305ba2b",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "117f5e6b1558a2f545c67c14e1cbd8239772e273cf1dba954b4c762361afd928"
+        }
+      ],
+      "originalPlainTranslationSha256": "ff2fcdf46b8e3740d4bf139d19458080b2f203942a2616e72a7df45253ed3a1a",
+      "retainedPlainTranslationSha256": "3d2740f914628fcecbb2d9d244cc1bd54ac413d4718f0f0a4c6e8b322c96430d",
+      "originalAdviceSha256": "074c17109d84593f1f38c4ca0db9efa813176758a34c6aec882315cd0f92931d",
+      "updatedAdviceSha256": "eabdb9356026ccc48edf4038b469a045b2500f3676032bbaa95defe2b0f4a6e2"
+    },
+    {
+      "id": "A-venus_B-venus_opposition",
+      "originalFileSha256": "79693ad7dc594289f8856365ed488988cd1e36ff0968ba91c1bb347a3b22ea2e",
+      "updatedFileSha256": "c5cd8b019d25a9548d7bdfb42e9cd3c07636979d2adcd72c83468e95988e3fa1",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "4b636eeb32d0c848c95194b9f6dfc0be02558a832571f5f036c2ffdb70c4a6c9"
+        }
+      ],
+      "originalPlainTranslationSha256": "d092c4d92b72743e2710dd27709e3960050c42a0734d27d7689ab2821ff90485",
+      "retainedPlainTranslationSha256": "be3f9331043f3f81571be2155eee0e95d48c60553c1c1ffc634d572b1412015a",
+      "originalAdviceSha256": "c1710bb797a277d913f98012b5207eab18a1ec510cb94d5e40b98e646cba0e72",
+      "updatedAdviceSha256": "45ee8d7ade4f2cf27d8a740b71e640dc8d59b0fb7c78e091e325c2f0f66ea3de"
+    },
+    {
+      "id": "A-venus_B-venus_sextile",
+      "originalFileSha256": "901fd11b88fa4b03bdcee64c6f795c1bd377d1dd784ddcd3c03c8889707ae974",
+      "updatedFileSha256": "5b33d45499a79dc4f06f987ddff29c57dcb90cb3f6bc9d52058a66a6c9351278",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "8a4193453b70266a6188ea6af27a6419568f3f6f3a399e96e0d160daf9d1259f"
+        }
+      ],
+      "originalPlainTranslationSha256": "af0ba1be05833ba74735cb3a9b36037867f9a19d4b5195217594ed260d62a7b5",
+      "retainedPlainTranslationSha256": "7c6447a986b7339a55208a99b3b3d5796b8bde1b0eb20e1739d91cab5bfc68c4",
+      "originalAdviceSha256": "7d6454884a909fafc8c3846c080f3e7514a1f50ebc975ff83a296009a4aaaba2",
+      "updatedAdviceSha256": "d212a58245506e2aa90b298ff41565ed39c565e6232740e235b9ef7103010024"
+    },
+    {
+      "id": "A-venus_B-venus_square",
+      "originalFileSha256": "f6390424d49568032833e02d61359ce19fa9a448a1e5769f9ea30d5a35f93636",
+      "updatedFileSha256": "eb00e1c69a168082becea378694ce6cd5897cda596dbdd6d7b8110169450f10d",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "464d5b84a895011de0403f0960954c696631af7b46f6cb67daa8795b051ff44b"
+        }
+      ],
+      "originalPlainTranslationSha256": "b58a3efc85d09c425b026529f1538dcaa3f6d7b8d9e1d70a1405c6e40e3c552f",
+      "retainedPlainTranslationSha256": "769beb078f7abf8dcebfe06e1dce27ba897174722231a36e3b9351b2d68bf17e",
+      "originalAdviceSha256": "c36fb26337b8033bc5903f52fb2d0191879d2aa079401e8ccd190b9c7463d1cc",
+      "updatedAdviceSha256": "d32856fe5ca91cc0b2639fca1dd8651d9941750d275447310180d6fcde84683f"
+    },
+    {
+      "id": "A-venus_B-venus_trine",
+      "originalFileSha256": "dd81355f07f98c172f617e33d96766cc8a6007cff3ca50a7ddd4b5c307734f6f",
+      "updatedFileSha256": "18efddcf46a0def6262a3edb195ed0a016fec9acbcc118b448b2939812e4b055",
+      "moved": [
+        {
+          "from": "plainTranslation",
+          "to": "advice",
+          "textSha256": "e319f57e84fc612a52ebdca392df41d2b251355a2673aba8cfc85e92cbbf70e9"
+        }
+      ],
+      "originalPlainTranslationSha256": "38e6782ec03116ea9df05271004dd0b86f1433afbe198198c5c8f9e4448a72f1",
+      "retainedPlainTranslationSha256": "3b0a94855ddc285ecf32d81692949c65c9dafa6f00602e0befbaee823246231e",
+      "originalAdviceSha256": "5106fe596805395b283f6bfaecabc688960da2e77d2cb74e50ca8d3c660837af",
+      "updatedAdviceSha256": "de74802547454613aff035aacbae45ff58d6cb1ae3635e47cc994475122bdbb2"
+    }
+  ]
+}

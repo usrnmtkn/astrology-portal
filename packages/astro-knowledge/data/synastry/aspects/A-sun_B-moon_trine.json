@@ -4,7 +4,7 @@
   "planetA": "sun",
   "planetB": "moon",
   "aspect": "trine",
-  "plainTranslation": "A natural, easy fit between who one is and what the other needs. Drives and feelings sync; the relationship feels like home fast. Failure mode: comfort breeds passivity. Stay awake in it - easy compatibility still needs effort to become something.",
+  "plainTranslation": "A natural, easy fit between who one is and what the other needs. Drives and feelings sync; the relationship feels like home fast.",
   "humanMoment": "Being around {{holder1}} gives {{holder2}} an immediate sense of home, no explanations needed and nothing to prove.",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
   "note": "Synced from authored synastry bundle synastry-authored__19_ (2).json.",
@@ -12,8 +12,7 @@
   "status": "DRAFT",
   "summaryShort": "Their sense of self and your feelings fit together comfortably.",
   "summaryDeep": "Their sense of self and your feelings fit together comfortably. You feel safe being yourself around them. This is real compatibility glue, so trust it.",
-  "tension": "The problem is that easy can become lazy. Because the connection feels natural, both people may assume it will just keep going without much care.",
-  "advice": "Don't sleep on the good thing just because it isn't causing problems. Keep showing up for it.",
+  "advice": "Don't sleep on the good thing just because it isn't causing problems. Keep showing up for it. Stay awake in it - easy compatibility still needs effort to become something. Failure mode: comfort breeds passivity. The problem is that easy can become lazy. Because the connection feels natural, both people may assume it will just keep going without much care.",
   "weight": 1,
   "authoringStatus": "draft"
 }
