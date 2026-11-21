@@ -6668,7 +6668,7 @@ for (const sect of ["day", "night"] as const) test(`Natal approved saved bodies 
       const article = page.locator(audience === "you" ? ".you-transit-article-page" : ".sky-detail-article");
       const addition = article.getByRole("region", { name: sect === "day" ? "Day chart" : "Night chart", exact: true });
       await expect(addition.locator("p")).toHaveText(body(`cms/natal-planet-sect/${audience}/${planet.toLowerCase()}/${sect}`).split(/\n{2,}/u));
-      await page.getByRole("button", { name: audience === "you" ? "Back to updates" : "Close detail", exact: true }).click();
+      await page.getByRole("button", { name: audience === "you" ? "Back to natal chart" : "Close detail", exact: true }).click();
     }
   }
 });
@@ -6808,7 +6808,7 @@ for (const width of [390,1440]) test(`Complete Friend natal placement bodies rea
         await assertCompleteCopy();
         await article.screenshot({path:`test-results/approved-friend-${planet}-${width}-${name}.png`});
       }
-      await page.getByRole('button',{name:audience==='you'?'Back to updates':'Close detail',exact:true}).click();
+      await page.getByRole('button',{name:audience==='you'?'Back to natal chart':'Close detail',exact:true}).click();
     }
   };
   await check('you'); await check('they');
@@ -6880,7 +6880,7 @@ for (const [theme, width] of [["light", 1440], ["dark", 390]] as const) for (con
     expect(await sect.evaluate(precedingCopy)).toEqual(baseCopy);
     expect(await aspects.allTextContents()).toEqual(aspectCopy);
     if (pilot.planet === "Jupiter") {
-      await page.getByRole("button", { name: audience === "you" ? "Back to updates" : "Close detail", exact: true }).click();
+      await page.getByRole("button", { name: audience === "you" ? "Back to natal chart" : "Close detail", exact: true }).click();
       await expect(page).toHaveURL(natalListUrl);
       await expect(article).toHaveCount(0);
       await page.locator("button.placement-table-row").filter({ hasText: /Saturn/ }).first().click();
@@ -7163,7 +7163,7 @@ for (const [width, theme] of [[390, 'dark'], [1440, 'light']] as const) for (con
       await page.reload({ waitUntil: 'domcontentloaded' });
       for (const text of texts) for (const paragraph of text.split('\n\n')) await expect(reading).toContainText(paragraph);
       await page.screenshot({ path: `test-results/saturn-natal-reader-${width}-${theme}-${failure}.png`, fullPage: true });
-      await page.getByRole('button', { name: 'Back to updates', exact: true }).click();
+      await page.getByRole('button', { name: 'Back to natal chart', exact: true }).click();
       await selectYouNatalTab(page);
       await page.getByRole('button', { name: 'Saturn Rx in Virgo', exact: true }).click();
       await expect(reading).toContainText(texts[0]);
