@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { buildCompositionMap, type CompositionMapRow } from "../apps/admin/src/compositionMap";
+import { buildCompositionMap, buildCompositionTemplate, type CompositionMapRow } from "../apps/admin/src/compositionMap";
 
 const sourcePackage = JSON.parse(fs.readFileSync(
   new URL("../apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json", import.meta.url),
@@ -79,6 +79,35 @@ assert.deepEqual(
   [],
   "Every rendered saved-copy span must deep-link to one exact atomic source row."
 );
+
+const natal = map.find(template => template.row.content_key === "fallback-template/natal.aspect")!;
+assert.ok(natal);
+assert.equal(natal.slots.some(slot => slot.name === "aspectAdj"), false,
+  "The owner-retired recap variable is not needed to locate a natal pair passage.");
+for (const [aspect, group] of [["conjunction", "conjunction"], ["square", "hard"], ["opposition", "hard"], ["trine", "soft"], ["sextile", "soft"]]) {
+  const key = `fallback-hook/aspect-pair/mars/pluto/${group}`;
+  const source = rows.find(row => row.content_key === key)!;
+  assert.ok(source);
+  for (const [a, b] of [["Mars", "Pluto"], ["Pluto", "Mars"]]) {
+    const preview = buildCompositionTemplate(natal.row, rows, {
+      exampleValues: { planetATitle: a, planetBTitle: b, aspectName: aspect }
+    }).preview;
+    const field = preview.fields.find(field => field.key === "body_you")!;
+    assert.equal(preview.lineage, "runtime-traceable");
+    assert.equal(field.rendered, String((source.sections as any).packageRecord.body_you).trim(),
+      "Source linking preserves the complete saved pair passage.");
+    assert.deepEqual(field.paragraphs.flat().filter(segment => segment.name === "pairSentences")
+      .map(segment => segment.source?.row.content_key), [key],
+      `${a} ${aspect} ${b} links the exact natal family/group in either planet order.`);
+  }
+}
+const absentNatalPair = buildCompositionTemplate(natal.row,
+  rows.filter(row => row.content_key !== "fallback-hook/aspect-pair/mars/pluto/soft"), {
+    exampleValues: { planetATitle: "Mars", planetBTitle: "Pluto", aspectName: "trine" }
+  }).preview;
+assert.equal(absentNatalPair.lineage, "not-traceable",
+  "A missing exact natal source must not borrow a Synastry row, a different pair or another aspect group.");
+assert.equal(absentNatalPair.sources.some(source => source.row.content_key.includes("/synastry-pair/")), false);
 
 const transit = map.find((template) => template.row.content_key === "fallback-template/transit.aspect");
 assert.ok(transit);

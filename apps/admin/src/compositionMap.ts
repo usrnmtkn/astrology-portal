@@ -320,6 +320,19 @@ function representativeSource(
     return slot.sources.find(source => source.row.content_key.split("/").at(-1) === sign) ?? null;
   }
   if ((!includeOptionalSources && slot.requirement === "Optional") || !slot.sources.length) return null;
+  if (slot.name === "pairSentences" && slot.sourceContract.prefixes[0] === "fallback-hook/aspect-pair/") {
+    const planet = (name: string) => (values.get(name) ?? "").toLowerCase().trim().replace(/\s+/gu, "-");
+    const aspect = (values.get("aspectName") ?? "").toLowerCase();
+    const group = ({ conjunction: "conjunction", square: "hard", opposition: "hard", trine: "soft", sextile: "soft" } as Record<string, string>)[aspect];
+    if (!group) return null;
+    const a = planet("planetATitle"), b = planet("planetBTitle");
+    // Match the natal resolver's exact family, aspect group and forward/reverse order.
+    for (const [first, second] of [[a, b], [b, a]]) {
+      const exact = slot.sources.find(source => source.row.content_key === `fallback-hook/aspect-pair/${first}/${second}/${group}`);
+      if (exact) return exact;
+    }
+    return null;
+  }
   if (slot.sources.length === 1) return slot.sources[0];
   const directAnchorNames: Record<string, string[]> = {
     angleIntro: ["angleTitle"],

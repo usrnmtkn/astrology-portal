@@ -87,6 +87,9 @@ const templateSourceContracts: Record<string, Record<string, string[]>> = {
   "fallback-template/synastry.aspect-v3": {
     pairSentences: ["fallback-hook/synastry-pair/"]
   },
+  "fallback-template/natal.aspect": {
+    pairSentences: ["fallback-hook/aspect-pair/"]
+  },
   "fallback-template/compat.cross-sign": {
     elementPattern: ["fallback-hook/element-pattern/"]
   }
