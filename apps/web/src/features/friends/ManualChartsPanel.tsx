@@ -853,6 +853,24 @@ export function ManualChartsPanel({
     });
   }
 
+  function renderFriendSynastryContact(
+    contact: SynastryContact,
+    friendName: string,
+    otherPronouns?: PronounChoice | null,
+    relationshipType?: string | null
+  ) {
+    const friendVenusMarsSquare = relationshipType != null
+      && normalizeRelationshipContextKey(relationshipType) === "friend"
+      && contact.aspect === "square"
+      && [contact.yourPoint.name, contact.friendPoint.name].sort().join("/") === "Mars/Venus";
+    return renderReaderDirectedSynastryContact(contact, friendName, {
+      otherPronouns,
+      relationshipType,
+      romanticAllowed: isExplicitRomanticRelationship(relationshipType) || friendVenusMarsSquare
+    });
+  }
+
+
   function compositeAspectSummary(
     aspect: { from: string; to: string; type: string; orb: number },
     generatedContent?: GeneratedContentMap
@@ -1137,7 +1155,7 @@ export function ManualChartsPanel({
   const selectedSynastryViewGroups = useMemo<FriendSynastryAspectGroup[]>(() => (
     selectedSynastryAspectGroups.map((group) => ({
       contacts: group.aspects.map((contact) => {
-        const rendered = renderReaderDirectedSynastryContact(contact, selectedChart?.displayName ?? "Friend");
+        const rendered = renderFriendSynastryContact(contact, selectedChart?.displayName ?? "Friend", selectedChart?.pronouns, selectedRelationshipContextType);
 
         return {
           id: contact.id,
@@ -1150,7 +1168,7 @@ export function ManualChartsPanel({
         };
       })
     }))
-  ), [selectedChart?.displayName, selectedSynastryAspectGroups]);
+  ), [selectedChart?.displayName, selectedChart?.pronouns, selectedRelationshipContextType, selectedSynastryAspectGroups]);
   const selectedCompatibilityCards = useMemo(() => {
     if (!friendProfileWork.compatibility || !selectedChart || !selectedFriendReadyNatalChart || selectedChartIsEvent) {
       return [];
@@ -1192,6 +1210,7 @@ export function ManualChartsPanel({
     )
     && profileNatalCalculationStatus !== "error"
   );
+
   const selectedSynastryAspectLines = useMemo<InterChartAspectLine[]>(() => (
     (friendProfileWork.compatibility || friendProfileWork.synastry) && selectedChart && selectedFriendReadyNatalChart && !selectedChartIsEvent
       ? synastryWheelAspectLines(relationshipComparisonSky, selectedChart)
@@ -2338,7 +2357,7 @@ export function ManualChartsPanel({
       return;
     }
 
-    const rendered = renderReaderDirectedSynastryContact(contact, selectedChart.displayName);
+    const rendered = renderFriendSynastryContact(contact, selectedChart.displayName, selectedChart.pronouns, selectedRelationshipContextType);
     const title = rendered?.headline ?? `Your ${contact.yourPoint.name} ${contact.aspect} ${selectedChart.displayName}'s ${contact.friendPoint.name}`;
     const subtitle = rendered?.tag ?? relationshipThemeTitle(contact.yourPoint.name, contact.friendPoint.name, contact.aspect);
 
@@ -2359,11 +2378,11 @@ export function ManualChartsPanel({
     if (!route?.detail || route.view !== "synastry" || route.chartId !== selectedChart?.id) return;
     const contact = selectedSynastryContacts.find(candidate => `synastry-${candidate.id}` === route.detail);
     if (!contact) return;
-    const refreshKey = `synastry:${connectionNavigation}:${route.chartId}:${route.detail}:${fallbackArchitectureV3Version}`;
+    const refreshKey = `synastry:${connectionNavigation}:${route.chartId}:${route.detail}:${fallbackArchitectureV3Version}:${selectedRelationshipContextType}:${selectedChart?.pronouns}`;
     if (friendRouteDetailRefreshKeyRef.current === refreshKey) return;
     friendRouteDetailRefreshKeyRef.current = refreshKey;
     openFriendSynastryContactDetail(contact.id);
-  }, [connectionNavigation, selectedChart?.id, selectedSynastryContacts, fallbackArchitectureV3Version]);
+  }, [connectionNavigation, selectedChart?.id, selectedChart?.pronouns, selectedRelationshipContextType, selectedSynastryContacts, fallbackArchitectureV3Version]);
   const openFriendTransitDetail = (transit: TransitItem) => {
     if (!currentSky || !selectedChart) {
       return;

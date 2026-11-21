@@ -54,7 +54,7 @@ async function expectHousePillsInArticle(page: Page) {
 
 type SeedOptions = {
   pageAnimations?: "on" | "off";
-  synastryFixture?: { body: string; aspect: string; inverse: boolean };
+  synastryFixture?: { body: string; aspect: string; inverse: boolean; readerBody?: string; relationshipType?: string };
   profile?: boolean;
   profileBirthDate?: string;
   profileBirthTime?: string;
@@ -409,8 +409,9 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
         : name === "Imum Coeli" ? normalize(sky.midheavenLongitude! + 180)
         : sky.positions.find(p => p.planet === name)!.longitude!;
       const degrees = ({ conjunction: 0, square: 90, opposition: 180, trine: 120, sextile: 60 } as Record<string, number>)[fixture.aspect];
-      const targetName = fixture.inverse ? "Sun" : fixture.body;
-      const longitude = normalize(pointLongitude(fixture.inverse ? fixture.body : "Sun") + degrees);
+      const readerBody = fixture.readerBody ?? "Sun";
+      const targetName = fixture.inverse ? readerBody : fixture.body;
+      const longitude = normalize(pointLongitude(fixture.inverse ? fixture.body : readerBody) + degrees);
       const friendSky = structuredClone(sky);
       // Avoid filling the 16-card ranking cap with same-chart conjunctions.
       const fixtureOffset = fixture.body === "Imum Coeli" && fixture.aspect === "sextile" ? 47 : 17;
@@ -437,7 +438,7 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
       // selection, card and detail path. They never enter production sources.
       window.localStorage.setItem(`tldrastro:manualCharts:${fixtureUserId}`, JSON.stringify([{
         id: "friend-batch4", ownerUserId: fixtureUserId, chartType: "person", displayName: "Sofia", firstName: "Sofia", lastName: null,
-        relationshipType: "partner", birthDate: "1990-01-01", birthTime: "12:00 PM", birthTimeUnknown: false,
+        relationshipType: fixture.relationshipType ?? "partner", birthDate: "1990-01-01", birthTime: "12:00 PM", birthTimeUnknown: false,
         birthPlace: fixtureLocation.label, birthLocation: fixtureLocation, natalChart: friendSky, notes: null,
         createdAt: "2026-07-16T16:00:00.000Z", updatedAt: "2026-07-16T16:00:00.000Z"
       }]));
@@ -5825,6 +5826,45 @@ test("an open Friends article survives an empty initial dashboard overlay", asyn
     await expect(detail).toContainText(copy);
   }
 });
+
+for (const [width, theme] of [[390, "light"], [1440, "dark"]] as const) {
+  for (const inverse of [false, true]) {
+    for (const relationshipType of ["friend", "partner", "family"]) {
+      test(`Venus Mars square interpretation ${width} ${theme} ${inverse ? "reverse" : "forward"} ${relationshipType}`, async ({ page }) => {
+        test.setTimeout(90_000);
+        await page.setViewportSize({ width, height: 1000 });
+        await seedClientState(page, { profile: true, preloadProfileNatalSky: true, theme,
+          synastryFixture: { readerBody: "Venus", body: "Mars", aspect: "square", inverse, relationshipType } });
+        const first = inverse ? "Mars" : "Venus";
+        const second = inverse ? "Venus" : "Mars";
+        const title = `Your ${first} square Sofia's ${second}`;
+        const row = fallbackSourceRowsV3.hookRows.find(r => r.contentKey === "fallback-hook/synastry-pair/venus/mars/hard")!;
+        const copy = String(inverse ? row.body_they : row.body_you)
+          .replaceAll(inverse ? "{{holder1}}" : "{{holder2}}", "Sofia");
+        await expectClientRouteLoads(page, "/#friends?tab=charts&chart=friend-batch4&view=compatibility");
+        await expect(page.getByRole("heading", { name: "Planet by planet", exact: true })).toBeVisible();
+        await expect(page.locator(".compatibility-dynamic-row")).toHaveCount(0);
+        await page.reload();
+        await expect(page.getByRole("heading", { name: "Planet by planet", exact: true })).toBeVisible();
+        await selectFriendDetailTab(page, "Synastry");
+        const synastry = page.getByRole("button", { name: `Open full entry for ${title}`, exact: true });
+        if (relationshipType === "family") {
+          await expect(synastry).toHaveCount(0);
+          await expect(page.locator(".friend-tab-pane")).not.toContainText(copy);
+          return;
+        }
+        await expect(synastry.locator(".synastry-contact-description")).toHaveText(copy);
+        await synastry.scrollIntoViewIfNeeded();
+        await page.screenshot({ path: `test-results/venus-mars-square-${width}-${theme}-${inverse}-${relationshipType}.png` });
+        await synastry.click();
+        const detail = page.locator(".app-shell.mode-detail");
+        await expect(detail).toContainText(copy);
+        await page.reload();
+        await expect(detail).toContainText(copy);
+      });
+    }
+  }
+}
 
 for (const body of ["Ascendant", "Midheaven", "Descendant", "Imum Coeli", "Chiron", "North Node", "South Node", "Lilith"]) {
   for (const aspect of ["conjunction", "square", "opposition", "trine", "sextile"]) {
