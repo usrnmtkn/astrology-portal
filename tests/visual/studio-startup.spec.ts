@@ -7,7 +7,7 @@ for (const choice of ['system', 'on', 'off'] as const) test(`Studio startup uses
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   let release!: () => void;
   const held = new Promise<void>(resolve => { release = resolve; });
-  const entry = studioBuildAsset('index.html');
+  const entry = await studioBuildAsset('index.html');
   await page.route(url => url.pathname === entry, async route => {
     await held;
     await route.continue().catch(() => {});

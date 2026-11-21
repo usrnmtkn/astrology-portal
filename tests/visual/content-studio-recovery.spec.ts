@@ -104,7 +104,7 @@ for (const [width, theme] of [[1440, "light"], [390, "dark"]] as const) {
         return url.origin === studioOrigin && !url.pathname.startsWith("/api/")
           ? route.continue() : route.abort("blockedbyclient");
       });
-      const optionalEditorAsset = studioBuildAsset('src/SkyFallbackFieldsEditor.tsx');
+      const optionalEditorAsset = await studioBuildAsset('src/SkyFallbackFieldsEditor.tsx');
       await page.route(url => url.pathname === optionalEditorAsset, route => {
         editorDownloads++;
         return route.fulfill({ status: 404, contentType: "text/javascript", body: "/* Old deployment chunk is gone. */" });
@@ -468,7 +468,7 @@ for (const theme of ["light", "dark"]) for (const width of [390, 1440]) {
     await mockStudio(page);
     // Fault injection is confined to the test browser's module response.
     let recoverOnReload = false;
-    const compositionAsset = studioBuildAsset('src/SkyPlacementComposition.tsx');
+    const compositionAsset = await studioBuildAsset('src/SkyPlacementComposition.tsx');
     await page.route(url => url.pathname === compositionAsset, route => route.fulfill({
       contentType: "text/javascript",
       body: recoverOnReload ? 'export default function(){return null;}' : 'export default function(){if(!document.documentElement.hasAttribute("data-qa-recovered"))throw new Error("Studio recovery fixture");return null;}'
@@ -525,7 +525,7 @@ for (const action of ['Retry page', 'Open Review Queue']) {
     let missing = true;
     let documents = 0;
     page.on('request', request => { if (request.isNavigationRequest() && request.frame() === page.mainFrame()) documents++; });
-    const coverageAsset = studioBuildAsset('src/ContentCoverageDashboard.tsx');
+    const coverageAsset = await studioBuildAsset('src/ContentCoverageDashboard.tsx');
     await page.route(url => url.pathname === coverageAsset, route => missing
       ? route.fulfill({ status: 503, contentType: 'text/javascript', body: '/* Initial dashboard unavailable. */' })
       : route.continue());
@@ -570,7 +570,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
         return url.origin === studioOrigin && !url.pathname.startsWith("/api/")
           ? route.continue() : route.abort("blockedbyclient");
       });
-      const formattingAsset = studioBuildAsset('src/StudioFormattingEditor.tsx');
+      const formattingAsset = await studioBuildAsset('src/StudioFormattingEditor.tsx');
       await page.route(url => url.pathname === formattingAsset, route => missing
         ? route.fulfill({ status: 503, contentType: "text/javascript", body: "/* Optional formatting unavailable. */" })
         : route.continue());
@@ -651,7 +651,7 @@ for (const [width, theme] of [[390, "dark"], [1440, "light"]] as const) {
       }, { storageKey, token: token("initial"), theme });
       await context.route("**/*", route => new URL(route.request().url()).hostname === "127.0.0.1"
         ? route.continue() : route.abort("blockedbyclient"));
-      const accessAsset = studioBuildAsset('src/AdminAccessGate.tsx');
+      const accessAsset = await studioBuildAsset('src/AdminAccessGate.tsx');
       await page.route(url => url.pathname === accessAsset, route => route.fulfill({ status: 503, contentType: "text/javascript", body: "/* Synthetic sign-in panel unavailable. */" }));
       page.on("response", response => {
         if (new URL(response.url()).pathname === accessAsset) statuses.push(response.status());
@@ -716,7 +716,7 @@ for (const entry of ["/", "/admin/content"]) test(`standalone Studio retains ini
   await mockStudio(page);
   let missing = true, documents = 0;
   page.on("request", request => { if (request.isNavigationRequest() && request.frame() === page.mainFrame()) documents++; });
-  const entryAsset = studioBuildAsset('index.html');
+  const entryAsset = await studioBuildAsset('index.html');
   await page.route(url => url.pathname === entryAsset, route => missing
     ? route.fulfill({ status: 503, contentType: "text/javascript", body: "/* Entry unavailable. */" })
     : route.continue());

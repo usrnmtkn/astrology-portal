@@ -38,7 +38,7 @@ for (const legacyDraft of [false, true]) for (const [width, theme] of [[390, 'li
    const recoverChunk = !legacyDraft && width === 1440;
    let missingChunk = recoverChunk;
    const compositionResponses: number[] = [];
-   const compositionAsset = studioBuildAsset('src/SkyPlacementComposition.tsx');
+   const compositionAsset = await studioBuildAsset('src/SkyPlacementComposition.tsx');
    page.on('response', response => {
     if (new URL(response.url()).pathname === compositionAsset) compositionResponses.push(response.status());
    });
