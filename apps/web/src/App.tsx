@@ -7,7 +7,6 @@ import { isNatalRetrogradeModifierKey } from './content/natalRetrogradeModifier.
 import { comparePersonalDailyTransits, personalDailyPriority, personalDailyPeakLabel, precisePersonalOrb, personalTransitCopySeed, type PersonalDailyPeak } from "./services/personalDailyTransits";
 import { usePersonalDailyPeaks, usePersonalTransitSeries } from "./services/usePersonalDailyTransits";
 import { compositeReaderRelationshipCopy } from "./content/compositeRelationshipCopy";
-import { NatalInsightsSection } from "./components/charts/NatalInsightsSection";
 import { DeferredNatalInsightReading as NatalInsightReading } from "./components/charts/DeferredNatalInsightReading";
 import { natalInsightFromHash, natalInsightBirthTimeKnown } from "./services/natalInsightNavigation";
 import type { NatalInsightId } from "./content/natalInsightCatalog";
@@ -316,7 +315,7 @@ import {
   resolveCmsSurfaceOverride
 } from "./content/cmsSurfaceOverrides";
 import { eligibleSkyDetailContent, loadSkyDetailContent, prefetchSkyPlacementAspectContent, skyDetailRequiredAspectKeys, skySnapshotAspectContentKeys, type ColdSkyAspectRead } from "./services/skyDetailContent";
-import { skyAspectReadingDateLine, skyAspectPackageCandidates } from "./services/skyAspectRouting";
+import { skyAspectReadingDateLine, skyAspectPackageCandidates } from "./services/skyAspectReaderFacts";
 import { localDateParts as eventCalendarParts, skyAspectDateRange, skyAspectNarrativeTimingLines, timingGroupLabel } from "./services/skyAspectTiming";
 import { transitArticleDescription } from "./services/transitArticleDescription";
 import { natalTransitGeometry, natalTransitWindowDays } from "./services/natalTransitGeometry";
@@ -17930,7 +17929,7 @@ function ProfileView({
         elementalSummaryLabel={elementalSummary.label}
         elementalSummarySentence={elementalSummary.sentence}
         emptyHouseRows={emptyHouseRows}
-        natalInsights={natalSky ? <NatalInsightsSection birthTimeKnown={natalInsightBirthTimeKnown(natalSky, !unknownBirthTime)} generatedContent={generatedContent} ownerName={profile.name} onOpenTopic={openNatalInsight} /> : null}
+        natalInsights={natalSky ? { birthTimeKnown: natalInsightBirthTimeKnown(natalSky, !unknownBirthTime), generatedContent, ownerName: profile.name, onOpenTopic: openNatalInsight } : undefined}
         hasSavedBirthDetails={hasSavedBirthDetails}
         hasSavedCurrentCity={hasSavedCurrentCity}
         currentSky={currentSky}

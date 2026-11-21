@@ -1,3 +1,4 @@
+import "../../styles/natal-insights.css";
 import { useId } from "react";
 import { ChevronRight } from "lucide-react";
 import { natalInsightTopics, type NatalInsightId } from "../../content/natalInsightDefinitions";

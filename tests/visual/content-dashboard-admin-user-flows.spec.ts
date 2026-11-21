@@ -7201,7 +7201,7 @@ test("natal correction drafts stay editable and unpublished after reload", async
     const changed = row.body + " A synthetic saved ending.";
     await fillAdminEditorField(editor, "Article body", changed);
     await editor.getByRole("button", { name: "Save draft", exact: true }).click();
-    await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Inactive");
+    await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Draft");
     await editor.getByRole("button", { name: "Close", exact: true }).click();
     await page.reload();
     await open();

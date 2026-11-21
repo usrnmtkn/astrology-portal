@@ -1,4 +1,5 @@
 import { expectSkyAspectBody } from "../helpers/sky-aspect-reading";
+import { skyAspectReadingDateLine } from "../../apps/web/src/services/skyAspectRouting";
 import { approvedNatalPilotBody } from "../helpers/natal-approved-pilot.mts";
 import { moonRoutingRecords, moonReaderCompetingRecords } from '../helpers/moon-routing-fixtures';
 import { personalTransitCopySeed, personalTransitId } from '../../apps/web/src/services/personalDailyTransits';
@@ -5727,10 +5728,19 @@ test("Sky detail hydrates published aspects for its displayed snapshot and dated
   await keyDates.locator(':scope > summary').click();
   const plutoDate = keyDates.getByRole('link', { name: /Venus.*square.*Pluto/iu }).first();
   await expect(plutoDate).toHaveAttribute('href', /^#sky\/aspect\//);
+  const venusHref = await plutoDate.getAttribute("href");
   await plutoDate.click();
-  await expectPublishedBody(venus.body);
+  // The approved signed Calendar card supersedes the older generic publication
+  // in every Sky article. Keep the entire forecast and details assertion.
+  const cards = JSON.parse(readFileSync("packages/astro-knowledge/data/sky-calendar/composed-cards-v1.json", "utf8")).cards;
+  const card = cards.find((row: any) => row.id === "sky-card/venus/scorpio/square/pluto/aquarius");
+  expect(card).toMatchObject({ ownerApproved: true, servingAuthorized: true });
+  const exactInstant = decodeURIComponent(venusHref!.split(/\/(?:on|at)\//u)[1]);
+  const selectedBody = `${skyAspectReadingDateLine(exactInstant, fixtureLocation.timeZone)}, ${card.forecast[0].toLowerCase()}${card.forecast.slice(1)}\n\n${card.details}`;
+  await expectPublishedBody(selectedBody);
+  expect((await page.locator(".sky-detail-article p").allTextContents()).join("\n\n")).not.toContain(venus.body.trim());
   await page.reload();
-  await expectPublishedBody(venus.body);
+  await expectPublishedBody(selectedBody);
 });
 
 for (const theme of ["light", "dark"] as const) {

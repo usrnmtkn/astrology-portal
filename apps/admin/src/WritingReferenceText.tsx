@@ -51,5 +51,5 @@ export default memo(function WritingReferenceText({text,prefix,title}: {text:str
       return <p className="memory-detail-content" key={index}>{token.raw}</p>;
     });
   }
-  return <div className="writing-reference-copy">{blocks(Lexer.lex(body,{gfm:true,breaks:true}))}</div>;
+  return <div className="writing-reference-copy studio-stack">{blocks(Lexer.lex(body,{gfm:true,breaks:true}))}</div>;
 });

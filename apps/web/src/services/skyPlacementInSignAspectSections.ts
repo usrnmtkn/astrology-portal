@@ -2,7 +2,7 @@ import type { AspectToneBucket, SkyDetailSection } from "../features/sky/SkyDeta
 import { normalizedArticleAspectToneBucket } from "../utils/articleAspects";
 import type { LiveGeneratedContent } from "./generatedContent";
 import { resolveSkyAspectReading } from "./skyAspectReading";
-import { skyAspectReadingDateLine, type skyAspectPackageCandidates } from "./skyAspectRouting";
+import { skyAspectReadingDateLine, type skyAspectPackageCandidates } from "./skyAspectReaderFacts";
 import type { ApprovedExactSkyAspectLookup, SkyCalendarComposedCardLookup } from "./skyAspectRouting";
 import type { SkyPlacementAspectEvent } from "../types";
 import { placementAspectIdentity } from "./skyPlacementAspectContentKeys";

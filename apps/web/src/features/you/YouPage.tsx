@@ -1,3 +1,4 @@
+import { NatalInsightsSection } from "../../components/charts/NatalInsightsSection";
 import { LunationTransitSection, LunationTransitCard, type LunationTransitCardProps } from "../../components/LunationTransitSection";
 import { NatalPatternsInsights } from "./NatalPatternsInsights";
 import { ArticleKeyDates, type ArticleKeyDate } from "../../components/ArticleKeyDates";
@@ -17,7 +18,7 @@ import { NatalReadingPage } from "../../components/charts/NatalReadingPage";
 import { FormattedProse } from "../../components/FormattedProse";
 import { ArticlePills, type ArticlePillData } from "../../components/ArticlePills";
 import { TransitFacts } from "../../components/ArticleFacts";
-import { Fragment, isValidElement, useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { Fragment, isValidElement, useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode, type ComponentProps } from "react";
 import { ChevronLeft, ChevronRight, MoreVertical, Pencil, Sparkles } from "lucide-react";
 import { DailyMoonContextTags, type DailyMoonContext } from "../../components/DailyMoonContextTags";
 import { ProfileAvatar } from "../../components/ProfileAvatar";
@@ -150,7 +151,7 @@ export type YouPageProps = {
   elementalSummaryLabel: string;
   elementalSummarySentence: string;
   emptyHouseRows: ReactNode[];
-  natalInsights?: ReactNode;
+  natalInsights?: ComponentProps<typeof NatalInsightsSection>;
   hasSavedBirthDetails: boolean;
   hasSavedCurrentCity: boolean;
   natalSky: SkySnapshot | null;
@@ -1270,7 +1271,7 @@ export function YouPage({
       const feedback = missing && (natalPlacementContentStatus === 'loading'
         ? <PageLoading message="Loading natal reading…" />
         : <PageLoadError message="The natal reading could not load. Please try again." onRetry={onRetryNatalPlacementContent ?? (() => window.location.reload())} />);
-      return <YouTransitArticlePage article={transitArticle} sourceFeedback={feedback} onClose={onCloseTransitArticle} />;
+      return <YouTransitArticlePage article={transitArticle} sourceFeedback={feedback} onClose={onCloseTransitArticle} backAriaLabel="Back to natal chart" />;
     }
     if (transitSourceFeedback && transitArticle.requiresTransitSources !== false) return transitSourceFeedback;
     return <YouTransitArticlePage article={transitArticle} onClose={onCloseTransitArticle} backAriaLabel={transitArticle.requiresTransitSources === false ? "Back to natal chart" : "Back to updates"} />;
@@ -1333,7 +1334,7 @@ export function YouPage({
               elementalSummaryLabel={elementalSummaryLabel}
               elementalSummarySentence={elementalSummarySentence}
               emptyHouseRows={emptyHouseRows}
-              natalInsights={natalInsights}
+              natalInsights={natalInsights ? <NatalInsightsSection {...natalInsights} /> : null}
               natalAspectPatternItems={natalAspectPatternItems}
               natalAspectPatternStatus={natalAspectPatternStatus}
               onOpenNatalAspectPatternDetail={(item, nestedItems) => {

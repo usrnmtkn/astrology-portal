@@ -198,7 +198,7 @@ const appSource = fs.readFileSync(new URL("../apps/web/src/App.tsx", import.meta
 const adminSource = fs.readFileSync(new URL("../apps/admin/src/GeneratedContentAdminDashboard.tsx", import.meta.url), "utf8");
 const adminSurfaceMap = fs.readFileSync(new URL("../apps/admin/src/writingSurfaceSourceMap.ts", import.meta.url), "utf8");
 assert.doesNotMatch(appSource, /function fallbackSkyAspectWritingSection\(/u);
-const readingContextSource = fs.readFileSync(new URL("../apps/web/src/services/skyAspectRouting.ts", import.meta.url), "utf8");
+const readingContextSource = fs.readFileSync(new URL("../apps/web/src/services/skyAspectReaderFacts.ts", import.meta.url), "utf8");
 const sharedReadingSource = fs.readFileSync(new URL("../apps/web/src/services/skyAspectReading.ts", import.meta.url), "utf8");
 assert.match(appSource, /const selected = registry\?\.resolveSkyAspectReading\?\.\(\{/u);
 assert.match(appSource, /\.\.\.skyAspectPackageCandidates\(/u);

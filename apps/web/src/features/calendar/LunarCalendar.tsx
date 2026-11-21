@@ -76,7 +76,7 @@ import { cmsSurfaceKeys } from "../../content/cmsSurfaceOverrides";
 import { slugContentPart } from "../../services/generatedContentKeys";
 import { isContentRetired } from "../../content/contentPublicationState";
 import { resolveCalendarAspectPublication } from "./calendarAspectPublication";
-import { skyAspectReadingDateLine, skyAspectPackageCandidates } from "../../services/skyAspectRouting";
+import { skyAspectReadingDateLine, skyAspectPackageCandidates } from "../../services/skyAspectReaderFacts";
 import { resolveSkyAspectMasterOverride, resolveSkyAspectReading } from "../../services/skyAspectReading";
 import { isSkyAspectRetired, resolveSkyAspectContentStudioExact, resolveSkyAspectGeneratedContent } from "../../services/skyAspectContent";
 import {

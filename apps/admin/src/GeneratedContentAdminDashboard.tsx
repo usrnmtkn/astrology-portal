@@ -4480,7 +4480,8 @@ export function GeneratedContentAdminDashboard() {
     setNatalPlacementSign(page === "content" && natalSign && natalPlacementSigns.includes(natalSign) ? natalSign : "");
     setNatalPlacementHouse(page === "content" && natalHouse && natalPlacementHouses.includes(natalHouse) ? natalHouse : "");
     setNatalPlacementMotion(page === "content" && natalMotion && natalPlacementMotions.includes(natalMotion) ? natalMotion : "direct");
-    setNatalChartWritingView(page === "content" && (view === "empty-houses" || view === "deeper-insights" || view === "rulership" || view === "day-night") ? view : "placements");
+    const natalView = view ?? params.get("natalView");
+    setNatalChartWritingView(page === "content" && (natalView === "empty-houses" || natalView === "deeper-insights" || natalView === "rulership" || natalView === "day-night") ? natalView : "placements");
     setNatalAspectFirst(page === "content" && category === "Natal Aspects" ? natalAspectFirstParam : "");
     setNatalAspectName(page === "content" && category === "Natal Aspects" ? natalAspectNameParam : "");
     setNatalAspectSecond(page === "content" && category === "Natal Aspects" ? natalAspectSecondParam : "");

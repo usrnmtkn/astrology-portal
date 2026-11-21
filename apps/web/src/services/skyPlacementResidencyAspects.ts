@@ -1,4 +1,4 @@
-import { skyAspectPackageCandidates } from "./skyAspectRouting";
+import { skyAspectPackageCandidates } from "./skyAspectReaderFacts";
 import { getSkyPlacementTransitFacts } from "./ephemeris";
 import {
   skyPlacementInSignAspectSections,
