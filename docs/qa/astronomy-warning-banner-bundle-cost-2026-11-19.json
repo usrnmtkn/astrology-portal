@@ -23,15 +23,15 @@
         "measurements": {
           "memoryGraphJavaScriptGzipBytes": 49119,
           "memoryGraphCssGzipBytes": 33253,
-          "appBootGzipBytes": 402375,
-          "appChunkGzipBytes": 89117,
-          "readerBootGzipBytes": 462006,
-          "readerInitialCssGzipBytes": 59631,
+          "appBootGzipBytes": 402386,
+          "appChunkGzipBytes": 89128,
+          "readerBootGzipBytes": 462057,
+          "readerInitialCssGzipBytes": 59671,
           "largestJavaScriptGzipBytes": 339712,
           "friendsWorkspaceChunkGzipBytes": 9995,
-          "skyDetailChunkGzipBytes": 7096,
-          "reportRouteChunkGzipBytes": 3160,
-          "horoscopeReaderChunkGzipBytes": 5868,
+          "skyDetailChunkGzipBytes": 7109,
+          "reportRouteChunkGzipBytes": 3159,
+          "horoscopeReaderChunkGzipBytes": 5867,
           "horoscopeEditorChunkGzipBytes": 16174,
           "studioCsvChunkGzipBytes": 8144,
           "skyPlacementFallbackChunkGzipBytes": 127245,
@@ -39,9 +39,9 @@
           "transitFallbackChunkGzipBytes": 339712,
           "calendarFallbackChunkGzipBytes": 8970,
           "relationshipFallbackChunkGzipBytes": 190743,
-          "signupChunkGzipBytes": 4270,
-          "totalCssGzipBytes": 153783,
-          "totalJavaScriptGzipBytes": 3816456
+          "signupChunkGzipBytes": 4272,
+          "totalCssGzipBytes": 153823,
+          "totalJavaScriptGzipBytes": 3816484
         },
         "failures": []
       },
@@ -49,15 +49,15 @@
         "measurements": {
           "memoryGraphJavaScriptGzipBytes": 49119,
           "memoryGraphCssGzipBytes": 33253,
-          "appBootGzipBytes": 402385,
-          "appChunkGzipBytes": 89125,
-          "readerBootGzipBytes": 462016,
-          "readerInitialCssGzipBytes": 59631,
+          "appBootGzipBytes": 402396,
+          "appChunkGzipBytes": 89127,
+          "readerBootGzipBytes": 462067,
+          "readerInitialCssGzipBytes": 59671,
           "largestJavaScriptGzipBytes": 339712,
-          "friendsWorkspaceChunkGzipBytes": 9994,
-          "skyDetailChunkGzipBytes": 7095,
-          "reportRouteChunkGzipBytes": 3160,
-          "horoscopeReaderChunkGzipBytes": 5869,
+          "friendsWorkspaceChunkGzipBytes": 9996,
+          "skyDetailChunkGzipBytes": 7108,
+          "reportRouteChunkGzipBytes": 3165,
+          "horoscopeReaderChunkGzipBytes": 5871,
           "horoscopeEditorChunkGzipBytes": 16174,
           "studioCsvChunkGzipBytes": 8144,
           "skyPlacementFallbackChunkGzipBytes": 127245,
@@ -65,9 +65,9 @@
           "transitFallbackChunkGzipBytes": 339712,
           "calendarFallbackChunkGzipBytes": 8970,
           "relationshipFallbackChunkGzipBytes": 190743,
-          "signupChunkGzipBytes": 4271,
-          "totalCssGzipBytes": 153783,
-          "totalJavaScriptGzipBytes": 3816429
+          "signupChunkGzipBytes": 4273,
+          "totalCssGzipBytes": 153823,
+          "totalJavaScriptGzipBytes": 3816495
         },
         "failures": []
       }
@@ -124,7 +124,137 @@
       ],
       "status": "Pre-existing manual diagnostics outside selected required API commands and every CI workflow; failures retained and reported to release coordinator, not relabeled PASS"
     },
-    "remainingReleaseGates": "Frozen exact-head hosted API/browser/privacy and all actual checks; protected merge; all actual main checks; exact Git-main production deployment and isolated deployed acceptance."
+    "remainingReleaseGates": "Frozen exact-head hosted API/browser/privacy and all actual checks; protected merge; all actual main checks; exact Git-main production deployment and isolated deployed acceptance.",
+    "historicalProfilesBeforeFinalCorrection": {
+      "default": {
+        "measurements": {
+          "memoryGraphJavaScriptGzipBytes": 49119,
+          "memoryGraphCssGzipBytes": 33253,
+          "appBootGzipBytes": 402375,
+          "appChunkGzipBytes": 89117,
+          "readerBootGzipBytes": 462006,
+          "readerInitialCssGzipBytes": 59631,
+          "largestJavaScriptGzipBytes": 339712,
+          "friendsWorkspaceChunkGzipBytes": 9995,
+          "skyDetailChunkGzipBytes": 7096,
+          "reportRouteChunkGzipBytes": 3160,
+          "horoscopeReaderChunkGzipBytes": 5868,
+          "horoscopeEditorChunkGzipBytes": 16174,
+          "studioCsvChunkGzipBytes": 8144,
+          "skyPlacementFallbackChunkGzipBytes": 127245,
+          "lunationBookFallbackChunkGzipBytes": 210198,
+          "transitFallbackChunkGzipBytes": 339712,
+          "calendarFallbackChunkGzipBytes": 8970,
+          "relationshipFallbackChunkGzipBytes": 190743,
+          "signupChunkGzipBytes": 4270,
+          "totalCssGzipBytes": 153783,
+          "totalJavaScriptGzipBytes": 3816456
+        },
+        "failures": []
+      },
+      "auth": {
+        "measurements": {
+          "memoryGraphJavaScriptGzipBytes": 49119,
+          "memoryGraphCssGzipBytes": 33253,
+          "appBootGzipBytes": 402385,
+          "appChunkGzipBytes": 89125,
+          "readerBootGzipBytes": 462016,
+          "readerInitialCssGzipBytes": 59631,
+          "largestJavaScriptGzipBytes": 339712,
+          "friendsWorkspaceChunkGzipBytes": 9994,
+          "skyDetailChunkGzipBytes": 7095,
+          "reportRouteChunkGzipBytes": 3160,
+          "horoscopeReaderChunkGzipBytes": 5869,
+          "horoscopeEditorChunkGzipBytes": 16174,
+          "studioCsvChunkGzipBytes": 8144,
+          "skyPlacementFallbackChunkGzipBytes": 127245,
+          "lunationBookFallbackChunkGzipBytes": 210198,
+          "transitFallbackChunkGzipBytes": 339712,
+          "calendarFallbackChunkGzipBytes": 8970,
+          "relationshipFallbackChunkGzipBytes": 190743,
+          "signupChunkGzipBytes": 4271,
+          "totalCssGzipBytes": 153783,
+          "totalJavaScriptGzipBytes": 3816429
+        },
+        "failures": []
+      }
+    },
+    "latestCorrection": {
+      "date": "2026-11-22",
+      "runtimeRevision": "ee2b7f8b70e8ca10bcf89344d3451da8574ca971",
+      "originalHostedHead": "e3c65ceb36c7b24abefe3b5798b11e1df83ec703",
+      "originalHostedResults": {
+        "api": "FAIL: stale Weekly cross-week input assertion",
+        "browser": {
+          "success": 51,
+          "failure": 2,
+          "timeoutCancelled": 2,
+          "aggregate": "FAIL"
+        }
+      },
+      "productRepair": "The full-article recovery notice clears the fixed astronomy warning and navigation; the real Retry click preserves complete text and rejects late results after route/date/location changes.",
+      "consumerRepairs": [
+        "Profile Edit uses the approved menu and restores focus to its trigger",
+        "Circle/Charts use their approved32px navigation gap",
+        "Only the approved Friends mobile screenshot reference was updated from the original Linux CI actual image",
+        "Lunar titles preserve canonical Moon glyphs, composite eclipses, whitespace normalization and unrelated-name boundaries"
+      ],
+      "currentVerification": {
+        "canonicalProfiles": "Both default and auth builds and all numeric guards PASS; numeric caps unchanged",
+        "completeBrowserSpecs": [
+          {
+            "spec": "mobile-parity.spec.ts",
+            "passed": 16,
+            "failed": 0,
+            "profiles": 8
+          },
+          {
+            "spec": "connection-transit-separation.spec.ts",
+            "passed": 48,
+            "failed": 0,
+            "profiles": 4
+          },
+          {
+            "spec": "design-handoff-pages.spec.ts",
+            "passed": 247,
+            "failed": 0,
+            "profiles": 1
+          }
+        ],
+        "retries": 0,
+        "correctionApiConsumers": {
+          "selected": 5,
+          "executed": 5,
+          "passed": 5,
+          "failed": 0
+        },
+        "nativeScreenshotDiagnostics": {
+          "candidate": {
+            "passed": 0,
+            "failed": 3
+          },
+          "acceptedMainControl": {
+            "revision": "72a6f10fbdb4a6f3df27dfe509412a536631482c",
+            "passed": 0,
+            "failed": 3
+          },
+          "unchangedScreensByteIdentical": 6,
+          "status": "Native macOS-versus-Linux reference comparison remains FAIL. Actual canonical Linux acceptance is pending the required exact-head browser gate. No unrelated reference or tolerance changed."
+        }
+      },
+      "prevention": {
+        "selector": "Actual stdin imports, including after template interpolation, retain their renderer; screenshot-reference changes select their comparing spec.",
+        "inventory": "The existing affected plan reports selected/executed/PASS/FAIL/NOT_RUN/PROTECTED_UNAVAILABLE with provenance. Partial specs and unverified old local/hosted evidence cannot count as PASS.",
+        "proofs": "Each missing renderer/reference mapping and both bounded-review defects failed before correction; the complete focused regression passed after correction.",
+        "coverage": "Local scoped evidence is not a complete release PASS. Full selected209API/231browser coverage remains pending exact-head hosted validation."
+      },
+      "preservedLocalFailures": [
+        "Original connection44PASS/4FAIL before focus-target correction; complete corrected rerun48PASS",
+        "Visual runner setup failures before any cases ran, followed by actual3-case native failures and paired accepted-main control",
+        "Default SkyDetail size overages of1-3bytes during repair; final two canonical profiles both PASS with no cap change"
+      ],
+      "remaining": "Every required exact-head hosted gate and all actual checks, protected merge, main checks, Git-main production READY and actual production acceptance."
+    }
   },
   "baseRevision": "7b0ce3b2de90946ee95a6af8c41a8a2d4aa4631f",
   "runtimeCandidateRevision": "ee97bf4f121ee7cb9359789a5de465d6bf1324e9",

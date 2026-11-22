@@ -59,7 +59,7 @@ export function preflightInventory(plan, receipts = []) {
       assert(receipt.complete===true,'A partial spec or command cannot be counted as PASS');
       assert(['local','sanctioned-private','hosted-unchanged'].includes(receipt.origin)&&receipt.source,'PASS needs actual evidence provenance');
       assert(/^[a-f0-9]{40}$/u.test(receipt.revision),'PASS needs its tested revision');
-      if(receipt.origin!=='local')assert.equal(receipt.relevantInputsUnchanged,true,'Reused evidence needs unchanged relevant inputs');
+      if(receipt.revision!==plan.head||receipt.origin!=='local')assert.equal(receipt.relevantInputsUnchanged,true,'Reused evidence needs unchanged relevant inputs');
     }
     evidence.set(key,receipt);
   }

@@ -62,6 +62,9 @@ assert.equal(incomplete.status,'INCOMPLETE');assert.equal(incomplete.counts.NOT_
 const baselineReceipt={kind:'browser',name:screenshotReference.browserSpecs[0],status:'PASS',origin:'local',source:'synthetic execution receipt',revision:head,complete:true};
 assert.throws(()=>preflightInventory(screenshotReference,[{...baselineReceipt,complete:false}]),/partial spec/);
 assert.equal(preflightInventory(screenshotReference,[baselineReceipt]).status,'PASS');
+const oldLocal={...baselineReceipt,revision:'a'.repeat(40)};
+assert.throws(()=>preflightInventory(screenshotReference,[oldLocal]),/unchanged relevant inputs/,'An old local PASS cannot certify changed current inputs');
+assert.equal(preflightInventory(screenshotReference,[{...oldLocal,relevantInputsUnchanged:true}]).status,'PASS');
 assert.equal(preflightInventory(screenshotReference,[{...baselineReceipt,status:'PROTECTED_UNAVAILABLE'}]).status,'INCOMPLETE');
 assert.equal(preflightInventory(screenshotReference,[{...baselineReceipt,status:'FAIL'}]).status,'FAIL');
 assert.throws(()=>preflightInventory(screenshotReference,[{...baselineReceipt,origin:'hosted-unchanged'}]),/unchanged relevant inputs/);
@@ -149,6 +152,7 @@ try {
   write('apps/web/src/features/friends/card.css',"@import './palette.css';");
   write('apps/web/src/features/friends/palette.css','');
   write('apps/web/src/features/sky/Card.tsx','export const Card=()=>null;');
+  write('tests/visual/interpolated-renderer.spec.ts',"build({stdin:{resolveDir:process.cwd(),contents:`const fixture = ${42}; import {Card} from './apps/web/src/features/friends/Card';`}});");
   write('tests/visual/friends.spec.ts',"const route=`/#friends?chart=${'fixture'}`;");
   write('tests/visual/sky.spec.ts',"import '../../apps/web/src/App'; const route='/#sky';");
   write('tests/visual/admin.spec.ts',"import '../../apps/web/src/App'; const route='/admin/index.html';");
@@ -162,6 +166,7 @@ try {
   write('tests/forked.mjs',"fork(path.resolve('tests/process-helper.mts'),[]);");
   write('tests/spawned.mjs',"spawn(process.execPath,['--import','tsx',path.resolve('tests/process-helper.mts')]);");
   const uiGraph=createDependencyGraph(directory,[...fixtureFiles]);
+  assert(uiGraph.reachesBrowser(['tests/visual/interpolated-renderer.spec.ts'],new Set(['apps/web/src/features/friends/Card.tsx']),true),'A real renderer import after a template interpolation remains an executable dependency');
   const friendCard=new Set(['apps/web/src/features/friends/Card.tsx']);
   assert(!uiGraph.reaches(['src/types-only.ts'],new Set(['src/shared.ts'])),'Type-only imports and exports do not execute a module');
   assert(!uiGraph.reaches(['src/metadata.ts'],new Set(['src/shared.ts'])),'Source path metadata is not an import');

@@ -99,7 +99,8 @@ export function createDependencyGraph(root, files) {
         &&parent.name.getText(ast)==='contents'&&ts.isPropertyAssignment(parent.parent.parent)
         &&parent.parent.parent.name.getText(ast)==='stdin'
         &&parent.parent.properties.some(property=>ts.isPropertyAssignment(property)&&property.name.getText(ast)==='resolveDir'&&property.initializer.getText(ast)==='process.cwd()')) {
-        const inline=ts.createSourceFile('stdin.tsx',ts.isTemplateExpression(node)?node.head.text:node.text,ts.ScriptTarget.Latest,true);
+        const program=ts.isTemplateExpression(node)?node.head.text+node.templateSpans.map(span=>'__interpolated__'+span.literal.text).join(''):node.text;
+        const inline=ts.createSourceFile('stdin.tsx',program,ts.ScriptTarget.Latest,true);
         const imports=node=>{
           if(ts.isStringLiteralLike(node)&&(ts.isImportDeclaration(node.parent)||ts.isExportDeclaration(node.parent)
             ||ts.isCallExpression(node.parent)&&node.parent.expression.kind===ts.SyntaxKind.ImportKeyword)) {
