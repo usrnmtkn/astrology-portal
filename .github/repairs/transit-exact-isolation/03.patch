@@ -1,0 +1,129 @@
+diff --git a/apps/admin/src/transitNatalEditorScope.ts b/apps/admin/src/transitNatalEditorScope.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..f3cc4a4be283a4ee46a2c8361570570e64c7cd99
+--- /dev/null
++++ b/apps/admin/src/transitNatalEditorScope.ts
+@@ -0,0 +1,59 @@
++/** Editor-only scope information. Never changes reader selection or publication. */
++export type TransitSourceEditScope = {
++  kind: "exact" | "exact-variant" | "shared";
++  label: string;
++  explanation: string;
++};
++
++export function transitSourceEditScope(exactKey: string | null, sourceKey: string): TransitSourceEditScope {
++  if (exactKey && sourceKey === exactKey) return {
++    kind: "exact", label: "Aspect-specific source",
++    explanation: "This is the source for the selected transit and natal contact. You and Friend have separate writing fields."
++  };
++  if (exactKey && sourceKey.startsWith(`${exactKey}/`)) return {
++    kind: "exact-variant", label: "Aspect-specific variant",
++    explanation: "This source belongs to the selected contact, but only to a particular variant or context. The base passage is edited separately."
++  };
++  const family = sourceKey.startsWith("authored/transit-aspect/") ? sourceKey.split("/")[4] : null;
++  const uses = family === "soft" ? "multiple aspects, including trines and sextiles"
++    : family === "hard" ? "multiple aspects, including squares and oppositions"
++    : "other transit selections";
++  return {
++    kind: "shared", label: "Shared fallback source",
++    explanation: `This source can be used by ${uses}. Publishing a change affects every reading that selects it, not just the contact selected above.`
++  };
++}
++
++export type TransitExactPassageState = {
++  exists: boolean;
++  savedStatus: string | null;
++  detail: string;
++  row: { id: string; status?: string | null; updated_at?: string | null } | null;
++};
++
++/** A saved LIVE flag is editorial state, not proof of reader eligibility. */
++export function transitExactPassageState(contentKey: string, payload: unknown): TransitExactPassageState {
++  if (!payload || typeof payload !== "object" || Array.isArray(payload)) throw new Error("The exact passage could not be verified.");
++  const value = payload as Record<string, unknown>;
++  if (!Array.isArray(value.rows) || value.rows.length > 1) throw new Error("The exact passage could not be verified.");
++  for (const candidate of value.rows) {
++    if (!candidate || typeof candidate !== "object" || candidate.content_key !== contentKey || typeof candidate.id !== "string" || !candidate.id) {
++      throw new Error("The exact passage could not be verified.");
++    }
++  }
++  const packaged = value.packageSource as Record<string, unknown> | null | undefined;
++  if (packaged != null && (packaged.contentKey !== contentKey || ![packaged.body, packaged.body_you, packaged.body_they].some(body => typeof body === "string" && body.trim()))) {
++    throw new Error("The packaged exact passage could not be verified.");
++  }
++  const saved = value.rows[0];
++  const row = saved ? { id: saved.id as string, status: typeof saved.status === "string" ? saved.status : null, updated_at: typeof saved.updated_at === "string" ? saved.updated_at : null } : null;
++  const savedStatus = row?.status?.toUpperCase() ?? null;
++  const exists = Boolean(packaged) || Boolean(row);
++  const detail = !exists ? "No aspect-specific passage has been saved. Start a separate draft; shared fallback writing will not be copied or changed."
++    : savedStatus === "DRAFT" ? "An aspect-specific draft is saved. Its edits are not used in the reader preview until reviewed and published."
++    : savedStatus === "ARCHIVED" || savedStatus === "RETIRED" ? "This aspect-specific passage is archived or retired. Opening it does not restore or publish it."
++    : savedStatus === "REVIEWED" ? "The aspect-specific passage has been reviewed. Review alone does not publish it."
++    : row ? "An aspect-specific record is saved. The reader preview identifies the source actually in use; saving and publishing are separate actions."
++    : "An aspect-specific source exists in the reader package. Opening it does not change its publication state.";
++  return { exists, savedStatus, detail, row };
++}
+diff --git a/apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts b/apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
+index 000e90b5ae5e54c81b2bfb949110c88b188974a8..7682c3af79f193fda16a8a0a2c49509dd091bf6d 100644
+--- a/apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
++++ b/apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
+@@ -12,7 +12,7 @@
+ // Version stamp: the app must surface this in its debug/about screen and the dashboard
+ // admin must show it next to the import status, so the owner can verify at a glance
+ // that the running app and the dashboard are on the current package.
+-export const PACKAGE_VERSION = "v3-2026-09-15-custom-variables";
++export const PACKAGE_VERSION = "v3-2026-09-17-transit-exact-isolation";
+ 
+ type PackageRow = {
+   contentKey: string;
+diff --git a/apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts b/apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts
+index e9b4b737366fd2693cc73ecb6aee7e44bd94be23..756a8ca03911c24948cd1a6b01a25df08072424f 100644
+--- a/apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts
++++ b/apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts
+@@ -1,3 +1,4 @@
++import { prioritizeExactTransitSources } from "./transitAspectSourcePriority.mjs";
+ import { bindStudioVariableRenderer } from "../../studioCustomVariables.mjs";
+ import { resolveZodiacSeasonVariables, zodiacSeasonVariableNames } from "./zodiacSeasonVariables.mjs";
+ import { passageSources, passageSource } from "./passageSources.mjs";
+@@ -1046,7 +1047,7 @@
+     push(transiting, natal);
+     if (FAST.has(transiting) && FAST.has(natal)) push(natal, transiting); // mirror rule (Batch 4)
+     tryKeys.push(`authored/transit-aspect/any/${natal}/${g}`, `authored/transit-aspect/any/${natal}/conjunction`);
+-    for (const k of tryKeys) {
++    for (const k of prioritizeExactTransitSources(tryKeys, transiting, natal, aspect)) {
+     const c = card(k);
+     if (c) {
+       // v2 aspect library (owner-approved 2026-07-27/28): authored bodies carry
+diff --git a/apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs b/apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs
+index d16e264348f3c9f68b33a4671ac3f6c170c4ca17..a28f89c2b4febabb727d606e819fc9dff1940c12 100644
+--- a/apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs
++++ b/apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs
+@@ -1,3 +1,4 @@
++import { prioritizeExactTransitSources } from "./transitAspectSourcePriority.mjs";
+ import { bindStudioVariableReference } from "../../studioCustomVariables.mjs";
+ import { resolveZodiacSeasonVariables, zodiacSeasonVariableNames } from "./zodiacSeasonVariables.mjs";
+ import { passageSources, passageSource } from "./passageSources.mjs";
+@@ -711,7 +712,7 @@
+   push(transiting, natal);
+   if (FAST.has(transiting) && FAST.has(natal)) push(natal, transiting); // mirror rule (Batch 4)
+   tryKeys.push(`authored/transit-aspect/any/${natal}/${g}`, `authored/transit-aspect/any/${natal}/conjunction`);
+-  for (const k of tryKeys) {
++  for (const k of prioritizeExactTransitSources(tryKeys, transiting, natal, aspect)) {
+     const c = card(k);
+     if (c) {
+       // v2 aspect library (owner-approved 2026-07-27/28): authored bodies carry
+diff --git a/apps/web/src/content/fallbackArchitectureV3/resolver/transitAspectSourcePriority.mjs b/apps/web/src/content/fallbackArchitectureV3/resolver/transitAspectSourcePriority.mjs
+new file mode 100644
+index 0000000000000000000000000000000000000000..790b2ad66fba3fff193194b018222d4035950278
+--- /dev/null
++++ b/apps/web/src/content/fallbackArchitectureV3/resolver/transitAspectSourcePriority.mjs
+@@ -0,0 +1,9 @@
++/** Keep the selected contact's exact pass/variant/base ahead of shared variants.
++ * Eligibility and publication checks still run on each candidate in the caller.
++ * Non-exact candidates retain their existing fallback order, including mirrors.
++ */
++export function prioritizeExactTransitSources(keys, transiting, natal, aspect) {
++  const exact = `authored/transit-aspect/${transiting}/${natal}/${aspect}`;
++  const isExact = key => key === exact || key.startsWith(`${exact}/`);
++  return [...keys.filter(isExact), ...keys.filter(key => !isExact(key))];
++}
