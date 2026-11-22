@@ -9,7 +9,7 @@ function retry() {
   window.dispatchEvent(new Event("tldr:ephemeris-retry"));
 }
 
-export function EphemerisStatus({ retainedAt, timeZone }: Omit<EphemerisWarningProps, "onRetry">) {
+export function EphemerisStatus(props: Omit<EphemerisWarningProps, "onRetry">) {
   const health = useSyncExternalStore(subscribeEphemerisHealth, readEphemerisHealth, readEphemerisHealth);
   useEffect(() => {
     const check = () => { if (document.visibilityState !== "hidden") void refreshEphemerisHealth(); };
@@ -24,6 +24,6 @@ export function EphemerisStatus({ retainedAt, timeZone }: Omit<EphemerisWarningP
       document.removeEventListener("visibilitychange", check);
     };
   }, []);
-  const degraded = Boolean(retainedAt) || health.service?.ok === false || health.worker?.ok === false;
-  return degraded ? <Suspense fallback={null}><EphemerisWarning retainedAt={retainedAt} timeZone={timeZone} onRetry={retry} /></Suspense> : null;
+  const degraded = Boolean(props.retainedAt) || health.service?.ok === false || health.worker?.ok === false;
+  return degraded ? <Suspense fallback={null}><EphemerisWarning {...props} onRetry={retry} /></Suspense> : null;
 }
