@@ -3005,8 +3005,6 @@ export function ManualChartsPanel({
           isEventChart={selectedChartIsEvent}
           moon={selectedFriendBigThree?.moon ?? "Pending"}
           name={selectedChart.displayName}
-          editButtonId={`friend-edit-${selectedChart.id}`}
-          onEdit={isSocialFriendChart(selectedChart) ? undefined : () => editChart(selectedChart)}
           profileActions={isSocialFriendChart(selectedChart) ? undefined : <FriendChartActions
             id={selectedChart.id} name={selectedChart.displayName} open={openChartMenuId === selectedChart.id}
             onToggle={() => setOpenChartMenuId(current => current === selectedChart.id ? null : selectedChart.id)}

@@ -3759,7 +3759,10 @@ test.describe("client-facing user flow case studies", () => {
         const panelBox = await panel.boundingBox();
         expect(Math.abs(headingBox!.x - panelBox!.x), "Friends title shares the directory rail").toBeLessThan(1);
         await expect(heading.locator("h1")).toHaveText("Friends");
-        expect(headingBox!.y + headingBox!.height).toBeLessThan(panelBox!.y);
+        // The approved compact directory carries its visible gap inside the panel.
+        expect(headingBox!.y + headingBox!.height).toBeLessThanOrEqual(panelBox!.y);
+        const labelBox = await panel.getByRole("heading", { name: /^Saved charts/ }).boundingBox();
+        expect(headingBox!.y + headingBox!.height).toBeLessThan(labelBox!.y);
         await page.screenshot({ path: path.join(responsiveScreenshotDir, `friends-list-${theme}-${width}.png`) });
       }
       await page.getByRole("button", { name: "Open Nikki" }).click();
