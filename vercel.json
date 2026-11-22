@@ -193,6 +193,7 @@
       "maxDuration": 15
     },
     "api/sky-reader.ts": {
+      "regions": ["pdx1"],
       "includeFiles": "{api/_lib/local-env.ts,node_modules/swisseph-wasm/wasm/*,server/initial-sky-reader/dist/**}",
       "maxDuration": 15
     },

@@ -7,6 +7,8 @@ import {deploymentAssetsPlugin} from './deployment-assets-plugin.mjs';
 
 const config=JSON.parse(readFileSync(new URL('../vercel.json',import.meta.url)));
 assert.equal(config.routes.length,2);
+assert.deepEqual(config.functions['api/sky-reader.ts'].regions,['pdx1']);
+assert(Object.entries(config.functions).every(([path,options])=>path==='api/sky-reader.ts'||!options.regions),'Other functions retain their existing deployment regions.');
 for(const extension of ['js','css']) {
   const pathname=`/assets/reader-aB12_-34.${extension}`;
   const route=config.routes.find(route=>new RegExp(`^${route.src}$`).test(pathname));
