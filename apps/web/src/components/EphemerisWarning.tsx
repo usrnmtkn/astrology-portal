@@ -1,7 +1,8 @@
+import type { ReactNode } from "react";
 import { RefreshCw, TriangleAlert } from "lucide-react";
 import "../styles/ephemeris-status.css";
 
-export type EphemerisWarningProps = { retainedAt?: string; timeZone?: string; onRetry: () => void };
+type EphemerisWarningProps = { children: ReactNode; onRetry: () => void };
 
 function observeStatusHeight(element: HTMLElement | null) {
   if (!element) return;
@@ -23,12 +24,10 @@ function observeStatusHeight(element: HTMLElement | null) {
   };
 }
 
-export default function EphemerisWarning({ retainedAt, timeZone, onRetry }: EphemerisWarningProps) {
+export default function EphemerisWarning({ children, onRetry }: EphemerisWarningProps) {
   return <aside ref={observeStatusHeight} className="ephemeris-status" role="status" aria-live="polite" aria-label="Astronomy service warning" data-ephemeris-status="degraded">
     <TriangleAlert className="ephemeris-status__icon" aria-hidden="true" focusable="false" />
-    <p><strong>{retainedAt ? "Live calculations are temporarily unavailable." : "Some astronomy calculations are temporarily unavailable."}</strong>{retainedAt
-      ? ` Showing the last verified calculation from ${new Date(retainedAt).toLocaleString([], { timeZone: timeZone || "UTC", timeZoneName: "short" })}.`
-      : " Affected readings may need another try."}</p>
+    {children}
     <button type="button" aria-label="Check again" title="Check again" onClick={onRetry}><RefreshCw aria-hidden="true" focusable="false" /></button>
   </aside>;
 }

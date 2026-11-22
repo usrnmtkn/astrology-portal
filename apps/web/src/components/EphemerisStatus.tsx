@@ -1,6 +1,5 @@
 import { lazy, Suspense, useEffect, useSyncExternalStore } from "react";
 import { readEphemerisHealth, refreshEphemerisHealth, subscribeEphemerisHealth } from "../services/ephemerisHealth";
-import type { EphemerisWarningProps } from "./EphemerisWarning";
 
 const EphemerisWarning = lazy(() => import("./EphemerisWarning"));
 
@@ -9,7 +8,7 @@ function retry() {
   window.dispatchEvent(new Event("tldr:ephemeris-retry"));
 }
 
-export function EphemerisStatus(props: Omit<EphemerisWarningProps, "onRetry">) {
+export function EphemerisStatus({ retainedAt, timeZone }: { retainedAt?: string; timeZone?: string }) {
   const health = useSyncExternalStore(subscribeEphemerisHealth, readEphemerisHealth, readEphemerisHealth);
   useEffect(() => {
     const check = () => { if (document.visibilityState !== "hidden") void refreshEphemerisHealth(); };
@@ -24,6 +23,11 @@ export function EphemerisStatus(props: Omit<EphemerisWarningProps, "onRetry">) {
       document.removeEventListener("visibilitychange", check);
     };
   }, []);
-  const degraded = Boolean(props.retainedAt) || health.service?.ok === false || health.worker?.ok === false;
-  return degraded ? <Suspense fallback={null}><EphemerisWarning {...props} onRetry={retry} /></Suspense> : null;
+  const degraded = Boolean(retainedAt) || health.service?.ok === false || health.worker?.ok === false;
+  if (!degraded) return null;
+  return <Suspense fallback={null}><EphemerisWarning onRetry={retry}>
+    <p><strong>{retainedAt ? "Live calculations are temporarily unavailable." : "Some astronomy calculations are temporarily unavailable."}</strong>{retainedAt
+      ? ` Showing the last verified calculation from ${new Date(retainedAt).toLocaleString([], { timeZone: timeZone || "UTC", timeZoneName: "short" })}.`
+      : " Affected readings may need another try."}</p>
+  </EphemerisWarning></Suspense>;
 }
