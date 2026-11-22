@@ -151,6 +151,12 @@ try {
   rowVersion='2026-10-23T15:01:00.000000Z';assert.equal((await invoke()).body.initialReader,null,'A source race cannot serve stale prepared prose.');rowVersion=stamp;
   failRows=true;const rowFailure=await invoke();assert.equal(rowFailure.body.initialReader,null);assert.deepEqual(rowFailure.body.sky,sky);failRows=false;
   failLedger=true;assert.equal((await invoke()).body.initialReader,null);failLedger=false;
+  ledger=[marker,selectedPublication];
+  const missingSelectedRow=createInitialSkyReaderHandler(async()=>({status:200,headers:{},value:{schema:'content-reader-row-v1',nextCursor:null,rows:[]}}));
+  assert((await invoke(`/api/sky-reader?${query.toString().replace('2026-10-23','2026-10-01')}`,'GET',missingSelectedRow)).body.initialReader,
+    'An unrelated missing publication does not replace the selected complete reading.');
+  assert.equal((await invoke(undefined,'GET',missingSelectedRow)).body.initialReader,null,
+    'Identical rows and ledger cannot reuse another Sky selection when its current live source is missing.');
   let release!:()=>void;held=new Promise(resolve=>{release=resolve;});
   const start=performance.now();const timeout=await invoke(undefined,'GET',createInitialSkyReaderHandler(async()=>{await held;return {status:503,headers:{},value:{}};},50));
   assert.equal(timeout.body.initialReader,null);assert.deepEqual(timeout.body.sky,sky);assert(performance.now()-start<2000,'Optional stalled assembly returns facts promptly.');release();held=null;

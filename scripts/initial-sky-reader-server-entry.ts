@@ -23,18 +23,18 @@ export function renderInitialSkyReader(sky: SkySnapshot, inputRows: GeneratedCon
     installContentPublications(publications, "complete-sky-list");
     await loadInitialSkyListFallbackArchitectureV3Bundle();
     const rows = inputRows.filter(row => publicationAllowsContent(row.content_key, row.id, row.updated_at, row.target_date));
-    // Revalidate the live ledger on every request. Reuse only the renderer
-    // indexes for byte-identical admitted sources and publication identities.
-    const sources = JSON.stringify([publications, rows]);
-    if (sources !== installedSources) {
-    const core = packageFallbackArchitectureV3CoreRows(rows.filter(row => row.provider === "tldrastro-fallback-architecture-v3" && isSkyListDashboardRow(row)), keys);
-    installSkyCoreFallbackArchitectureV3Bundle(core);
     const selectedKey = selectedSourceKey(sky);
     if (publications.some(publication => selectedKey(publication.content_key) && publication.state === "live"
       && publication.row_id && !rows.some(row => row.id === publication.row_id && row.content_key === publication.content_key
         && publicationAllowsContent(row.content_key, row.id, row.updated_at)))) {
       throw new Error("Current Sky publications did not load.");
     }
+    // Revalidate the live ledger on every request. Reuse only the renderer
+    // indexes for byte-identical admitted sources and publication identities.
+    const sources = JSON.stringify([publications, rows, sky.positions.map(position => [position.planet, position.sign])]);
+    if (sources !== installedSources) {
+    const core = packageFallbackArchitectureV3CoreRows(rows.filter(row => row.provider === "tldrastro-fallback-architecture-v3" && isSkyListDashboardRow(row)), keys);
+    installSkyCoreFallbackArchitectureV3Bundle(core);
     const selected = rows.filter(row => selectedKey(row.content_key)).map(packageHookRowFromRow).filter(Boolean);
     installSkyPlacementFallbackArchitectureV3Bundle(selected.length ? {
       transitLib: { authoredCards: [] }, templatesFile: { templates: [] },
