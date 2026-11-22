@@ -6,7 +6,7 @@ import {pathToFileURL} from 'node:url';
 import ts from 'typescript';
 import {apiCommandShards} from './run-content-studio-api-shard.mjs';
 import {expandMatrixValues, expandNpmScripts, specsSelectedByConfig} from './test-browser-suite-coverage.mjs';
-import {apiTestCommands,validateTestPlan} from './ci-test-plan.mjs';
+import {apiTestCommands,validateTestPlan,preflightInventory} from './ci-test-plan.mjs';
 
 const nonRuntime = /^(?:docs\/|README(?:\.[^/]+)?$|LICENSE(?:\.[^/]+)?$|AGENTS\.md$|CLAUDE\.md$)/u;
 const infrastructure = /^(?:\.github\/workflows\/|scripts\/(?:ci-|test-ci-|check-affected-api-gate|check-browser-release-gate|test-browser-release-gate|test-browser-suite-coverage|test-content-studio-api-shards|run-content-studio-api-shard|run-affected-playwright|balanced-browser-tests|test-browser-balance)|config\/.*(?:durations|timings).*\.json$)/u;
@@ -92,6 +92,23 @@ export function createDependencyGraph(root, files) {
     if (!/\.[cm]?[jt]sx?$/u.test(file)) return dependencies;
     const ast=ts.createSourceFile(file,source,ts.ScriptTarget.Latest,true);
     function visit(node) {
+      // Browser component harnesses compile real imports in stdin.contents.
+      // Parse that program, rather than treating its code as inert fixture text.
+      const parent=node.parent;
+      if((ts.isStringLiteralLike(node)||ts.isTemplateExpression(node))&&ts.isPropertyAssignment(parent)
+        &&parent.name.getText(ast)==='contents'&&ts.isPropertyAssignment(parent.parent.parent)
+        &&parent.parent.parent.name.getText(ast)==='stdin'
+        &&parent.parent.properties.some(property=>ts.isPropertyAssignment(property)&&property.name.getText(ast)==='resolveDir'&&property.initializer.getText(ast)==='process.cwd()')) {
+        const inline=ts.createSourceFile('stdin.tsx',ts.isTemplateExpression(node)?node.head.text:node.text,ts.ScriptTarget.Latest,true);
+        const imports=node=>{
+          if(ts.isStringLiteralLike(node)&&(ts.isImportDeclaration(node.parent)||ts.isExportDeclaration(node.parent)
+            ||ts.isCallExpression(node.parent)&&node.parent.expression.kind===ts.SyntaxKind.ImportKeyword)) {
+            for(const dependency of resolveReferences('stdin.tsx',node.text))dependencies.add(dependency);
+          }
+          ts.forEachChild(node,imports);
+        };
+        imports(inline);
+      }
       if(ts.isImportDeclaration(node)) {
         const clause=node.importClause;
         if(clause?.isTypeOnly||clause&&!clause.name&&clause.namedBindings&&ts.isNamedImports(clause.namedBindings)
@@ -197,7 +214,11 @@ export function createAffectedPlan({root=process.cwd(),files,head,base,previousP
       for(const command of commands)if(graph.reaches(commandSources(command,pkg.scripts),new Set([file])))api.add(command);
       continue;
     }
-    if(file.startsWith('tests/visual/')) {if(runnableSpecs.has(file))selected.add(file);continue;}
+    if(file.startsWith('tests/visual/')) {
+      const snapshot=file.match(/^(tests\/visual\/[\w.-]+\.spec\.ts)-snapshots\//u)?.[1];
+      if(runnableSpecs.has(snapshot??file))selected.add(snapshot??file);
+      continue;
+    }
     if(file==='package.json') {
       assert(previousPackage,'Package changes require the base package manifest');
       const withoutScripts=value=>Object.fromEntries(Object.entries(value).filter(([key])=>key!=='scripts'));
@@ -270,11 +291,17 @@ export function revisionRange(env=process.env) {
 }
 
 if(import.meta.url===pathToFileURL(process.argv[1]??'').href) {
-  assert(process.argv.length===2||process.argv.length===3&&process.argv[2]==='--json','Usage: node scripts/ci-affected-tests.mjs [--json]');
+  assert(process.argv.length===2||process.argv.length===3&&process.argv[2]==='--json'||process.argv.length===4&&process.argv[2]==='--preflight-report','Usage: node scripts/ci-affected-tests.mjs [--json | --preflight-report receipts.json]');
   const plan=createAffectedPlan(revisionRange());
+  if(process.argv[2]==='--preflight-report') {
+    const report=preflightInventory(plan,JSON.parse(readFileSync(process.argv[3],'utf8')).receipts);
+    console.log(JSON.stringify(report));
+    process.exitCode=report.status==='PASS'?0:1;
+  } else {
   const outputs={test_plan:JSON.stringify(plan),api_needed:String(plan.apiShards.length>0),api_shards:JSON.stringify(plan.apiShards)};
   for(const job of Object.keys(browserJobCatalog(process.cwd(),JSON.parse(readFileSync('package.json','utf8')).scripts,plan.browserSpecs)))outputs[job.replaceAll('-','_')]=String(plan.browserJobs.includes(job));
   const lines=Object.entries(outputs).map(([key,value])=>`${key}=${value}`).join('\n')+'\n';
   if(process.env.GITHUB_OUTPUT)appendFileSync(process.env.GITHUB_OUTPUT,lines);
   console.log(JSON.stringify(process.argv[2]==='--json'?plan:{head:plan.head,changedFiles:plan.files.length,apiCommands:plan.apiCommands.length,apiShards:plan.apiShards,browserSpecs:plan.browserSpecs.length,browserJobs:plan.browserJobs,reasons:plan.reasons}));
+  }
 }

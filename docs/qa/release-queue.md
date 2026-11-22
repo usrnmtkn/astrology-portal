@@ -151,6 +151,23 @@ Keep the scope affected; this rule does not require a routine complete-suite run
   verify it together before freezing; a current knowledge index alone does not
   prove its downstream comparison is current. Keep deterministic evidence
   construction separate from paid generation and editorial approval.
+- **Shared Weekly inputs:** changes to the shared writer context, saved direction
+  or model controls must run their affected API consumers, including
+  `test-weekly-cross-week-editorial.mts`, `test-weekly-batch-editorial.mts` and
+  `test-horoscope-durable-batch.mts`. Use the existing affected selector/catalog;
+  checking only edited test files misses consumers of the changed request shape.
+  Preserve exact historical text, frozen comparison snapshots, sign isolation,
+  factual/publication guards and bounded mocked-provider call counts. The selector
+  regression protects these consumers for the relevant shared Weekly inputs.
+- **Consumer coverage inventory:** use the same affected plan for local evidence
+  and hosted selection. `node scripts/ci-affected-tests.mjs --preflight-report
+  receipts.json` accounts for every selected API command and browser spec. Record
+  actual local, sanctioned-private or valid unchanged-input hosted provenance;
+  a browser receipt covers the complete spec and its required profiles, not a
+  grep subset. Preserve FAIL, NOT_RUN and PROTECTED_UNAVAILABLE distinctly.
+  Missing consumers make the inventory INCOMPLETE; a scoped batch or build PASS
+  cannot be reported as complete release preflight. Rendered harness imports
+  and screenshot references retain their comparing specs in the existing selector.
 - **Build budgets:** build every affected hosted profile, including ordinary Web,
   authentication startup and standalone Studio where applicable, with the pinned
   CI toolchain and locked dependencies. Run `npm run qa:release-builds` for the

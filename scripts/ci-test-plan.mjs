@@ -44,3 +44,27 @@ export function affectedBrowserIdentities(identities, plan) {
   const selected = new Set(plan.browserSpecs);
   return identities.filter(identity => selected.has(identity.match(/tests\/visual\/[^›]+\.spec\.ts/u)?.[0]));
 }
+
+// An inventory of evidence for this existing plan; this does not execute tests.
+export function preflightInventory(plan, receipts = []) {
+  validateTestPlan(plan);
+  const selected=[...plan.apiCommands.map(name=>({kind:'api',name})),...plan.browserSpecs.map(name=>({kind:'browser',name}))];
+  const keys=new Set(selected.map(item=>`${item.kind}:${item.name}`)),evidence=new Map();
+  for(const receipt of receipts) {
+    const key=`${receipt.kind}:${receipt.name}`;
+    assert(keys.has(key),'Evidence is outside the selected affected plan');
+    assert(!evidence.has(key),'Duplicate consumer evidence');
+    assert(['PASS','FAIL','NOT_RUN','PROTECTED_UNAVAILABLE'].includes(receipt.status),'Invalid evidence status');
+    if(receipt.status==='PASS') {
+      assert(receipt.complete===true,'A partial spec or command cannot be counted as PASS');
+      assert(['local','sanctioned-private','hosted-unchanged'].includes(receipt.origin)&&receipt.source,'PASS needs actual evidence provenance');
+      assert(/^[a-f0-9]{40}$/u.test(receipt.revision),'PASS needs its tested revision');
+      if(receipt.origin!=='local')assert.equal(receipt.relevantInputsUnchanged,true,'Reused evidence needs unchanged relevant inputs');
+    }
+    evidence.set(key,receipt);
+  }
+  const consumers=selected.map(item=>({...item,...evidence.get(`${item.kind}:${item.name}`),status:evidence.get(`${item.kind}:${item.name}`)?.status??'NOT_RUN'}));
+  const counts={selected:consumers.length,executed:consumers.filter(item=>['PASS','FAIL'].includes(item.status)).length};
+  for(const status of ['PASS','FAIL','NOT_RUN','PROTECTED_UNAVAILABLE'])counts[status]=consumers.filter(item=>item.status===status).length;
+  return {schema:'affected-preflight-inventory/v1',head:plan.head,base:plan.base,status:counts.FAIL?'FAIL':counts.PASS===counts.selected?'PASS':'INCOMPLETE',counts,consumers};
+}

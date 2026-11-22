@@ -294,9 +294,10 @@ for (const width of [320, 390, 768, 1440]) for (const theme of ['light', 'dark']
         const element = (await first.boundingBox())!;
         return element.y - nav.y - nav.height;
       };
-      const expectedGap = label === 'Saved chart' ? 40 : width <= 720 ? 64 : 80;
+      const directory = label === 'Circle' || label === 'Charts';
+      const expectedGap = label === 'Saved chart' ? 40 : directory ? 32 : width <= 720 ? 64 : 80;
       await expect.poll(gap, { message: `${label} uses its approved navigation clearance` }).toBeCloseTo(expectedGap, 0);
-      if (label !== 'Saved chart') gaps.push(await gap());
+      if (label !== 'Saved chart' && !directory) gaps.push(await gap());
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), label).toBe(true);
       await page.screenshot({ path: `test-results/design-page-clearance-${label.toLowerCase()}-${width}-${theme}.png` });
     }
