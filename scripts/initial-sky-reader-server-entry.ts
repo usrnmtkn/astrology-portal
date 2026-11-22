@@ -14,6 +14,7 @@ import type { SkySnapshot } from "../apps/web/src/types";
 // The shared browser renderer owns mutable public overlay indexes. Serialize
 // only their install/render section; request I/O and astronomy stay parallel.
 let queue: Promise<void> = Promise.resolve();
+let installedSources = "";
 // Load the complete local reader sources while the independent calculation
 // worker and public I/O run. No request publication or overlay is installed.
 void loadInitialSkyListFallbackArchitectureV3Bundle().catch(() => {});
@@ -22,6 +23,10 @@ export function renderInitialSkyReader(sky: SkySnapshot, inputRows: GeneratedCon
     installContentPublications(publications, "complete-sky-list");
     await loadInitialSkyListFallbackArchitectureV3Bundle();
     const rows = inputRows.filter(row => publicationAllowsContent(row.content_key, row.id, row.updated_at, row.target_date));
+    // Revalidate the live ledger on every request. Reuse only the renderer
+    // indexes for byte-identical admitted sources and publication identities.
+    const sources = JSON.stringify([publications, rows]);
+    if (sources !== installedSources) {
     const core = packageFallbackArchitectureV3CoreRows(rows.filter(row => row.provider === "tldrastro-fallback-architecture-v3" && isSkyListDashboardRow(row)), keys);
     installSkyCoreFallbackArchitectureV3Bundle(core);
     const selectedKey = selectedSourceKey(sky);
@@ -35,6 +40,8 @@ export function renderInitialSkyReader(sky: SkySnapshot, inputRows: GeneratedCon
       transitLib: { authoredCards: [] }, templatesFile: { templates: [] },
       rowsFile: { hookRows: selected as any, vocabularyRows: [] }
     } : null);
+    installedSources = sources;
+    }
     const content = generatedContentMapFromRows(rows);
     const positions = skyNodeDisplayPositions(sky.positions);
     const editions = positions.flatMap(position => skyIngressEssayPublicationKeys(publications, {

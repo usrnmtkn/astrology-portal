@@ -62,6 +62,7 @@ try {
   for(const url of ['/api/sky-reader',`/api/sky-reader?${query.toString().replace('lat=40.7128','lat=91')}`,`/api/sky-reader?${query.toString().replace('placements','full')}`])assert.equal((await invoke(url)).status,400);
   const first=await invoke(); assert.equal(first.status,200);
   const {sky,initialReader}=first.body;
+  assert.deepEqual((await invoke()).body,first.body,'Repeated requests preserve complete exact facts, previews, sources and publication proof.');
   assert(initialReader,'Actual shared server renderer must produce all complete placement previews.');
   assert.equal(initialReader.previews.length,14);assert(initialReader.previews.every((row:any)=>row.body.trim()));
   assert.equal(first.headers['cache-control'],'private, no-store');

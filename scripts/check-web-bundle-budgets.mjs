@@ -4,7 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
-import { gzipSync } from "node:zlib";
+import { brotliDecompressSync, gzipSync } from "node:zlib";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const distRoot = path.join(repoRoot, "apps/web/dist");
@@ -183,6 +183,17 @@ const failures = Object.entries(budgets).flatMap(([metric, limit]) => {
     ? [`${metric}: ${actual.toLocaleString("en-US")} bytes exceeds ${limit.toLocaleString("en-US")} bytes by ${(actual - limit).toLocaleString("en-US")} bytes`]
     : [];
 });
+
+for (const item of builtFiles) {
+  const original = path.join(distRoot, item.file);
+  try {
+    if (!brotliDecompressSync(fs.readFileSync(`${original}.br`)).equals(fs.readFileSync(original))) {
+      failures.push(`Precompressed asset differs from the complete original: ${item.file}`);
+    }
+  } catch {
+    failures.push(`Precompressed asset is missing or invalid: ${item.file}`);
+  }
+}
 
 const wheelEntries = Object.values(manifest).filter(item => item.name === "InteractiveZodiacWheel");
 const wheelEntry = wheelEntries[0];
