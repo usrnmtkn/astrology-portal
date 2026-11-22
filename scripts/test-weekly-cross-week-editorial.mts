@@ -60,7 +60,11 @@ assert.deepEqual(reviewInput.priorWeeks,JSON.parse(original),'Planner and final 
 assert.deepEqual(reviewInput.profile,profile,'The complete current saved profile also reaches the full-set reviewer');
 for(const request of writerFixture.requests.values()){
  assert(!request.input.includes('\"priorQuote\":'),'Historical citation fields are not writer voice or meaning inputs');
- assert(request.input.includes('weekDifference is comparison-only analysis'));
+ const concern=JSON.parse(request.input.split('CURRENT SIGN CONCERN\n')[1].split('\n')[0]);
+ const {priorQuote,priorEditionId,priorSign,weekDifference,...expectedConcern}=plan.concerns.find((item:any)=>item.sign===request.sign);
+ assert.deepEqual(concern,expectedConcern,'The writer receives only its own current concern; historical comparison stays with planner and reviewer');
+ assert(!request.input.includes('SHARED WEEKLY CONCERNS\n'));
+ for(const key of ['priorQuote','priorEditionId','priorSign','weekDifference'])assert(!Object.hasOwn(concern,key));
  for(const field of ['voiceGuidance','structure','sourceGuidance'] as const)assert(request.input.includes(profile[field]),`Complete ${field} reaches the actual writer`);
  assert(request.instructions.includes('An opening may need several connected sentences'));
  assert(request.instructions.includes('without requiring a psychological revelation'),'The ordinary-language correction belongs in prose authority, not raw planning fields');

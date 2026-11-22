@@ -2,7 +2,7 @@ import forecastProse from './forecastProseDevelopment.cjs';
 const {FORECAST_PROSE_DEVELOPMENT_VERSION}=forecastProse;
 import {approvedVoiceStyleReference} from './approvedVoiceStyle.mjs';
 import {WEEKLY_BATCH_EDITORIAL,WEEKLY_CROSS_WEEK_EDITORIAL} from './weeklyBatchEditorial.mjs';
-import {WEEKLY_OWNER_DIRECTION,weeklyOwnerDirection,weeklyDirectionWriterInput} from './weeklyConcernDirection.mjs';
+import {WEEKLY_OWNER_DIRECTION,WEEKLY_SIGN_CONTEXT,weeklySignConcern,weeklyOwnerDirection,weeklyDirectionWriterInput} from './weeklyConcernDirection.mjs';
 import {DAILY_BATCH_EDITORIAL} from './dailyBatchEditorial.mjs';
 import {weeklyPreviousReadingsInput} from './weeklyPreviousReadings.mjs';
 import {horoscopeEvidenceReceipt} from './horoscopeEvidenceReceipt.mjs';
@@ -116,7 +116,7 @@ export function prepareHoroscopeWriting(row,{studioCorrections=[],feedbackReceip
   const proseVersion={forecastProseDevelopmentVersion:FORECAST_PROSE_DEVELOPMENT_VERSION,...(usesRefinedHoroscopeProse(edition.window.period)?{proseInstructionsVersion:HOROSCOPE_PROSE_INSTRUCTIONS_VERSION,
     ...(usesWeeklyFromSamples(writingProfile.profile)?{weeklyFromSamplesVersion:WEEKLY_FROM_SAMPLES_VERSION}:{}),
     ...(edition.window.period==='daily'?{dailyBatchEditorial:DAILY_BATCH_EDITORIAL}:{}),
-    ...(edition.window.period==='weekly'?{weeklyBatchEditorial:WEEKLY_BATCH_EDITORIAL}:{})}:{})};
+    ...(edition.window.period==='weekly'?{weeklyBatchEditorial:WEEKLY_BATCH_EDITORIAL,weeklySignContextVersion:WEEKLY_SIGN_CONTEXT}:{})}:{})};
   const comparison=edition.window.period==='weekly'?row.source_snapshot?.weeklyComparison:null;
   const comparisonBinding=comparison?{weeklyComparisonHash:comparison.contextHash,weeklyComparisonContract:WEEKLY_CROSS_WEEK_EDITORIAL}:{};
   const ownerEdits=edition.window.period==='weekly'?row.source_snapshot?.horoscopeGeneration?.weeklyEditorial?.plan?.ownerEdits:null;
@@ -223,14 +223,12 @@ export function horoscopePlanPreview(prepared) {
 }
 
 export function horoscopeWriterContextInput(input,prepared,sign) {
-  const sharedConcerns=prepared.weeklyBatchPlan?.concerns.map(({priorQuote,priorEditionId,priorSign,...concern})=>concern);
-  const ownerEdits=prepared.weeklyBatchPlan?.ownerEdits??prepared.weeklyConcernEdits;
+  const concern=weeklySignConcern(prepared,sign);
   const direction=weeklyOwnerDirection(prepared,sign);
-  return [input,...(prepared.weeklyBatchPlan?[
-      `SHARED WEEKLY CONCERNS\n${JSON.stringify(sharedConcerns)}`,
-      `CURRENT SIGN CONCERN\n${JSON.stringify(sharedConcerns.find(c=>c.sign===sign))}`,
-      'The shared plan supplies current meaning decisions and scope, not reader wording or a required paragraph script. Use its current astrologicalReason and development. weekDifference is comparison-only analysis, never voice evidence, current facts or a story to copy. Historical citations are retained by the planner and reviewer rather than passed as writer evidence. Develop this sign\'s specific concern, stakes and observation. Do not borrow another sign\'s interpretation or ending. Keep complete saved owner examples and current corrections authoritative for voice. Only the final whole-set check can compare the complete finished set; this writer compares only supplied earlier readings.'
-    ]:[]),...(ownerEdits?[`OWNER-EDITED WEEKLY CONCERNS\n${JSON.stringify(ownerEdits)}`, 'The saved owner edits to concern, stakes and observation are the editorial direction for this edition. Develop their meaning without restoring earlier AI choices. Use other planning notes only where consistent with those edits and the calculated facts. These notes are direction, not wording to copy or additional astrological facts.']:[]),...(prepared.previousReadings?[weeklyPreviousReadingsInput(prepared.previousReadings)]:[]),...(prepared.explicitFeedbackMarker?[prepared.explicitFeedbackMarker]:[]),...(direction?[weeklyDirectionWriterInput(direction)]:[])].join('\n\n');
+  return [input,...(concern?[
+      `CURRENT SIGN CONCERN\n${JSON.stringify(concern)}`,
+      'This sign\'s plan supplies meaning and scope, not reader wording or a paragraph script. Use its astrologicalReason and development only where consistent with the saved owner direction and calculated facts. Complete owner examples and current corrections govern the voice. The planner and final whole-set review retain the other signs\' concerns; this writer compares only supplied earlier readings.'
+    ]:[]),...(prepared.previousReadings?[weeklyPreviousReadingsInput(prepared.previousReadings)]:[]),...(prepared.explicitFeedbackMarker?[prepared.explicitFeedbackMarker]:[]),...(direction?[weeklyDirectionWriterInput(direction)]:[])].join('\n\n');
 }
 
 export async function writeHoroscopeSign(prepared,sign,{approvedPlanHash,writerClient,approvalReference}) {

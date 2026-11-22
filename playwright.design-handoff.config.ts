@@ -16,6 +16,7 @@ export default defineConfig(base, {
     'design-handoff-wheel.spec.ts',
     'interactive-zodiac-wheel.spec.ts',
     'friends-feed-exact.spec.ts',
+    'friends-directory-handoff.spec.ts',
     'friends-feed-priority.spec.ts',
     'friends-pair-forecast.spec.ts',
     'handoff-v4-states.spec.ts',

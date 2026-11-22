@@ -5,7 +5,7 @@ import {tmpdir} from 'node:os';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {createAffectedPlan,createDependencyGraph,revisionRange} from './ci-affected-tests.mjs';
-import {validateTestPlan,apiTestCommands} from './ci-test-plan.mjs';
+import {validateTestPlan,apiTestCommands,preflightInventory} from './ci-test-plan.mjs';
 import {checkAffectedApiGate} from './check-affected-api-gate.mjs';
 import {runAffectedPlaywright} from './run-affected-playwright.mjs';
 
@@ -47,6 +47,33 @@ assert(!writing.browserSpecs.includes('tests/visual/friends-loading-performance.
 const unknownWriter=planFor(['src/astro-writing/unmapped-source.cjs']);
 assert.equal(unknownWriter.apiCommands.length,unknown.apiCommands.length,'Unmapped writing sources retain the conservative fallback');
 assert.deepEqual(unknownWriter.browserSpecs,unknown.browserSpecs);
+for(const file of ['src/astro-writing/horoscopeWriting.mjs','src/astro-writing/weeklyConcernDirection.mjs','src/astro-writing/horoscopeWriterModels.mjs']) {
+  const weekly=planFor([file]);
+  for(const consumer of ['test-weekly-cross-week-editorial','test-weekly-batch-editorial','test-horoscope-durable-batch']) {
+    assert(weekly.apiCommands.some(command=>command.includes(consumer)),`${file} must retain the actual Weekly consumer ${consumer}`);
+  }
+}
+const articleRenderers=planFor(['apps/web/src/features/sky/SkyDetailArticle.tsx']);
+assert(articleRenderers.browserSpecs.includes('tests/visual/mobile-parity.spec.ts'),'An inline esbuild renderer must retain its actual SkyDetailArticle consumer');
+const screenshotReference=planFor(['tests/visual/visual-regression-baseline.spec.ts-snapshots/client-friends-mobile-light-chromium-desktop-linux.png']);
+assert.deepEqual(screenshotReference.browserSpecs,['tests/visual/visual-regression-baseline.spec.ts'],'A screenshot reference must retain the complete spec that compares it');
+const incomplete=preflightInventory(screenshotReference);
+assert.equal(incomplete.status,'INCOMPLETE');assert.equal(incomplete.counts.NOT_RUN,1);
+const baselineReceipt={kind:'browser',name:screenshotReference.browserSpecs[0],status:'PASS',origin:'local',source:'synthetic execution receipt',revision:head,complete:true};
+assert.throws(()=>preflightInventory(screenshotReference,[{...baselineReceipt,complete:false}]),/partial spec/);
+assert.equal(preflightInventory(screenshotReference,[baselineReceipt]).status,'PASS');
+const oldLocal={...baselineReceipt,revision:'a'.repeat(40)};
+assert.throws(()=>preflightInventory(screenshotReference,[oldLocal]),/unchanged relevant inputs/,'An old local PASS cannot certify changed current inputs');
+assert.equal(preflightInventory(screenshotReference,[{...oldLocal,relevantInputsUnchanged:true}]).status,'PASS');
+assert.equal(preflightInventory(screenshotReference,[{...baselineReceipt,status:'PROTECTED_UNAVAILABLE'}]).status,'INCOMPLETE');
+assert.equal(preflightInventory(screenshotReference,[{...baselineReceipt,status:'FAIL'}]).status,'FAIL');
+assert.throws(()=>preflightInventory(screenshotReference,[{...baselineReceipt,origin:'hosted-unchanged'}]),/unchanged relevant inputs/);
+for(const file of ['apps/web/src/features/friends/FriendChartsList.tsx','apps/web/src/styles/friends-route.css']) {
+  const directory=planFor([file]);
+  for(const spec of ['visual-regression-baseline','design-handoff-pages','connection-transit-separation']) {
+    assert(directory.browserSpecs.includes(`tests/visual/${spec}.spec.ts`),`${file} must retain its rendered-output consumer ${spec}`);
+  }
+}
 const friendsUiFiles=[
   'apps/web/src/features/friends/CompatibilityTab.tsx',
   'apps/web/src/features/friends/FriendProfileChartRail.tsx',
@@ -125,6 +152,7 @@ try {
   write('apps/web/src/features/friends/card.css',"@import './palette.css';");
   write('apps/web/src/features/friends/palette.css','');
   write('apps/web/src/features/sky/Card.tsx','export const Card=()=>null;');
+  write('tests/visual/interpolated-renderer.spec.ts',"build({stdin:{resolveDir:process.cwd(),contents:`const fixture = ${42}; import {Card} from './apps/web/src/features/friends/Card';`}});");
   write('tests/visual/friends.spec.ts',"const route=`/#friends?chart=${'fixture'}`;");
   write('tests/visual/sky.spec.ts',"import '../../apps/web/src/App'; const route='/#sky';");
   write('tests/visual/admin.spec.ts',"import '../../apps/web/src/App'; const route='/admin/index.html';");
@@ -138,6 +166,7 @@ try {
   write('tests/forked.mjs',"fork(path.resolve('tests/process-helper.mts'),[]);");
   write('tests/spawned.mjs',"spawn(process.execPath,['--import','tsx',path.resolve('tests/process-helper.mts')]);");
   const uiGraph=createDependencyGraph(directory,[...fixtureFiles]);
+  assert(uiGraph.reachesBrowser(['tests/visual/interpolated-renderer.spec.ts'],new Set(['apps/web/src/features/friends/Card.tsx']),true),'A real renderer import after a template interpolation remains an executable dependency');
   const friendCard=new Set(['apps/web/src/features/friends/Card.tsx']);
   assert(!uiGraph.reaches(['src/types-only.ts'],new Set(['src/shared.ts'])),'Type-only imports and exports do not execute a module');
   assert(!uiGraph.reaches(['src/metadata.ts'],new Set(['src/shared.ts'])),'Source path metadata is not an import');

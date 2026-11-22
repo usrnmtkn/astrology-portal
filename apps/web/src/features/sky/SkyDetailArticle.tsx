@@ -211,14 +211,9 @@ function signArticleGlyph(sign: string): ArticleEyebrowGlyph | null {
 function uniqueArticleGlyphs(glyphs: Array<ArticleEyebrowGlyph | null>) {
   const seen = new Set<string>();
 
-  return glyphs.filter((glyph): glyph is ArticleEyebrowGlyph => {
-    if (!glyph || seen.has(glyph.key)) {
-      return false;
-    }
-
-    seen.add(glyph.key);
-    return true;
-  });
+  return glyphs.filter((glyph): glyph is ArticleEyebrowGlyph =>
+    Boolean(glyph && !seen.has(glyph.key) && seen.add(glyph.key))
+  );
 }
 
 function articleTitleHouseToken(title: string, meta = "") {
@@ -238,30 +233,19 @@ function articleTitleSign(title: string) {
 }
 
 function articlePlacementGlyphs(title: string, meta = "") {
-  const source = `${title} ${meta}`;
-  if (/^(?:(?:Full|New|(?:First|Last|Third)\s+Quarter|(?:Waxing|Waning)\s+(?:Crescent|Gibbous))\s+Moon|(?:Lunar|Solar)\s+Eclipse)\b/i.test(title)) {
-    const house = articleTitleHouseToken(title, meta);
-    return uniqueArticleGlyphs([
-      textArticleGlyph(pointGlyph("Moon"), "Moon"),
-      signArticleGlyph(articleTitleSign(source) ?? ""),
-      house ? { key: `house-${house}`, label: house, text: house, house: true } : null
-    ]);
-  }
-
+  const source = `${title.trim()} ${meta}`;
   const match = source.match(
     /^(\w[\w\s]*?)(\s+Rx)?\s+in\s+(\w+)(?:\s+in\s+the\s+(\d+)(?:st|nd|rd|th)\s+house)?/i
   );
-
-  if (!match) {
-    return [];
-  }
-
-  const [, body, retrograde, sign, house] = match;
+  const lunar = /^(?:(?:Full|New|(?:First|Last|Third)\s+Quarter|(?:Waxing|Waning)\s+(?:Crescent|Gibbous))\s+Moon(?:\s+(?:Lunar|Solar)\s+Eclipse)?|(?:Lunar|Solar)\s+Eclipse)$/i.test((match?.[1] ?? title).trim());
+  if (!match && !lunar) return [];
+  const point = lunar ? "Moon" : match![1].trim();
+  const house = lunar ? articleTitleHouseToken(title, meta) : match![4];
   return uniqueArticleGlyphs([
-    textArticleGlyph(pointGlyph(body.trim()), body.trim()),
-    retrograde ? textArticleGlyph("℞", "Retrograde") : null,
-    signArticleGlyph(sign.trim()),
-    house ? { key: `house-${house}`, label: `${house} house`, text: articleHouseToken(house), house: true } : null
+    textArticleGlyph(pointGlyph(point), point),
+    match?.[2] ? textArticleGlyph("℞", "Retrograde") : null,
+    signArticleGlyph(lunar ? articleTitleSign(source) ?? "" : match![3]),
+    house ? { key: `house-${house}`, label: lunar ? house : `${house} house`, text: lunar ? house : articleHouseToken(house), house: true } : null
   ]);
 }
 

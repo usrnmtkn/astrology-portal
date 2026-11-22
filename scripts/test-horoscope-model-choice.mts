@@ -66,6 +66,23 @@ const step=async(id:string)=>{
   assert([200,202,409].includes(result.status),JSON.stringify(result.payload));return result;
 };
 
+// Verify the actual OpenAI dispatch, not only the configuration helper. Weekly
+// leaves more of its bounded output budget for prose; Daily keeps its setting.
+for(const [period,effort] of [['daily','xhigh'],['weekly','medium']]){
+  const id=await create(period,'2026-11-23'),prepared=await action(id,'prepare');
+  const started=await action(id,'generate',{sign:'aries',approvedPlanHash:prepared.payload.plan.planHash});
+  assert.equal(started.status,202,JSON.stringify(started.payload));
+  const operation=latest(id).source_snapshot.horoscopeGeneration.active;
+  assert.equal(operation.config.reasoningEffort,effort);
+  const request=writerFixture.requests.get(operation.responseId);
+  assert.equal(request.reasoning.effort,effort,'The reserved setting reaches the provider request');
+  assert.equal(request.max_output_tokens,12000);
+  for(let attempts=0;latest(id).source_snapshot.horoscopeGeneration.active&&attempts<40;attempts++)await step(id);
+  const receipt=latest(id).source_snapshot.horoscopeGeneration.readings.aries;
+  assert.equal(receipt.config.reasoningEffort,effort);
+  assert.equal(receipt.ownerApproved,false);
+}
+
 for(const period of ['daily','weekly','monthly','seasonal'])for(const choice of ['gemini','claude']){
   const id=await create(period,choice==='gemini'?'2026-09-07':'2026-10-07');
   const original=latest(id),sign=period==='monthly'?'overview':'aries';

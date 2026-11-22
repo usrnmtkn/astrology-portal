@@ -2296,9 +2296,10 @@ test.describe("client-facing user flow case studies", () => {
 
     await selectFriendDetailTab(page, "Composite");
     await expect(page.getByText("What a composite chart is")).toBeVisible();
-    await expect(page.getByRole("button", { name: "Edit Nikki" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "More actions for Nikki" })).toBeVisible();
 
     await page.getByRole("button", { name: "Charts" }).click();
+    await page.getByRole("button", { name: "Open Nikki", exact: true }).click();
     await expect(page.getByRole("button", { name: "More actions for Nikki" })).toBeVisible();
     await page.getByRole("button", { name: "More actions for Nikki" }).click();
     await expect(page.getByRole("menu", { name: "Nikki actions" })).toBeVisible();
@@ -3758,7 +3759,11 @@ test.describe("client-facing user flow case studies", () => {
         const panelBox = await panel.boundingBox();
         expect(Math.abs(headingBox!.x - panelBox!.x), "Friends title shares the directory rail").toBeLessThan(1);
         await expect(heading.locator("h1")).toHaveText("Friends");
-        expect(headingBox!.y + headingBox!.height).toBeLessThan(panelBox!.y);
+        // The approved compact directory carries its visible gap inside the panel.
+        expect(headingBox!.y + headingBox!.height).toBeLessThanOrEqual(panelBox!.y);
+        await expect(panel).toHaveCSS("padding-top", width < 800 ? "16px" : "32px");
+        const labelBox = await panel.getByRole("heading", { name: /^Saved charts/ }).boundingBox();
+        expect(labelBox!.y - headingBox!.y - headingBox!.height).toBeGreaterThanOrEqual(width < 800 ? 16 : 32);
         await page.screenshot({ path: path.join(responsiveScreenshotDir, `friends-list-${theme}-${width}.png`) });
       }
       await page.getByRole("button", { name: "Open Nikki" }).click();
@@ -4537,13 +4542,15 @@ test.describe("client-facing user flow case studies", () => {
     await expectClientRouteLoads(page, "/#friends?tab=charts");
 
     await expect(page.getByText("Nikki")).toBeVisible();
+    await page.getByRole("button", { name: "Open Nikki", exact: true }).click();
     await page.getByRole("button", { name: "More actions for Nikki" }).click();
     await page.getByRole("menuitem", { name: "Delete" }).click();
     await expect(page.getByRole("heading", { name: "Delete Nikki?" })).toBeVisible();
     await expect(page.getByText("This removes the saved chart and cannot be undone.")).toBeVisible();
 
     await page.getByRole("button", { name: "Cancel" }).click();
-    await expect(page.getByText("Nikki")).toBeVisible();
+    await expect(page.getByRole("heading", {name:"Nikki",exact:true})).toBeVisible();
+    await expect(page.getByRole("button", {name:"More actions for Nikki",exact:true})).toBeFocused();
     await assertNoClientErrors();
   });
 
@@ -4554,6 +4561,7 @@ test.describe("client-facing user flow case studies", () => {
     await expectClientRouteLoads(page, "/#friends?tab=charts");
 
     await expect(page.getByText("Nikki")).toBeVisible();
+    await page.getByRole("button", { name: "Open Nikki", exact: true }).click();
     await page.getByRole("button", { name: "More actions for Nikki" }).click();
     await page.getByRole("menuitem", { name: "Edit" }).click();
 
@@ -4565,7 +4573,8 @@ test.describe("client-facing user flow case studies", () => {
     await expect(editChartDialog.getByRole("button", { name: "Save chart" })).toBeVisible();
 
     await editChartDialog.getByRole("button", { name: "Close" }).click();
-    await expect(page.getByText("Nikki")).toBeVisible();
+    await expect(page.getByRole("heading", {name:"Nikki",exact:true})).toBeVisible();
+    await expect(page.getByRole("button", {name:"More actions for Nikki",exact:true})).toBeFocused();
     await assertNoClientErrors();
   });
 
