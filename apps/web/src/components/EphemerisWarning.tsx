@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 import { RefreshCw, TriangleAlert } from "lucide-react";
-import "../styles/ephemeris-status.css";
 
 type EphemerisWarningProps = { children: ReactNode; onRetry: () => void };
 
