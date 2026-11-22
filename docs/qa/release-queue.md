@@ -62,10 +62,31 @@ fixes. A separate PR does not require a separate production release.
 This supersedes a routine one-PR/one-release drain. Required checks, execution
 timeouts, branch protection, editorial authority and privacy remain in force.
 
+## Reservation release and external verification
+
+Owner direction, 2026-11-21, in
+`thread:01a1efe7-84fd-7623-8559-23a770f86ad8`: release the CI reservation after
+the merged candidate has terminal acceptable required and all actual main checks,
+and its Git-main deployment verification passes.
+
+An open external verification gap with no queued or running related CI must have
+a named owner, recorded status and dependency, and a concrete next event or
+deadline. Release the reservation for unrelated ready candidates. Dependent
+features retain that unverified acceptance requirement and cannot inherit a PASS.
+For example, the missing genuine GitHub schedule event after #1539 remains with
+the recovery owner under #1508; it does not reserve CI for unrelated application
+changes or become verified because application checks passed.
+
+This releases admission only. Every candidate still requires its own frozen,
+current-base exact-head gates, normal protected merge and affected production
+acceptance. Further code changes for an external gap require a new coordinator
+slot. Use one quiet wait per non-overlapping purpose. Existing approval, privacy
+and numeric-budget rules remain in force.
+
 1. The coordinator records the next compatible candidate and keeps other
    candidates frozen.
-2. After the preceding main deployment passes its affected production acceptance
-   and required main workflows finish successfully, set `RELEASE_ACTIVE_PR`
+2. After the preceding candidate's CI reservation is released under the criteria
+   above, set `RELEASE_ACTIVE_PR`
    with `gh variable set RELEASE_ACTIVE_PR --repo usrnmtkn/astrology-portal
    --body candidate-number`. Supply the actual PR number explicitly so the command
    runs noninteractively.
@@ -86,7 +107,8 @@ timeouts, branch protection, editorial authority and privacy remain in force.
    required action. Repair a concrete failure before submitting a replacement.
 6. Merge, let the main Git integration deploy, and verify the affected production
    journeys automatically. Record commit, deployment and acceptance outcomes,
-   then hand the slot to the next owner after the required main workflows pass.
+   including any separately owned external gap, then release the reservation
+   under the criteria above and hand the slot to the next owner.
    Clear the variable when the queue ends.
 
 ## Mandatory preflight before CI submission
