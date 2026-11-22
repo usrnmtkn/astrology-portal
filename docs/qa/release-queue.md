@@ -91,6 +91,13 @@ and numeric-budget rules remain in force.
    --body candidate-number`. Supply the actual PR number explicitly so the command
    runs noninteractively.
    The variable is scheduling state, not a secret or content approval.
+   The coordinator assigns every handoff. An implementation owner changes
+   admission only under an explicit coordinator assignment and a fresh server
+   lease read matching the expected owner/state. Read back the assigned value
+   before pushing. Preserve an unexpected value, stop the claim and report it to
+   the coordinator; never overwrite another active owner. A previous PR being
+   merged alone does not authorize a claim while its main checks or deployment
+   acceptance are still running.
    For a new candidate, reserve its number with a release issue, set admission,
    then [convert that same issue into the PR](https://docs.github.com/en/rest/pulls/pulls#create-a-pull-request).
    This lets its first PR event use the assigned slot instead of producing held

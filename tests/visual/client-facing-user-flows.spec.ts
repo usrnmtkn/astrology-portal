@@ -3761,8 +3761,9 @@ test.describe("client-facing user flow case studies", () => {
         await expect(heading.locator("h1")).toHaveText("Friends");
         // The approved compact directory carries its visible gap inside the panel.
         expect(headingBox!.y + headingBox!.height).toBeLessThanOrEqual(panelBox!.y);
+        await expect(panel).toHaveCSS("padding-top", width < 800 ? "16px" : "32px");
         const labelBox = await panel.getByRole("heading", { name: /^Saved charts/ }).boundingBox();
-        expect(headingBox!.y + headingBox!.height).toBeLessThan(labelBox!.y);
+        expect(labelBox!.y - headingBox!.y - headingBox!.height).toBeGreaterThanOrEqual(width < 800 ? 16 : 32);
         await page.screenshot({ path: path.join(responsiveScreenshotDir, `friends-list-${theme}-${width}.png`) });
       }
       await page.getByRole("button", { name: "Open Nikki" }).click();
