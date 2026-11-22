@@ -156,31 +156,6 @@ function inferredSectionQaSourceTag(section: { body?: ReactNode; sourceTag?: str
   return typeof section.sourceTag === "string" ? section.sourceTag.trim() : "";
 }
 
-function detailMetaRows(meta: string) {
-  const parts = meta.split("·").map((part) => part.trim()).filter(Boolean);
-
-  if (parts.length === 0) {
-    return [{ label: "Context", value: "Field guide" }];
-  }
-
-  return parts.map((part, index) => {
-    const lower = part.toLowerCase();
-    const label = lower.includes("orb")
-      ? "Orb"
-      : lower.includes("house")
-        ? "House"
-        : lower.includes("chapter")
-          ? "Chapter"
-      : lower === "today" || lower.includes("about ") || lower.includes("until ") || lower.includes("near exact")
-        ? "Duration"
-        : index === 0
-          ? "Signature"
-          : "Duration";
-
-    return { label, value: part };
-  });
-}
-
 type ArticleEyebrowGlyph = {
   key: string;
   label: string;
@@ -427,7 +402,6 @@ export function SkyDetailArticle({
       ))
     ]
   : (detail.sections ?? []);
-  const metaRows = detailMetaRows(detail.meta);
   const articleBody = detail.body.filter((node) => (
     !isRetrogradeTimelineNode(node) && (typeof node !== "string" || isReaderFacingCopy(node))
   ));
@@ -514,7 +488,7 @@ export function SkyDetailArticle({
   const readingPage = !placementPage && Boolean(headerAspect || personalArticle || /transit/iu.test(detail.kicker ?? ""));
   const eyebrowGlyphs = articleEyebrowGlyphs({
     glyph: detail.glyph,
-    meta: metaRows.map((row) => row.value).join(" "),
+    meta: detail.meta.split("·").map((part) => part.trim()).filter(Boolean).join(" ") || "Field guide",
     title: detail.title
   });
   const relatedAspectRows = (detail.relatedAspects?.rows ?? []).map(normalizeRelatedAspectRow);
