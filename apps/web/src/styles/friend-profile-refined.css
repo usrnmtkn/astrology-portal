@@ -8,7 +8,7 @@
 .app-shell.mode-friends .friends-page.friend-detail-page:has(.friend-profile-view) {
   width: min(var(--container-profile), calc(100vw - var(--profile-page-gutter) * 2));
   max-width: var(--container-profile);
-  margin-top: calc(var(--top-control-top) + var(--top-control-height) + var(--space-8));
+  margin-top: var(--page-top-compact);
 }
 .friend-chart-page.friend-profile-view.relationship-detail-layout {
   width: 100%; max-width: none; grid-template-columns: var(--layout-profile-balanced-columns);

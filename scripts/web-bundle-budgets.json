@@ -1,8 +1,8 @@
 {
-  "appBootGzipBytes": 402811,
-  "appChunkGzipBytes": 91642,
-  "readerBootGzipBytes": 463599,
-  "readerInitialCssGzipBytes": 60205,
+  "appBootGzipBytes": 402514,
+  "appChunkGzipBytes": 91358,
+  "readerBootGzipBytes": 462935,
+  "readerInitialCssGzipBytes": 59838,
   "largestJavaScriptGzipBytes": 520000,
   "friendsWorkspaceChunkGzipBytes": 16500,
   "skyDetailChunkGzipBytes": 7109,
@@ -13,8 +13,8 @@
   "calendarFallbackChunkGzipBytes": 10000,
   "relationshipFallbackChunkGzipBytes": 230000,
   "signupChunkGzipBytes": 4325,
-  "totalCssGzipBytes": 154573,
-  "totalJavaScriptGzipBytes": 3817013,
+  "totalCssGzipBytes": 154142,
+  "totalJavaScriptGzipBytes": 3816629,
   "_rationale": {
     "astronomyWarningScrollPosition20261119": {"receipt":"docs/qa/astronomy-warning-banner-bundle-cost-2026-11-19.json","runtimeCandidateRevision":"e3d0d944b8e1758c7ed24def4dcedf4f6dd2d66d","baseRevision":"786a6ad10017c1c3f62618e9960276c9191f2cc7","combinedFeatureCost":{"appBootGzipBytes":297,"appChunkGzipBytes":284,"readerBootGzipBytes":664,"readerInitialCssGzipBytes":367,"totalCssGzipBytes":431,"totalJavaScriptGzipBytes":384,"memoryGraphCssGzipBytes":32},"newLimits":{"appBootGzipBytes":401787,"appChunkGzipBytes":91642,"readerBootGzipBytes":461551,"readerInitialCssGzipBytes":60205,"totalCssGzipBytes":152525,"totalJavaScriptGzipBytes":3804725,"memoryGraphCssGzipBytes":33174},"reason":"Retain historical allocations exactly once, increasing only where the maximum measured positive paired final feature delta exceeds it. Preserve accepted-main headroom. Original numeric overages remain failures; source/lazy boundaries and all other guards remain unchanged."},
     "astronomyWarningOverlayRepair20261119": {"runtimeCandidateRevision":"37b664cc1fe5f2fd61a8a403819f62e40f2bd990","evidence":"docs/qa/astronomy-warning-banner-bundle-cost-2026-11-19.json","additionalAllocation":{"totalCssGzipBytes":32},"reason":"Carry the existing warning allowance once, retaining its complete earlier measurements. Re-measure the overlay repair in both matching profiles against the unchanged independent main controls. Add only the additional 32-byte aggregate CSS feature cost; preserve prior control headroom and every other numeric/source/runtime guard. The original failed CI job remains recorded."},
@@ -486,7 +486,7 @@
     "lunationTransitLayout20261112": "Matched isolated npm-ci builds of main 988c17cf7dccad62c01180fd4273bd5c2caebe60 and PR #1460 use identical locked dependencies, Node v22.20.0 arm64, gzip level 9, and the same synthetic reader build inputs. Moving the shared lunation UI and its new stylesheet entirely into the deferred You/Friends pages preserves all startup caps; the shared reader stylesheet remains byte-identical at 38599 gzip bytes. Aggregate JavaScript measures 3771671 to 3775865 (+4194), aggregate CSS 148033 to 148197 (+164), and the existing HoroscopeReader chunk 5678 to 5759 (+81) from shared module extraction/import overhead. Allocate only 4500 aggregate JavaScript bytes, 200 aggregate CSS bytes and 100 HoroscopeReader bytes for this requested feature, with rounding headroom. All other numeric limits, startup boundaries, source guards, assertions and dependencies remain unchanged. Preserve the original failed budget results: initial reader CSS +1428 over limit before deferral, then aggregate JS +3458, CSS +143 and HoroscopeReader +48 over the previous ceilings after deferral. This is a measured UI feature cost, not a performance-improvement claim. The final comparison includes restored existing non-lunar weekly cards: hiding the lunar section must not suppress Solar Return or other weekly personal-transit readings."
   },
   "memoryGraphJavaScriptGzipBytes": 64000,
-  "memoryGraphCssGzipBytes": 33302,
+  "memoryGraphCssGzipBytes": 33270,
   "horoscopeReaderChunkGzipBytes": 5969,
   "horoscopeEditorChunkGzipBytes": 16400,
   "studioCsvChunkGzipBytes": 8200
