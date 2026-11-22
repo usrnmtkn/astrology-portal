@@ -1,4 +1,131 @@
 {
+  "currentRelease": {
+    "date": "2026-11-21",
+    "acceptedMainRevision": "c924e790dc153d10dd8a8e031968f54d67d77083",
+    "runtimeCandidateRevision": "50a765064b2faba89bba2e2346043bb92a1e2797",
+    "scope": [
+      "Approved semantic astronomy warning above navigation with accessible icon-only refresh",
+      "Owner-approved Weekly context/direction/model patch",
+      "Owner-approved Friends directory and profile actions patch"
+    ],
+    "inheritedUpstream": "Moon event glyphs accepted through main PR1540",
+    "numericLimits": "Every numeric limit equals accepted main. Historical allocation proposals below are retained evidence and do not authorize or apply an increase to this release.",
+    "profile": {
+      "node": "v22.20.0",
+      "architecture": "arm64",
+      "zlib": "1.3.1-470d3a2",
+      "gzipLevel": 9,
+      "independentLockedDependencies": true,
+      "canonicalEnvironment": "Exported releaseBuildEnvironment, all inherited VITE flags stripped, CI=true; default and auth-startup profiles."
+    },
+    "profiles": {
+      "default": {
+        "measurements": {
+          "memoryGraphJavaScriptGzipBytes": 49119,
+          "memoryGraphCssGzipBytes": 33253,
+          "appBootGzipBytes": 402375,
+          "appChunkGzipBytes": 89117,
+          "readerBootGzipBytes": 462006,
+          "readerInitialCssGzipBytes": 59631,
+          "largestJavaScriptGzipBytes": 339712,
+          "friendsWorkspaceChunkGzipBytes": 9995,
+          "skyDetailChunkGzipBytes": 7096,
+          "reportRouteChunkGzipBytes": 3160,
+          "horoscopeReaderChunkGzipBytes": 5868,
+          "horoscopeEditorChunkGzipBytes": 16174,
+          "studioCsvChunkGzipBytes": 8144,
+          "skyPlacementFallbackChunkGzipBytes": 127245,
+          "lunationBookFallbackChunkGzipBytes": 210198,
+          "transitFallbackChunkGzipBytes": 339712,
+          "calendarFallbackChunkGzipBytes": 8970,
+          "relationshipFallbackChunkGzipBytes": 190743,
+          "signupChunkGzipBytes": 4270,
+          "totalCssGzipBytes": 153783,
+          "totalJavaScriptGzipBytes": 3816456
+        },
+        "failures": []
+      },
+      "auth": {
+        "measurements": {
+          "memoryGraphJavaScriptGzipBytes": 49119,
+          "memoryGraphCssGzipBytes": 33253,
+          "appBootGzipBytes": 402385,
+          "appChunkGzipBytes": 89125,
+          "readerBootGzipBytes": 462016,
+          "readerInitialCssGzipBytes": 59631,
+          "largestJavaScriptGzipBytes": 339712,
+          "friendsWorkspaceChunkGzipBytes": 9994,
+          "skyDetailChunkGzipBytes": 7095,
+          "reportRouteChunkGzipBytes": 3160,
+          "horoscopeReaderChunkGzipBytes": 5869,
+          "horoscopeEditorChunkGzipBytes": 16174,
+          "studioCsvChunkGzipBytes": 8144,
+          "skyPlacementFallbackChunkGzipBytes": 127245,
+          "lunationBookFallbackChunkGzipBytes": 210198,
+          "transitFallbackChunkGzipBytes": 339712,
+          "calendarFallbackChunkGzipBytes": 8970,
+          "relationshipFallbackChunkGzipBytes": 190743,
+          "signupChunkGzipBytes": 4271,
+          "totalCssGzipBytes": 153783,
+          "totalJavaScriptGzipBytes": 3816429
+        },
+        "failures": []
+      }
+    },
+    "preservedFailuresAndRepairs": [
+      {
+        "failure": "Short desktop date controls clipped after warning clearance",
+        "repair": "Viewport-bounded short desktop dialog; mobile sheets retained"
+      },
+      {
+        "failure": "Saturn paragraph shifted by notice height during background refresh",
+        "repair": "Compensate scroll for notice appearance, resize and removal; strict less-than-two-pixel assertions retained"
+      },
+      {
+        "failure": "Friend profile report tabs sat beneath fixed navigation",
+        "repair": "Notice-aware compact profile clearance, preserving normal spacing"
+      },
+      {
+        "failure": "Four local tests expected retired directory edit/delete controls and wrapper-only gaps",
+        "repair": "Use approved profile action menu and assert exact responsive padding, non-overlap and visible-label clearance"
+      },
+      {
+        "failure": "Warning failed to appear when later frontend assets could not load",
+        "repair": "Warning presentation and stylesheet ship with initial page; only background report validation defers; import failure and deadline remain unavailable observations"
+      },
+      {
+        "failure": "Eager warning stylesheet as separate CSS asset exceeded startup CSS by144bytes",
+        "repair": "Consolidate with initial reader stylesheet; all size guards pass without cap increases"
+      }
+    ],
+    "verification": {
+      "browser": {
+        "passed": 369,
+        "failed": 0,
+        "notRun": 0,
+        "retries": 0,
+        "minutes": 23.5,
+        "scope": "Complete ephemeris-health, full-chart-reports, overlay-viewport, sky-placement-retrograde, friends-directory-handoff, generic-sky-key-dates and calendar-event-sky-navigation specs; affected profile/action/layout cases in design-handoff and client-facing specs"
+      },
+      "visual": "Twelve warning-header, short date-dialog and Friends directory captures inspected across mobile/desktop and light/dark",
+      "weekly": "Four actual-handler/mock-provider contracts pass on unchanged integrated Weekly inputs; no paid calls or content publication",
+      "health": "Scoped HTTP handler and configured Swiss engine checks, worker hang/malformed/wrong-input/recovery contracts pass",
+      "server": "Server types and native production health import graph pass",
+      "boundaries": "CSS/token, social read-only, browser gate, release admission/workflow, source and public-asset privacy pass",
+      "memory": "Release-queue search/detail/integrity, owner provenance, explicit lease handoff and deployment inclusion pass",
+      "reuse": "Successful API/evidence/Studio phases retained only where their source/dependency inputs are unchanged; current Web and affected browser checks rerun after final runtime edits"
+    },
+    "unrelatedBaselineDiagnostics": {
+      "baseline": "72a6f10fbdb4a6f3df27dfe509412a536631482c",
+      "sameFailureProvedOnCandidateAndBaseline": [
+        "scripts/test-full-detail-copy-integrity.mjs",
+        "scripts/test-fallback-refresh-wiring.mjs",
+        "scripts/test-friends-live-detail-refresh.mjs"
+      ],
+      "status": "Pre-existing manual diagnostics outside selected required API commands and every CI workflow; failures retained and reported to release coordinator, not relabeled PASS"
+    },
+    "remainingReleaseGates": "Frozen exact-head hosted API/browser/privacy and all actual checks; protected merge; all actual main checks; exact Git-main production deployment and isolated deployed acceptance."
+  },
   "baseRevision": "7b0ce3b2de90946ee95a6af8c41a8a2d4aa4631f",
   "runtimeCandidateRevision": "ee97bf4f121ee7cb9359789a5de465d6bf1324e9",
   "profile": {
