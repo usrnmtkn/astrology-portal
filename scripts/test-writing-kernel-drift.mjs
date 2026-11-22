@@ -13,7 +13,8 @@ const ignoredSegments = new Set(["node_modules", "dist", "generated", "review", 
 const kernelFiles = new Set([
   "packages/astro-knowledge/scripts/knowledge-resolver.js",
   "src/astro-writing/geminiInteractions.cjs",
-  "src/astro-writing/openAIResponses.cjs"
+  "src/astro-writing/openAIResponses.cjs",
+  "src/astro-writing/writingRunArchive.cjs"
 ]);
 
 const RULES = Object.freeze({
@@ -21,7 +22,8 @@ const RULES = Object.freeze({
     /api\.openai\.com/gu,
     /api\.anthropic\.com/gu,
     /generativelanguage\.googleapis\.com/gu,
-    /\bcallOpenAIResponses\s*\(/gu
+    /\bcallOpenAIResponses\s*\(/gu,
+    /\barchivedWritingFetch\s*\(/gu
   ],
   packet_builder: [
     /\bfunction\s+buildPacket\s*\(/gu,

@@ -2,8 +2,8 @@
 
 Request: retain exact prompts and selected evidence for every future writer and
 judge run, so private instruction exports can show the inputs actually supplied.
-Implementation and release ownership remain in this change; no cross-chat
-handoff or paid generation is required.
+Implementation and release ownership remain in this change. Release coordination
+is authorized; no paid generation is required.
 
 Implementation base: `767a98a5285ac9e917aadaab0712a7f20a8c493f`. The subsequent
 main revision `5af47261880e4495ed42ff35e2f311ad7f7962eb` changes Friends CSS,
@@ -42,10 +42,34 @@ helper was corrected without changing emitted JavaScript, then checked with the
 full server TypeScript configuration. These corrections do not relax runtime
 checks or change model input.
 
+The `corpus-grammar` check on `5b44645a29c62fb7704aa744c314dbd4dddd46a6`
+identified the new shared archive transport as an unregistered kernel boundary.
+It was registered alongside the existing canonical provider transports. Direct
+uses of `archivedWritingFetch` are now also detected by the drift scanner; the
+frozen exception allowlist remains unchanged.
+
+The earlier hosted `project-privacy` check passed on that revision. The required
+`content-studio-api` and `browser-release-gate` runs were cancelled during the
+release hold; neither is passing evidence. The corrected strict-type preview
+reached Ready, but a preview is not production activation.
+
+The additive archive migration was applied on November 18. Production inspection
+confirmed RLS, no client policies or browser-role read privileges, server
+insert/read access, outcome-only updates, and no server delete privilege. Do not
+reapply the migration merely to resume the release.
+
+The owner resumed release on November 21. A static integration check against
+`72a6f10fbdb4a6f3df27dfe509412a536631482c` found conflicts in `package.json`,
+`scripts/test-shared-explicit-writing-feedback.mts`, and
+`scripts/test-synastry-writing-contract.mts`. The release coordinator queued this
+change after the preceding accepted main release. Main integration, scoped
+preflight, exact-head gates, and production acceptance remain pending. Private
+run archives must remain excluded from any public published-content backup.
+
 Hosted exact-head API/browser/privacy gates and production activation are separate
 release evidence. Local acceptance alone does not establish a live deployment.
-Apply the new migration before the main-branch app deployment, verify private
-access without a paid call, and retain existing archives on rollback. Historical
+Verify the existing migration and private access without a paid call before
+production acceptance, and retain existing archives on rollback. Historical
 requests that were never saved remain explicitly unavailable.
 
 See [archive architecture and export instructions](../architecture/writing-run-archives.md).
