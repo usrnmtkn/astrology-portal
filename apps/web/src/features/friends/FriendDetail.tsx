@@ -1,6 +1,6 @@
 import { PortalVisibility } from "../../components/portalVisibility";
 import { ViewportMenu } from "../../components/ViewportMenu";
-import { Check, ChevronDown, MoreVertical } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 import { useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { ProfileAvatar } from "../../components/ProfileAvatar";
 import "../../styles/friends-detail.css";
@@ -24,9 +24,7 @@ type FriendDetailProps = {
   isEventChart: boolean;
   moon: string;
   name: string;
-  onEdit?: () => void;
   profileActions?: ReactNode;
-  editButtonId?: string;
   onTabChange: (tab: FriendDetailTab) => void;
   onTabIntent?: (tab: FriendDetailTab) => void;
   rising: string;
@@ -54,9 +52,7 @@ export function FriendDetail({
   isEventChart,
   moon,
   name,
-  onEdit,
   profileActions,
-  editButtonId,
   onTabChange,
   onTabIntent,
   rising,
@@ -212,11 +208,7 @@ export function FriendDetail({
             ) : null}
           </div>
         ) : null}
-        {profileActions ?? (onEdit ? (
-          <button id={editButtonId} className="friend-kebab" type="button" aria-label={`Edit ${name}`} onClick={onEdit}>
-            <MoreVertical size={24} aria-hidden="true" />
-          </button>
-        ) : null)}
+        {profileActions}
         </div>
       </header>
       <div className="relationship-detail-right friend-detail-content-column friend-detail-main chart-layout__content">
