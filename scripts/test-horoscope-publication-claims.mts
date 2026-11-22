@@ -345,4 +345,28 @@ for(const bad of [
  assert.equal(denied.status,422);assert.deepEqual(store.rows.get(invalid.id),invalid);
 }
 console.log('PASS natural grammar: twelve exact drafts clear preflight without writes; missing/wrong planets, aspects, motion, houses and natal biography remain blocked.');
+// A bounded sector description is ordinary placement grammar, not an unnamed
+// aspect. The calculated pair, aspect and any stated motion still govern it.
+const sectorBody='Venus retrograde in your partnership sector also sextiles Jupiter. You can review the synthetic fixture.';
+for(const gloss of ['partnership','close relationship']){
+ assert.deepEqual(issues('aries',sectorBody.replace('partnership',gloss),grammarBrief),[]);
+}
+for(const bad of [
+ sectorBody.replace('sextiles','trines'),
+ sectorBody.replace('retrograde','direct'),
+ sectorBody.replace('Jupiter','a colleague'),
+ sectorBody.replace('sector also','sector, while Mars also'),
+ sectorBody.replace('sector also','sector on Monday also')
+])assert(issues('aries',bad,grammarBrief).length,'Sector grammar cannot hide unsupported or ambiguous claims');
+const sectorRow=structuredClone(grammarBefore);
+for(const passage of sectorRow.sections.horoscopeEdition.passages){
+ passage.body=passage.body.replace('Maybe you kept the task because you always did it before. ','');
+}
+sectorRow.sections.horoscopeEdition.passages[0].body=sectorBody;
+sectorRow.body=horoscopeEditionBody(sectorRow.sections.horoscopeEdition);
+store.rows.set(sectorRow.id,sectorRow);
+const sectorLive=await store.invoke('PATCH',{id:sectorRow.id,expectedUpdatedAt:sectorRow.updated_at,status:'LIVE'});
+assert.equal(sectorLive.status,200,JSON.stringify(sectorLive.payload));
+assert.deepEqual(sectorLive.payload.rows[0].sections,sectorRow.sections,'Recognizing grammar never rewrites a passage');
+console.log('PASS bounded sector grammar: supported pair publishes unchanged; wrong aspects, motions and ambiguous intervening subjects remain blocked.');
 await import('./test-horoscope-described-aspect.mjs');
