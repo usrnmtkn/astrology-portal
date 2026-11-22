@@ -1,7 +1,6 @@
-import { lazy, Suspense, useEffect, useSyncExternalStore } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { readEphemerisHealth, refreshEphemerisHealth, subscribeEphemerisHealth } from "../services/ephemerisHealth";
-
-const EphemerisWarning = lazy(() => import("./EphemerisWarning"));
+import EphemerisWarning from "./EphemerisWarning";
 
 function retry() {
   void refreshEphemerisHealth();
@@ -25,9 +24,9 @@ export function EphemerisStatus({ retainedAt, timeZone }: { retainedAt?: string;
   }, []);
   const degraded = Boolean(retainedAt) || health.service?.ok === false || health.worker?.ok === false;
   if (!degraded) return null;
-  return <Suspense fallback={null}><EphemerisWarning onRetry={retry}>
+  return <EphemerisWarning onRetry={retry}>
     <p><strong>{retainedAt ? "Live calculations are temporarily unavailable." : "Some astronomy calculations are temporarily unavailable."}</strong>{retainedAt
       ? ` Showing the last verified calculation from ${new Date(retainedAt).toLocaleString([], { timeZone: timeZone || "UTC", timeZoneName: "short" })}.`
       : " Affected readings may need another try."}</p>
-  </EphemerisWarning></Suspense>;
+  </EphemerisWarning>;
 }

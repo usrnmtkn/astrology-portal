@@ -154,6 +154,38 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
   });
 }
 
+test('A service warning remains available when later frontend assets cannot load', async ({ page }) => {
+  test.setTimeout(120_000);
+  await page.clock.setFixedTime(new Date(instant));
+  await page.addInitScript(() => localStorage.setItem('tldrastro:selectedLocation', JSON.stringify({ label: 'Synthetic Greenwich', latitude: 0, longitude: 0, timeZone: 'UTC' })));
+  await bundledSkyPublications(page);
+  await page.route('**/api/calendar?**', route => route.fulfill({ json: { ok: true, calendar: { days: [] } } }));
+  let ready = true;
+  let healthRequests = 0;
+  await page.route('**/api/health?scope=ephemeris', route => {
+    healthRequests++;
+    return route.fulfill({ status: ready ? 200 : 503, json: health(ready) });
+  });
+  await page.route(/\/api\/sky(?:-reader)?\?/, async route => {
+    let body = '';
+    const res = { statusCode: 200, setHeader() {}, end(value: string) { body = value; } };
+    await skyHandler({ method: 'GET', url: route.request().url() } as IncomingMessage, res as unknown as ServerResponse);
+    await route.fulfill({ status: res.statusCode, contentType: 'application/json', body });
+  });
+  await page.goto('/#sky');
+  const reading = page.getByLabel('Daily sky summary');
+  await expect(reading).toBeVisible({ timeout: 60_000 });
+  await expect.poll(() => healthRequests).toBeGreaterThan(0);
+  await page.evaluate(() => document.fonts.ready);
+  await expect(page.locator('[data-ephemeris-status]')).toHaveCount(0);
+  await page.route('**/assets/**', route => route.abort());
+  ready = false;
+  await page.evaluate(() => window.dispatchEvent(new Event('online')));
+  await expect(page.getByRole('status', { name: 'Astronomy service warning' })).toBeVisible();
+  await expect(reading).toBeVisible();
+  await expectWarningAboveNavigation(page);
+});
+
 test('Invalid facts and a hung fallback reach an error, then retry admits only verified facts', async ({ page }) => {
   test.setTimeout(120_000);
   await page.clock.setFixedTime(new Date(instant));
