@@ -484,7 +484,7 @@ for (const width of [320, 390, 960, 1440]) for (const theme of ['light', 'dark']
   await expect(title).toHaveText(friendName);
   await expect(profile.locator('.compatibility-card').first()).toBeVisible({timeout: 60_000});
   const tabs = profile.getByRole('tablist', {name: 'Chart profile sections', exact: true});
-  const edit = profile.getByRole('button', {name: `Edit ${friendName}`, exact: true});
+  const edit = profile.getByRole('button', {name: `More actions for ${friendName}`, exact: true});
   await expect(title).toHaveCSS('font-family', /Newsreader/);
   await expect(title).toHaveCSS('font-size', width > 800 ? '44px' : '34px');
   await expect(title).toHaveCSS('font-weight', '400');
@@ -512,7 +512,7 @@ for (const width of [320, 390, 960, 1440]) for (const theme of ['light', 'dark']
   await expect(profile.locator('.compatibility-card').first()).toHaveCSS('background-color', cardSurface.background);
   await expect(profile.locator('.compatibility-card').first()).toHaveCSS('box-shadow', cardSurface.shadow);
   const bodyBefore = await profile.locator('.compatibility-card p').allTextContents();
-  await edit.click(); await expect(page.getByRole('dialog')).toBeVisible(); await page.keyboard.press('Escape'); await expect(edit).toBeFocused();
+  await edit.click(); await page.getByRole('menuitem', {name:'Edit', exact:true}).click(); await expect(page.getByRole('dialog')).toBeVisible(); await page.keyboard.press('Escape'); await expect(edit).toBeFocused();
   for (const name of ['Compatibility', 'Transits', 'Natal', 'Synastry', 'Composite']) {
     const tab = tabs.getByRole('tab', {name, exact: true, includeHidden: true});
     if (await tab.isVisible()) await tab.click();
@@ -621,7 +621,7 @@ for(const width of [390,1440]) for(const theme of ['light','dark']) {
   const placements=(await profile.locator('.natal-placement-sections').boundingBox())!;
   expect(chart.y).toBeGreaterThanOrEqual((await profile.locator('.friend-profile-heading').boundingBox())!.y+(await profile.locator('.friend-profile-heading').boundingBox())!.height);
   expect(placements.y).toBeGreaterThanOrEqual(chart.y+chart.height);
-  let box=(await profile.boundingBox())!,edit=(await profile.getByRole('button',{name:'Edit Fixture Event',exact:true}).boundingBox())!;
+  let box=(await profile.boundingBox())!,edit=(await profile.getByRole('button',{name:'More actions for Fixture Event',exact:true}).boundingBox())!;
   expect(Math.abs(edit.x+edit.width-box.x-box.width)).toBeLessThan(1);
   await page.screenshot({path:`test-results/design-friend-event-${width}-${theme}.png`});
   await page.goto('/?date=2026-10-13#friends?tab=charts&chart=fixture-missing&view=natal');

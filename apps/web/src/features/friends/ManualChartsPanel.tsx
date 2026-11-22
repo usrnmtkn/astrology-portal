@@ -29,6 +29,7 @@ import { useConnectionTransitSources, publishedConnectionCopy, connectionBridgeC
 import { connectionTransitReading } from "./connectionTransitReading";
 import { PageLoading, PageLoadError } from "../../components/PageLoading";
 import { FriendDetail } from "./FriendDetail";
+import { FriendChartActions } from "./FriendChartActions";
 import {
   Suspense,
   lazy,
@@ -2866,15 +2867,11 @@ export function ManualChartsPanel({
           charts: friendChartListItems,
           isLoading: isLoadingCharts,
           message,
-          openChartMenuId,
           showMessage: !friendChartModalOpen,
           onAddBirthTime: addBirthTime,
           onAddChart: openAddChartModal,
-          onDeleteChart: requestDeleteChart,
-          onEditChart: editChart,
           onChartIntent: prefetchFriendProfile,
-          onOpenChart: openFriendProfile,
-          onToggleChartMenu: (chartId) => setOpenChartMenuId((currentId) => currentId === chartId ? null : chartId)
+          onOpenChart: openFriendProfile
         }}
         detailVariant={friendProfileTab}
         isDetailView={isFriendDetailView}
@@ -2920,7 +2917,7 @@ export function ManualChartsPanel({
           form={form}
           formCopy={formCopy}
           isEditing={Boolean(editingChart)}
-          restoreFocusId={editingChartId ? `friend-edit-${editingChartId}` : undefined}
+          restoreFocusId={editingChartId ? `friend-menu-${editingChartId}` : undefined}
           isEventForm={isEventForm}
           isSubmitting={status === "saving" || status === "deleting"}
           message={message}
@@ -3010,6 +3007,10 @@ export function ManualChartsPanel({
           name={selectedChart.displayName}
           editButtonId={`friend-edit-${selectedChart.id}`}
           onEdit={isSocialFriendChart(selectedChart) ? undefined : () => editChart(selectedChart)}
+          profileActions={isSocialFriendChart(selectedChart) ? undefined : <FriendChartActions
+            id={selectedChart.id} name={selectedChart.displayName} open={openChartMenuId === selectedChart.id}
+            onToggle={() => setOpenChartMenuId(current => current === selectedChart.id ? null : selectedChart.id)}
+            onEdit={() => editChart(selectedChart)} onDelete={() => requestDeleteChart(selectedChart)} />}
           onTabChange={changeFriendProfileTab}
           onTabIntent={requestFriendProfileTab}
           rising={selectedFriendBigThree?.rising ?? "Rising pending"}

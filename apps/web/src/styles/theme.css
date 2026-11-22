@@ -1403,8 +1403,10 @@
   /* Every route begins below the floating header with the same clear space. */
   --page-nav-gap: calc(var(--space-10) + var(--space-4));
   --page-top: calc(env(safe-area-inset-top, 0px) + var(--app-notice-height) + var(--top-control-top) + var(--top-control-height) + var(--page-nav-gap));
-  /* Compact page headings retain their existing gap below floating controls. */
+  /* Compact profile headings retain their existing gap below floating controls. */
   --page-top-compact: calc(var(--app-notice-height) + var(--top-control-top) + var(--top-control-height) + var(--space-8));
+  /* Directory headings retain their compact gap and clear viewport notices. */
+  --page-compact-top: calc(env(safe-area-inset-top, 0px) + var(--app-notice-height) + var(--top-control-top) + var(--top-control-height) + var(--space-7));
   --page-bottom: clamp(64px, 8vw, 96px);
   --page-content-width: min(var(--page-max), calc(100vw - var(--page-gutter) * 2));
   --page-narrow-width: min(var(--page-narrow), calc(100vw - var(--page-gutter) * 2));

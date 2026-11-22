@@ -1,4 +1,5 @@
 /* One stationary title/control row for every Friends workspace tab. */
+.app-shell.mode-friends .friends-page:is([data-view="circle"], [data-view="charts"], [data-view="requests"]) { margin-top: var(--page-compact-top); padding-top: 0; }
 .friends-page .friends-unified-panel { width: min(var(--container-content), 100%); border: 0; border-radius: 0; background: transparent; box-shadow: none; }
 .friends-workspace-heading { display: flex; align-items: center; justify-content: space-between; gap: var(--space-6); width: 100%; margin-bottom: var(--space-6); }
 .friends-workspace-heading h1 { margin: 0; font-family: var(--font-display); font-size: var(--text-title); font-weight: var(--weight-regular); line-height: var(--leading-display); letter-spacing: var(--tracking-display); }
@@ -15,7 +16,7 @@
 .friends-add-menu button { display: flex; align-items: center; gap: var(--space-4); width: 100%; padding: var(--space-4); border: 0; border-radius: var(--radius-sm); background: transparent; color: var(--ink); text-align: left; font-family: var(--font-ui); font-size: var(--text-button-size); }
 .friends-add-menu button:hover { background: var(--surface-2); }
 .friends-add-menu small { display: block; margin-top: var(--space-1); font-size: var(--type-meta-size); color: var(--muted); }
-.friends-page .friends-unified-search-row { min-height: var(--size-7); height: var(--size-7); border: 0; border-radius: var(--radius-pill); padding: 0 var(--space-6); background: var(--surface); box-shadow: var(--card-shadow); margin-top: var(--space-7); }
+.friends-page .friends-unified-search-row { min-height: var(--size-7); height: var(--size-7); border: 0; border-radius: var(--radius-pill); padding: 0 var(--space-6); background: var(--surface-track); box-shadow: var(--shadow-recessed); margin-top: var(--space-7); }
 .friends-page .friends-unified-search-row input { min-height: 0; font-family: var(--font-ui); font-size: var(--text-button-size); }
 .friends-page .friends-unified-content { padding: var(--space-7) 0 0; border: 0; background: transparent; }
 .friends-page .friends-person-list { display: grid; gap: var(--space-2); }
@@ -66,6 +67,8 @@
  .friends-feed-layout { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 800px) {
+ .friends-page:not([data-view="feed"]) .friends-workspace-heading { margin-bottom: 0; }
+ .friends-page:not([data-view="feed"]) .friends-unified-content { padding-top: var(--space-4); }
  .friends-workspace-controls { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--space-2); }
  .friends-workspace-heading .friends-unified-tabs { width: 100%; gap: 0; }
  .friends-workspace-heading .friends-unified-tabs > button { flex: 1; min-width: 0; padding: 0 var(--space-2); font-size: var(--type-meta-size); }
@@ -79,10 +82,12 @@
  .friends-workspace-heading--feed .friends-unified-tabs { grid-column: 1 / -1; grid-row: 2; }
  .friends-workspace-heading--feed .friends-workspace-action { grid-column: 2; grid-row: 1; width: auto; }
  .friends-workspace-heading--feed .friends-workspace-action > select { width: auto; padding-inline: var(--space-4); }
- .friends-page .friends-person-row { padding: var(--space-5); gap: var(--space-3); border-radius: var(--card-radius-sm); }
- .friends-page .friends-person-identity { display: grid; gap: var(--space-1); }
+ .friends-page .friends-person-row { padding: var(--space-4) 0; gap: var(--space-3); border-radius: 0; background: transparent; box-shadow: none; }
+ .friends-page .friends-person-identity { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-1); }
  .friends-page .friends-person-identity strong { font-family: var(--font-ui); font-size: var(--type-compact-row-size); font-weight: var(--weight-semibold); }
  .friends-page .friends-person-actions { flex-wrap: wrap; }
+ .friends-page .friends-person-row:has(.friends-row-arrow) { grid-template-columns: var(--size-4) minmax(0, 1fr) auto; }
+ .friends-page .friends-person-row:has(.friends-row-arrow) .friends-person-actions { grid-column: 3; grid-row: 1; }
  .friends-timing-card { padding: var(--space-6); }
  .friends-feed-sidebar { display: none; }
 }

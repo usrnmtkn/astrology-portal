@@ -25,6 +25,7 @@ type FriendDetailProps = {
   moon: string;
   name: string;
   onEdit?: () => void;
+  profileActions?: ReactNode;
   editButtonId?: string;
   onTabChange: (tab: FriendDetailTab) => void;
   onTabIntent?: (tab: FriendDetailTab) => void;
@@ -54,6 +55,7 @@ export function FriendDetail({
   moon,
   name,
   onEdit,
+  profileActions,
   editButtonId,
   onTabChange,
   onTabIntent,
@@ -210,11 +212,11 @@ export function FriendDetail({
             ) : null}
           </div>
         ) : null}
-        {onEdit ? (
+        {profileActions ?? (onEdit ? (
           <button id={editButtonId} className="friend-kebab" type="button" aria-label={`Edit ${name}`} onClick={onEdit}>
             <MoreVertical size={24} aria-hidden="true" />
           </button>
-        ) : null}
+        ) : null)}
         </div>
       </header>
       <div className="relationship-detail-right friend-detail-content-column friend-detail-main chart-layout__content">

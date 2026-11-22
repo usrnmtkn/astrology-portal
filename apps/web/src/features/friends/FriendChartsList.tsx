@@ -1,6 +1,5 @@
-import { Clock, MoreVertical, Pencil, Trash2 } from "lucide-react";
+import { ChevronRight, Clock } from "lucide-react";
 import type { ReactNode } from "react";
-import { ViewportMenu } from "../../components/ViewportMenu";
 import type { ManualChart } from "../../services/manualCharts";
 import { ChartPatternPill } from "./ChartPatternPill";
 import { ContentLoading as PageLoading } from "../../components/LoadingPatterns";
@@ -11,15 +10,11 @@ export type FriendChartsListProps = {
   charts: FriendChartListItem[];
   isLoading: boolean;
   message: string;
-  openChartMenuId: string | null;
   showMessage: boolean;
   onAddChart: () => void;
   onAddBirthTime: (chart: ManualChart) => void;
-  onDeleteChart: (chart: ManualChart) => void;
-  onEditChart: (chart: ManualChart) => void;
   onChartIntent: (chart: ManualChart) => void;
   onOpenChart: (chart: ManualChart) => void;
-  onToggleChartMenu: (chartId: string) => void;
   embedded?: boolean;
 };
 
@@ -28,15 +23,11 @@ export function FriendChartsList({
   charts,
   isLoading,
   message,
-  openChartMenuId,
   showMessage,
   onAddChart,
   onAddBirthTime,
-  onDeleteChart,
-  onEditChart,
   onChartIntent,
   onOpenChart,
-  onToggleChartMenu,
   embedded = false
 }: FriendChartsListProps) {
   return (
@@ -104,6 +95,7 @@ export function FriendChartsList({
                         {patternSummary ? <ChartPatternPill summary={patternSummary} /> : null}
                       </span>
                     </span>
+                    <span className="manual-chart-open" aria-hidden="true"><ChevronRight size={18} /></span>
                   </button>
                   {needsBirthTime && (
                     <span className="manual-chart-row-cta">
@@ -113,28 +105,6 @@ export function FriendChartsList({
                       </button>
                     </span>
                   )}
-                  <span className="manual-chart-actions">
-                    <button
-                      className="manual-chart-menu-trigger"
-                      id={`friend-menu-${chart.id}`}
-                      type="button"
-                      aria-label={`More actions for ${chart.displayName}`}
-                      aria-expanded={openChartMenuId === chart.id}
-                      onClick={() => onToggleChartMenu(chart.id)}
-                    >
-                      <MoreVertical size={20} aria-hidden="true" />
-                    </button>
-                    {openChartMenuId === chart.id && (
-                      <ViewportMenu className="manual-chart-overflow-menu" aria-label={`${chart.displayName} actions`}>
-                        <button type="button" role="menuitem" onClick={() => onEditChart(chart)}>
-                          <Pencil size={17} aria-hidden="true" /><span>Edit</span>
-                        </button>
-                        <button type="button" role="menuitem" className="manual-chart-delete" onClick={() => onDeleteChart(chart)}>
-                          <Trash2 size={17} aria-hidden="true" /><span>Delete</span>
-                        </button>
-                      </ViewportMenu>
-                    )}
-                  </span>
                 </div>
               ))}
             </div>
