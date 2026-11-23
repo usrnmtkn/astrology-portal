@@ -127,8 +127,12 @@ for(const width of [390,1440])for(const theme of ['light','dark']){
   await expect(page.getByRole('button',{name:'Planets',exact:true})).toHaveAttribute('aria-pressed','true');
   await expect(article.locator('.horoscope-reading-sign')).toHaveText(['Gemini','↑Gemini Rising']);
   const title=article.locator('.horoscope-reading-date');
-  await expect(title).toHaveCSS('font-family',/Newsreader/);await expect(title).toHaveCSS('font-size',width<=800?'34px':'44px');await expect(title).toHaveCSS('font-weight','400');await expect(title).toHaveCSS('line-height',width<=800?'37.4px':'48.4px');
-  await expect(article.locator('.horoscope-prose p')).toHaveCSS('font-family',/Newsreader/);await expect(article.locator('.horoscope-prose p')).toHaveCSS('font-size',width<=800?'19px':'26px');await expect(article.locator('.horoscope-prose p')).toHaveCSS('line-height',width<=800?'28.5px':'37.7px');
+  await expect(title).toHaveCSS('font-family',/Newsreader/);await expect(title).toHaveCSS('font-size',width<=800?'34px':'44px');await expect(title).toHaveCSS('font-weight','400');
+  // WebKit serializes fractional CSS pixels with float32 noise (37.400002px).
+  await expect.poll(async()=>Number.parseFloat(await title.evaluate(el=>getComputedStyle(el).lineHeight)),{timeout:15_000}).toBeCloseTo(width<=800?37.4:48.4,5);
+  const prose=article.locator('.horoscope-prose p');
+  await expect(prose).toHaveCSS('font-family',/Newsreader/);await expect(prose).toHaveCSS('font-size',width<=800?'19px':'26px');
+  await expect.poll(async()=>Number.parseFloat(await prose.evaluate(el=>getComputedStyle(el).lineHeight)),{timeout:15_000}).toBeCloseTo(width<=800?28.5:37.7,5);
   await expect(page.getByRole('heading',{level:1})).toHaveText('Horoscopes');
   await expect(page.getByRole('navigation',{name:'Planetary horoscopes'}).getByRole('button',{name:'Previous',exact:true})).toBeDisabled();
   await page.getByRole('button',{name:'Aries & Aries Rising',exact:true}).click();

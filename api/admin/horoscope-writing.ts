@@ -468,7 +468,7 @@ export async function runHoroscopeWriting(input:Record<string,any>,actor:string,
           ...(batchId?{batch:{...generation.batch,attempted:[...generation.batch.attempted,sign]}}:{}),
           failures:legacy&&!failures.some((failure:any)=>failure.operation?.id===legacy.operation?.id)?[...failures,legacy]:failures}}});
         stage='dispatch';dispatchAttempted=true;
-        const {response,payload:result}=await startHoroscopeResponse({config:operation.config,role,request:dispatchedRequest,instructions,context:{editionId:row.id,operationId:operation.id,requestHash:operation.requestHash,...(reservedStreamId?{deadline:invocationDeadline,weekly:true}:{})}});
+        const {response,payload:result}=await startHoroscopeResponse({config:operation.config,role,request:dispatchedRequest,instructions,context:{period:row.sections.horoscopeEdition.window.period,contentKey:row.content_key,editionId:row.id,operationId:operation.id,requestHash:operation.requestHash,...(reservedStreamId?{deadline:invocationDeadline,weekly:true}:{})}});
         payload=result;
         if(!response.ok) {
           if(response.status>=400&&response.status<500)readHoroscopeProviderResult({...payload,status:'failed'},{format:operation.outputFormat});

@@ -343,6 +343,14 @@
         "PATCH"
       ],
       "access": "owner"
+    },
+    {
+      "path": "/api/admin/writing-runs",
+      "file": "api/admin/writing-runs.ts",
+      "methods": [
+        "GET"
+      ],
+      "access": "owner"
     }
   ]
 }

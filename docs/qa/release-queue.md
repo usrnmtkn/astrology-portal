@@ -62,15 +62,49 @@ fixes. A separate PR does not require a separate production release.
 This supersedes a routine one-PR/one-release drain. Required checks, execution
 timeouts, branch protection, editorial authority and privacy remain in force.
 
+## Reservation release and external verification
+
+Owner direction, 2026-11-21, in
+`thread:01a1efe7-84fd-7623-8559-23a770f86ad8`: release the CI reservation after
+the merged candidate has terminal acceptable required and all actual main checks,
+and its Git-main deployment verification passes.
+
+An open external verification gap with no queued or running related CI must have
+a named owner, recorded status and dependency, and a concrete next event or
+deadline. Release the reservation for unrelated ready candidates. Dependent
+features retain that unverified acceptance requirement and cannot inherit a PASS.
+For example, the missing genuine GitHub schedule event after #1539 remains with
+the recovery owner under #1508; it does not reserve CI for unrelated application
+changes or become verified because application checks passed.
+
+This releases admission only. Every candidate still requires its own frozen,
+current-base exact-head gates, normal protected merge and affected production
+acceptance. Further code changes for an external gap require a new coordinator
+slot. Use one quiet wait per non-overlapping purpose. Existing approval, privacy
+and numeric-budget rules remain in force.
+
 1. The coordinator records the next compatible candidate and keeps other
    candidates frozen.
-2. After the preceding main deployment passes its affected production acceptance
-   and required main workflows finish successfully, set `RELEASE_ACTIVE_PR`
+2. After the preceding candidate's CI reservation is released under the criteria
+   above, set `RELEASE_ACTIVE_PR`
    with `gh variable set RELEASE_ACTIVE_PR --repo usrnmtkn/astrology-portal
    --body candidate-number`. Supply the actual PR number explicitly so the command
    runs noninteractively.
    The variable is scheduling state, not a secret or content approval.
-   For a new candidate, reserve its number with a release issue, set admission,
+   The coordinator assigns every handoff. An implementation owner changes
+   admission only under an explicit coordinator assignment and a fresh server
+   lease read matching the expected owner/state. Read back the assigned value
+   before pushing. Preserve an unexpected value, stop the claim and report it to
+   the coordinator; never overwrite another active owner. A previous PR being
+   merged alone does not authorize a claim while its main checks or deployment
+   acceptance are still running.
+   When an authorized code draft is complete, its draft PR may be created through
+   normal review without an additional bookkeeping issue. If its unchanged SHA
+   was held, the coordinator verifies the fresh lease and reads back admission,
+   then the owner reruns its original PR workflows in full once. Preserve the
+   held attempts and every normal review and release gate. This does not authorize
+   additional public issues or bypass branch protection.
+   Where a release issue is already authorized, reserve its number, set admission,
    then [convert that same issue into the PR](https://docs.github.com/en/rest/pulls/pulls#create-a-pull-request).
    This lets its first PR event use the assigned slot instead of producing held
    runs that need a second submission. Prepare the branch and review body first.
@@ -86,7 +120,8 @@ timeouts, branch protection, editorial authority and privacy remain in force.
    required action. Repair a concrete failure before submitting a replacement.
 6. Merge, let the main Git integration deploy, and verify the affected production
    journeys automatically. Record commit, deployment and acceptance outcomes,
-   then hand the slot to the next owner after the required main workflows pass.
+   including any separately owned external gap, then release the reservation
+   under the criteria above and hand the slot to the next owner.
    Clear the variable when the queue ends.
 
 ## Mandatory preflight before CI submission
@@ -122,6 +157,23 @@ Keep the scope affected; this rule does not require a routine complete-suite run
   verify it together before freezing; a current knowledge index alone does not
   prove its downstream comparison is current. Keep deterministic evidence
   construction separate from paid generation and editorial approval.
+- **Shared Weekly inputs:** changes to the shared writer context, saved direction
+  or model controls must run their affected API consumers, including
+  `test-weekly-cross-week-editorial.mts`, `test-weekly-batch-editorial.mts` and
+  `test-horoscope-durable-batch.mts`. Use the existing affected selector/catalog;
+  checking only edited test files misses consumers of the changed request shape.
+  Preserve exact historical text, frozen comparison snapshots, sign isolation,
+  factual/publication guards and bounded mocked-provider call counts. The selector
+  regression protects these consumers for the relevant shared Weekly inputs.
+- **Consumer coverage inventory:** use the same affected plan for local evidence
+  and hosted selection. `node scripts/ci-affected-tests.mjs --preflight-report
+  receipts.json` accounts for every selected API command and browser spec. Record
+  actual local, sanctioned-private or valid unchanged-input hosted provenance;
+  a browser receipt covers the complete spec and its required profiles, not a
+  grep subset. Preserve FAIL, NOT_RUN and PROTECTED_UNAVAILABLE distinctly.
+  Missing consumers make the inventory INCOMPLETE; a scoped batch or build PASS
+  cannot be reported as complete release preflight. Rendered harness imports
+  and screenshot references retain their comparing specs in the existing selector.
 - **Build budgets:** build every affected hosted profile, including ordinary Web,
   authentication startup and standalone Studio where applicable, with the pinned
   CI toolchain and locked dependencies. Run `npm run qa:release-builds` for the
@@ -131,6 +183,12 @@ Keep the scope affected; this rule does not require a routine complete-suite run
   measure budgets through the canonical command. Even a two-byte
   excess in the applicable profile is a failure; a budget change needs its
   existing measured-cost approval rather than an automatic cap increase.
+  Git tree equality alone does not establish identical budget inputs: the
+  knowledge build's `generatedAt` changes dependency chunk hashes and imported
+  filenames. A same-source, same-profile control reproduced a seven-byte gzip
+  change with identical code after filename normalization. Preserve meaningful
+  headroom in every profile and require the actual merge build to pass; do not
+  treat an earlier near-limit measurement as proof for regenerated artifacts.
 - **Runner and preview readiness:** validate the selected Playwright image and
   browser setup. For local checks, verify the actual launcher's Node architecture
   matches its native dependencies, including subprocesses launched by Python.

@@ -13536,14 +13536,19 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     userProfile?.charts[0]?.birthTime
   ]);
 
-  useEffect(() => {
-    const primaryChart = userProfile?.charts[0];
+  const savedTransitSubjectId = userProfile?.charts[0]?.id;
+  // Profile hydration can recreate equivalent transit/settings objects. Only a
+  // changed set of requested readings should cancel and restart the cache read.
+  const savedTransitKeys = useMemo(() => JSON.stringify(
+    rankTransitsByLifeAreaFocus(profileTransits, normalizeChartSettings(userProfile?.settings).lifeAreaFocus)
+      .slice(0, 8).map(transit => personalTransitGeneratedContentKey(transit, skyDate))
+  ), [profileTransits, userProfile?.settings, skyDate]);
 
+  useEffect(() => {
     if (
       !isProfileMode
-      || !userProfile
       || !remoteAccountId
-      || !primaryChart
+      || !savedTransitSubjectId
       || !transitsDrawn
       || profileTransitsTargetDate !== skyDate
     ) {
@@ -13551,11 +13556,10 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       return;
     }
 
-    const profile = userProfile;
-    const subjectId = primaryChart.id;
-    const transits = rankTransitsByLifeAreaFocus(profileTransits, normalizeChartSettings(profile.settings).lifeAreaFocus).slice(0, 8);
+    const subjectId = savedTransitSubjectId;
+    const contentKeys: string[] = JSON.parse(savedTransitKeys);
 
-    if (transits.length === 0) {
+    if (contentKeys.length === 0) {
       setPersonalTransitGeneratedContent(new Map());
       return;
     }
@@ -13567,9 +13571,8 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       const nextContent = new Map<string, LiveGeneratedContent>();
 
       try {
-        for (const transit of transits) {
+        for (const contentKey of contentKeys) {
           controller.signal.throwIfAborted();
-          const contentKey = personalTransitGeneratedContentKey(transit, skyDate);
           const existing = await loadUserGeneratedInterpretation({
             subjectType: "you_transit",
             subjectId,
@@ -13591,15 +13594,14 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     void loadSavedTransitContent();
     return () => controller.abort();
   }, [
-    profileTransits,
+    savedTransitKeys,
+    savedTransitSubjectId,
     profileTransitsTargetDate,
     remoteAccountId,
     isProfileMode,
     skyDate,
     transitsDrawn,
-    userProfile?.id,
-    userProfile?.settings,
-    userProfile?.charts[0]?.id
+    userProfile?.id
   ]);
 
   const applyAuthAccount = useCallback(async (account: AuthAccount | null) => {
@@ -14424,6 +14426,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
 
   return (
     <main onClick={selectedSkyDetail ? navigateSkyArticle : undefined} className={`app-shell theme-${theme} mode-${selectedSkyDetail ? "detail" : mode} ${sunriseOrbEnabled ? "sunrise-orb-enabled" : "sunrise-orb-disabled"} ${dyslexiaFriendlyFont ? "dyslexia-font-enabled" : "dyslexia-font-disabled"} `}>
+      {!isSignupMode && <EphemerisStatus retainedAt={skyStatus === "stale" && !sky?.cacheState ? sky?.generatedAt : undefined} timeZone={sky?.location.timeZone} />}
       {(authDialogIntent || isSignupMode) && <ModalPortal onClose={closeAuthentication} closeOnBackdrop titleId="auth-flow-title" className="auth-flow-modal" panelClassName="auth-dialog">
         <Suspense fallback={<PageLoading message="Loading sign-in…" />}>{renderSignupView("dialog")}</Suspense>
       </ModalPortal>}
@@ -14676,7 +14679,6 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
         </header>
       )}
 
-      {!isSignupMode && <EphemerisStatus retainedAt={skyStatus === "stale" && !sky?.cacheState ? sky?.generatedAt : undefined} timeZone={sky?.location.timeZone} />}
       <PageLoadBoundary resetKey={`${mode}:${skyDetailRoutePath ?? ""}`}>
       <Suspense fallback={<PageLoading message={mode === "calendar" ? "Loading calendar…" : mode === "friends" ? "Loading Friends…" : mode === "profile" ? "Loading your profile…" : "Loading page…"} />}>
       {routeIssue ? <ReaderUnavailable kind={routeIssue} /> : skyDetailRoutePath && skyDetailUnavailableRoute === skyDetailRoutePath ? <ReaderUnavailable kind="sky-event" /> : selectedSkyDetail && !connectionDetail && (!/^sky\/(?:placement|retrograde|archive)\//u.test(skyDetailRoutePath ?? "")

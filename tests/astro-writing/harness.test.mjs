@@ -84,6 +84,10 @@ import {
   validateCopyBatch,
   evaluateSpineQuality
 } from "../../src/astro-writing/index.mjs";
+import {withWritingRunStore} from '../../src/astro-writing/writingRunArchive.cjs';
+import {writingRunArchiveFixture} from '../helpers/writing-run-archive.mjs';
+
+await withWritingRunStore(writingRunArchiveFixture().store, async () => {
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const read = (relativePath) => fs.readFileSync(path.join(repoRoot, relativePath), "utf8");
@@ -1758,3 +1762,5 @@ console.log(JSON.stringify({
   pipeline: pipeline.report,
   status: "PASS"
 }, null, 2));
+
+});

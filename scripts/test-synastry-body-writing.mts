@@ -4,6 +4,10 @@ import { createHash } from 'node:crypto';
 import { prepareSynastryBodyWriting, generateSynastryBody, validateSynastryBody, RejectedSynastryBodyError } from '../api/_lib/synastry-body-writing.js';
 import { GHOSTWRITING_SKILL_INSTRUCTIONS } from '../src/astro-writing/ghostwritingSkill.mjs';
 import { syntheticLatestTen, syntheticApprovedTen, syntheticSynastryVoice, encodedSynastryVoice, installSyntheticSynastryApproval } from '../tests/fixtures/synastry-approved-voice.cjs';
+import {withWritingRunStore} from '../src/astro-writing/writingRunArchive.cjs';
+import {writingRunArchiveFixture} from '../tests/helpers/writing-run-archive.mjs';
+const archive = writingRunArchiveFixture();
+await withWritingRunStore(archive.store, async () => {
 const restoreApprovalFixture = installSyntheticSynastryApproval();
 
 Object.assign(process.env, { OPENAI_API_KEY: 'synthetic', OPENAI_GENERATION_MODEL: 'gpt-4.1-mini',
@@ -151,6 +155,10 @@ try {
   assert.equal(result.needs_review, true);
   assert.equal(result.body, next.body);
   assert.deepEqual(dispatched, { ...prepared.request, instructions: prepared.instructions });
+  const archived = [...archive.rows.values()].at(-1)!;
+  assert.deepEqual(JSON.parse(archived.request_body), dispatched);
+  assert.equal(archived.surface, input.surface);
+  assert.equal(archived.context.contentKey, input.contentKey);
   await assert.rejects(() => generateSynastryBody({ ...prepared, instructions: prepared.instructions + 'changed' }), /instructions or current feedback changed/u);
   assert.equal(providerCalls, 1, 'A changed reviewed request stops before OpenAI.');
   for (const raw of [{ body: 'Synthetic', summary: 'Unexpected' }, { body: '' }, { body: 'Person A tells Person B.' },
@@ -193,3 +201,4 @@ try {
   assert.equal(providerCalls, 3);
   console.log('Synastry body writing: request delivery, complete sources, feedback freshness, strict body output, failure isolation and no writes passed. Synthetic transport only; voice unverified.');
 } finally { globalThis.fetch = originalFetch; restoreApprovalFixture(); }
+});

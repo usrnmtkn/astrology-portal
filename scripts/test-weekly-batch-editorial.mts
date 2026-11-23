@@ -49,9 +49,9 @@ assert.equal(JSON.parse(requests[0].input).facts.length,12);
 reviewInput=JSON.parse(requests[1].input);
 assert.deepEqual(JSON.parse(requests[1].input).existingReadings,row.sections.horoscopeEdition.passages,'Judge sees every complete reading');
 assert.deepEqual(JSON.parse(requests[1].input).profile,row.source_snapshot.studioWritingProfile.profile,'Judge sees the entire saved profile');
-const writerConcerns=gate.plan.concerns.map(({priorQuote,priorEditionId,priorSign,...concern}:any)=>concern);
+const writerConcerns=gate.plan.concerns.map(({priorQuote,priorEditionId,priorSign,weekDifference,...concern}:any)=>concern);
 for(const request of writerFixture.requests.values()){
- assert(request.input.includes(`SHARED WEEKLY CONCERNS\n${JSON.stringify(writerConcerns)}`));
+ assert(!request.input.includes('SHARED WEEKLY CONCERNS\n'),'An individual writer does not receive all twelve planning stories');
  assert(request.input.includes(`CURRENT SIGN CONCERN\n${JSON.stringify(writerConcerns.find((c:any)=>c.sign===request.sign))}`));
  const snapshot=row.source_snapshot.horoscopeGeneration.readings[request.sign].previousReadings;
  assert.deepEqual(snapshot.readings.map((p:any)=>p.sign),HOROSCOPE_SIGNS.slice(0,HOROSCOPE_SIGNS.indexOf(request.sign)));
@@ -139,7 +139,7 @@ await action(native,'plan-weekly',{approvedPlanHash:nativePlan.payload.plan.plan
 const nativeEdits={coreConcern:'Exact native owner concern.',stakes:'Exact native owner stakes.',distinctiveObservation:'Exact native owner observation.'};
 const nativeSaved=await action(native,'save-weekly-concern',{sign:'pisces',concern:nativeEdits,approvedPlanHash:nativePlan.payload.plan.planHash});assert.equal(nativeSaved.status,200);
 await action(native,'start-batch',{approvedPlanHash:nativeSaved.payload.plan.planHash});assert.equal((await runWeeklyHoroscopeBatch(native,{maxSteps:100,wait:()=>new Promise(resolve=>setTimeout(resolve,5))})).state,'complete');
-assert.equal(nativeTransport.requests.length,1);assert.deepEqual(JSON.parse(nativeTransport.requests[0].request.messages[0].content.split('OWNER-EDITED WEEKLY CONCERNS\n')[1].split('\n')[0]),{pisces:nativeEdits});assert(nativeTransport.requests[0].request.messages[0].content.includes('SHARED WEEKLY CONCERNS\n'));assert(nativeTransport.requests[0].request.messages[0].content.includes('CURRENT SIGN CONCERN\n'));
+assert.equal(nativeTransport.requests.length,1);assert(!nativeTransport.requests[0].request.messages[0].content.includes('OWNER-EDITED WEEKLY CONCERNS\n'));assert(!nativeTransport.requests[0].request.messages[0].content.includes('SHARED WEEKLY CONCERNS\n'));assert(nativeTransport.requests[0].request.messages[0].content.includes('CURRENT SIGN CONCERN\n'));
 assert(nativeTransport.requests[0].request.messages[0].content.endsWith(weeklyDirectionWriterInput({version:WEEKLY_OWNER_DIRECTION,sign:'pisces',...nativeEdits})),'Native Claude receives the current sign directions after all other context');
 assert.equal(latest(native).source_snapshot.horoscopeGeneration.readings.pisces.rhetoricalReview.weeklyDirection.ending.outcome,'pass');
 assert(nativeTransport.requests[0].request.system.includes('An opening may need several connected sentences'),'The native Claude system retains the Weekly opening correction');
@@ -211,8 +211,8 @@ assert.equal(staleSaved.status,200,JSON.stringify(staleSaved.payload));editedHas
 assert.equal(latest(editable).source_snapshot.horoscopeGeneration.weeklyEditorial.plan.scopeHash,staleScope,'Saving directions does not certify an obsolete shared plan');
 assert.notEqual(staleScope,editedHash);assert.equal(writerFixture.batchCalls,beforeStaleSave,'Editing a stale plan makes no paid request');
 const savedExport=await action(editable,'export');assert.equal(savedExport.status,200);assert.equal(savedExport.payload.writingExport.providerCalls,0);
-const exportedEdits=savedExport.payload.writingExport.text.split('OWNER-EDITED WEEKLY CONCERNS\n').slice(1).map((text:string)=>JSON.parse(text.split('\n')[0]));
-assert.equal(exportedEdits.length,12);for(const fields of exportedEdits)assert.deepEqual(fields,edits);
+const exportedEdits=savedExport.payload.writingExport.text.split('CURRENT SIGN SAVED EDITORIAL DIRECTION\n').slice(1).map((text:string)=>JSON.parse(text.split('\n')[0]));
+assert.equal(exportedEdits.length,12);for(const fields of exportedEdits)assert.deepEqual(fields,{version:WEEKLY_OWNER_DIRECTION,sign:fields.sign,...edits[fields.sign]});
 assert.equal(writerFixture.batchCalls,beforeStaleSave,'Reading exact writer inputs makes no paid request');
 assert.equal((await action(editable,'generate',{sign:'aries',approvedPlanHash:editedHash})).status,409,'Stale plan still requires fresh planning before single-sign drafting');
 const editedRequests=writerFixture.requests.size,editedReviews=writerFixture.reviewRequests.size;
@@ -220,8 +220,12 @@ await action(editable,'start-batch',{approvedPlanHash:editedHash});
 assert.equal((await action(editable,'save-weekly-concern',{sign:'aries',concern:edits.aries,approvedPlanHash:editedHash})).status,409);
 assert.equal((await worker(editable)).state,'complete');
 for(const request of [...writerFixture.requests.values()].slice(editedRequests)){
- assert.deepEqual(JSON.parse(request.input.split('OWNER-EDITED WEEKLY CONCERNS\n')[1].split('\n')[0]),edits);
- assert.deepEqual(JSON.parse(request.input.split('CURRENT SIGN CONCERN\n')[1].split('\n')[0]),latest(editable).source_snapshot.horoscopeGeneration.weeklyEditorial.plan.concerns.map(({priorQuote,priorEditionId,priorSign,...c}:any)=>c).find((c:any)=>c.sign===request.sign));
+ assert(!request.input.includes('OWNER-EDITED WEEKLY CONCERNS\n'));
+ const concern=JSON.parse(request.input.split('CURRENT SIGN CONCERN\n')[1].split('\n')[0]);
+ assert.equal(concern.sign,request.sign);for(const key of ['coreConcern','stakes','distinctiveObservation','weekDifference','priorQuote'])assert(!Object.hasOwn(concern,key));
+ for(const [other,fields]of Object.entries(edits) as any){
+  for(const text of Object.values(fields) as string[])assert.equal(request.input.split(text).length-1,other===request.sign?1:0,'Each exact owner direction appears only in its own sign request, once');
+ }
  assert(request.input.endsWith(weeklyDirectionWriterInput({version:WEEKLY_OWNER_DIRECTION,sign:request.sign,...edits[request.sign]})),'The final writer instruction binds this exact sign, including its ending');
 }
 for(const request of [...writerFixture.reviewRequests.values()].slice(editedReviews)){

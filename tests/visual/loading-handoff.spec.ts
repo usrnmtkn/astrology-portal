@@ -2,6 +2,7 @@ import { test, expect } from '../helpers/polish-test';
 import { build } from 'esbuild';
 import { readFileSync } from 'node:fs';
 import { readerResponse } from '../helpers/reader-response';
+import { bundledPublications } from '../helpers/bundled-publications';
 
 async function harness() {
   const result = await build({stdin:{resolveDir:process.cwd(),loader:'tsx',contents:`
@@ -80,6 +81,7 @@ for(const width of [390,1440])for(const theme of ['light','dark'])test(`Blog loa
 });
 
 for(const theme of ['light','dark'])test(`Startup orbit stays outside reader pages ${theme}`,async({page},info)=>{
+  await bundledPublications(page);
   await page.addInitScript(theme=>localStorage.setItem('tldrastro:theme',theme),theme);
   const manifest=JSON.parse(readFileSync(`${process.env.PLAYWRIGHT_DIST_ROOT??'apps/web/dist'}/.vite/manifest.json`,'utf8'));
   await page.route('**/'+manifest['index.html'].file,route=>route.fulfill({contentType:'text/javascript',body:''}));

@@ -70,6 +70,7 @@ async function providerResponse({ request, config, apiKeys }) {
   if (config.provider === "gemini") {
     const structuredInput = `${input}\n\nOUTPUT JSON SCHEMA\n${JSON.stringify(schema, null, 2)}`;
     const result = await callGeminiInteractions({
+      role, surface:request.surface, family:request.family, archiveContext:{stage},
       apiKey: apiKeys.GEMINI_API_KEY,
       model: config.model,
       systemInstruction: instructions,

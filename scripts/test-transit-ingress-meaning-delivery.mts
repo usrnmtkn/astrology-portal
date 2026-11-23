@@ -9,6 +9,10 @@ import {
 import { prepareProductionPreCallGate } from "../src/astro-writing/productionPreCallGate.cjs";
 import { buildPersonalTransitWriterContext } from "../api/_lib/personal-transit-writer-context.js";
 import { syntheticTransitSources } from "./fixtures/personal-transit-writing.mjs";
+import {withWritingRunStore} from '../src/astro-writing/writingRunArchive.cjs';
+import {writingRunArchiveFixture} from '../tests/helpers/writing-run-archive.mjs';
+
+await withWritingRunStore(writingRunArchiveFixture().store, async () => {
 
 // Exercise the real writer boundary with every network destination intercepted.
 // These fixtures test source delivery, not the quality of model-written prose.
@@ -178,3 +182,5 @@ try {
   await assert.rejects(generateWithClaude(generic),/synthetic writer boundary stop/u);
 } finally { globalThis.fetch = originalFetch; }
 console.log("Transit, house, return and ingress meaning reaches both providers; unrelated rollout controls and pre-call rejection are preserved. No network calls made.");
+
+});

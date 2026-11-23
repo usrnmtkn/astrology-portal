@@ -308,8 +308,8 @@ assert.match(
 );
 assert.match(
   manualChartsPanel,
-  /onEdit=\{isSocialFriendChart\(selectedChart\) \? undefined/,
-  "Accepted account charts must remain read-only in the manual chart editor."
+  /profileActions=\{isSocialFriendChart\(selectedChart\) \? undefined/,
+  "Accepted account charts must remain read-only for profile edit/delete actions."
 );
 assert.match(
   app,

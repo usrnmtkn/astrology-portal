@@ -294,9 +294,10 @@ for (const width of [320, 390, 768, 1440]) for (const theme of ['light', 'dark']
         const element = (await first.boundingBox())!;
         return element.y - nav.y - nav.height;
       };
-      const expectedGap = label === 'Saved chart' ? 40 : width <= 720 ? 64 : 80;
+      const directory = label === 'Circle' || label === 'Charts';
+      const expectedGap = label === 'Saved chart' ? 40 : directory ? 32 : width <= 720 ? 64 : 80;
       await expect.poll(gap, { message: `${label} uses its approved navigation clearance` }).toBeCloseTo(expectedGap, 0);
-      if (label !== 'Saved chart') gaps.push(await gap());
+      if (label !== 'Saved chart' && !directory) gaps.push(await gap());
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), label).toBe(true);
       await page.screenshot({ path: `test-results/design-page-clearance-${label.toLowerCase()}-${width}-${theme}.png` });
     }
@@ -484,7 +485,7 @@ for (const width of [320, 390, 960, 1440]) for (const theme of ['light', 'dark']
   await expect(title).toHaveText(friendName);
   await expect(profile.locator('.compatibility-card').first()).toBeVisible({timeout: 60_000});
   const tabs = profile.getByRole('tablist', {name: 'Chart profile sections', exact: true});
-  const edit = profile.getByRole('button', {name: `Edit ${friendName}`, exact: true});
+  const edit = profile.getByRole('button', {name: `More actions for ${friendName}`, exact: true});
   await expect(title).toHaveCSS('font-family', /Newsreader/);
   await expect(title).toHaveCSS('font-size', width > 800 ? '44px' : '34px');
   await expect(title).toHaveCSS('font-weight', '400');
@@ -512,7 +513,7 @@ for (const width of [320, 390, 960, 1440]) for (const theme of ['light', 'dark']
   await expect(profile.locator('.compatibility-card').first()).toHaveCSS('background-color', cardSurface.background);
   await expect(profile.locator('.compatibility-card').first()).toHaveCSS('box-shadow', cardSurface.shadow);
   const bodyBefore = await profile.locator('.compatibility-card p').allTextContents();
-  await edit.click(); await expect(page.getByRole('dialog')).toBeVisible(); await page.keyboard.press('Escape'); await expect(edit).toBeFocused();
+  await edit.click(); await page.getByRole('menuitem', {name:'Edit', exact:true}).click(); await expect(page.getByRole('dialog')).toBeVisible(); await page.keyboard.press('Escape'); await expect(edit).toBeFocused();
   for (const name of ['Compatibility', 'Transits', 'Natal', 'Synastry', 'Composite']) {
     const tab = tabs.getByRole('tab', {name, exact: true, includeHidden: true});
     if (await tab.isVisible()) await tab.click();
@@ -621,7 +622,7 @@ for(const width of [390,1440]) for(const theme of ['light','dark']) {
   const placements=(await profile.locator('.natal-placement-sections').boundingBox())!;
   expect(chart.y).toBeGreaterThanOrEqual((await profile.locator('.friend-profile-heading').boundingBox())!.y+(await profile.locator('.friend-profile-heading').boundingBox())!.height);
   expect(placements.y).toBeGreaterThanOrEqual(chart.y+chart.height);
-  let box=(await profile.boundingBox())!,edit=(await profile.getByRole('button',{name:'Edit Fixture Event',exact:true}).boundingBox())!;
+  let box=(await profile.boundingBox())!,edit=(await profile.getByRole('button',{name:'More actions for Fixture Event',exact:true}).boundingBox())!;
   expect(Math.abs(edit.x+edit.width-box.x-box.width)).toBeLessThan(1);
   await page.screenshot({path:`test-results/design-friend-event-${width}-${theme}.png`});
   await page.goto('/?date=2026-10-13#friends?tab=charts&chart=fixture-missing&view=natal');
@@ -1411,7 +1412,8 @@ for (const width of [320,390,768,1440]) test(`Overflow theme control persists an
       return {navRight:nav.right,profileX:profile.x,profileRight:profile.right,menuX:menu.x,profileY:profile.y,menuY:menu.y,navY:nav.y,profileSize:profile.width,menuSize:menu.width,visible:profile.x>=0&&menu.right<=innerWidth};
     });
     expect(geometry.navRight).toBeLessThan(geometry.profileX);expect(geometry.profileRight).toBeLessThan(geometry.menuX);expect(geometry.profileY).toBe(geometry.menuY);expect(geometry.profileY).toBe(geometry.navY);expect(geometry.profileSize).toBe(geometry.menuSize);expect(geometry.profileSize).toBe(width<=720?48:56);expect(geometry.visible).toBe(true);
-    await expectReadableTheme(page,readable);
+    // Theme changes animate control colours; measure the settled light state too.
+    await expect(async()=>await expectReadableTheme(page,readable)).toPass({timeout:2000});
     await selectMenuTheme(page,'dark');
     await expect.poll(()=>page.evaluate(()=>localStorage.getItem('tldrastro:theme'))).toBe('dark');
     await expect(async()=>await expectReadableTheme(page,readable)).toPass({timeout:2000});
@@ -2143,7 +2145,9 @@ for(const width of [390,1440])for(const theme of ['light','dark'])for(const audi
     const assertClean=await inspectMemberSourceFailures(page);
     const fixture=await patternInsightFixtures(page,theme,{cachedSources:true});
       const route=audience==='you'?'/#you?tab=chart':'/#friends?tab=charts&chart=fixture-friend&view=natal';
-      const reads:ReadonlyArray<readonly [string,string]>=[['GET','/rest/v1/social_profiles'],['POST','/rest/v1/rpc/list_social_friend_requests'],...(audience==='they'?[['POST','/rest/v1/rpc/list_social_friends']] as const:[])];
+      // You deliberately defers its current-sky request until after first paint.
+      // Finish that calculation before this fast journey navigates or reloads.
+      const reads:ReadonlyArray<readonly [string,string]>=[['GET','/rest/v1/social_profiles'],['POST','/rest/v1/rpc/list_social_friend_requests'],...(audience==='they'?[['POST','/rest/v1/rpc/list_social_friends']] as const:[['GET','/api/sky']] as const)];
       await withFinishedSocialReads(page,`${audience}-initial`,()=>page.goto(route),reads);
       await expect(page.getByRole('heading',{level:1,name:audience==='you'?'Fixture Reader':'Fixture Friend',exact:true})).toBeVisible();
       const section=page.getByRole('region',{name:'Patterns & Insights',exact:true});

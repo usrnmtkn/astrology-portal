@@ -29,6 +29,12 @@
   width: 100%;
 }
 
+.feature-loading-fallback:has(+ .sky-detail-page) {
+  min-height: 0;
+  margin-top: var(--page-top);
+}
+.feature-loading-fallback + .sky-detail-page { padding-top: var(--space-5); }
+
 .sky-detail-page {
   width: 100%;
   min-height: 100svh;

@@ -1,6 +1,11 @@
 import { useEffect, useSyncExternalStore } from "react";
 import { readEphemerisHealth, refreshEphemerisHealth, subscribeEphemerisHealth } from "../services/ephemerisHealth";
-import "../styles/ephemeris-status.css";
+import EphemerisWarning from "./EphemerisWarning";
+
+function retry() {
+  void refreshEphemerisHealth();
+  window.dispatchEvent(new Event("tldr:ephemeris-retry"));
+}
 
 export function EphemerisStatus({ retainedAt, timeZone }: { retainedAt?: string; timeZone?: string }) {
   const health = useSyncExternalStore(subscribeEphemerisHealth, readEphemerisHealth, readEphemerisHealth);
@@ -19,13 +24,9 @@ export function EphemerisStatus({ retainedAt, timeZone }: { retainedAt?: string;
   }, []);
   const degraded = Boolean(retainedAt) || health.service?.ok === false || health.worker?.ok === false;
   if (!degraded) return null;
-  return <aside className="ephemeris-status" role="status" aria-live="polite" data-ephemeris-status="degraded">
-    <p>{retainedAt
-      ? <>Live calculations are temporarily unavailable. Showing the last verified calculation from {new Date(retainedAt).toLocaleString([], { timeZone: timeZone || "UTC", timeZoneName: "short" })}.</>
-      : "Some astronomy calculations are temporarily unavailable. Affected readings may need another try."}</p>
-    <button type="button" className="load-error__retry" onClick={() => {
-      void refreshEphemerisHealth();
-      window.dispatchEvent(new Event("tldr:ephemeris-retry"));
-    }}>Check again</button>
-  </aside>;
+  return <EphemerisWarning onRetry={retry}>
+    <p><strong>{retainedAt ? "Live calculations are temporarily unavailable." : "Some astronomy calculations are temporarily unavailable."}</strong>{retainedAt
+      ? ` Showing the last verified calculation from ${new Date(retainedAt).toLocaleString([], { timeZone: timeZone || "UTC", timeZoneName: "short" })}.`
+      : " Affected readings may need another try."}</p>
+  </EphemerisWarning>;
 }

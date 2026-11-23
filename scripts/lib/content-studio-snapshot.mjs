@@ -1,4 +1,6 @@
 const fields = ['content_key', 'state', 'revision', 'row_id', 'row_updated_at', 'updated_at'];
+export const publishedSnapshotPath = 'content-studio-published.json';
+export const publishedSnapshotSchema = 'content-studio-published-v1';
 
 export function publicationSnapshotIdentity(records) {
   const keys = new Set();
@@ -50,10 +52,20 @@ const timestamp = value => `${Date.parse(value)}:${(value?.match(/\.(\d+)/u)?.[1
 const same = (a, b) => a === b || Boolean(a && b && typeof a === 'object' && typeof b === 'object'
   && Object.keys(a).length === Object.keys(b).length && Object.keys(a).every(key => Object.hasOwn(b, key) && same(a[key], b[key])));
 
+export function snapshotRowIsPublished(row, publications) {
+  const record = publications.get(row?.content_key);
+  // Match contentPublicationState.publicationAllowsContent: dated instances
+  // have their own row versions, not the reusable key's ledger row identity.
+  if (row?.target_date != null) return !record || (record.state === 'live'
+    && !(record.row_id == null && record.row_updated_at == null));
+  return record?.state === 'live' && record.row_id === row?.id
+    && timestamp(record.row_updated_at) === timestamp(row?.updated_at);
+}
+
 // A recovery copy may contain public reader fields and publication identities only.
-export function validateRecoverySnapshot(snapshot, projectRow = null) {
+function validateSnapshot(snapshot, projectRow, published) {
   const fail = () => { throw new Error('Invalid public recovery snapshot.'); };
-  if (!snapshot || snapshot.schema !== 'content-studio-last-known-good-v2' || !Array.isArray(snapshot.rows)
+  if (!snapshot || snapshot.schema !== (published ? publishedSnapshotSchema : 'content-studio-last-known-good-v2') || !Array.isArray(snapshot.rows)
     || snapshot.rowCount !== snapshot.rows.length || snapshot.rowCount < 100 || !Array.isArray(snapshot.publications)
     || Object.keys(snapshot).some(key => !['schema', 'sourceRevision', 'publications', 'rowCount', 'rows'].includes(key))) fail();
   const publications = new Map();
@@ -65,16 +77,41 @@ export function validateRecoverySnapshot(snapshot, projectRow = null) {
     publications.set(record.content_key, record);
   }
   if (!publications.has('__content-publication-ledger/v1')) fail();
-  const keys = new Set();
+  const keys = new Set(), ids = new Set();
   let latest = '';
   for (const row of snapshot.rows) {
-    const record = publications.get(row?.content_key);
-    if (!row || row.status !== 'LIVE' || row.lane !== 'serving' || row.review_state != null || row.target_date != null
-      || !Number.isFinite(Date.parse(row.updated_at)) || keys.has(row.content_key) || (projectRow && !same(row, projectRow(row)))
-      || record?.state !== 'live' || record.row_id !== row.id || timestamp(record.row_updated_at) !== timestamp(row.updated_at)) fail();
-    keys.add(row.content_key);
+    const identity = published ? JSON.stringify([row?.content_key, row?.target_date ?? null, row?.mode ?? null]) : row?.content_key;
+    if (!row || row.status !== 'LIVE' || row.lane !== 'serving' || row.review_state != null || (!published && row.target_date != null)
+      || (row.target_date != null && (typeof row.target_date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/u.test(row.target_date)
+        || new Date(row.target_date).toJSON()?.slice(0, 10) !== row.target_date))
+      || !Number.isFinite(Date.parse(row.updated_at)) || keys.has(identity) || ids.has(row.id) || (projectRow && !same(row, projectRow(row)))
+      || !snapshotRowIsPublished(row, publications)) fail();
+    keys.add(identity); ids.add(row.id);
     if (row.updated_at > latest) latest = row.updated_at;
   }
   if (snapshot.sourceRevision !== latest) fail();
   return snapshot;
+}
+
+export function validateRecoverySnapshot(snapshot, projectRow = null) {
+  return validateSnapshot(snapshot, projectRow, false);
+}
+
+// Complete public-reader inventory, including dated editions. This is a GitHub
+// archive, never an input to the app's undated runtime recovery loader.
+export function validatePublishedSnapshot(snapshot, projectRow = null) {
+  return validateSnapshot(snapshot, projectRow, true);
+}
+
+export function validateSnapshotPair(recovery, published, projectRow = null) {
+  validateRecoverySnapshot(recovery, projectRow);
+  validatePublishedSnapshot(published, projectRow);
+  assertStablePublicationSnapshot(recovery.publications, published.publications);
+  const byKey = new Map(published.rows.filter(row => row.target_date == null).map(row => [row.content_key, row]));
+  for (const row of recovery.rows) {
+    const archived = byKey.get(row.content_key);
+    if (!archived || archived.id !== row.id || timestamp(archived.updated_at) !== timestamp(row.updated_at)) {
+      throw new Error('Recovery and published archive do not describe the same publications.');
+    }
+  }
 }

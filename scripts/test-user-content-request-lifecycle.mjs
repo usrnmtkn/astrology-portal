@@ -168,9 +168,9 @@ const javascript = (await transform(effectFunction, { loader: "ts", target: "es2
 for (const fail of [false, true]) {
   const controller = new AbortController();
   let reads = 0, updates = 0;
-  const run = new Function("controller", "transits", "personalTransitGeneratedContentKey", "skyDate", "subjectId",
+  const run = new Function("controller", "contentKeys", "skyDate", "subjectId",
     "loadUserGeneratedInterpretation", "setPersonalTransitGeneratedContent", `${javascript}; return loadSavedTransitContent();`);
-  await run(controller, [{ id: "one" }, { id: "two" }], value => value.id, "2026-11-14", "synthetic-chart", async () => {
+  await run(controller, ["one", "two"], "2026-11-14", "synthetic-chart", async () => {
     reads++;
     controller.abort();
     if (fail) throw new Error("Synthetic interrupted lookup");

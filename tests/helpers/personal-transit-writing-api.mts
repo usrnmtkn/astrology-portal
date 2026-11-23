@@ -1,6 +1,8 @@
 import { Readable } from 'node:stream';
 import { readFileSync } from 'node:fs';
+import assert from 'node:assert/strict';
 import { syntheticTransitSources, encodeTransitSources } from '../../scripts/fixtures/personal-transit-writing.mjs';
+import { writingRunArchiveFixture } from './writing-run-archive.mjs';
 
 const calibration={required:true,id:'synthetic-browser-review',source:'synthetic-owner-request',contentKeys:['authored/transit-aspect/neptune/jupiter/trine']};
 const fixtureSources=(reviewed:boolean)=>{
@@ -19,12 +21,19 @@ Object.assign(process.env, env);
 const { default: handler } = await import('../../api/admin/personal-transit-writing.js');
 Object.assign(process.env, env);
 let providerCalls = 0;
+const writingRuns = writingRunArchiveFixture();
 globalThis.fetch = async (url, init = {}) => {
+  const target = new URL(String(url));
+  const archived = target.origin === env.SUPABASE_URL ? await writingRuns.handle(target, init) : null;
+  if (archived) return archived;
   if (String(url).startsWith(env.SUPABASE_URL)) {
     if (init.method && init.method !== 'GET') throw Error('Fixture forbids writing saved content');
     return Response.json(JSON.parse(readFileSync(process.env.CALENDAR_REVIEW_FIXTURE!, 'utf8')));
   }
   if (String(url) !== 'https://api.openai.com/v1/responses') throw Error('Unexpected fixture network destination');
+  const reserved = [...writingRuns.rows.values()].at(-1);
+  assert.equal(reserved?.request_body, init.body, 'Archive the exact request before provider dispatch');
+  assert.equal(reserved?.state, 'dispatch_reserved');
   providerCalls++;
   const request = JSON.parse(String(init.body));
   const names = request.text.format.schema.properties.slotValues.required;

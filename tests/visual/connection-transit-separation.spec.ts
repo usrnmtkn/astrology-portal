@@ -308,16 +308,19 @@ test('relationship context separates direct transits from connections through on
   ]);
   const close = facts.getByRole('button', {name: 'Close connection details'});
   const reading = facts.getByRole('region', {name: 'Reading text', exact: true});
+  // macOS WebKit uses Option+Tab to include buttons in native keyboard navigation.
+  // https://github.com/microsoft/playwright/issues/5609
+  const tabModifier = process.platform === 'darwin' && testInfo.project.use.browserName === 'webkit' ? 'Alt+' : '';
   await expect(facts.getByRole('heading', {level: 2})).toBeFocused();
-  await page.keyboard.press('Tab');
+  await page.keyboard.press(`${tabModifier}Tab`);
   await expect(close).toBeFocused();
-  await page.keyboard.press('Tab');
+  await page.keyboard.press(`${tabModifier}Tab`);
   await expect(reading).toBeFocused();
-  await page.keyboard.press('Tab');
+  await page.keyboard.press(`${tabModifier}Tab`);
   await expect(close).toBeFocused();
-  await page.keyboard.press('Shift+Tab');
+  await page.keyboard.press(`${tabModifier}Shift+Tab`);
   await expect(reading).toBeFocused();
-  await page.keyboard.press('Shift+Tab');
+  await page.keyboard.press(`${tabModifier}Shift+Tab`);
   await expect(close).toBeFocused();
   await page.keyboard.press('Escape');
   await expect(facts).toHaveCount(0);
@@ -473,7 +476,9 @@ for (const [activationLive, bridgeLive] of [[false,false],[true,false],[true,tru
   }
   if(activationLive && bridgeLive){
     await page.getByRole('button',{name:'Close detail',exact:true}).click();
-    const edit=page.getByRole('button',{name:'Edit Nikki',exact:true});
+    const actions=page.getByRole('button',{name:'More actions for Nikki',exact:true});
+    await actions.click();
+    const edit=page.getByRole('menuitem',{name:'Edit',exact:true});
     await expect(edit).toBeVisible();
     await edit.focus();
     await edit.click();
@@ -489,7 +494,7 @@ for (const [activationLive, bridgeLive] of [[false,false],[true,false],[true,tru
     await expect(name).toHaveValue('Nikki unsaved draft');
     await expect(name).toBeFocused();
     await page.getByRole('dialog').getByRole('button',{name:'Close',exact:true}).click();
-    await expect(edit).toBeFocused();
+    await expect(actions).toBeFocused();
     const tabs=page.getByRole('tablist',{name:'Chart profile sections',exact:true});
     await expect(tabs.getByRole('tab')).toHaveText((page.viewportSize()?.width ?? 1440)<=800?['Compatibility','Transits','Natal']:['Compatibility','Transits','Natal','Synastry','Composite']);
     await tabs.getByRole('tab',{name:'Transits',exact:true}).focus();
@@ -755,6 +760,10 @@ for (const heldStage of ['prepare', 'edition-fetch'] as const) for (const target
   test.setTimeout(120_000);
   await page.clock.setFixedTime(new Date('2026-10-15T16:00:00Z'));
   await seed(page, testInfo.project.name.endsWith('dark') ? 'dark' : 'light');
+  if (heldStage === 'prepare') await page.route('**/api/health?scope=ephemeris', route => route.fulfill({ status: 503, json: {
+    schema: 'ephemeris-health/v1', timestamp: '2026-10-15T16:00:00Z', ok: false, status: 'degraded',
+    dependencies: { ephemeris: { ok: false, elapsedMs: 1 }, skyCalculationApi: { ok: false, elapsedMs: 1 } }
+  } }));
   const { compileSkyArticleEdition } = await import('../../apps/web/src/content/skyArticleTemplateCompiler');
   const { skyIngressEssayFields } = await import('../../apps/web/src/content/skyIngressEssay.mjs');
   const slots = Object.fromEntries(skyIngressEssayFields.map(({ name }) => [name, `Synthetic ${name}.`]));
@@ -908,7 +917,10 @@ for (const heldStage of ['prepare', 'edition-fetch'] as const) for (const target
     await page.getByRole('region', { name: 'Between you two', exact: true }).getByRole('button', { name: 'Open full entry for Saturn in Aries trine your natal Mars', exact: true }).click();
     await expect(notice).toBeVisible();
     phase = 'retry';
+    await page.evaluate(() => window.dispatchEvent(new Event('online')));
+    await expect(page.getByRole('status', { name: 'Astronomy service warning', exact: true })).toBeVisible();
     await notice.getByRole('button', { name: 'Retry', exact: true }).click();
+    await expect(aBody).toHaveText(completeA, { useInnerText: true });
   } else {
     // The ordinary list is the actual owner of its required edition await.
     const listError = page.locator('.load-error').filter({ hasText: 'The placement readings could not load. Please try again.' });

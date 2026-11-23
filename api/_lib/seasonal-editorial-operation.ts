@@ -63,7 +63,7 @@ export async function seasonalEditorialOperation({action,row:initialRow,persist,
   reserveEditorialCall(run,request);await save();await reflect();
   try{
     const result=await startHoroscopeResponse({config:request.config,role:request.role,request:buildHoroscopeProviderRequest(request),instructions:request.instructions,
-      context:{editionId:row.id,operationId:run.id,requestHash:run.pending.requestHash,seasonalRunId:run.id}});
+      context:{period:row.sections.horoscopeEdition.window.period,contentKey:row.content_key,editionId:row.id,operationId:run.id,requestHash:run.pending.requestHash,seasonalRunId:run.id}});
     if(!result.response.ok){
       // An explicit HTTP rejection is recorded, not retried as a fresh charge.
       await completeEditorialCall(run,{...result.payload,status:'failed'},adapter);await save();await reflect();return reply();

@@ -36,9 +36,14 @@ export function FriendsFeed({ cards, filter, now, timeZone, loading, error, onRe
   const groups = useMemo(() => {
     return groupFriendsFeedCards(cards.filter(card => filter === "all" || card.source === filter), now, timeZone);
   }, [cards, filter, now, timeZone]);
-  const date = (value: string) => new Date(value).toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone });
+  const date = (value: string, includeYear = false) => new Date(value).toLocaleDateString("en-US", {
+    month: "short", day: "numeric", timeZone, ...(includeYear ? { year: "numeric" as const } : {})
+  });
   const metadata = (card: FriendsFeedCard) => {
-    const range = dayKey(card.startsAt,timeZone) === dayKey(card.endsAt,timeZone) ? date(card.startsAt) : `${date(card.startsAt)} – ${date(card.endsAt)}`;
+    const startDay = dayKey(card.startsAt, timeZone);
+    const endDay = dayKey(card.endsAt, timeZone);
+    const includeYear = startDay.slice(0, 4) !== endDay.slice(0, 4);
+    const range = startDay === endDay ? date(card.startsAt) : `${date(card.startsAt, includeYear)} – ${date(card.endsAt, includeYear)}`;
     const exact = friendsFeedExactToday(card.exactAt, now, timeZone);
     return exact.length ? `Exact ${exact.map(at => new Date(at).toLocaleTimeString("en-US", { timeZone, hour: "numeric", minute: "2-digit", timeZoneName: "short" })).join(", ")} · ${range} · Transit`
       : `${range} · ${card.orb} · Transit`;

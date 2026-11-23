@@ -9,6 +9,10 @@ import { fileURLToPath } from "node:url";
 import geminiInteractions from "../../src/astro-writing/geminiInteractions.cjs";
 import localProviderKeys from "../../src/astro-writing/localProviderKeys.cjs";
 import offlineProviderConfig from "../../src/astro-writing/offlineProviderConfig.cjs";
+import {withWritingRunStore} from '../../src/astro-writing/writingRunArchive.cjs';
+import {writingRunArchiveFixture} from '../helpers/writing-run-archive.mjs';
+
+await withWritingRunStore(writingRunArchiveFixture().store, async () => {
 
 const {
   DEFAULT_GEMINI_MODEL,
@@ -195,3 +199,5 @@ try {
 }
 
 console.log("Gemini Interactions adapter and provider-selectable unbilled batch requests passed.");
+
+});

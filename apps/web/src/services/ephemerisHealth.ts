@@ -1,4 +1,3 @@
-import { isEphemerisHealthReport } from "../../../../src/shared/ephemerisHealth.mjs";
 import { withRequestDeadline } from "./requestDeadline";
 
 type Source = "service" | "worker" | "sky-api";
@@ -26,6 +25,9 @@ export function refreshEphemerisHealth() {
   probe = withRequestDeadline(async signal => {
     const response = await fetch("/api/health?scope=ephemeris", { cache: "no-store", signal });
     const report = await response.json();
+    // Defer probe validation, keeping outage presentation available without a
+    // later asset request. Import failure is an unavailable observation too.
+    const { isEphemerisHealthReport } = await import("../../../../src/shared/ephemerisHealth.mjs");
     signal.throwIfAborted();
     observeEphemerisHealth("service", isEphemerisHealthReport(report) && response.ok && report.ok);
   }, { timeoutMs: 8_000 }).catch(() => observeEphemerisHealth("service", false))

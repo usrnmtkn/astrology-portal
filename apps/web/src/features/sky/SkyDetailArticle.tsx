@@ -156,31 +156,6 @@ function inferredSectionQaSourceTag(section: { body?: ReactNode; sourceTag?: str
   return typeof section.sourceTag === "string" ? section.sourceTag.trim() : "";
 }
 
-function detailMetaRows(meta: string) {
-  const parts = meta.split("·").map((part) => part.trim()).filter(Boolean);
-
-  if (parts.length === 0) {
-    return [{ label: "Context", value: "Field guide" }];
-  }
-
-  return parts.map((part, index) => {
-    const lower = part.toLowerCase();
-    const label = lower.includes("orb")
-      ? "Orb"
-      : lower.includes("house")
-        ? "House"
-        : lower.includes("chapter")
-          ? "Chapter"
-      : lower === "today" || lower.includes("about ") || lower.includes("until ") || lower.includes("near exact")
-        ? "Duration"
-        : index === 0
-          ? "Signature"
-          : "Duration";
-
-    return { label, value: part };
-  });
-}
-
 type ArticleEyebrowGlyph = {
   key: string;
   label: string;
@@ -211,14 +186,9 @@ function signArticleGlyph(sign: string): ArticleEyebrowGlyph | null {
 function uniqueArticleGlyphs(glyphs: Array<ArticleEyebrowGlyph | null>) {
   const seen = new Set<string>();
 
-  return glyphs.filter((glyph): glyph is ArticleEyebrowGlyph => {
-    if (!glyph || seen.has(glyph.key)) {
-      return false;
-    }
-
-    seen.add(glyph.key);
-    return true;
-  });
+  return glyphs.filter((glyph): glyph is ArticleEyebrowGlyph =>
+    Boolean(glyph && !seen.has(glyph.key) && seen.add(glyph.key))
+  );
 }
 
 function articleTitleHouseToken(title: string, meta = "") {
@@ -238,22 +208,19 @@ function articleTitleSign(title: string) {
 }
 
 function articlePlacementGlyphs(title: string, meta = "") {
-  const source = `${title} ${meta}`;
-  // Phase names use the supplied lunar icon through the fallback below.
+  const source = `${title.trim()} ${meta}`;
   const match = source.match(
-    /^(?!(?:Full|New)\s+Moon\s+in\b)(\w[\w\s]*?)(\s+Rx)?\s+in\s+(\w+)(?:\s+in\s+the\s+(\d+)(?:st|nd|rd|th)\s+house)?/i
+    /^(\w[\w\s]*?)(\s+Rx)?\s+in\s+(\w+)(?:\s+in\s+the\s+(\d+)(?:st|nd|rd|th)\s+house)?/i
   );
-
-  if (!match) {
-    return [];
-  }
-
-  const [, body, retrograde, sign, house] = match;
+  const lunar = /^(?:(?:Full|New|(?:First|Last|Third)\s+Quarter|(?:Waxing|Waning)\s+(?:Crescent|Gibbous))\s+Moon(?:\s+(?:Lunar|Solar)\s+Eclipse)?|(?:Lunar|Solar)\s+Eclipse)$/i.test((match?.[1] ?? title).trim());
+  if (!match && !lunar) return [];
+  const point = lunar ? "Moon" : match![1].trim();
+  const house = lunar ? articleTitleHouseToken(title, meta) : match![4];
   return uniqueArticleGlyphs([
-    textArticleGlyph(pointGlyph(body.trim()), body.trim()),
-    retrograde ? textArticleGlyph("℞", "Retrograde") : null,
-    signArticleGlyph(sign.trim()),
-    house ? { key: `house-${house}`, label: `${house} house`, text: articleHouseToken(house), house: true } : null
+    textArticleGlyph(pointGlyph(point), point),
+    match?.[2] ? textArticleGlyph("℞", "Retrograde") : null,
+    signArticleGlyph(lunar ? articleTitleSign(source) ?? "" : match![3]),
+    house ? { key: `house-${house}`, label: lunar ? house : `${house} house`, text: lunar ? house : articleHouseToken(house), house: true } : null
   ]);
 }
 
@@ -435,7 +402,6 @@ export function SkyDetailArticle({
       ))
     ]
   : (detail.sections ?? []);
-  const metaRows = detailMetaRows(detail.meta);
   const articleBody = detail.body.filter((node) => (
     !isRetrogradeTimelineNode(node) && (typeof node !== "string" || isReaderFacingCopy(node))
   ));
@@ -522,7 +488,7 @@ export function SkyDetailArticle({
   const readingPage = !placementPage && Boolean(headerAspect || personalArticle || /transit/iu.test(detail.kicker ?? ""));
   const eyebrowGlyphs = articleEyebrowGlyphs({
     glyph: detail.glyph,
-    meta: metaRows.map((row) => row.value).join(" "),
+    meta: detail.meta.split("·").map((part) => part.trim()).filter(Boolean).join(" ") || "Field guide",
     title: detail.title
   });
   const relatedAspectRows = (detail.relatedAspects?.rows ?? []).map(normalizeRelatedAspectRow);

@@ -209,7 +209,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
       const request={...provider.buildProviderRequest({config,role:'writer',input:prompt,schema}),background:true,store:true};
       operation={...operation,requestHash:hash({request,instructions})};await persistState({active:operation});
       dispatched=true;
-      const {response,payload}:any=await responses.startStoredWritingResponse({apiKey,role,request,governedInstructions:instructions,surface:'lunation-article',family:'lunation-article',fetchImpl:(url:any,options:any)=>fetch(url,{...options,signal:AbortSignal.timeout(25000)})});
+      const {response,payload}:any=await responses.startStoredWritingResponse({archiveContext:{contentKey:row.content_key,operationId:operation.id},apiKey,role,request,governedInstructions:instructions,surface:'lunation-article',family:'lunation-article',fetchImpl:(url:any,options:any)=>fetch(url,{...options,signal:AbortSignal.timeout(25000)})});
       if(!response.ok) {
         if(response.status>=400&&response.status<500){await persistState({active:null,lastError:'The writer declined the request. Check its configuration or quota.',lastFailed:operation});}
         throw new AdminHttpError(503,'The writer request did not complete. Reload the draft to check its saved state.');

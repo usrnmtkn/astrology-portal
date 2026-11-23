@@ -145,6 +145,8 @@ for (const viewport of [{ width: 360, height: 640 }, { width: 390, height: 844 }
       await page.getByRole('menuitem', { name: /Add (?:a )?chart/ }).click();
       overlay = page.getByRole('dialog', { name: 'Add chart' });
     } else if (name === 'Friend chart menu' || name === 'Edit friend chart') {
+      await page.getByRole('button', { name: 'Open Fixture Friend', exact: true }).click();
+      await expect(page.locator('.friend-profile-heading h1')).toHaveText('Fixture Friend');
       await page.getByRole('button', { name: 'More actions for Fixture Friend' }).click();
       overlay = page.getByRole('menu');
       if (name === 'Edit friend chart') {

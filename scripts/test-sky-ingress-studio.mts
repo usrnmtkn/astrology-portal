@@ -22,6 +22,10 @@ import { projectReaderRow } from "../apps/web/src/content/readerRowProjection.mj
 import { isGeneratedContentReaderBoundaryAllowed } from "../apps/web/src/content/generatedContentEligibility.ts";
 import { skyArticleEditionFactsFromSnapshot, ingressTimeLabel } from "../api/_lib/sky-article-facts.ts";
 import { skyIngressNasaReceipt } from "../api/_lib/sky-ingress-nasa.ts";
+import {withWritingRunStore} from '../src/astro-writing/writingRunArchive.cjs';
+import {writingRunArchiveFixture} from '../tests/helpers/writing-run-archive.mjs';
+
+await withWritingRunStore(writingRunArchiveFixture().store, async () => {
 
 const env = { NODE_ENV: "test", CONTENT_GENERATION_SECRET: "synthetic-ingress-secret",
   SUPABASE_URL: "https://ingress.invalid", SUPABASE_SERVICE_ROLE_KEY: "synthetic", OPENAI_API_KEY: "synthetic",
@@ -566,3 +570,5 @@ try {
   await verifySkyVisitWriter(invoke, slotsHandler, factsHandler);
   console.log("PASS ingress Studio: actual authenticated facts/slot handlers, real Swiss roots, provider request, retained fields, isolated companion, exact approved reader payload, expiry, DST and scoped NASA receipts.");
 } finally { globalThis.fetch = originalFetch; }
+
+});

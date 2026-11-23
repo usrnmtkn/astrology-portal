@@ -6,6 +6,10 @@ import {runRhetoricalCalibration} from '../../src/astro-writing/rhetoricalCalibr
 import {aiWritingPatternCases} from './fixtures/ai-writing-patterns.mjs';
 import './aphorism-review.test.mjs';
 import {HOROSCOPE_RHETORICAL_REVIEW,LEGACY_HOROSCOPE_RHETORICAL_REVIEW,horoscopeReviewPolicy,supportedHoroscopeReview} from '../../src/astro-writing/horoscopeRhetoricalReview.mjs';
+import {withWritingRunStore} from '../../src/astro-writing/writingRunArchive.cjs';
+import {writingRunArchiveFixture} from '../helpers/writing-run-archive.mjs';
+
+await withWritingRunStore(writingRunArchiveFixture().store, async () => {
 const require=createRequire(import.meta.url);
 const responses=require('../../src/astro-writing/openAIResponses.cjs');
 const compiled=require('../../src/astro-writing/canonicalInstructions.cjs');
@@ -70,3 +74,5 @@ for(const version of [HOROSCOPE_RHETORICAL_REVIEW,LEGACY_HOROSCOPE_RHETORICAL_RE
 const customSavedInstructions=`${horoscopeReviewPolicy(LEGACY_HOROSCOPE_RHETORICAL_REVIEW)}\n\nSaved task.`;
 assert.equal(responses.governedInstructionsForRole('WRITER',{surface:'horoscopes',family:'horoscope',governedInstructions:customSavedInstructions}),customSavedInstructions);
 console.log('PASS AI-pattern transport, contextual exceptions, evidence admission, hidden-label controls and frozen-review compatibility. Injected responses only; no literary calibration or paid calls.');
+
+});

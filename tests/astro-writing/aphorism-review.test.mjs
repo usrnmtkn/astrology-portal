@@ -4,6 +4,10 @@ import {RHETORICAL_LABELS,RHETORICAL_WRITER_POLICY,RHETORICAL_JUDGE_POLICY,RHETO
 import {reviewDraft} from '../../src/astro-writing/reviewDraft.mjs';
 import {REVIEW_FIELDS} from '../../src/astro-writing/canonicalInstructions.mjs';
 import * as horoscope from '../../src/astro-writing/horoscopeRhetoricalReview.mjs';
+import {withWritingRunStore} from '../../src/astro-writing/writingRunArchive.cjs';
+import {writingRunArchiveFixture} from '../helpers/writing-run-archive.mjs';
+
+await withWritingRunStore(writingRunArchiveFixture().store, async () => {
 const require=createRequire(import.meta.url);
 const history=require('../../src/astro-writing/rhetoricalPatternHistory.cjs');
 const transport=require('../../src/astro-writing/openAIResponses.cjs');
@@ -78,3 +82,5 @@ for(const period of ['daily','weekly','monthly','seasonal']){
 }
 assert.equal(endingRequestCount,4,'All period transport fixtures stay intercepted and unbilled.');
 console.log('PASS aphorism review-only policy, earned horoscope endings, source preservation, scope isolation and frozen requests. Injected responses only.');
+
+});

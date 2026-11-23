@@ -12,6 +12,10 @@ import { sharedGenerationOwnerExamples } from '../api/_lib/shared-generation-own
 import { ingressArticleFields } from '../api/_lib/transit-ingress-editorial-authority.ts';
 const skyIngressEssayFields = ingressArticleFields();
 import { ingressFixtureValues } from './fixtures/sky-ingress-writing.mjs';
+import {withWritingRunStore} from '../src/astro-writing/writingRunArchive.cjs';
+import {writingRunArchiveFixture} from '../tests/helpers/writing-run-archive.mjs';
+
+await withWritingRunStore(writingRunArchiveFixture().store, async () => {
 
 assert.match(responses.instructionsForRole('WRITER', '', { surface: 'sky', family: 'sky-ingress-essay' }),
   /DATED INGRESS EDITORIAL AUTHORITY/, 'A dated ingress must not inherit the natal/placement article spine.');
@@ -188,3 +192,5 @@ try {
   delete process.env.OPENAI_INGRESS_REASONING_EFFORT;
 }
 console.log('PASS dated ingress: scoped provider authority, real 2026/2027 events, required lunar/ruler/aspect coverage, exact ET facts, dignity basis, complete event meaning and matching owner season voice. Negative date, degree, motion, omission and natal cases rejected; prose depth remains advisory.');
+
+});
