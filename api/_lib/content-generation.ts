@@ -5694,6 +5694,7 @@ export async function writeSynastryBodyWithOpenAI(input: GenerateContentInput, r
   const gate = prepareProductionPreCallGate(projected);
   assertProductionRoleGate(gate, "WRITER", projected);
   return callOpenAIResponses({ apiKey: requireEnv("OPENAI_API_KEY"), role: "WRITER",
+    archiveContext: {surface: projected.surface, family: projected.eventType, contentKey: projected.contentKey},
     ...editorialInstructionContext(projected), request });
 }
 

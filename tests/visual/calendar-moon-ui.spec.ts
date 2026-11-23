@@ -9,6 +9,10 @@ import { watchBrowserErrors } from "./qaRuntimeGuards";
 
 const output = "test-results/calendar-ui-qa";
 
+test.beforeEach(async ({ page }) => {
+  await bundledPublications(page);
+});
+
 const weeklyDates = ['2026-10-04', '2026-10-05', '2026-10-06', '2026-10-07', '2026-10-08', '2026-10-09', '2026-10-10'];
 const weeklyLabels = ['Sunday, October 4, 2026', 'Monday, October 5, 2026', 'Tuesday, October 6, 2026', 'Wednesday, October 7, 2026', 'Thursday, October 8, 2026', 'Friday, October 9, 2026', 'Saturday, October 10, 2026'];
 
@@ -19,7 +23,6 @@ for (const theme of ['light', 'dark'] as const) for (const width of [390, 1440])
     page.on('pageerror', error => errors.push(error.message));
     await page.setViewportSize({ width, height: 1000 });
     await page.clock.setFixedTime(new Date('2026-10-07T16:00:00Z'));
-    await bundledPublications(page);
     await page.addInitScript(theme => {
       localStorage.setItem('tldrastro:theme', theme);
       localStorage.setItem('tldrastro:selectedLocation', JSON.stringify({ label: 'QA reference', latitude: 0, longitude: 0, timeZone: 'America/New_York' }));
@@ -85,7 +88,6 @@ for (const theme of ["light", "dark"] as const) for (const width of [390, 1440])
     const assertNoErrors = watchBrowserErrors(page);
     await page.setViewportSize({ width, height: 1000 });
     await page.clock.setFixedTime(new Date("2026-09-24T16:00:00Z"));
-    await bundledPublications(page);
     await page.addInitScript(theme => {
       localStorage.setItem("tldrastro:theme", theme);
       localStorage.setItem("tldrastro:selectedLocation", JSON.stringify({
@@ -114,7 +116,6 @@ for (const theme of ["light", "dark"] as const) for (const width of [320, 390, 4
     const assertNoErrors = watchBrowserErrors(page);
     await page.setViewportSize({ width, height: 844 });
     await page.clock.setFixedTime(new Date("2026-09-21T16:00:00Z"));
-    await bundledPublications(page);
     await page.addInitScript(({ theme, prompts }) => {
       localStorage.setItem("tldrastro:theme", theme);
       localStorage.setItem("tldrastro:journalPrompts", String(prompts));

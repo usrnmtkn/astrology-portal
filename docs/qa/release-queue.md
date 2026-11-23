@@ -98,7 +98,13 @@ and numeric-budget rules remain in force.
    the coordinator; never overwrite another active owner. A previous PR being
    merged alone does not authorize a claim while its main checks or deployment
    acceptance are still running.
-   For a new candidate, reserve its number with a release issue, set admission,
+   When an authorized code draft is complete, its draft PR may be created through
+   normal review without an additional bookkeeping issue. If its unchanged SHA
+   was held, the coordinator verifies the fresh lease and reads back admission,
+   then the owner reruns its original PR workflows in full once. Preserve the
+   held attempts and every normal review and release gate. This does not authorize
+   additional public issues or bypass branch protection.
+   Where a release issue is already authorized, reserve its number, set admission,
    then [convert that same issue into the PR](https://docs.github.com/en/rest/pulls/pulls#create-a-pull-request).
    This lets its first PR event use the assigned slot instead of producing held
    runs that need a second submission. Prepare the branch and review body first.

@@ -66,6 +66,32 @@ change after the preceding accepted main release. Main integration, scoped
 preflight, exact-head gates, and production acceptance remain pending. Private
 run archives must remain excluded from any public published-content backup.
 
+## November 22 integration candidate
+
+The coordinator accepted main `d5cacf371f1f17f9eeee491b125b0eedf0009dd8`
+and assigned PR #1525. A fresh server lease read returned the released #1542
+reservation; the assignment was changed to #1525 and read back successfully.
+The main merge preserves published branch history. The three original conflicts
+retain current-main synthetic approval fixtures together with explicit archive
+storage, and compose the API test commands without removing existing consumers.
+
+The combined candidate includes the approved public synchronization delta from
+`dc656f7e92f5009fbcdc0fe0be4c0eae31a28921`, whose seven postimages and complete
+tree `4bf09e0133880c7e1ffb0bd99e2dc365dd8e1ff7` were verified independently,
+and the UI delta from `720423536f3f81a3b5fbc02b762e3a1532e9084a`.
+The UI test catalog retains both accepted Friends directory coverage and the new
+date-range spec. Mobile speed work is outside this candidate.
+
+Public synchronization reads only the controlled reader and publication ledger.
+Its integration fixture explicitly rejects archive-table reads and verifies that
+exact request bodies, selected evidence, writer/judge history, profiles and
+feedback are excluded. The newer Synastry body path now carries its content key
+into the archive and verifies the exact dispatched request through fixture storage.
+The admission, workflow syntax, drift and public synchronization contracts pass.
+Complete affected-consumer preflight, canonical builds, hosted exact-head gates
+and production acceptance remain pending at this integration checkpoint. Earlier
+local/source receipts retain their original revision and scope.
+
 Hosted exact-head API/browser/privacy gates and production activation are separate
 release evidence. Local acceptance alone does not establish a live deployment.
 Verify the existing migration and private access without a paid call before

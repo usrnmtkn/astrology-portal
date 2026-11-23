@@ -47,7 +47,7 @@ async function fits(page: Page, locator: Locator) {
 for (const viewport of [{width:320,height:568},{width:390,height:844},{width:844,height:390},{width:1440,height:900}]) {
  for (const theme of ['light','dark']) {
   for (const family of ['Sky','You natal','You transit','Friend natal','Friend unknown-time natal','Synastry','Composite','Studio coverage','Studio browse','Calendar comparison']) {
-   test(`${family} charts and tables contained ${viewport.width}x${viewport.height} ${theme}`,async({page})=>{
+   test(`${family} charts and tables contained ${viewport.width}x${viewport.height} ${theme}`,async({page},info)=>{
     test.setTimeout(60000);
     await page.setViewportSize(viewport);
     const friendName=family==='Synastry'?'FixtureName'.repeat(7):'Fixture Friend';
@@ -160,6 +160,25 @@ for (const viewport of [{width:320,height:568},{width:390,height:844},{width:844
       }
       await expect(page.getByRole('tab',{name:family,exact:true,includeHidden:true})).toHaveAttribute('aria-selected','true');
      }
+    }
+    if(family==='Synastry'||family==='Composite') {
+     const intro=page.getByRole('article',{name:family==='Synastry'?'What synastry shows':'What a composite chart is',exact:true});
+     await expect(intro).toBeVisible();
+     await info.attach('relationship-intro-geometry',{body:JSON.stringify(await intro.evaluate(card=>[card.parentElement,card,...card.querySelectorAll('*')].map(node=>{
+      const style=getComputedStyle(node!);return {tag:node!.tagName,class:node!.className,width:node!.getBoundingClientRect().width,display:style.display,gridTemplateColumns:style.gridTemplateColumns,minWidth:style.minWidth,overflowWrap:style.overflowWrap};
+     }))),contentType:'application/json'});
+     await fits(page,intro);
+     await expect(intro.locator('p')).not.toHaveCount(0);
+     const clipped=await intro.evaluate(card=>{
+      const bounds=card.getBoundingClientRect();
+      return [...card.querySelectorAll('p')].flatMap(node=>{
+       const range=document.createRange();range.selectNodeContents(node);
+       return [...range.getClientRects()].filter(rect=>rect.left<bounds.left-1||rect.right>bounds.right+1)
+        .map(rect=>({left:rect.left,right:rect.right,cardLeft:bounds.left,cardRight:bounds.right}));
+      });
+     });
+     expect(clipped,'Relationship introduction text stays inside its card, including unbroken names').toEqual([]);
+     await intro.screenshot({path:info.outputPath('relationship-introduction.png')});
     }
     await chartFits(page,page.locator('svg.sky-wheel:visible, svg.interactive-zodiac-wheel__svg:visible').first());
     if(friendNatal) {

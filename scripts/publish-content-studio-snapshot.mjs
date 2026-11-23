@@ -7,7 +7,7 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { recoveryBranch, recoverySnapshotPath, recoveryDeploymentConfig } from '../apps/web/src/content/contentStudioRecovery.mjs';
 
-import { validateRecoverySnapshot } from './lib/content-studio-snapshot.mjs';
+import { publishedSnapshotPath, validateRecoverySnapshot, validateSnapshotPair } from './lib/content-studio-snapshot.mjs';
 
 export const snapshotBranch = recoveryBranch;
 export const snapshotPath = recoverySnapshotPath;
@@ -15,7 +15,7 @@ const execute = (command, args, options = {}) => execFileSync(command, args, {
   maxBuffer: 128 * 1024 * 1024, encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'], ...options
 }).trim();
 
-// Trusted main code writes a two-file data tree; recovery history is append-only.
+// Trusted main code writes public data only; recovery history is append-only.
 export function publishContentStudioSnapshot({ run = execute, env = process.env } = {}) {
   if (env.GITHUB_REPOSITORY !== 'usrnmtkn/astrology-portal' || env.GITHUB_REF !== 'refs/heads/main'
     || !['schedule', 'workflow_dispatch'].includes(env.GITHUB_EVENT_NAME) || !/^[a-f0-9]{40}$/u.test(env.GITHUB_SHA ?? '')) {
@@ -29,34 +29,47 @@ export function publishContentStudioSnapshot({ run = execute, env = process.env 
   if (previousHead && !/^[a-f0-9]{40}$/u.test(previousHead)) throw new Error('Invalid recovery branch head.');
   const original = readFileSync(snapshotPath, 'utf8');
   let previous = '';
+  let previousPublished = '';
   const directory = mkdtempSync(path.join(tmpdir(), 'studio-recovery-'));
+  const publishedPath = path.join(directory, publishedSnapshotPath);
   try {
     if (previousHead) {
       run('git', ['fetch', '--no-tags', 'origin', `refs/heads/${snapshotBranch}`]);
       if (run('git', ['rev-parse', 'FETCH_HEAD']) !== previousHead) throw new Error('Recovery branch moved during fetch.');
       const files = run('git', ['ls-tree', '-r', '--name-only', previousHead]).split('\n').sort();
-      if (JSON.stringify(files) !== JSON.stringify([snapshotPath, 'vercel.json'].sort())
+      const legacyFiles = [snapshotPath, 'vercel.json'].sort();
+      const completeFiles = [...legacyFiles, publishedSnapshotPath].sort();
+      if (![legacyFiles, completeFiles].some(expected => JSON.stringify(files) === JSON.stringify(expected))
+        || run('git', ['ls-tree', '-r', previousHead]).split('\n').some(entry => !/^100644 blob /u.test(entry))
         || run('git', ['show', `${previousHead}:vercel.json`]) !== recoveryDeploymentConfig.trim()) {
         throw new Error('Unexpected recovery branch scope or deployment configuration.');
       }
       previous = run('git', ['show', `${previousHead}:${snapshotPath}`]);
       validateRecoverySnapshot(JSON.parse(previous), projectReaderRow);
+      if (files.includes(publishedSnapshotPath)) {
+        previousPublished = run('git', ['show', `${previousHead}:${publishedSnapshotPath}`]);
+        validateSnapshotPair(JSON.parse(previous), JSON.parse(previousPublished), projectReaderRow);
+        writeFileSync(publishedPath, `${previousPublished}\n`);
+      }
       writeFileSync(snapshotPath, `${previous}\n`);
     }
-    const refresh = ['scripts/refresh-content-studio-last-known-good.mjs'];
+    const refresh = ['scripts/refresh-content-studio-last-known-good.mjs', '--published-output', publishedPath];
     if (env.GITHUB_EVENT_NAME === 'schedule') refresh.push('--if-changed');
     run(process.execPath, refresh);
-    validateRecoverySnapshot(JSON.parse(readFileSync(snapshotPath, 'utf8')), projectReaderRow);
+    validateSnapshotPair(JSON.parse(readFileSync(snapshotPath, 'utf8')), JSON.parse(readFileSync(publishedPath, 'utf8')), projectReaderRow);
     run(process.execPath, ['scripts/test-content-studio-last-known-good.mjs']);
     run(process.execPath, ['scripts/test-content-studio-snapshot-sync.mjs']);
+    run(process.execPath, ['scripts/test-content-studio-published-export.mjs']);
     const changed = run('git', ['diff', '--name-only']).split('\n').filter(Boolean);
     if (changed.some(file => file !== snapshotPath)) throw new Error('Unexpected source changes in recovery export.');
-    if (previous && readFileSync(snapshotPath, 'utf8').trim() === previous.trim()) return { state: 'synchronized', head: previousHead };
+    if (previous && previousPublished && readFileSync(snapshotPath, 'utf8').trim() === previous.trim()
+      && readFileSync(publishedPath, 'utf8').trim() === previousPublished.trim()) return { state: 'synchronized', head: previousHead };
     const configPath = path.join(directory, 'vercel.json');
     writeFileSync(configPath, recoveryDeploymentConfig);
     writeFileSync(path.join(directory, 'snapshot.json'), readFileSync(snapshotPath));
     run(process.execPath, ['scripts/check-project-privacy.mjs', '--directory', directory]);
     const snapshotBlob = run('git', ['hash-object', '-w', snapshotPath]);
+    const publishedBlob = run('git', ['hash-object', '-w', publishedPath]);
     const configBlob = run('git', ['hash-object', '-w', configPath]);
     const gitEnv = { ...env, GIT_INDEX_FILE: path.join(directory, 'index'),
       GIT_AUTHOR_NAME: 'github-actions[bot]', GIT_COMMITTER_NAME: 'github-actions[bot]',
@@ -65,6 +78,7 @@ export function publishContentStudioSnapshot({ run = execute, env = process.env 
     const git = args => run('git', args, { env: gitEnv });
     git(['read-tree', '--empty']);
     git(['update-index', '--add', '--cacheinfo', `100644,${snapshotBlob},${snapshotPath}`]);
+    git(['update-index', '--add', '--cacheinfo', `100644,${publishedBlob},${publishedSnapshotPath}`]);
     git(['update-index', '--add', '--cacheinfo', `100644,${configBlob},vercel.json`]);
     const tree = git(['write-tree']);
     const head = git(['commit-tree', tree, ...(previousHead ? ['-p', previousHead] : []),
