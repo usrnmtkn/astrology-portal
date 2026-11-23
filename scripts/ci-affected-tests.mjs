@@ -47,7 +47,7 @@ export function browserJobCatalog(root, scripts, specs) {
 }
 
 export function createDependencyGraph(root, files) {
-  const known = new Set(files), cache = new Map(), referenceCache = new Map(), browserCache = new Map(), browserRoutes = new Set();
+  const known = new Set(files), cache = new Map(), referenceCache = new Map(), directoryCache = new Map(), browserCache = new Map(), browserRoutes = new Set();
   const surfaces = uiSurfaces.map(([routes,source])=>({
     route: new RegExp(`(?:#(?:${routes})|^(?:https?:\\/\\/[^/]+)?\\/(?:${routes}))(?=[/?&]|$)`,'u'),
     sources: files.filter(file=>file.startsWith('apps/web/src/')&&source.test(file.slice('apps/web/src/'.length)))
@@ -80,7 +80,7 @@ export function createDependencyGraph(root, files) {
   }
   function dependencies(file) {
     if (cache.has(file)) return cache.get(file);
-    const dependencies = new Set(),references=new Set();cache.set(file,dependencies);referenceCache.set(file,references);
+    const dependencies = new Set(),references=new Set(),directories=new Set();cache.set(file,dependencies);referenceCache.set(file,references);directoryCache.set(file,directories);
     if (!/\.(?:css|[cm]?[jt]sx?)$/u.test(file) || !existsSync(path.join(root,file))) return dependencies;
     const source=readFileSync(path.join(root,file),'utf8');
     if(file.endsWith('.css')) {
@@ -121,6 +121,15 @@ export function createDependencyGraph(root, files) {
         const parent=node.parent;
         const call=ts.isCallExpression(parent)?parent:null;
         const method=call&&(ts.isIdentifier(call.expression)?call.expression.text:ts.isPropertyAccessExpression(call.expression)?call.expression.name.text:null);
+        if(method==='readdirSync'&&call.arguments.length===1&&call.arguments[0]===node) {
+          const directory=path.posix.normalize(node.text);
+          if(/^(?:api|apps|src|tests|scripts|packages|config)(?:\/[\w.-]+)*$/u.test(directory)) {
+            // Enumerated handlers may be read or imported dynamically. Membership
+            // also depends on removed entries absent from the current file list.
+            directories.add(directory);
+            for(const entry of known)if(entry.startsWith(`${directory}/`))dependencies.add(entry);
+          }
+        }
         const module=ts.isImportDeclaration(parent)||ts.isExportDeclaration(parent)||ts.isExternalModuleReference(parent)
           ||call&&(call.expression.kind===ts.SyntaxKind.ImportKeyword||['require','ssrLoadModule'].includes(method));
         const worker=ts.isNewExpression(parent)&&ts.isIdentifier(parent.expression)&&parent.expression.text==='URL'
@@ -170,6 +179,7 @@ export function createDependencyGraph(root, files) {
       // does not mean a Sky journey renders every Friends and Calendar view.
       if(ui&&routeKnown&&file==='apps/web/src/App.tsx')continue;
       pending.push(...dependencies(file));
+      if([...directoryCache.get(file)??[]].some(directory=>[...changed].some(entry=>entry.startsWith(`${directory}/`))))return true;
       if([...referenceCache.get(file)??[]].some(reference=>changed.has(reference)))return true;
       if(browser)pending.push(...browserDependencies(file));
     }

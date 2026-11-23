@@ -131,6 +131,25 @@ Darwin WebKit, and compare unchanged line-height targets to five decimal places
 with the same 15-second deadline. No runtime, stylesheet or budget changes are
 included. Both complete specs and all their configured profiles must pass again.
 
+All 243 corrected spec/profile cases passed on
+`05038cf323a67c173b827914d3f2135b759e4708`, with zero skips or flaky cases.
+The local inventory initially reported 442 passes, but hosted API shard 1 then
+exposed an invalid reused receipt: the access-matrix test enumerates `api/admin`,
+and the new archive endpoint was missing from its route catalog. That inventory
+claim is superseded. The catalog now classifies the endpoint as owner-only GET;
+all 168 actual-handler unauthorized-access cases pass. The dependency graph now
+tracks literal directory membership and enumerated handler imports, including
+removed entries absent from the current file list. A focused regression covers
+added/removed entries, transitive consumers and unrelated directories; a direct
+before/after check reproduces the stale-reuse bug against the previous graph.
+Other discovered dynamic filesystem consumers are audited before evidence reuse.
+The original hosted failure remains recorded and replacement gates are required.
+The complete original hosted run reached terminal state: 15 workflows and 83
+checks, with 75 successes, six skips, and only the access-matrix shard and its
+API aggregate failing. The browser release gate, privacy gate, and API shards
+2 and 3 passed on the exact submitted revision. Replacement evidence may reuse
+only their complete, unchanged consumer inputs; the failed aggregate stays FAIL.
+
 Complete affected-consumer preflight, hosted exact-head gates
 and production acceptance remain pending at this integration checkpoint. Earlier
 local/source receipts retain their original revision and scope.
