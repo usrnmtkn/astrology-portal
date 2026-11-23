@@ -120,7 +120,18 @@ stopped after 24 passes, two failures and one interrupted case; 327 cases did no
 run. The mobile configuration now enables the same intercepted provider fixture.
 Its full profile matrix must pass again; no runtime behavior or timeout changed.
 
-Complete affected-consumer preflight, canonical builds, hosted exact-head gates
+The corrected full mobile matrix on
+`974b37c17bb1941a19847ea2dffcfe3778937436` collected all 354 cases with
+339 passes, 15 failures, zero skips and no global errors. The city fixture
+passed throughout. All remaining failures were two independently reproduced
+WebKit platform differences: macOS requires Option+Tab to include native buttons,
+and fractional line heights serialize with float32 noise. The tests retain every
+focus/wrap/Escape/restoration assertion, using the native macOS shortcut only for
+Darwin WebKit, and compare unchanged line-height targets to five decimal places
+with the same 15-second deadline. No runtime, stylesheet or budget changes are
+included. Both complete specs and all their configured profiles must pass again.
+
+Complete affected-consumer preflight, hosted exact-head gates
 and production acceptance remain pending at this integration checkpoint. Earlier
 local/source receipts retain their original revision and scope.
 
