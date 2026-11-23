@@ -8,6 +8,7 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
     test.setTimeout(90_000);
     const store = await studioApiStore([]);
     let releaseLookup: (() => void) | undefined;
+    let releaseSummary: (() => void) | undefined;
     try {
       const errors: string[] = [];
       page.on('pageerror', error => errors.push(error.message));
@@ -16,11 +17,19 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
         localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture');
         localStorage.setItem('tldrastro:studio-theme', theme);
       }, theme);
+      let initialSummaryLookups = 0;
+      const summaryKey = 'cms/sky-daily-summary/assembly/opening';
+      const summaryGate = new Promise<void>(resolve => { releaseSummary = resolve; });
       await routeStudioInventoryApi(page, { call: store.call, actualDocumentRoute: true, answer: async (route, url) => {
         if (url.pathname !== '/api/admin/content-live-status') return false;
         const result = await store.call({ method: route.request().method(), url: url.pathname, body: route.request().postDataJSON() });
         await route.fulfill({ status: result.status, json: result.payload }); return true;
       } });
+      await page.route(url => url.pathname === '/api/admin/generated-content-inventory' && url.searchParams.get('contentKey') === summaryKey, async route => {
+        initialSummaryLookups++;
+        await summaryGate;
+        await route.fallback();
+      });
       const entry = process.env.STUDIO_PRODUCTION_ENTRY === '1' ? '/admin/content' : '/';
       const openNavigation = async () => {
         if (width !== 390) return;
@@ -29,10 +38,16 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
         if (await toggle.getAttribute('aria-expanded') === 'false') await toggle.click();
       };
       await page.goto(`${entry}#sky-writeups?view=daily-summary`);
+      await expect.poll(() => initialSummaryLookups).toBe(1);
       await openNavigation();
       await page.getByLabel('Sky Write-ups sections').getByRole('button', { name: 'House × aspect bridges', exact: true }).click();
       const region = page.getByRole('region', { name: 'House × aspect bridges', exact: true });
       await expect(region).toBeVisible();
+      await expect(region.getByRole('button', { name: 'Open bridge', exact: true })).toBeEnabled();
+      const summarySettled = page.waitForResponse(response => new URL(response.url()).searchParams.get('contentKey') === summaryKey);
+      releaseSummary!();
+      await (await summarySettled).finished();
+      await expect(page.getByRole('dialog')).toHaveCount(0);
       const heading = region.getByRole('heading', { level: 2, name: 'House × aspect bridges', exact: true });
       await expect(heading).toBeVisible();
       await expect(page.locator('.admin-main h1, .admin-main h2')).toHaveText(['Sky Write-ups', 'Sky writing workspaces', 'House × aspect bridges']);
@@ -116,6 +131,6 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
       await expect(region).toHaveCount(0);
       expect(errors).toEqual([]);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-    } finally { releaseLookup?.(); store.close(); }
+    } finally { releaseSummary?.(); releaseLookup?.(); await page.unrouteAll({ behavior: 'wait' }); store.close(); }
   });
 }

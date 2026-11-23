@@ -1,5 +1,6 @@
 import { expect, test, type Page, type Request } from '@playwright/test';
 import { bundledPublications } from './bundled-publications';
+import { healthyEphemerisProbe } from './ephemeris-health';
 import { getAstrodienstSky } from '../../apps/web/src/services/ephemeris';
 import { zonedDateTimeToUtc } from '../../apps/web/src/services/timezones';
 import { natalSkySnapshotCacheKey, VERIFIED_SKY_CACHE_SCHEMA } from '../../apps/web/src/services/verifiedSkyCache';
@@ -63,8 +64,10 @@ export async function authenticate(page:Page, sect?: 'day' | 'night') {
     return route.fulfill({json:socialProfile});
   });
   await page.route('**/rest/v1/manual_charts*',route=>{
-    const request=route.request(),method=request.method(),id=new URL(request.url()).searchParams.get('id')?.replace(/^eq\./,'');
-    if(method==='GET')return route.fulfill({json:manualRows});
+    const request=route.request(),method=request.method(),idFilter=new URL(request.url()).searchParams.get('id');
+    const ids=idFilter?.startsWith('in.(') ? idFilter.slice(4,-1).split(',') : idFilter?.startsWith('eq.') ? [idFilter.slice(3)] : [];
+    const id=ids[0];
+    if(method==='GET')return route.fulfill({json:ids.length ? manualRows.filter(row=>ids.includes(String(row.id))) : manualRows});
     if(method==='POST'){
       requests.manualInserts++;const input=request.postDataJSON();
       const row={...input,id:manualRows.length?'fixture-import-'+manualRows.length:'fixture-friend',created_at:now,updated_at:now};manualRows.push(row);
@@ -75,7 +78,7 @@ export async function authenticate(page:Page, sect?: 'day' | 'night') {
       if(!row)return route.fulfill({status:404,json:{message:'Synthetic chart not found'}});
       Object.assign(row,request.postDataJSON(),{updated_at:now});return route.fulfill({json:row});
     }
-    if(method==='DELETE'){const index=manualRows.findIndex(row=>row.id===id);if(index>=0)manualRows.splice(index,1);return route.fulfill({status:204});}
+    if(method==='DELETE'){for(let index=manualRows.length-1;index>=0;index--)if(ids.includes(String(manualRows[index].id)))manualRows.splice(index,1);return route.fulfill({status:204});}
     return route.fulfill({status:405,json:{message:'Unexpected synthetic manual-chart method'}});
   });
   await page.route('**/rest/v1/connections*',route=>route.fulfill(route.request().method()==='GET'?{json:[]}:{status:204}));
@@ -173,6 +176,7 @@ export async function inspectMemberSourceFailures(page:Page){
   const failures:string[]=[],pending:Array<Promise<void>>=[];let completedCachedReads=0;
   // All supported API routes are installed by the fixture after this fallback.
   await page.route('**/api/**',route=>{failures.push(`Unhandled synthetic API: ${route.request().method()} ${new URL(route.request().url()).pathname}`);return route.abort('blockedbyclient');});
+  await healthyEphemerisProbe(page);
   page.on('pageerror',error=>failures.push(`pageerror: ${error.message}`));
   page.on('console',message=>{if(['warning','error'].includes(message.type()))failures.push(`console ${message.type()}: ${message.text()}`);});
   const isApi=(url:string)=>/^\/(?:api\/|rest\/v1\/|auth\/v1\/)/.test(new URL(url).pathname);

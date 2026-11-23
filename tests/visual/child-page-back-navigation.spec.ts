@@ -38,6 +38,7 @@ for (const width of [390, 768, 1024, 1440]) for (const theme of ['light', 'dark'
     await expect(page.locator('#sky-detail-title')).toHaveText('Mercury Rx in Scorpio', { timeout: 60_000 });
     const articleBack = page.getByRole('button', { name: 'Close detail', exact: true });
     await expectHeaderAlignment(page, articleBack);
+    if (width === 390) await expect(page.locator('.brand-word')).toBeVisible();
     await page.evaluate(() => window.scrollTo(0, 600));
     await expectHeaderAlignment(page, articleBack);
     await page.reload();

@@ -137,11 +137,16 @@ test('Calculated lunar eclipse identity wins over an incompatible reusable headl
   await expect(day.getByRole('heading', { level: 2 })).toHaveText(event.title, { timeout: 60000 });
   await day.getByRole('button', { name: event.title, exact: true }).click();
   await expect(page.locator('#sky-detail-title')).toHaveText(event.title, { timeout: 60000 });
+  const glyphs = page.locator('.article-eyebrow__glyphs');
+  await expect(glyphs).toHaveText('☽');
+  await expect(glyphs.locator('img')).toHaveAttribute('src', /\/aries\.svg/);
   const paragraphs = page.locator('.sky-detail-body .article-body-inner').first().locator('p');
   await expect(paragraphs).toHaveText(passage.split('\n\n'));
   await page.reload();
   await expect(page.locator('#sky-detail-title')).toHaveText(event.title, { timeout: 60000 });
+  await expect(glyphs).toHaveText('☽');
   await expect(paragraphs).toHaveText(passage.split('\n\n'));
+  await page.locator('.article-id').screenshot({ path: test.info().outputPath('lunar-eclipse-reader-header.png') });
 });
 
 const moon = cases.find(c => c.key === 'ingress/Moon/Leo')!.event;

@@ -5,7 +5,7 @@ import {tmpdir} from 'node:os';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {createAffectedPlan,createDependencyGraph,revisionRange} from './ci-affected-tests.mjs';
-import {validateTestPlan,apiTestCommands} from './ci-test-plan.mjs';
+import {validateTestPlan,apiTestCommands,preflightInventory} from './ci-test-plan.mjs';
 import {checkAffectedApiGate} from './check-affected-api-gate.mjs';
 import {runAffectedPlaywright} from './run-affected-playwright.mjs';
 
@@ -19,8 +19,17 @@ assert.equal(browser.apiCommands.length,0);assert.deepEqual(browser.browserSpecs
 assert.deepEqual(browser.browserJobs,['studio-admin-flows']);assert.equal(browser.postgres,false);
 const infrastructure=planFor(['.github/workflows/content-studio-api.yml','scripts/ci-test-plan.mjs','scripts/run-affected-playwright.mjs']);
 assert.equal(infrastructure.apiCommands.length,0);assert.equal(infrastructure.browserJobs.length,0);
+const browserWorkflow=planFor(['.github/workflows/visual-smoke.yml']);
+assert(browserWorkflow.browserJobs.includes('studio-admin-flows'),'Changing the Studio Admin matrix must exercise its exact-head shards');
+assert(browserWorkflow.browserSpecs.length>0,'Browser workflow topology cannot pass with every browser job skipped');
 const styling=planFor(['apps/admin/src/studio-system.css']);
 assert.equal(styling.apiCommands.length,0);assert(styling.browserJobs.length>1);
+const budgetChecker=planFor(['scripts/check-admin-bundle-budgets.mjs']);
+assert(!budgetChecker.apiCommands.some(command=>/test-calendar-daily-writing|test-horoscope-monthly/u.test(command)),'Budget changes retain their own API consumers without unrelated writers');
+assert.deepEqual(budgetChecker.browserJobs,['visual-smoke'],'A budget checker change must execute the build preflight without unrelated browser journeys');
+const buildProfiles=planFor(['scripts/release-build-preflight.mjs']);
+assert(buildProfiles.apiCommands.some(command=>command.includes('test-release-build-preflight')),'The canonical launcher retains its profile-parity regression');
+assert.deepEqual(buildProfiles.browserJobs,['visual-smoke']);
 const natal=planFor(['src/shared/natalSectPlacement.ts','api/admin/natal-placement-preview.ts']);
 assert(natal.apiCommands.some(command=>command.includes('test-natal-editorial-library')));
 assert(natal.apiCommands.some(command=>command.includes('test-admin-natal-placement-preview-api')));
@@ -29,6 +38,42 @@ assert(natal.browserSpecs.includes('tests/visual/natal-friend-publication.spec.t
 assert(!natal.browserSpecs.includes('tests/visual/report-library-ui.spec.ts'));
 const unknown=planFor(['new-unclassified-runtime.ts']);
 assert.equal(unknown.apiCommands.length,apiTestCommands(pkg).length);assert(unknown.reasons.length);
+const writing=planFor(['src/astro-writing/forecastProseDevelopment.cjs','scripts/assert-horoscope-request-evidence.mjs']);
+assert(writing.apiCommands.some(command=>command.includes('test-lunation-saved-writing')),'Retain the lunar writer consumer');
+assert(writing.apiCommands.some(command=>command.includes('test-horoscope-monthly')),'Retain the Monthly writer consumer');
+assert(writing.apiCommands.length<apiTestCommands(pkg).length,'Indexed writing modules must use their actual API consumers');
+assert(writing.browserSpecs.includes('tests/visual/horoscope-model-choice.spec.ts'),'Retain the forked actual-handler browser consumer');
+assert(!writing.browserSpecs.includes('tests/visual/friends-loading-performance.spec.ts'),'A writer change must not select unrelated Friends loading');
+const unknownWriter=planFor(['src/astro-writing/unmapped-source.cjs']);
+assert.equal(unknownWriter.apiCommands.length,unknown.apiCommands.length,'Unmapped writing sources retain the conservative fallback');
+assert.deepEqual(unknownWriter.browserSpecs,unknown.browserSpecs);
+for(const file of ['src/astro-writing/horoscopeWriting.mjs','src/astro-writing/weeklyConcernDirection.mjs','src/astro-writing/horoscopeWriterModels.mjs']) {
+  const weekly=planFor([file]);
+  for(const consumer of ['test-weekly-cross-week-editorial','test-weekly-batch-editorial','test-horoscope-durable-batch']) {
+    assert(weekly.apiCommands.some(command=>command.includes(consumer)),`${file} must retain the actual Weekly consumer ${consumer}`);
+  }
+}
+const articleRenderers=planFor(['apps/web/src/features/sky/SkyDetailArticle.tsx']);
+assert(articleRenderers.browserSpecs.includes('tests/visual/mobile-parity.spec.ts'),'An inline esbuild renderer must retain its actual SkyDetailArticle consumer');
+const screenshotReference=planFor(['tests/visual/visual-regression-baseline.spec.ts-snapshots/client-friends-mobile-light-chromium-desktop-linux.png']);
+assert.deepEqual(screenshotReference.browserSpecs,['tests/visual/visual-regression-baseline.spec.ts'],'A screenshot reference must retain the complete spec that compares it');
+const incomplete=preflightInventory(screenshotReference);
+assert.equal(incomplete.status,'INCOMPLETE');assert.equal(incomplete.counts.NOT_RUN,1);
+const baselineReceipt={kind:'browser',name:screenshotReference.browserSpecs[0],status:'PASS',origin:'local',source:'synthetic execution receipt',revision:head,complete:true};
+assert.throws(()=>preflightInventory(screenshotReference,[{...baselineReceipt,complete:false}]),/partial spec/);
+assert.equal(preflightInventory(screenshotReference,[baselineReceipt]).status,'PASS');
+const oldLocal={...baselineReceipt,revision:'a'.repeat(40)};
+assert.throws(()=>preflightInventory(screenshotReference,[oldLocal]),/unchanged relevant inputs/,'An old local PASS cannot certify changed current inputs');
+assert.equal(preflightInventory(screenshotReference,[{...oldLocal,relevantInputsUnchanged:true}]).status,'PASS');
+assert.equal(preflightInventory(screenshotReference,[{...baselineReceipt,status:'PROTECTED_UNAVAILABLE'}]).status,'INCOMPLETE');
+assert.equal(preflightInventory(screenshotReference,[{...baselineReceipt,status:'FAIL'}]).status,'FAIL');
+assert.throws(()=>preflightInventory(screenshotReference,[{...baselineReceipt,origin:'hosted-unchanged'}]),/unchanged relevant inputs/);
+for(const file of ['apps/web/src/features/friends/FriendChartsList.tsx','apps/web/src/styles/friends-route.css']) {
+  const directory=planFor([file]);
+  for(const spec of ['visual-regression-baseline','design-handoff-pages','connection-transit-separation']) {
+    assert(directory.browserSpecs.includes(`tests/visual/${spec}.spec.ts`),`${file} must retain its rendered-output consumer ${spec}`);
+  }
+}
 const friendsUiFiles=[
   'apps/web/src/features/friends/CompatibilityTab.tsx',
   'apps/web/src/features/friends/FriendProfileChartRail.tsx',
@@ -107,6 +152,7 @@ try {
   write('apps/web/src/features/friends/card.css',"@import './palette.css';");
   write('apps/web/src/features/friends/palette.css','');
   write('apps/web/src/features/sky/Card.tsx','export const Card=()=>null;');
+  write('tests/visual/interpolated-renderer.spec.ts',"build({stdin:{resolveDir:process.cwd(),contents:`const fixture = ${42}; import {Card} from './apps/web/src/features/friends/Card';`}});");
   write('tests/visual/friends.spec.ts',"const route=`/#friends?chart=${'fixture'}`;");
   write('tests/visual/sky.spec.ts',"import '../../apps/web/src/App'; const route='/#sky';");
   write('tests/visual/admin.spec.ts',"import '../../apps/web/src/App'; const route='/admin/index.html';");
@@ -115,13 +161,20 @@ try {
   write('tests/ssr.mts',"server.ssrLoadModule('/src/features/friends/Card.tsx');");
   write('src/worker.ts',"import './shared.js';");
   write('src/worker-loader.ts',"new Worker(new URL('./worker.ts',import.meta.url));");
+  write('src/process-shared.cjs','module.exports=1;');
+  write('tests/process-helper.mts',"const value=require('../src/process-shared.cjs');");
+  write('tests/forked.mjs',"fork(path.resolve('tests/process-helper.mts'),[]);");
+  write('tests/spawned.mjs',"spawn(process.execPath,['--import','tsx',path.resolve('tests/process-helper.mts')]);");
   const uiGraph=createDependencyGraph(directory,[...fixtureFiles]);
+  assert(uiGraph.reachesBrowser(['tests/visual/interpolated-renderer.spec.ts'],new Set(['apps/web/src/features/friends/Card.tsx']),true),'A real renderer import after a template interpolation remains an executable dependency');
   const friendCard=new Set(['apps/web/src/features/friends/Card.tsx']);
   assert(!uiGraph.reaches(['src/types-only.ts'],new Set(['src/shared.ts'])),'Type-only imports and exports do not execute a module');
   assert(!uiGraph.reaches(['src/metadata.ts'],new Set(['src/shared.ts'])),'Source path metadata is not an import');
   assert(uiGraph.reaches(['tests/text.mts'],new Set(['src/raw.ts'])),'Text reads depend on the exact file');
   assert(!uiGraph.reaches(['tests/text.mts'],new Set(['src/shared.ts'])),'Reading source text must not execute its imports');
   assert(uiGraph.reaches(['src/worker-loader.ts'],new Set(['src/shared.ts'])),'Worker URL imports remain transitive');
+  assert(uiGraph.reaches(['tests/forked.mjs'],new Set(['src/process-shared.cjs'])),'Forked helpers retain their transitive CommonJS consumers');
+  assert(uiGraph.reaches(['tests/spawned.mjs'],new Set(['src/process-shared.cjs'])),'Node subprocess helpers retain their transitive consumers');
   assert(uiGraph.reaches(['tests/ssr.mts'],friendCard),'Resolve Vite SSR /src modules');
   assert(!uiGraph.reaches(['tests/visual/friends.spec.ts'],friendCard),'Browser route evidence must not create API dependencies');
   assert(uiGraph.reachesBrowser(['tests/visual/friends.spec.ts'],friendCard,true),'A route journey covers its composed UI');
@@ -161,7 +214,7 @@ try {
   const balanced=new URL('./balanced-browser-tests.mjs',import.meta.url).href;
   const cli=fileURLToPath(new URL('../node_modules/@playwright/test/cli.js',import.meta.url));
   const balancedPlan={...selected,head:fixtureHead};
-  for(const shard of ['1/6','6/6']) {
+  for(const shard of ['1/7','7/7']) {
     const code=`import{main}from ${JSON.stringify(balanced)};process.exitCode=main(['--config','playwright.studio-admin-flows.config.ts',${JSON.stringify(shard)}],{cli:${JSON.stringify(cli)}});`;
     const result=spawnSync(process.execPath,['--input-type=module','-e',code],{cwd:directory,env:{PATH:process.env.PATH,CI_AFFECTED_TEST_PLAN:JSON.stringify(balancedPlan)},encoding:'utf8'});
     assert.equal(result.status,0,result.stderr);

@@ -105,7 +105,10 @@ try {
     assert.equal((await store.invoke('PATCH', { id: row.id, expectedUpdatedAt: draftVersion, body: 'Stale edit' })).status, 409);
     assert.equal((await store.invoke('PATCH', { id: row.id, body: 'Unauthorized edit' }, undefined, 'invalid')).status, 401);
     assert.equal(store.rows.get(row.id).body, body);
-    for (const key of reader.calendarEventArticleSourceKeys(event).filter((key: string) => key !== draft.contentKey)) {
+    // Authored station cards are package sources, not native calendar_event
+    // aliases. Their complete published bodies are covered by the 2027
+    // approved-reading fixture through the actual subscription handlers.
+    for (const key of reader.calendarEventArticleSourceKeys(event).filter((key: string) => key !== draft.contentKey && !key.startsWith('authored/station/'))) {
       const aliasBody = `Synthetic complete ${key} opening.\n\nExact alias final paragraph.`;
       const aliasCreate = await store.invoke('POST', { ...input, contentKey: key, body: aliasBody, eventType: 'calendar_event' });
       assert.equal(aliasCreate.status, 200, JSON.stringify(aliasCreate.payload));

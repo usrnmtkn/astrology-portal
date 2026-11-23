@@ -1,3 +1,4 @@
+import {calendarDailyReviewDraft} from '../_lib/calendar-daily-review.js';
 import type {IncomingMessage,ServerResponse} from 'node:http';
 import {randomUUID} from 'node:crypto';
 import {getContentAdminPrincipal,requireContentAdmin} from '../_lib/admin-auth.js';
@@ -14,9 +15,10 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
   const actor=(await getContentAdminPrincipal(req))!;
   try{
     const input:any=req.method==='GET'?Object.fromEntries(new URL(req.url!,'http://localhost').searchParams):await readAdminJsonBody(req,1000000);
-    if(Object.keys(input).some(k=>!['action','date','timeZone','expectedUpdatedAt','profile','workspace','requestHash','authorizeWriterCall'].includes(k)))throw new AdminHttpError(400,'Unknown daily writing request field.');
+    if(Object.keys(input).some(k=>!['action','date','timeZone','writerResultId','expectedUpdatedAt','profile','workspace','requestHash','authorizeWriterCall'].includes(k)))throw new AdminHttpError(400,'Unknown daily writing request field.');
     const action=req.method==='GET'?'load':input.action;
     if(!['load','save-profile','save','export','prepare','generate','poll'].includes(action))throw new AdminHttpError(400,'Choose a daily writing action.');
+    if(Object.hasOwn(input,'writerResultId')&&(action!=='load'||typeof input.writerResultId!=='string'))throw new AdminHttpError(400,'A saved writer result can only be loaded for review.');
     if(action==='save-profile'){
       const profile=validateTextFields(input.profile,PROFILE_FIELDS,30000),row=await readDailyRow(DAILY_PROFILE_KEY);
       const saved=await saveDailyRow(DAILY_PROFILE_KEY,input.expectedUpdatedAt,{...row?.sections,profile},row,actor);
@@ -24,7 +26,16 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
     }
     const key=target(input.date,input.timeZone);
     let row=await readDailyRow(key);
-    if(action==='load')return sendAdminJson(res,200,{ok:true,row,workspace:row?.sections.workspace??{thought:'',exclusions:''},profileRow:await readDailyRow(DAILY_PROFILE_KEY),emptyProfile:emptyProfile(),configured:Boolean(process.env.OPENAI_API_KEY)});
+    if(action==='load'){
+      if(Object.hasOwn(input,'writerResultId')){
+        let review;
+        try{review=calendarDailyReviewDraft(row,{surface:'calendar',date:input.date,timeZone:input.timeZone,
+          sourceKey:`calendar-passage/daily/${input.date}/${encodeURIComponent(input.timeZone)}`,writerResultId:input.writerResultId});}
+        catch{throw new AdminHttpError(400,'The saved writer result could not be verified. Reopen it in Daily writing.');}
+        return sendAdminJson(res,200,{ok:true,review});
+      }
+      return sendAdminJson(res,200,{ok:true,row,workspace:row?.sections.workspace??{thought:'',exclusions:''},profileRow:await readDailyRow(DAILY_PROFILE_KEY),emptyProfile:emptyProfile(),configured:Boolean(process.env.OPENAI_API_KEY)});
+    }
     if(input.expectedUpdatedAt!==(row?.updated_at??null))throw new AdminHttpError(409,'This daily workspace changed. Reload before continuing.');
     const persist=async(sections:any)=>row=await saveDailyRow(key,row?.updated_at??null,sections,row,actor);
     if(action==='save'){

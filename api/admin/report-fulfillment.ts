@@ -165,8 +165,11 @@ async function action(body: {
   if (!body.reportId) throw new Error("reportId is required.");
   const report = await admin.selectOne<{
     id: string; user_id: string; entitlement_id: string; fulfillment_status: string; report_domain: string; report_horizon: string;
-    prompt_versions: Record<string, unknown>;
-  }>("user_reports", new URLSearchParams({ id: `eq.${body.reportId}`, select: "id,user_id,entitlement_id,fulfillment_status,report_domain,report_horizon,prompt_versions" }));
+    prompt_versions: Record<string, unknown>; period_start: string; period_end: string; facts_engine: string; facts_hash: string;
+  }>("user_reports", new URLSearchParams({
+    id: `eq.${body.reportId}`,
+    select: "id,user_id,entitlement_id,fulfillment_status,report_domain,report_horizon,prompt_versions,period_start,period_end,facts_engine,facts_hash"
+  }));
   if (!report) throw new Error("Report not found.");
   if (body.action === "save_report_unit_draft") {
     if (!body.unitId) throw new Error("unitId is required.");

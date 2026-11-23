@@ -25,7 +25,7 @@ test.beforeAll(async()=>{
  const [own,setOwn]=useState({name:'Sample Reader',birthMonth:'01',birthDay:'01',birthYear:'1990',birthHour:'12',birthMinute:'00',birthMeridiem:'PM',unknownBirthTime:false,birthPlace:'Test City',birthLocation:null,currentLocation:'Test City',currentLocationData:null});
  const facts={summary:'This is the complete calculated relationship context.',caution:'These are connections through one endpoint.',groups:[{key:'primary',heading:'The primary transit',rows:[{key:'contact',title:'Saturn square the natal Midheaven',aspect:'square',orb:'0° 16′'}]},{key:'related',heading:'Related contacts',rows:Array.from({length:8},(_,i)=>({key:'related-'+i,title:'Complete related contact '+i,aspect:'trine',orb:'1° 27′'}))}]};
  const articleCase=new URLSearchParams(location.search).get('article');
- const iconArticle={full:{title:'Full Moon in Libra',glyph:'○'},new:{title:'New Moon in Libra',glyph:'●'},spaced:{title:'Full   Moon in Libra',glyph:'○'},padded:{title:'  New Moon in Libra  ',glyph:'●'},planet:{title:'Sun in Libra',glyph:'○'},retrograde:{title:'Mercury Rx in Libra',glyph:'○'},unknown:{title:'Quasar in Libra',glyph:'○'},phaseLike:{title:'New Moonstone in Libra',glyph:'○'},phasePrefix:{title:'Full Moon Watcher in Libra',glyph:'○'},empty:{title:'',glyph:''},aspect:{title:'Sun sextile Mercury',glyph:'☉'}}[articleCase];
+ const iconArticle={full:{title:'Full Moon in Libra',glyph:'○'},new:{title:'New Moon in Libra',glyph:'●'},eclipse:{title:'Full Moon Lunar Eclipse in Libra',glyph:'○'},spaced:{title:'Full   Moon in Libra',glyph:'○'},padded:{title:'  New Moon in Libra  ',glyph:'●'},planet:{title:'Sun in Libra',glyph:'○'},retrograde:{title:'Mercury Rx in Libra',glyph:'○'},unknown:{title:'Quasar in Libra',glyph:'○'},phaseLike:{title:'New Moonstone in Libra',glyph:'○'},phasePrefix:{title:'Full Moon Watcher in Libra',glyph:'○'},empty:{title:'',glyph:''},aspect:{title:'Sun sextile Mercury',glyph:'☉'}}[articleCase];
  if(iconArticle)return <SkyDetailArticle detail={{...iconArticle,kicker:'Sky',meta:'October 29, 2026',body:['Synthetic complete opening paragraph.','Synthetic complete ending paragraph.']}} onClose={()=>{}}/>;
  return <><ThemeToggleButton theme={theme} onThemeChange={next=>{setTheme(next);document.documentElement.dataset.theme=next}}/><button id='edit-sample' onClick={()=>setOpen('friend')}>Edit sample chart</button><button onClick={()=>setOpen('own')}>Edit own chart</button><button className='social-secondary-button' onClick={()=>setOpen('wheel')}>Full-screen chart</button><button id='delete-sample' onClick={()=>setOpen('delete')}>Delete sample chart</button>
  {open==='delete'&&<FriendChartDeleteDialog name='Sample Chart' pending={deleting} restoreFocusId='delete-sample' onClose={()=>setOpen('')} onDelete={()=>{window.__mobileDeletes=(window.__mobileDeletes||0)+1;setDeleting(true)}}/>}
@@ -98,7 +98,7 @@ test('Mobile parity: chart forms, close icons, connection sheet and badge center
   expect((await dialog.locator(input).boundingBox())!.width).toBeGreaterThan(Math.min(250,page.viewportSize()!.width-100));
  }
  const close=dialog.getByRole('button',{name:'Close',exact:true});
- await expect(close.locator('svg')).toHaveCSS('width','16px');await expect(close.locator('svg')).toHaveCSS('height','16px');
+ await expect(close.locator('svg')).toHaveCSS('width','24px');await expect(close.locator('svg')).toHaveCSS('height','24px');
  await expect(close).toHaveCSS('padding','0px');
  await dialog.getByRole('button',{name:'Save chart',exact:true}).scrollIntoViewIfNeeded();
  await expect(dialog.getByRole('button',{name:'Save chart',exact:true})).toBeInViewport();
@@ -177,8 +177,9 @@ test('Mobile parity: article aspect and lunar icons preserve supplied glyphs',as
  const theme=info.project.use.colorScheme==='dark'?'dark':'light';
  await routeMobileHarness(page,theme);
  for(const [key,title,glyph] of [
-  ['full','Full Moon in Libra','○'],['new','New Moon in Libra','●'],
-  ['spaced','Full Moon in Libra','○'],['padded','New Moon in Libra','●'],
+  ['full','Full Moon in Libra','☽'],['new','New Moon in Libra','☽'],
+  ['eclipse','Full Moon Lunar Eclipse in Libra','☽'],
+  ['spaced','Full Moon in Libra','☽'],['padded','New Moon in Libra','☽'],
   ['planet','Sun in Libra','☉'],['unknown','Quasar in Libra','Q'],
   ['retrograde','Mercury Rx in Libra','☿'],
   ['phaseLike','New Moonstone in Libra','N'],['phasePrefix','Full Moon Watcher in Libra','F'],['empty','',''],

@@ -112,7 +112,17 @@ assert.match(skyContent, /South Node \(\$\{southAspect\}\): \$\{southContent ===
 assert.match(skyContent, /sky\.aspect\.south-node\.\$\{southAspect\}/u, "Calendar hydration must request the editable South Node counterpart for node-axis events.");
 assert.match(seedSource, /studio_editable_fields:[\s\S]*Summary[\s\S]*Body/u, "All exact aspect baselines must keep Summary and Body editable in Content Studio.");
 assert.match(seedSource, /EXACT-SKY-ASPECT-CONTENT-STUDIO-2026-09-07-COLLECTIVE/u, "Content Studio exact package version was not advanced with this release.");
-assert.match(surfaceContract, /Governed LIVE Content Studio exact-aspect version[\s\S]*canonical transit corpus as the baseline/u, "The documented exact-aspect authority order must match runtime behavior.");
+const documentedAuthority = surfaceContract.match(/Resolve each calculated Sky aspect in this order:\n\n```text\n([\s\S]*?)\n```/u)?.[1].split("\n");
+assert.deepEqual(documentedAuthority, [
+  "1. The identity-specific owner-selected PA-092 master",
+  "2. Published sign-specific Calendar reading or authorized composed card",
+  "3. Signed owner-authored exact Studio reading",
+  "4. Governed LIVE general Content Studio exact-aspect version",
+  "5. Owner-approved exact-aspect reader copy from the canonical transit corpus",
+  "6. Approved sign-specific, exact or pair-specific Sky aspect phrasebook hook",
+  "7. Explicitly approved generated write-up for the current planet/aspect/sign facts",
+  "8. SOURCE_GAP"
+], "The complete documented authority order must match the shared Calendar/Sky selector.");
 
 console.log("Sky Calendar 379-row collective serving release contract passed.", {
   rows: projection.rowCount,

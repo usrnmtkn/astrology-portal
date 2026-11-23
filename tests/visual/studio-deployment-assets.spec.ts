@@ -7,6 +7,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { deploymentAssetsPlugin } from "../../scripts/deployment-assets-plugin.mjs";
 import { normalizeTransitNatalPreviewInput, renderTransitNatalDraftStarter, renderTransitNatalPreviewState } from "../../api/admin/transit-natal-preview";
+import { studioBuildAsset } from '../helpers/studio-build-assets';
 
 const studioPath = process.env.STUDIO_PRODUCTION_ENTRY === "1" ? "/admin/content" : "/";
 
@@ -102,12 +103,13 @@ for (const [width, theme] of [[1440, "light"], [390, "dark"]] as const) {
       await editor.getByLabel("Article title", { exact: true }).fill("Synthetic deployment recovery guide");
       await body.fill(copy);
       const mountedEditor = await editor.elementHandle();
-      expect(requested.some(url => /StudioFormattingEditor-/u.test(url))).toBe(false);
+      const formattingAsset = await studioBuildAsset('src/StudioFormattingEditor.tsx');
+      expect(requested.some(url => new URL(url).pathname === formattingAsset)).toBe(false);
       replaced = true;
       const count = requested.length;
       await body.locator("..").getByRole("button", { name: "Format text", exact: true }).click();
       await expect(editor.getByRole("textbox", { name: "Article body formatted text", exact: true })).toContainText("The complete final paragraph survives a deployment.");
-      expect(requested.slice(count).some(url => /StudioFormattingEditor-/u.test(url))).toBe(true);
+      expect(requested.slice(count).some(url => new URL(url).pathname === formattingAsset)).toBe(true);
       expect(rejected).toEqual([]);
       expect(requested.every(url => new URL(url).searchParams.get("dpl") === "dpl_0123456789abcdefghijklmnopqr")).toBe(true);
       expect(await mountedEditor!.evaluate(element => element.isConnected)).toBe(true);

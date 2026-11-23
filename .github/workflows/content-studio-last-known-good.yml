@@ -2,12 +2,11 @@ name: Refresh Content Studio last-known-good snapshot
 
 on:
   schedule:
-    - cron: "17 7 * * 1"
+    - cron: "8,23,38,53 * * * *"
   workflow_dispatch:
 
 permissions:
   contents: write
-  pull-requests: write
 
 concurrency:
   group: content-studio-last-known-good
@@ -15,36 +14,19 @@ concurrency:
 
 jobs:
   refresh:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
-      - name: Refresh reader-safe durable snapshot
+      - name: Synchronize validated published recovery data
         env:
           PROJECT_PRIVACY_POLICY: ${{ secrets.PROJECT_PRIVACY_POLICY }}
-        run: node scripts/refresh-content-studio-last-known-good.mjs
-      - name: Verify snapshot contract
-        run: node scripts/test-content-studio-last-known-good.mjs
-      - name: Publish validated snapshot through a pull request
-        env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          if git diff --quiet -- apps/web/public/content-studio-last-known-good.json; then
-            echo "Last-known-good snapshot is already current."
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          snapshot_branch="automation/content-studio-snapshot-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
-          git switch -c "$snapshot_branch"
-          git add apps/web/public/content-studio-last-known-good.json
-          git commit -m "chore(content): refresh CMS last-known-good snapshot"
-          snapshot_commit=$(git rev-parse HEAD)
-          git push origin "$snapshot_branch"
-          snapshot_pr=$(gh pr create --base main --head "$snapshot_branch" \
-            --title "Refresh validated Content Studio offline snapshot" \
-            --body "Refresh the generated offline snapshot from current publication records. The snapshot contract verifies each exported source identity and revision. No source writing is edited.")
-          gh pr merge "$snapshot_pr" --squash --match-head-commit "$snapshot_commit" --delete-branch
+        run: node scripts/publish-content-studio-snapshot.mjs

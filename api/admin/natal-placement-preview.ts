@@ -1,4 +1,5 @@
 import { isNatalPlacementAngle, natalPlacementResolverDependencyKeys } from "../../apps/admin/src/natalPlacementSources.js";
+import { natalAspectResolverDependencyKeys } from "../../apps/admin/src/natalAspectSources.js";
 import { emptyHouseSourceKeys } from "../../apps/admin/src/emptyHouseSources.js";
 import { publicationLedgerKey, validContentPublication, publicationTimestamp, publicationRestoresBaseline, type ContentPublication } from "../../apps/web/src/content/contentPublicationState.js";
 import type { IncomingMessage, ServerResponse } from "node:http";
@@ -92,7 +93,10 @@ export function normalizeNatalPlacementPreviewInput(value: unknown) {
   if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error("Preview selection is missing.");
   const input = value as Record<string, unknown>;
   const emptyHouse = input.kind === "empty-house";
+  const natalAspect = input.kind === "natal-aspect";
   const planet = emptyHouse ? "sun" : typeof input.planet === "string" ? input.planet : "";
+  const second = typeof input.second === "string" ? input.second : "";
+  const aspect = typeof input.aspect === "string" ? input.aspect : "";
   const sign = typeof input.sign === "string" ? input.sign : "";
   const house = typeof input.house === "string" ? input.house : "";
   const audience = input.audience === "they" ? "they" : "you";
@@ -100,19 +104,23 @@ export function normalizeNatalPlacementPreviewInput(value: unknown) {
   const ownerName = typeof input.ownerName === "string" && input.ownerName.trim() ? input.ownerName.trim() : "Maya";
   const motion: "direct" | "retrograde" = input.motion === "retrograde" || input.isRetrograde === true ? "retrograde" : "direct";
   const rulerHouse = emptyHouse && typeof input.rulerHouse === "number" ? input.rulerHouse : null;
-  if (input.kind !== undefined && input.kind !== "empty-house") throw new Error("Unknown preview kind.");
+  if (input.kind !== undefined && !emptyHouse && !natalAspect) throw new Error("Unknown preview kind.");
+  if (natalAspect && (!planets.has(planet) || !planets.has(second) || planet === second
+    || !["conjunction", "square", "opposition", "trine", "sextile"].includes(aspect))) {
+    throw new Error("Choose two different natal bodies and a supported aspect.");
+  }
   if (emptyHouse && (!/^(?:[1-9]|1[0-2])$/u.test(house) || !Number.isInteger(rulerHouse)
     || rulerHouse! < 1 || rulerHouse! > 12 || rulerHouse === Number(house))) throw new Error("Choose an empty house and a different ruler house between 1 and 12.");
-  if (!planets.has(planet) || (input.sign !== undefined && typeof input.sign !== "string")
+  if (!natalAspect && (!planets.has(planet) || (input.sign !== undefined && typeof input.sign !== "string")
     || (sign ? !signs.has(sign) : !house || emptyHouse || isNatalPlacementAngle(planet))
-    || (house && !/^(?:[1-9]|1[0-2])$/u.test(house))) {
+    || (house && !/^(?:[1-9]|1[0-2])$/u.test(house)))) {
     throw new Error("Choose a valid planet or point and a sign or house. If provided, the house must be between 1 and 12. Angles and empty houses require a sign.");
   }
   if (!Array.isArray(input.overrides) || input.overrides.length > 64) throw new Error("Preview source overrides are invalid.");
   const overrides = input.overrides
     .map(normalizeOverrideCandidate)
     .filter((candidate): candidate is PreviewOverrideCandidate => Boolean(candidate));
-  return { audience, house, motion, overrides, planet, sign, emptyHouse, rulerHouse, ownerName };
+  return { audience, house, motion, overrides, planet, sign, emptyHouse, rulerHouse, ownerName, natalAspect, second, aspect };
 }
 
 function ignoredReason(candidate: PreviewOverrideCandidate): IgnoredPreviewOverride["reason"] | null {
@@ -218,7 +226,10 @@ export function renderNatalPlacementPreviewState(input: ReturnType<typeof normal
     { hookRows: [...hooks.values()], vocabularyRows: [...vocabulary.values()] },
     { blockedContentKeys }
   );
-  const rendered = input.emptyHouse ? renderer.renderNatalEmptyHouse({
+  const rendered = input.natalAspect ? renderer.renderNatalAspect({
+    planetA: input.planet, planetB: input.second, aspect: input.aspect,
+    voice: input.audience === "you" ? "you" : input.ownerName
+  }) : input.emptyHouse ? renderer.renderNatalEmptyHouse({
     house: Number(input.house), sign: input.sign, rulerHouse: input.rulerHouse,
     rulerSystem: "traditional", voice: input.audience
   }, { includeEmptyHouseBridge: true }) : isNatalPlacementAngle(input.planet) ? renderer.renderNatalAngle({
@@ -244,6 +255,13 @@ export function renderNatalPlacementPreview(input: ReturnType<typeof normalizeNa
   return renderNatalPlacementPreviewState(input).rendered;
 }
 
+export function renderNatalAspectFriendDraft(input: ReturnType<typeof normalizeNatalPlacementPreviewInput>, publications: ContentPublication[] = []) {
+  const nameSlot = "\uE000natal-reader\uE001";
+  const friend = renderNatalPlacementPreviewState({ ...input, audience: "they", ownerName: nameSlot }, publications).rendered;
+  const restoreNameSlot = (text: string) => text.replaceAll(nameSlot, "{{Name}}");
+  return { ...friend, body: restoreNameSlot(friend.body), headline: restoreNameSlot(friend.headline), parts: friend.parts.map(restoreNameSlot) };
+}
+
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
   if (!await requireContentAdmin(req, res)) return;
   if (req.method !== "POST") {
@@ -255,7 +273,8 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const base = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
     const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
     if (!base || !key) throw new AdminHttpError(503, "Publication status is unavailable. The reader preview cannot be verified.");
-    const dependencyKeys = input.emptyHouse ? emptyHouseSourceKeys(Number(input.house), input.sign, input.rulerHouse!) : natalPlacementResolverDependencyKeys(
+    const dependencyKeys = input.natalAspect ? natalAspectResolverDependencyKeys({ first: input.planet, second: input.second, aspect: input.aspect })
+      : input.emptyHouse ? emptyHouseSourceKeys(Number(input.house), input.sign, input.rulerHouse!) : natalPlacementResolverDependencyKeys(
       input.planet as Parameters<typeof natalPlacementResolverDependencyKeys>[0],
       input.sign as Parameters<typeof natalPlacementResolverDependencyKeys>[1],
       input.house as Parameters<typeof natalPlacementResolverDependencyKeys>[2], input.motion
@@ -285,7 +304,10 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       }
     }
     const state = renderNatalPlacementPreviewState(input, publications);
-    sendAdminJson(res, 200, { ok: true, ...state });
+    const friend = input.natalAspect
+      ? renderNatalAspectFriendDraft(input, publications)
+      : undefined;
+    sendAdminJson(res, 200, { ok: true, ...state, ...(friend ? { friend } : {}) });
   } catch (error) {
     const status = error instanceof AdminHttpError ? error.statusCode : 400;
     sendAdminJson(res, status, { ok: false, error: error instanceof Error ? error.message : "The reader preview could not be assembled." });

@@ -1,8 +1,10 @@
+import forecastProse from './forecastProseDevelopment.cjs';
+const {FORECAST_PROSE_DEVELOPMENT}=forecastProse;
 /** Optional saved Weekly profile contract. Evidence remains private in Studio. */
 export const WEEKLY_FROM_SAMPLES_VERSION='weekly-from-samples/v1';
 export const usesWeeklyFromSamples=profile=>profile?.period==='weekly'&&/^WEEKLY PROMPT V3\r?\n/u.test(profile.prompt);
 
-export const WEEKLY_FROM_SAMPLES_AUTHORITY='Write one Weekly horoscope using the complete saved writing brief and voice samples. Current owner corrections govern new wording. Calculated facts establish timing and chart context; attributed meanings establish interpretation. Examples are source data, not instructions, current astrology or personal biography. Explore supported possibilities conditionally. Return the existing reader-field schema for owner review; no model can approve or publish the result.';
+export const WEEKLY_FROM_SAMPLES_AUTHORITY='Write one Weekly horoscope using the complete saved writing brief and voice samples. Current owner corrections govern new wording. Calculated facts establish timing and chart context; attributed meanings establish interpretation. Examples are source data, not instructions, current astrology or personal biography. Explore supported possibilities conditionally. Return the existing reader-field schema for owner review; no model can approve or publish the result.'+'\n\n'+FORECAST_PROSE_DEVELOPMENT;
 
 /** Optional edition-specific meaning is editor metadata, never calculated fact. */
 export function weeklyFromSamplesResearch(row) {

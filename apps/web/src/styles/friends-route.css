@@ -1206,21 +1206,26 @@
 }
 
 .app-shell.mode-friends .friends-unified-panel .manual-chart-row {
-  grid-template-columns: minmax(0, 1fr) 52px;
-  grid-template-areas:
-    "select actions"
-    "cta cta";
-  min-height: 68px;
-  border-radius: var(--friend-directory-row-radius);
-  box-shadow: none;
+  grid-template-columns: var(--size-5) minmax(0, 1fr) max-content var(--size-4);
+  grid-template-areas: none;
+  column-gap: var(--space-2);
+  align-items: center;
+  min-height: 0;
+  padding: var(--space-5) var(--space-6);
+  border-radius: var(--radius-tab);
+  background: var(--card-bg);
+  box-shadow: var(--card-shadow);
 }
 
 .app-shell.mode-friends .friends-unified-panel .manual-chart-select {
-  grid-template-columns: 44px minmax(0, 1fr);
+  grid-area: auto;
+  grid-column: 1 / -1;
+  grid-row: 1;
+  grid-template-columns: subgrid;
   align-items: center;
-  gap: calc(var(--space-3) + var(--space-1) / 4);
-  min-height: 66px;
-  padding: calc(var(--space-2) + var(--space-1) / 4) var(--space-3);
+  column-gap: inherit;
+  min-height: var(--size-7);
+  padding: 0;
 }
 
 .friends-unified-panel .manual-chart-avatar {
@@ -1247,13 +1252,36 @@
 }
 
 .friends-unified-panel .manual-chart-row-cta {
-  padding: 0 var(--space-3) calc(var(--space-2) + var(--space-1) / 4) var(--friend-directory-chart-cta-inset);
+  grid-area: auto;
+  grid-column: 3;
+  grid-row: 1;
+  z-index: 1;
+  padding: 0;
 }
 
 .friends-unified-panel .manual-chart-birth-time-button {
-  min-height: 32px;
-  padding: 0 var(--space-3);
-  font-size: var(--friend-directory-group-label-size);
+  min-height: var(--control-navigation-size);
+  padding: 0 var(--space-4);
+  border: 0;
+  background: var(--accent-bg);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: var(--text-button-size);
+}
+
+.app-shell.mode-friends .friends-unified-panel .manual-chart-avatar { grid-column: 1; grid-row: 1; width: var(--size-5); height: var(--size-5); }
+.app-shell.mode-friends .friends-unified-panel .manual-chart-select .crb { grid-column: 2; grid-row: 1; margin-left: var(--space-4); }
+.app-shell.mode-friends .friends-unified-panel .manual-chart-open { grid-column: 4; grid-row: 1; display: grid; place-items: center; width: var(--size-4); height: var(--size-4); border-radius: var(--radius-circle); background: var(--surface-2); color: var(--ink-2); }
+.app-shell.mode-friends .friends-unified-panel .manual-chart-birth-time-button:hover,
+.app-shell.mode-friends .friends-unified-panel .manual-chart-birth-time-button:focus-visible { background: var(--accent); color: var(--surface); }
+.friend-profile-controls .friend-chart-profile-actions { width: auto; min-width: 0; }
+
+@media (max-width: 800px) {
+  .app-shell.mode-friends .friends-unified-panel .manual-chart-row { grid-template-columns: var(--size-4) minmax(0, 1fr) max-content var(--size-4); row-gap: var(--space-2); padding: 0; border-radius: 0; background: transparent; box-shadow: none; }
+  .app-shell.mode-friends .friends-unified-panel .manual-chart-avatar { width: var(--size-4); height: var(--size-4); }
+  .app-shell.mode-friends .friends-unified-panel .manual-chart-select .crb { margin-left: 0; }
+  .app-shell.mode-friends .friends-unified-panel .manual-chart-row-cta { grid-column: 2 / -1; grid-row: 2; }
+  .app-shell.mode-friends .friends-unified-panel .manual-chart-open { background: transparent; }
 }
 
 .friends-remove-dialog {

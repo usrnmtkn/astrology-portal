@@ -12,7 +12,7 @@ const summaryRoot = fs.mkdtempSync(path.join(os.tmpdir(), "tldrastro-calculation
 let mode = "healthy";
 let requestCount = 0;
 const server = http.createServer((req, res) => {
-  if (req.url !== "/api/health") {
+  if (req.url !== "/api/health?scope=ephemeris") {
     res.statusCode = 404;
     res.end("{}");
     return;
@@ -27,22 +27,24 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  const dependencies = {};
-  if (mode === "healthy" || mode === "recovers_after_two") {
+  if (mode === "hang") return;
+  const dependencies = { ephemeris: { ok: mode !== "runtime_down", elapsedMs: 10, code: "invalid_facts", detail: { actualEngine: "swiss" } } };
+  if (mode === "healthy" || mode === "recovers_after_two" || mode === "stale" || mode === "runtime_down") {
     const failing = mode === "recovers_after_two" && requestCount < 3;
     dependencies.skyCalculationApi = failing
       ? { ok: false, elapsedMs: 12, error: "500 Internal Server Error from https://calculation.invalid/health: empty body" }
-      : { ok: true, elapsedMs: 71, detail: { host: "calculation.invalid" } };
+      : { ok: true, elapsedMs: 71, detail: { host: "calculation.invalid", actualEngine: "swiss" } };
   } else if (mode === "calculation_down") {
     dependencies.skyCalculationApi = {
       ok: false,
       elapsedMs: 413,
-      error: "500 Internal Server Error from https://calculation.invalid/health: Error: Server Error The server encountered an error"
+      code: "unready", error: "The calculation service is unready"
     };
   }
 
   res.statusCode = 200;
-  res.end(JSON.stringify({ ok: true, status: "ok", dependencies }));
+  const ok = Object.values(dependencies).every(dependency => dependency.ok);
+  res.end(JSON.stringify({ schema: "ephemeris-health/v1", timestamp: new Date(Date.now() - (mode === "stale" ? 300_000 : 0)).toISOString(), ok, status: ok ? "ok" : "degraded", dependencies }));
 });
 
 await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
@@ -50,7 +52,7 @@ const address = server.address();
 assert.ok(address && typeof address === "object");
 const baseUrl = `http://127.0.0.1:${address.port}`;
 
-function runMonitor(summaryName, { attempts = "1", delayMs = "0" } = {}) {
+function runMonitor(summaryName, { attempts = "1", delayMs = "0", timeoutMs = "1000" } = {}) {
   const summaryPath = path.join(summaryRoot, summaryName);
   return new Promise((resolve, reject) => {
     const child = spawn(process.execPath, ["scripts/monitor-calculation-service.mjs"], {
@@ -60,6 +62,8 @@ function runMonitor(summaryName, { attempts = "1", delayMs = "0" } = {}) {
         PRODUCTION_BASE_URL: baseUrl,
         CALCULATION_MONITOR_ATTEMPTS: attempts,
         CALCULATION_MONITOR_DELAY_MS: delayMs,
+        CALCULATION_MONITOR_TIMEOUT_MS: timeoutMs,
+        CALCULATION_MONITOR_REPORT_PATH: summaryPath + ".json",
         CALCULATION_MONITOR_SUMMARY_PATH: summaryPath
       },
       stdio: ["ignore", "pipe", "pipe"]
@@ -73,7 +77,8 @@ function runMonitor(summaryName, { attempts = "1", delayMs = "0" } = {}) {
       code,
       stdout,
       stderr,
-      summary: fs.existsSync(summaryPath) ? fs.readFileSync(summaryPath, "utf8") : ""
+      summary: fs.existsSync(summaryPath) ? fs.readFileSync(summaryPath, "utf8") : "",
+      report: fs.existsSync(summaryPath + ".json") ? JSON.parse(fs.readFileSync(summaryPath + ".json", "utf8")) : null
     }));
   });
 }
@@ -92,7 +97,7 @@ try {
   assert.equal(down.code, 1, "An unreachable calculation service must fail the monitor.");
   assert.equal(requestCount, 2, "The monitor must use every configured attempt before reporting an outage.");
   assert.match(down.summary, /The calculation service is not answering/u);
-  assert.match(down.summary, /The server encountered an error/u, "The summary must carry the reason the service gave.");
+  assert.match(down.summary, /unready/u, "The summary must carry the reason the service gave.");
   assert.match(down.summary, /gcloud logging read/u, "The summary must say where to look next.");
   assert.match(down.summary, /report fulfillment, Friends relationship facts/u, "The summary must name what else is failing.");
 
@@ -108,14 +113,23 @@ try {
   requestCount = 0;
   const missing = await runMonitor("missing.md");
   assert.equal(missing.code, 1, "A deployment without the calculation check must fail rather than report green.");
-  assert.match(missing.summary, /predates the calculation check/u);
+  assert.match(missing.summary, /missing, stale, or invalid/u);
 
   mode = "recovers_after_two";
   requestCount = 0;
   const recovering = await runMonitor("recovering.md", { attempts: "4" });
   assert.equal(recovering.code, 0, "A service that recovers within the retry window must not raise an outage.");
   assert.equal(requestCount, 3, "The monitor must stop retrying once the service answers.");
+  for (const scenario of ["stale", "runtime_down", "hang"]) {
+    mode = scenario; requestCount = 0;
+    const result = await runMonitor(`${scenario}.md`, { timeoutMs: "100" });
+    assert.equal(result.code, 1, `${scenario} must not report healthy`);
+    assert.equal(result.report.ok, false);
+    assert.equal(result.report.schema, "ephemeris-monitor/v1");
+  }
+  assert.equal(healthy.report.ok, true);
 } finally {
+  server.closeAllConnections();
   server.close();
   fs.rmSync(summaryRoot, { recursive: true, force: true });
 }

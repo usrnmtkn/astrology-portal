@@ -4,6 +4,7 @@ import path from 'node:path';
 import vm from 'node:vm';
 import { webcrypto } from 'node:crypto';
 import { build } from 'esbuild';
+import { recoverySnapshotUrl } from '../apps/web/src/content/contentStudioRecovery.mjs';
 
 const root = process.cwd();
 // Execute each real subscription effect with counted React setters, rather
@@ -156,11 +157,22 @@ function group(initial, snapshot = initial, { storageUnavailable = false, tabCou
           return { status: unchanged ? 304 : 200, ok: !unchanged, headers: { get: () => tag },
             json: async () => ({ schema: 'tldr-publications/v1', publications: records }) };
         }
+        if (String(url) === recoverySnapshotUrl) return { status: 503, ok: false };
         assert.equal(String(url), '/content-studio-last-known-good.json', 'Fixture must never contact a real endpoint.');
         counts.snapshotFetches++;
-        return { ok: true, json: async () => ({ schema: 'content-studio-last-known-good-v2', rowCount: 1,
-          rows: [{ id: snapshot[1].row_id, content_key: contentKey, updated_at: snapshot[1].row_updated_at, status: 'LIVE',
-            lane: 'serving', review_state: null, body: row(2).body, sections: {}, source_snapshot: { contentType: 'manual' } }], publications: snapshot }) };
+        // Recovery admission now requires a complete, uniquely published inventory.
+        // Keep this an outage-to-packaged-copy test without weakening that gate.
+        const extraRows = Array.from({ length: 99 }, (_, i) => ({
+          id: `offline-fixture-${i}`, content_key: `cms/offline-fixture/${String(i).padStart(3, '0')}`,
+          updated_at: snapshot[1].row_updated_at, status: 'LIVE', lane: 'serving', review_state: null,
+          body: `Complete synthetic auxiliary reading ${i}.`, sections: {}, source_snapshot: { contentType: 'manual' }
+        }));
+        const rows = [{ id: snapshot[1].row_id, content_key: contentKey, updated_at: snapshot[1].row_updated_at, status: 'LIVE',
+          lane: 'serving', review_state: null, body: row(2).body, sections: {}, source_snapshot: { contentType: 'manual' } }, ...extraRows];
+        const publications = [...snapshot, ...extraRows.map(r => ({ content_key: r.content_key, state: 'live', revision: 1,
+          row_id: r.id, row_updated_at: r.updated_at, updated_at: r.updated_at }))];
+        return { ok: true, json: async () => ({ schema: 'content-studio-last-known-good-v2', sourceRevision: snapshot[0].updated_at,
+          rowCount: rows.length, rows, publications }) };
       } });
     script.runInContext(context);
     tabs.push({ window, counts, api: context.fixtureAPI });

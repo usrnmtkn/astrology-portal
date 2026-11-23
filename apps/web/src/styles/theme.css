@@ -558,7 +558,7 @@
   --feedback-action-bg: var(--color-brand);
   --feedback-action-fg: var(--color-white);
   --feedback-action-hover: #003a35;
-  --feedback-sheet-min-height: calc(100svh - var(--top-control-top) - var(--top-control-height) - var(--page-nav-gap) - var(--space-10));
+  --feedback-sheet-min-height: calc(100svh - var(--app-notice-height) - var(--top-control-top) - var(--top-control-height) - var(--page-nav-gap) - var(--space-10));
   --feedback-spinner-track: rgba(255,255,255,.35);
   --type-section-heading-size: 22px;
   --type-row-title-size: 18px;
@@ -630,7 +630,10 @@
   --layout-action-slot: 168px;
   --menu-panel-width: 340px;
   --sheet-panel-width: 440px;
-  --sheet-height: 100svh;
+  --sheet-height: 100dvh;
+  /* Navigation covers Safari's expanded viewport and clears device safe areas. */
+  --navigation-sheet-padding: calc(var(--space-6) + env(safe-area-inset-top, 0px)) var(--space-6) calc(var(--space-6) + env(safe-area-inset-bottom, 0px));
+  --navigation-scroll-surface: linear-gradient(to bottom, var(--bg) 80%, transparent);
   --card-preview-fade: linear-gradient(180deg, #000 55%, transparent 100%);
   --card-preview-lines: 4;
   --card-preview-lines-compact: 3;
@@ -1369,6 +1372,7 @@
   --chart-size: clamp(560px, 42vw, 700px);
   --relationship-picker-width: var(--container-picker);
   --z-topbar: 1000;
+  --z-navigation-back: calc(var(--z-topbar) + 1);
   --z-floating: 120;
   --z-popover: 100;
   --z-picker: 40;
@@ -1394,9 +1398,15 @@
   --page-max: var(--container-page);
   --page-narrow: var(--container-narrow);
   --page-gutter: clamp(var(--sp-3), 5vw, 80px);
+  /* Measured viewport-level notice space shared by navigation and route content. */
+  --app-notice-height: 0px;
   /* Every route begins below the floating header with the same clear space. */
   --page-nav-gap: calc(var(--space-10) + var(--space-4));
-  --page-top: calc(env(safe-area-inset-top, 0px) + var(--top-control-top) + var(--top-control-height) + var(--page-nav-gap));
+  --page-top: calc(env(safe-area-inset-top, 0px) + var(--app-notice-height) + var(--top-control-top) + var(--top-control-height) + var(--page-nav-gap));
+  /* Compact profile headings retain their existing gap below floating controls. */
+  --page-top-compact: calc(var(--app-notice-height) + var(--top-control-top) + var(--top-control-height) + var(--space-8));
+  /* Directory headings retain their compact gap and clear viewport notices. */
+  --page-compact-top: calc(env(safe-area-inset-top, 0px) + var(--app-notice-height) + var(--top-control-top) + var(--top-control-height) + var(--space-7));
   --page-bottom: clamp(64px, 8vw, 96px);
   --page-content-width: min(var(--page-max), calc(100vw - var(--page-gutter) * 2));
   --page-narrow-width: min(var(--page-narrow), calc(100vw - var(--page-gutter) * 2));
@@ -1411,7 +1421,7 @@
   --tablet-nav-reserved-width: 112px;
   --mobile-menu-width: 260px;
   /* Header popovers leave room for the controls, safe area, and bottom gutter. */
-  --header-popover-max-height: max(0px, calc(100dvh - var(--top-control-top) - var(--top-control-height) - var(--space-8) - env(safe-area-inset-top, 0px)));
+  --header-popover-max-height: max(0px, calc(100dvh - var(--app-notice-height) - var(--top-control-top) - var(--top-control-height) - var(--space-8) - env(safe-area-inset-top, 0px)));
   --tablet-chart-max: 680px;
   --tablet-chart-edge: 48px;
   --tablet-friend-page-max: var(--container-form);
@@ -1420,8 +1430,8 @@
   --top-control-height: var(--size-7);
   --top-icon-button-size: var(--size-7);
   --top-brand-size: 32px;
-  --top-nav-icon-size: 15px;
-  --top-action-icon-size: 19px;
+  --top-nav-icon-size: var(--size-3);
+  --top-action-icon-size: var(--size-3);
   --top-control-gap: 8px;
   /* Keep the centered header group clear of child-page Back controls. */
   --header-back-gutter: 176px;
@@ -1469,7 +1479,7 @@
   --lunar-grid-aside-padding: clamp(var(--space-6), 3vw, 40px);
   --mobile-top-safe-padding: calc(env(safe-area-inset-top, 0px) + var(--top-control-top)) var(--mobile-control-inset) 0;
   /* Article navigation shares the top row; reserve one Back button beside the brand. */
-  --mobile-article-back-top: calc(env(safe-area-inset-top, 0px) + var(--top-control-top));
+  --mobile-article-back-top: calc(env(safe-area-inset-top, 0px) + var(--app-notice-height) + var(--top-control-top));
   --mobile-article-brand-offset: calc(var(--top-icon-button-size) + var(--top-control-gap));
   --mobile-chart-top-padding: var(--page-top);
   --mobile-route-padding: var(--page-top) var(--mobile-page-gutter) calc(var(--mobile-page-gutter) + 88px + env(safe-area-inset-bottom, 0px));
@@ -1582,7 +1592,7 @@
   :root {
     --dialog-surface: var(--surface-sheet);
     --top-control-top: var(--space-4);
-    --article-back-top: var(--space-4);
+    --article-back-top: calc(var(--app-notice-height) + var(--space-4));
   }
 }
 
@@ -1597,8 +1607,8 @@
     --top-control-height: var(--size-6);
     --top-icon-button-size: var(--size-6);
     --top-brand-size: 32px;
-    --top-nav-icon-size: 15px;
-    --top-action-icon-size: 19px;
+    --top-nav-icon-size: var(--size-3);
+    --top-action-icon-size: var(--size-3);
     --page-gutter: var(--mobile-page-gutter);
     --page-nav-gap: var(--space-10);
     --row-padding-y: var(--sp-2);

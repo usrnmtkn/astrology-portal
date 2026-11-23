@@ -13,12 +13,18 @@ import { isGovernedReaderEligible } from "../../apps/web/src/content/fallbackArc
 import { publicationAllowsContent, type ContentPublication } from "../../apps/web/src/content/contentPublicationState.js";
 import { createDomainRegistry } from "../../apps/web/src/content/domainRegistry.js";
 import { isReaderFacingCopy } from "../../apps/web/src/content/readerSafety.js";
-import { resolveApprovedExactSkyAspectCopy, resolveComposedSkyCalendarCard } from "../../apps/web/src/services/skyAspectRouting.js";
+import { resolveSkyAspectReading } from "../../apps/web/src/services/skyAspectReading.js";
+import { skyAspectPackageCandidates } from "../../apps/web/src/services/skyAspectRouting.js";
+import { canonicalContentStudioExactSkyPoint } from "../../apps/web/src/services/skyAspectContent.js";
+import { fromRow, isReaderServableGeneratedContent } from "../../apps/web/src/services/generatedContentRendering.js";
+import type { GeneratedContentRow, LiveGeneratedContent } from "../../apps/web/src/services/generatedContent.js";
 import { moonSignTransitionForPair, moonSignTransitionKey } from "../../apps/web/src/features/calendar/moonSignTransitions.js";
 import type { LunarCalendarEvent } from "../../apps/web/src/services/ephemeris.js";
 import { skyPlacementSourceCorpus } from "./sky-placement-sources.js";
 import { createPublishedSkyReader } from "../../apps/web/src/content/skyPlacementPublishedSources.js";
-import { isReaderServableGeneratedContentRow } from "../../apps/web/src/content/generatedContentEligibility.js";
+import { isReaderServableGeneratedContentRow, isGeneratedContentReaderBoundaryAllowed } from "../../apps/web/src/content/generatedContentEligibility.js";
+import { resolveCalendarLunationAspectReading } from "../../apps/web/src/content/skyLunationAspectReading.js";
+import { isRetiredCompositionKey } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/retiredCompositions.mjs";
 
 const registry = createDomainRegistry(knowledge as any);
 const slug = (value: string) => value.trim().toLowerCase().replace(/\s+/gu, "-");
@@ -47,11 +53,30 @@ export function calendarFeedCopyReader(publications: ReadonlyMap<string, Content
     { blockedContentKeys: [...publications.keys()].filter(key => !allowed(key)) });
   const hook = (key: string) => data.hookRows.find(row => row.contentKey === key);
   const safe = (body: string | undefined) => body && isReaderFacingCopy(body) && !/\{\{[^]*?\}\}/u.test(body) ? body : "";
+  const eligibleRows = publishedRows.filter(row => row.status === "LIVE" && row.lane === "serving" && !row.review_state && !row.sections?.packageDraft
+    && isReaderServableGeneratedContentRow(row as GeneratedContentRow) && isGeneratedContentReaderBoundaryAllowed(row as GeneratedContentRow)
+    && publicationAllowsContent(row.content_key, row.id, row.updated_at, row.target_date, publications))
+    .sort((a, b) => Number(Boolean(b.target_date)) - Number(Boolean(a.target_date)) || b.updated_at.localeCompare(a.updated_at));
+  function publishedContentForDate(date: string) {
+    const content = new Map<string, LiveGeneratedContent>();
+    for (const row of eligibleRows) {
+      if (content.has(row.content_key) || row.target_date && row.target_date !== date) continue;
+      const value = fromRow(row as GeneratedContentRow);
+      if (isReaderServableGeneratedContent(value)) content.set(row.content_key, value);
+    }
+    return content;
+  }
   function eventBody(event: LunarCalendarEvent, timeZone: string, events: LunarCalendarEvent[]) {
     const dateLine = `On ${new Intl.DateTimeFormat("en-US", { timeZone, weekday: "long", month: "long", day: "numeric" }).format(new Date(event.startsAt))}`;
+    const quarterPhase = event.type === "lunation" && /quarter/iu.test(event.title)
+      ? /first/iu.test(event.title) ? "first-quarter" : "last-quarter" : null;
     if (event.type === "ingress" && event.planet === "Moon") {
       const key = moonSignTransitionKey(event.fromSign ?? "", event.toSign ?? event.sign ?? "");
       return allowed(key) ? moonSignTransitionForPair(event.fromSign ?? "", event.toSign ?? event.sign ?? "") : "";
+    }
+    if (quarterPhase) {
+      const row = hook(`fallback-hook/moon-phase/${quarterPhase}`);
+      return safe(row?.body_you?.replaceAll("{{signTitle}}", event.sign ?? ""));
     }
     const canonicalInput = event.type === "lunation" && event.sign
       ? event.eclipseType
@@ -74,16 +99,20 @@ export function calendarFeedCopyReader(publications: ReadonlyMap<string, Content
     try {
       if (event.type === "aspect" && event.planets && event.aspect) {
         const [first, second] = event.planets;
-        const slots = { dateLine, planetA: first, planetB: second, signA: event.fromSign, signB: event.toSign, aspect: slug(event.aspect) };
-        const composed = resolveComposedSkyCalendarCard({ first, second, aspect: event.aspect, heading: event.title, slots, lookup: registry.skyCalendarComposedCard });
-        if (composed && composed.sourceKeys.every(allowed)) return safe([composed.body, composed.details].join("\n\n"));
-        const exact = resolveApprovedExactSkyAspectCopy({ first, second, aspect: event.aspect, heading: event.title, slots, lookup: registry.approvedExactSkyAspectCopy });
-        let rendered;
-        try { rendered = renderer.renderSkyAspectCard({ a: slug(first), b: slug(second), aspect: slug(event.aspect), aSign: event.fromSign && slug(event.fromSign), bSign: event.toSign && slug(event.toSign), dateLine }); }
-        catch (error) { if (!(error instanceof SourceGapError)) throw error; }
-        if (rendered?.contentKey?.startsWith("fallback-hook/sky-aspect-sign/")) return safe(rendered.parts.join("\n\n"));
-        if (exact && exact.sourceKeys.every(allowed)) return safe(exact.body);
-        return safe(rendered?.parts.join("\n\n"));
+        const a = canonicalContentStudioExactSkyPoint(first), b = canonicalContentStudioExactSkyPoint(second);
+        const relation = slug(event.aspect);
+        if ([`sky.aspect.${a}.${relation}.${b}`, `sky.aspect.${b}.${relation}.${a}`]
+          .some(key => isRetiredCompositionKey(key) || publications.get(key)?.state === "retired")) return "";
+        const generatedContent = publishedContentForDate(event.dateKey);
+        const lunar = resolveCalendarLunationAspectReading(event, generatedContent, publications);
+        if (lunar) return safe(lunar.body);
+        const options = { generatedContent, first, second, aspect: event.aspect,
+          firstSign: event.fromSign ?? "", secondSign: event.toSign ?? "", firstMotion: event.fromMotion, secondMotion: event.toMotion, targetDate: event.dateKey };
+        const selected = resolveSkyAspectReading({ ...options, dateLine, publications,
+          exactLookup: registry.approvedExactSkyAspectCopy, composedLookup: registry.skyCalendarComposedCard,
+          ...skyAspectPackageCandidates({ ...options, dateLine }, renderer.renderSkyAspectCard, SourceGapError)
+        });
+        return safe([selected?.body, selected?.details].filter(Boolean).join("\n\n"));
       }
       if (event.type === "lunation" && event.sign && !event.eclipseType) {
         return safe(renderer.renderCalendarPhase({ phase: /new moon/iu.test(event.title) ? "new-moon" : "full-moon", sign: slug(event.sign) }).parts.join("\n\n"));

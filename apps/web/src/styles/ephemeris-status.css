@@ -1,0 +1,46 @@
+.ephemeris-status {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: var(--z-topbar);
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border: var(--border-width-thin) solid color-mix(in srgb, currentColor 24%, transparent);
+  border-radius: var(--radius-sm);
+  background: var(--feedback-warning-bg);
+  color: var(--feedback-warning-ink);
+}
+.ephemeris-status svg {
+  width: var(--size-3);
+  height: var(--size-3);
+}
+.ephemeris-status p {
+  font-family: var(--font-ui);
+  font-size: var(--type-ui-copy-size);
+  color: inherit;
+  overflow-wrap: anywhere;
+}
+.ephemeris-status strong { font-weight: var(--weight-semibold); }
+.ephemeris-status button {
+  display: grid;
+  place-items: center;
+  width: var(--size-6);
+  min-height: var(--size-6);
+  padding: 0;
+  border: var(--border-width-thin) solid currentColor;
+  border-radius: var(--radius-circle);
+  background: transparent;
+}
+.ephemeris-status button:hover {
+  background: color-mix(in srgb, currentColor 10%, transparent);
+}
+.ephemeris-status button:focus-visible {
+  outline: var(--border-width-medium) solid var(--focus-ring);
+  outline-offset: var(--space-1);
+}
+@media (max-width: 800px) {
+  .ephemeris-status { grid-template-columns: auto minmax(0, 1fr); align-items: start; }
+  .ephemeris-status button { grid-column: 2; justify-self: start; }
+}

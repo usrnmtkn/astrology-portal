@@ -9,11 +9,11 @@ import {formatPlanetDegree,skyNodeDisplayPositions} from '../sky/skyHelpers';
 import {planetaryHoroscopeReading,planetaryHouse,usePlanetaryHoroscopeSources} from './usePlanetaryHoroscopeSources';
 
 export default function PlanetaryHoroscopeCards({sky,sign,href}:{sky:SkySnapshot;sign:string;href:(position:PlanetPosition)=>string}) {
-  const {ready,error,refresh,rows}=usePlanetaryHoroscopeSources();
+  const {ready,error,refresh,rows,dated}=usePlanetaryHoroscopeSources(undefined,{positions:sky.positions,generatedAt:sky.generatedAt,timeZone:sky.location.timeZone??'UTC'});
   const holding=useMinimumLoading(!ready);
   const positions=skyNodeDisplayPositions(sky.positions);
   return <PageLoadState scope="section" what="Planetary horoscopes" failed={Boolean(error)} pending={holding} onRetry={refresh}>{holding?<PageLoading layout="placements" count={positions.length} message="Loading planet readings…"/>:<div className="horoscope-planet-grid">{positions.map(position=>{
-    const reading=planetaryHoroscopeReading(position,sign,sky.generatedAt,rows);
+    const reading=planetaryHoroscopeReading(position,sign,sky.generatedAt,rows,dated,position.transitTimeZone??sky.location.timeZone??'UTC');
     const window=reading.window;
     const timeZone=position.transitTimeZone??sky.location.timeZone??'UTC';
     const dateFormat=new Intl.DateTimeFormat('en-US',{month:'short',day:'numeric',year:'numeric',timeZone});

@@ -2,6 +2,7 @@ import { isLunationAspectKey } from '../../../../src/shared/lunationHoroscopeIde
 import type { SkySnapshot } from '../types';
 import { datedLunationContentKey } from './lunationArticleIdentity';
 import { resolveCmsSurfaceOverride, type CmsGeneratedContentMap } from './cmsSurfaceOverrides';
+import { publicationAllowsContent } from './contentPublicationState';
 
 type Event = Parameters<typeof datedLunationContentKey>[0];
 type Aspect = SkySnapshot['aspects'][number];
@@ -28,5 +29,6 @@ export function lunationAspectReaderKeys(event: Event, sky: Pick<SkySnapshot, 'a
 
 export function resolveLunationAspectReading(event: Event, aspect: Aspect, positions: SkySnapshot['positions'], content: CmsGeneratedContentMap) {
   const key = lunationAspectReaderKey(event, aspect, positions);
-  return key ? resolveCmsSurfaceOverride(content, [key]) : null;
+  const row = key ? content.get(key) : undefined;
+  return key ? resolveCmsSurfaceOverride(row && !publicationAllowsContent(key, row.id, row.updatedAt, row.targetDate) ? new Map() : content, [key]) : null;
 }

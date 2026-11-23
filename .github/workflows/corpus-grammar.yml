@@ -108,8 +108,13 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: corpus-grammar-${{ github.event.pull_request.number || github.sha }}-${{ github.event_name }}
+  cancel-in-progress: true
+
 jobs:
   corpus-grammar:
+    if: ${{ (github.ref_type == 'branch' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && vars.RELEASE_ACTIVE_PR != '' && format('{0}', github.event.pull_request.number) == vars.RELEASE_ACTIVE_PR) }}
     name: corpus-grammar
     runs-on: ubuntu-latest
     timeout-minutes: 10

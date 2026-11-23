@@ -9,9 +9,9 @@ import {horoscopeSignLabel} from '../../content/horoscopeEditions.mjs';
 import {planetarySlug,planetaryHoroscopeReading,planetaryHoroscopeWindow,usePlanetaryHoroscopeSources} from './usePlanetaryHoroscopeSources';
 
 export default function PlanetaryHoroscope({position,generatedAt,sign,timeZone,previous,next,onBack,onPlanet}:{position:PlanetPosition;generatedAt:string;sign:string;timeZone:string;previous?:PlanetPosition;next?:PlanetPosition;onBack:()=>void;onPlanet:(position:PlanetPosition)=>void}) {
-  const {ready,error,refresh,rows}=usePlanetaryHoroscopeSources(`article:${planetarySlug(position.planet)}/${planetarySlug(position.sign)}`);
+  const {ready,error,refresh,rows,dated}=usePlanetaryHoroscopeSources(`article:${planetarySlug(position.planet)}/${planetarySlug(position.sign)}`,{positions:[position],generatedAt,timeZone});
   const holding=useMinimumLoading(!ready);
-  const reading=ready?planetaryHoroscopeReading(position,sign,generatedAt,rows):null;
+  const reading=ready?planetaryHoroscopeReading(position,sign,generatedAt,rows,dated,timeZone):null;
   const body=reading?.body??'';
   const rx=isDisplayRetrograde(position);
   const window=reading?reading.window:planetaryHoroscopeWindow(position,generatedAt);
@@ -28,7 +28,7 @@ export default function PlanetaryHoroscope({position,generatedAt,sign,timeZone,p
         {rx&&<span className="horoscope-reading-sign">℞ Retrograde</span>}
         <div className="horoscope-controls" aria-label="Reading signs"><span className="horoscope-reading-sign"><img src={zodiacAssetHref(zodiacSignIconFiles[signName])!} alt=""/>{signName}</span><span className="horoscope-reading-sign"><span aria-hidden="true">↑</span>{signName} Rising</span></div>
       </header>
-      <PageLoadState scope="page" what="This planetary horoscope" failed={Boolean(error)} pending={holding} onRetry={refresh}>{holding?<PageLoading message="Loading planetary horoscope…"/>:body?<div className="horoscope-prose"><FormattedProse text={body}/></div>:<p role="status">No planetary horoscope is published for this placement and rising sign yet.</p>}</PageLoadState>
+      <PageLoadState scope="page" what="This planetary horoscope" failed={Boolean(error)} pending={holding} onRetry={refresh}>{holding?<PageLoading message="Loading planetary horoscope…"/>:body?<>{reading?.headline&&<h3 className="horoscope-passage-title">{reading.headline}</h3>}<div className="horoscope-prose"><FormattedProse text={body}/></div></>:<p role="status">No planetary horoscope is published for this placement and rising sign yet.</p>}</PageLoadState>
     </article>
     {!error&&<nav className="horoscope-edition-nav" aria-label="Planetary horoscopes">{[previous,next].map((entry,index)=>{
       const Icon=index?ChevronRight:ChevronLeft;

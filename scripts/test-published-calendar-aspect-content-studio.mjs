@@ -2,6 +2,7 @@
 import assert from "node:assert/strict";
 import { assertSkyStudioAuthority } from "./lib/assert-sky-studio-authority.mjs";
 import fs from "node:fs";
+import { execFileSync } from "node:child_process";
 
 const dashboard = fs.readFileSync("apps/admin/src/GeneratedContentAdminDashboard.tsx", "utf8");
 const skyContent = fs.readFileSync("apps/web/src/services/skyAspectContent.ts", "utf8");
@@ -16,7 +17,17 @@ assert.match(dashboard, /contentKey\.startsWith\("sky\.aspect\."\)/u, "Published
 assert.match(skyContent, /resolveSkyAspectContentStudioExact/u, "The reader needs a governed exact-aspect Content Studio resolver.");
 assert.match(skyContent, /source\.contentStudioExactAspect !== true/u, "Exact Studio rows must fail closed without their provenance marker.");
 assert.match(skyContent, /canonicalContentStudioExactSkyPoint/u, "Exact Studio identity must preserve node poles instead of collapsing them to a generic nodes key.");
-assert.match(skyContent, /point === "south-node"\) return "south-node"/u, "South Node must remain a first-class exact Content Studio identity.");
+execFileSync(process.execPath, ["--import", "tsx", "--input-type=module", "-e", `
+  import assert from "node:assert/strict";
+  import { canonicalContentStudioExactSkyPoint, contentStudioExactSkyAspectKeys } from "./apps/web/src/services/skyAspectContent.ts";
+  assert.equal(canonicalContentStudioExactSkyPoint("South Node"), "south-node");
+  assert.equal(canonicalContentStudioExactSkyPoint("True Node"), "north-node");
+  assert.deepEqual(contentStudioExactSkyAspectKeys("South Node", "trine", "Mercury"), ["sky.aspect.south-node.trine.mercury"]);
+  assert.deepEqual(contentStudioExactSkyAspectKeys("Mercury", "trine", "North Node"), ["sky.aspect.north-node.trine.mercury", "sky.aspect.south-node.sextile.mercury"]);
+  for (const pair of [["North Node", "South Node"], ["Sun", "Sun"], ["Unknown", "Sun"]]) {
+    assert.deepEqual(contentStudioExactSkyAspectKeys(pair[0], "conjunction", pair[1]), []);
+  }
+`], { stdio: "inherit" });
 assert.match(skyContent, /Published exact-aspect Content Studio rows have always put the node first/u, "Existing North Node Content Studio keys must remain stable while South Node is added.");
 assert.match(seed, /studio_content_type: "aspect"/u, "Published exact rows must use versioned aspect editing.");
 assert.match(seed, /studio_editable_fields:[\s\S]*Summary[\s\S]*Body/u, "Summary and Body must remain editable fields for every exact aspect baseline.");

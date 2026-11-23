@@ -16,6 +16,7 @@ export default defineConfig(base, {
     'design-handoff-wheel.spec.ts',
     'interactive-zodiac-wheel.spec.ts',
     'friends-feed-exact.spec.ts',
+    'friends-directory-handoff.spec.ts',
     'friends-feed-priority.spec.ts',
     'friends-pair-forecast.spec.ts',
     'handoff-v4-states.spec.ts',
@@ -23,11 +24,16 @@ export default defineConfig(base, {
     'synthetic-network-guard.spec.ts',
     'modal-focus.spec.ts',
     'modal-handoff-v9.spec.ts',
+    'mobile-css-qa.spec.ts',
     'planetary-horoscope-navigation.spec.ts',
     'reader-unavailable-design.spec.ts',
     'reports-handoff.spec.ts',
     'sky-placement-date-labels.spec.ts',
     'sky-dignity-visibility.spec.ts',
     'wheel-label-clearance.spec.ts',
+  ],
+  projects: [
+    ...base.projects!,
+    { name: 'webkit-mobile-css', testMatch: 'mobile-css-qa.spec.ts', use: { browserName: 'webkit' } }
   ]
 });

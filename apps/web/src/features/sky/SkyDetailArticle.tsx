@@ -1,4 +1,6 @@
+import { NatalReadingPage } from "../../components/charts/NatalReadingPage";
 import { NatalChartReadings } from "../../components/NatalChartReadings";
+import { ArticleAspectCard, NatalPlacementAspects, normalizeRelatedAspectRow } from "../../components/ArticleAspects";
 import { ArticleKeyDates, type ArticleKeyDate } from "../../components/ArticleKeyDates";
 import { skyPlacementAspectParagraphs } from '../../content/skyPlacementAspectBridge';
 import { SeasonArticleLink } from "../../components/SeasonArticleLink";
@@ -48,7 +50,7 @@ import {
 export type AspectToneBucket = "gifts" | "lessons";
 const SkyReaderExportStatus = lazy(() => import("./SkyReaderExportStatus"));
 const SkyPlacementKeyDates = lazy(() => import("./SkyPlacementKeyDates").then(module => ({ default: module.SkyPlacementKeyDates })));
-export type RelatedAspectGroup = AspectToneBucket | "planets" | "points";
+export type RelatedAspectGroup = AspectToneBucket;
 
 export type SkyDetailRelatedAspectRow = {
   key: string;
@@ -94,6 +96,8 @@ export type SkyPersonalizedPlacement = {
 };
 
 export type SkyDetail = {
+  natalPlacement?: boolean;
+  natalReading?: boolean;
   aspectType?: string;
   natalPlanetReading?: import("../../content/natalChartReadings").NatalPlanetReadingContext;
   previewLabel?: string;
@@ -137,7 +141,7 @@ export type SkyDetail = {
   sections?: SkyDetailSection[];
   relatedAspects?: {
     heading: string;
-    grouping?: "tone" | "counterpart" | "event";
+    grouping?: "tone" | "event";
     rows: Array<ReactNode | SkyDetailRelatedAspectRow>;
   };
   personalizedPlacement?: SkyPersonalizedPlacement | null;
@@ -150,31 +154,6 @@ export type SkyDetail = {
 
 function inferredSectionQaSourceTag(section: { body?: ReactNode; sourceTag?: string }) {
   return typeof section.sourceTag === "string" ? section.sourceTag.trim() : "";
-}
-
-function detailMetaRows(meta: string) {
-  const parts = meta.split("·").map((part) => part.trim()).filter(Boolean);
-
-  if (parts.length === 0) {
-    return [{ label: "Context", value: "Field guide" }];
-  }
-
-  return parts.map((part, index) => {
-    const lower = part.toLowerCase();
-    const label = lower.includes("orb")
-      ? "Orb"
-      : lower.includes("house")
-        ? "House"
-        : lower.includes("chapter")
-          ? "Chapter"
-      : lower === "today" || lower.includes("about ") || lower.includes("until ") || lower.includes("near exact")
-        ? "Duration"
-        : index === 0
-          ? "Signature"
-          : "Duration";
-
-    return { label, value: part };
-  });
 }
 
 type ArticleEyebrowGlyph = {
@@ -207,14 +186,9 @@ function signArticleGlyph(sign: string): ArticleEyebrowGlyph | null {
 function uniqueArticleGlyphs(glyphs: Array<ArticleEyebrowGlyph | null>) {
   const seen = new Set<string>();
 
-  return glyphs.filter((glyph): glyph is ArticleEyebrowGlyph => {
-    if (!glyph || seen.has(glyph.key)) {
-      return false;
-    }
-
-    seen.add(glyph.key);
-    return true;
-  });
+  return glyphs.filter((glyph): glyph is ArticleEyebrowGlyph =>
+    Boolean(glyph && !seen.has(glyph.key) && seen.add(glyph.key))
+  );
 }
 
 function articleTitleHouseToken(title: string, meta = "") {
@@ -234,22 +208,19 @@ function articleTitleSign(title: string) {
 }
 
 function articlePlacementGlyphs(title: string, meta = "") {
-  const source = `${title} ${meta}`;
-  // Phase names use the supplied lunar icon through the fallback below.
+  const source = `${title.trim()} ${meta}`;
   const match = source.match(
-    /^(?!(?:Full|New)\s+Moon\s+in\b)(\w[\w\s]*?)(\s+Rx)?\s+in\s+(\w+)(?:\s+in\s+the\s+(\d+)(?:st|nd|rd|th)\s+house)?/i
+    /^(\w[\w\s]*?)(\s+Rx)?\s+in\s+(\w+)(?:\s+in\s+the\s+(\d+)(?:st|nd|rd|th)\s+house)?/i
   );
-
-  if (!match) {
-    return [];
-  }
-
-  const [, body, retrograde, sign, house] = match;
+  const lunar = /^(?:(?:Full|New|(?:First|Last|Third)\s+Quarter|(?:Waxing|Waning)\s+(?:Crescent|Gibbous))\s+Moon(?:\s+(?:Lunar|Solar)\s+Eclipse)?|(?:Lunar|Solar)\s+Eclipse)$/i.test((match?.[1] ?? title).trim());
+  if (!match && !lunar) return [];
+  const point = lunar ? "Moon" : match![1].trim();
+  const house = lunar ? articleTitleHouseToken(title, meta) : match![4];
   return uniqueArticleGlyphs([
-    textArticleGlyph(pointGlyph(body.trim()), body.trim()),
-    retrograde ? textArticleGlyph("℞", "Retrograde") : null,
-    signArticleGlyph(sign.trim()),
-    house ? { key: `house-${house}`, label: `${house} house`, text: articleHouseToken(house), house: true } : null
+    textArticleGlyph(pointGlyph(point), point),
+    match?.[2] ? textArticleGlyph("℞", "Retrograde") : null,
+    signArticleGlyph(lunar ? articleTitleSign(source) ?? "" : match![3]),
+    house ? { key: `house-${house}`, label: lunar ? house : `${house} house`, text: lunar ? house : articleHouseToken(house), house: true } : null
   ]);
 }
 
@@ -356,29 +327,6 @@ function isRetrogradeTimelineNode(node: ReactNode) {
   return typeof node.props.className === "string" && node.props.className.includes("retrograde-detail-line");
 }
 
-function normalizeRelatedAspectRow(row: ReactNode | SkyDetailRelatedAspectRow, index: number): SkyDetailRelatedAspectRow {
-  if (
-    row
-    && typeof row === "object"
-    && "node" in row
-    && !isValidElement(row)
-  ) {
-    const relatedRow = row as SkyDetailRelatedAspectRow;
-    return {
-      ...relatedRow,
-      key: relatedRow.key || `related-aspect-${index}`,
-      group: relatedRow.group ?? normalizedArticleAspectToneBucket(relatedRow.aspectType)
-    };
-  }
-
-  return {
-    key: `related-aspect-${index}`,
-    aspectType: "",
-    group: "lessons",
-    node: row
-  };
-}
-
 const skyPlacementDateLinePattern = /^(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2}(?:,\s+\d{4})?\s+(?:to|through|[-–])\s+(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},\s+\d{4}$/iu;
 
 const skyAspectExactDateLinePattern = /^(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2}(?:,\s+\d{4})?(?:(?:,\s+and\s+|,\s+|\s+and\s+)(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2}(?:,\s+\d{4})?)*$/iu;
@@ -454,7 +402,6 @@ export function SkyDetailArticle({
       ))
     ]
   : (detail.sections ?? []);
-  const metaRows = detailMetaRows(detail.meta);
   const articleBody = detail.body.filter((node) => (
     !isRetrogradeTimelineNode(node) && (typeof node !== "string" || isReaderFacingCopy(node))
   ));
@@ -471,7 +418,11 @@ export function SkyDetailArticle({
     heading: isLegacySkyArticleScaffoldHeading(section.heading) ? "" : section.heading,
     body: typeof section.body === "string" ? cleanGeneratedSectionBody(section.body) : section.body
   })).filter((section) => typeof section.body !== "string" || isReaderFacingCopy(section.body));
-  const generatedSections = dedupeArticleSectionHeadings(rawGeneratedSections, detail.title);
+  // Separate archived passes can select different complete approved readings.
+  // Each reading retains its aspect label and dated navigation link.
+  const generatedSections = dedupeArticleSectionHeadings(rawGeneratedSections, detail.title)
+    .map((section, index) => section.role === "aspect" && detail.routePath?.startsWith("sky/archive/")
+      ? rawGeneratedSections[index] : section);
   const contentSections = generatedSections.filter((section) => section.role !== "aspect");
   const aspectSections = generatedSections
     .filter((section) => section.role === "aspect")
@@ -537,18 +488,13 @@ export function SkyDetailArticle({
   const readingPage = !placementPage && Boolean(headerAspect || personalArticle || /transit/iu.test(detail.kicker ?? ""));
   const eyebrowGlyphs = articleEyebrowGlyphs({
     glyph: detail.glyph,
-    meta: metaRows.map((row) => row.value).join(" "),
+    meta: detail.meta.split("·").map((part) => part.trim()).filter(Boolean).join(" ") || "Field guide",
     title: detail.title
   });
   const relatedAspectRows = (detail.relatedAspects?.rows ?? []).map(normalizeRelatedAspectRow);
   const relatedAspectGrouping = detail.relatedAspects?.grouping ?? "tone";
   const aspectGroupDefinitions = relatedAspectGrouping === "event"
     ? ([{ id: "key-aspects" as const, label: "Key aspects" }])
-    : relatedAspectGrouping === "counterpart"
-    ? ([
-        { id: "planets" as const, label: "Planetary aspects" },
-        { id: "points" as const, label: "Angles and points" }
-      ])
     : ([
         { id: "gifts" as const, label: "Gifts" },
         { id: "lessons" as const, label: "Lessons" }
@@ -557,14 +503,12 @@ export function SkyDetailArticle({
     ...group,
     sections: relatedAspectGrouping === "event"
       ? aspectSections
-      : relatedAspectGrouping === "tone"
-        ? aspectSections.filter((section) => section.group === group.id)
-        : [],
+      : aspectSections.filter((section) => section.group === group.id),
     rows: relatedAspectGrouping === "event"
       ? []
       : relatedAspectRows.filter((row) => row.group === group.id)
   })).filter((group) => group.sections.length > 0 || group.rows.length > 0);
-  const hasAspectCard = aspectGroups.length > 0;
+  const hasAspectCard = !detail.natalPlacement && aspectGroups.length > 0;
   const hasReadableBody = Boolean(
     (placementPage && articleSub) ||
     detail.lensHint ||
@@ -599,6 +543,8 @@ export function SkyDetailArticle({
       </div>
     </section>
   ) : null;
+
+  if (detail.natalReading) return <NatalReadingPage audience="friend" title={detail.title} onClose={onClose} backLabel="Close detail">{detail.body}</NatalReadingPage>;
 
   return (
     <section
@@ -766,6 +712,8 @@ export function SkyDetailArticle({
           ) : null}
         </div>
 
+        {detail.natalPlacement && <NatalPlacementAspects rows={detail.relatedAspects?.rows ?? []} />}
+
         {!placementPage ? <ArticleKeyDates dates={detail.keyDates ?? []} intro={detail.keyDatesIntro ? <FormattedProse text={detail.keyDatesIntro} /> : null} titleId="sky-detail-key-dates-title" /> : null}
 
         {placementPage && <div className="sky-placement-article__sections" key={detail.routePath}>
@@ -777,18 +725,7 @@ export function SkyDetailArticle({
           <>
             <h2 className="sr-only">Aspect details</h2>
             {aspectGroups.map((group) => (
-              <Fragment key={group.id}>
-                <h3
-                  className="eyebrow section-label article-related-aspects__label article-related-aspects__label--outside"
-                  id={`sky-detail-related-aspects-${group.id}`}
-                >
-                  {group.label}
-                </h3>
-                <section
-                  className="article-card article-related-aspects article-related-aspects-card"
-                  aria-labelledby={`sky-detail-related-aspects-${group.id}`}
-                >
-                  <div className="article-related-aspects__group">
+              <ArticleAspectCard key={group.id} id={`sky-detail-related-aspects-${group.id}`} label={group.label} level="h3">
                     {group.sections.length ? (
                       <div className="article-related-aspects__copy-list">
                         {group.sections.map((section) => {
@@ -853,9 +790,7 @@ export function SkyDetailArticle({
                         ))}
                       </div>
                     ) : null}
-                  </div>
-                </section>
-              </Fragment>
+              </ArticleAspectCard>
             ))}
           </>
         ) : null}

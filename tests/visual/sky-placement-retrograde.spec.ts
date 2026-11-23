@@ -6,6 +6,9 @@ import { expect, test, type Page } from "@playwright/test";
 const corpus = JSON.parse(fs.readFileSync("apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-v4-canonical-content-studio-stage-v1.json", "utf8"));
 const modifier = (planet: string) => corpus.content.retrogradeGeneric.find((row: { Planet: string }) => row.Planet === planet).Body;
 const normalize = (value: string) => value.replace(/\s+/gu, " ").trim();
+const approvedNeptunePluto = JSON.parse(fs.readFileSync("packages/astro-knowledge/data/sky-calendar/composed-cards-v1.json", "utf8"))
+  .cards.find((row: {id: string}) => row.id === "sky-card/neptune/aries/sextile/pluto/aquarius");
+if (!approvedNeptunePluto?.ownerApproved || !approvedNeptunePluto.servingAuthorized) throw new Error("The complete approved sign-specific reading must exist");
 
 async function expectSeparateHoroscopesAfterAspects(page: Page) {
   const card = page.locator(".sky-detail-rising-horoscopes-card");
@@ -79,8 +82,8 @@ for (const theme of ["light", "dark"]) for (const width of [390, 1440]) {
     const plutoAspect = page.locator(".article-related-aspect-row").filter({ has: page.getByRole("heading", { name: /Neptune(?: Rx)? Sextile Pluto(?: Rx)?/, exact: true }) });
     await expect(plutoAspect).toBeVisible();
     await expect(plutoAspect).toContainText("Building through September 15.");
-    await expect(plutoAspect).toContainText("Strong feeling can become more trustworthy when curiosity reaches the motive, history, or power underneath the first version of the story.");
-    await expect(plutoAspect).toContainText("Care becomes more useful when it is attached to the thing actually happening rather than the story that was easiest to sell.");
+    await expect(plutoAspect).toContainText(approvedNeptunePluto.forecast);
+    await expect(plutoAspect).toContainText(approvedNeptunePluto.details);
     await expectSeparateHoroscopesAfterAspects(page);
     const heading = await page.locator("#sky-detail-title").evaluate(el => {
       const style = getComputedStyle(el), root = getComputedStyle(document.documentElement);

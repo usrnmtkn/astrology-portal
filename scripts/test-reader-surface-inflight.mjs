@@ -5,6 +5,7 @@ import { mkdirSync, mkdtempSync, writeFileSync, rmSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { READER_ROW_SCHEMA } from '../apps/web/src/content/readerRowSchema.mjs';
+import { recoverySnapshot } from '../tests/helpers/recovery-snapshot.mjs';
 
 const root = process.cwd();
 const symbol = Symbol.for('tldrastro.test.reader-surface-inflight');
@@ -32,6 +33,7 @@ const row = (content_key, index) => ({ id: id(revision, index), content_key, upd
   headline: null, summary: null, body: `Synthetic complete approved opening revision ${revision}. Synthetic final sentence revision ${revision}.`,
   sections: {}, source_snapshot: { contentType: 'manual' } });
 const rows = () => [row(mainKey, 0), row(vocabularyKey, 1)];
+let offlineSnapshot = recoverySnapshot(rows(), publications());
 const requests = [], unexpected = [];
 let offlineReads = 0, offlineHold = null;
 const originalFetch = globalThis.fetch;
@@ -54,15 +56,16 @@ async function waitForRequests(count) {
 try {
   globalThis[symbol] = state;
   globalThis.fetch = async (input, init) => {
-    if (String(input) === '/content-studio-last-known-good.json') {
-      offlineReads++;
+    if (['/content-studio-last-known-good.json',
+      'https://raw.githubusercontent.com/usrnmtkn/astrology-portal/refs/heads/data/content-studio-recovery/apps/web/public/content-studio-last-known-good.json'].includes(String(input))) {
+      if (String(input).startsWith('https://raw.githubusercontent.com/')) offlineReads++;
       const gate = offlineHold;
       if (gate) {
         gate.started.resolve();
         await gate.promise;
         return Response.json({ schema: 'content-studio-last-known-good-v2', rows: [], rowCount: 0, publications: [] });
       }
-      return Response.json({ schema: 'content-studio-last-known-good-v2', rows: rows(), rowCount: 2, publications: publications() });
+      return Response.json(offlineSnapshot);
     }
     if (String(input) !== '/api/content-reader') { unexpected.push(String(input)); throw Error('Unexpected fixture destination'); }
     assert.equal(init.method, 'POST'); assert.equal(init.cache, 'no-store'); assert(init.signal instanceof AbortSignal);
@@ -199,18 +202,29 @@ try {
     await olderRead;
     offlineHold = null;
   }
-  // Use a fresh actual module instance so dated offline fixtures cannot alter
-  // the preceding undated publication-version/retirement controls.
+  // Durable recovery admits complete undated publications, independently of
+  // the request date. It must reject a snapshot containing any dated passage.
+  const undatedApi = await import(pathToFileURL(modulePath).href + '?undated-offline');
+  const beforeUndatedRecovery = offlineReads;
+  state.client = null;
+  offlineSnapshot = recoverySnapshot(rows(), publications());
+  undatedApi.installContentPublications(publications());
+  for (const [surfaces, date] of [[['sky'], '2026-10-15'], [['you'], '2026-10-15'], [['you'], '2026-10-16'], [['you'], undefined]]) {
+    const recovered = await undatedApi.loadLiveGeneratedContentForSurfaces(surfaces, date);
+    assert.equal(body(recovered), body(retried), 'Complete undated recovery remains eligible across request dates');
+    assert.ok(recovered.has(vocabularyKey), 'Undated shared vocabulary remains eligible');
+  }
+  assert.equal(offlineReads, beforeUndatedRecovery + 1, 'Complete undated recovery shares its verified offline cache');
   const datedApi = await import(pathToFileURL(modulePath).href + '?dated-offline');
-  state.client = null; rowTargetDate = '2026-10-16';
+  const beforeDatedRecovery = offlineReads;
+  rowTargetDate = '2026-10-16';
+  offlineSnapshot = recoverySnapshot(rows(), publications());
   datedApi.installContentPublications(publications());
   const loadDated = (surfaces, date) => datedApi.loadLiveGeneratedContentForSurfaces(surfaces, date);
-  assert.equal(body(await loadDated(['sky'], '2026-10-15')), body(retried), 'Sky offline recovery ignores the request date');
-  assert.equal(body(await loadDated(['you'], '2026-10-15')), undefined, 'Other surfaces exclude mismatched dated offline rows');
-  assert.equal(body(await loadDated(['you'], '2026-10-16')), body(retried), 'Other surfaces retain matching dated offline rows');
-  assert.ok((await loadDated(['you'], '2026-10-15')).has(vocabularyKey), 'Undated shared vocabulary remains eligible');
-  assert.equal(body(await loadDated(['you'])), body(retried), 'An undated request retains dated offline rows');
-  assert.equal(offlineReads, 3, 'Dated controls use a separate actual offline cache');
+  for (const [surfaces, date] of [[['sky'], '2026-10-15'], [['you'], '2026-10-15'], [['you'], '2026-10-16'], [['you'], undefined]]) {
+    assert.equal((await loadDated(surfaces, date)).size, 0, 'Dated durable snapshots fail closed for every surface and request date');
+  }
+  assert.equal(offlineReads, beforeDatedRecovery + 4, 'Rejected dated snapshots are not retained as successful offline recovery');
 
   // A healthy paged inventory can exceed eight seconds in total. Exercise the
   // actual surface entry point with a virtual clock instead of waiting in CI.

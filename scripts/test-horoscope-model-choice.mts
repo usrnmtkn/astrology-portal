@@ -1,3 +1,5 @@
+import forecastProse from '../src/astro-writing/forecastProseDevelopment.cjs';
+const {FORECAST_PROSE_DEVELOPMENT}=forecastProse;
 import assert from 'node:assert/strict';
 import {decodeWeeklyHistoryRow} from '../api/_lib/horoscope-history-storage';
 import {applyCheckpointFixture} from '../tests/helpers/horoscope-checkpoint-fixture.mts';
@@ -64,6 +66,23 @@ const step=async(id:string)=>{
   assert([200,202,409].includes(result.status),JSON.stringify(result.payload));return result;
 };
 
+// Verify the actual OpenAI dispatch, not only the configuration helper. Weekly
+// leaves more of its bounded output budget for prose; Daily keeps its setting.
+for(const [period,effort] of [['daily','xhigh'],['weekly','medium']]){
+  const id=await create(period,'2026-11-23'),prepared=await action(id,'prepare');
+  const started=await action(id,'generate',{sign:'aries',approvedPlanHash:prepared.payload.plan.planHash});
+  assert.equal(started.status,202,JSON.stringify(started.payload));
+  const operation=latest(id).source_snapshot.horoscopeGeneration.active;
+  assert.equal(operation.config.reasoningEffort,effort);
+  const request=writerFixture.requests.get(operation.responseId);
+  assert.equal(request.reasoning.effort,effort,'The reserved setting reaches the provider request');
+  assert.equal(request.max_output_tokens,12000);
+  for(let attempts=0;latest(id).source_snapshot.horoscopeGeneration.active&&attempts<40;attempts++)await step(id);
+  const receipt=latest(id).source_snapshot.horoscopeGeneration.readings.aries;
+  assert.equal(receipt.config.reasoningEffort,effort);
+  assert.equal(receipt.ownerApproved,false);
+}
+
 for(const period of ['daily','weekly','monthly','seasonal'])for(const choice of ['gemini','claude']){
   const id=await create(period,choice==='gemini'?'2026-09-07':'2026-10-07');
   const original=latest(id),sign=period==='monthly'?'overview':'aries';
@@ -108,6 +127,9 @@ for(const period of ['daily','weekly','monthly','seasonal'])for(const choice of 
     assert.equal(input,captured.input,'Native transport preserves the complete Seasonal request');
     assert.equal(instructions,captured.instructions,'Native transport preserves Seasonal instructions');
   }else assert((input+instructions).includes('CONTENT STUDIO WRITING INSTRUCTIONS')); 
+  assert(instructions.includes(FORECAST_PROSE_DEVELOPMENT),`${period}/${choice} receives the same prose-development boundary`);
+  for(const label of ['OWNER-APPROVED WRITING PLAN','GOVERNED RETRIEVAL ANCHOR','FORECAST COVERAGE','current-approved-argument-and-close'])assert(!input.includes(label),`${period}/${choice}: ${label} is internal planning, not prose input`);
+  assert(!instructions.includes('specific situation, direct consequence, useful next move'));
   assert(input.includes('OWNER'),'Owner evidence reaches the actual native provider request');
   assert.equal(request.model,config.model);
   const calls=writerFixture.calls;await action(id,'prepare');assert.equal(writerFixture.calls,calls,'Preparing/reopening never calls a model');

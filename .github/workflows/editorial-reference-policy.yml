@@ -6,10 +6,11 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: editorial-reference-policy-${{ github.event.pull_request.number || github.ref }}
+  group: editorial-reference-policy-${{ github.event.pull_request.number || github.ref }}-${{ github.event_name }}
   cancel-in-progress: true
 jobs:
   reference-policy:
+    if: ${{ (github.ref_type == 'branch' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && vars.RELEASE_ACTIVE_PR != '' && format('{0}', github.event.pull_request.number) == vars.RELEASE_ACTIVE_PR) }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:

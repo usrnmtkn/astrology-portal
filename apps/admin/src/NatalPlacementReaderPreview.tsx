@@ -1,4 +1,5 @@
 import { StudioButton } from "./StudioControls";
+import { AdminDisclosureSummary } from "./AdminNativeControls";
 import { Stack, Text } from "./studio-ds/primitives";
 import { PageLoading } from "../../../src/shared/components/PageLoading";
 import { subscribeToContentPublications } from "../../web/src/content/contentPublicationState";
@@ -12,6 +13,7 @@ import {
   natalPlacementHouseLabel,
   natalPlacementResolverDependencyKeys,
   natalPlacementSignLabel,
+  natalPlacementSourceGroups,
   type NatalPlacementHouse,
   type NatalPlacementMotion,
   type NatalPlacementPlanet,
@@ -213,6 +215,8 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
   );
   const exactServingFromStudio = Boolean(exactServing && preview.appliedOverrideKeys.includes(exactKey));
   const usingLiveStudioSources = preview.appliedOverrideKeys.length > 0;
+  const sourceGroups = natalPlacementSourceGroups(planet, sign, house, motion);
+  const availableSourceKeys = new Set(rows.map(row => row.content_key));
   const label = house && !sign ? natalPlacementHouseLabel(planet, house, motion)
     : house && sign ? natalPlacementLabel(planet, sign, house, motion) : natalPlacementSignLabel(planet, sign as NatalPlacementSign);
 
@@ -254,6 +258,13 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
             {preview.rendered.parts.map((part, index) => {
               const contentKey = preview.rendered?.partKeys?.[index] ?? preview.rendered?.templateKey ?? "";
               const sectionLabel = sourceLabel(contentKey);
+              const groupKey = contentKey.includes("house") ? "house" : "sign";
+              const composed = contentKey.startsWith("fallback-template/");
+              const sectionSources = sourceGroups.find(group => group.key === groupKey)?.sources.filter(source =>
+                source.key !== contentKey && availableSourceKeys.has(source.key)
+                && (composed ? !source.key.includes("-final/") && !source.key.includes("-lived/")
+                  : groupKey === "house" && source.key.startsWith("fallback-hook/house-meaning/"))) ?? [];
+              const opening = sectionSources.find(source => /\/(?:planet-intro|angle-intro|house-meaning)\//u.test(source.key));
               return (
                 <article
                   className={`admin-natal-reader-preview-part variable-${index % 2 === 0 ? "hook" : "phrase"}`}
@@ -269,6 +280,15 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
                       Edit {sectionLabel.toLowerCase()}
                     </StudioButton>
                   )}
+                  {opening && <StudioButton type="button" className="admin-natal-reader-preview-part-action"
+                    onClick={() => onOpenSource(opening.key, opening.label)}>Edit {opening.label.toLowerCase()}</StudioButton>}
+                  {sectionSources.some(source => source !== opening) && <details className="admin-workspace-details">
+                    <AdminDisclosureSummary>Edit other wording in this section</AdminDisclosureSummary>
+                    {sectionSources.filter(source => source !== opening).map(source => <div key={source.key}>
+                      <StudioButton type="button" onClick={() => onOpenSource(source.key, source.label)}>Edit {source.label.toLowerCase()}</StudioButton>
+                      <p className="admin-field-hint">{source.scope}</p>
+                    </div>)}
+                  </details>}
                 </article>
               );
             })}

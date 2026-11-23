@@ -189,7 +189,7 @@ try {
   );
   assert.match(
     appSource,
-    /skyPlacementInSignAspectSections\(\s*timelineAspectEvents,\s*matchingAspectFacts\.timeZone,\s*generatedContent,\s*contentRegistryFor\("sky"\)\?\.approvedExactSkyAspectCopy\s*\)/u,
+    /skyPlacementInSignAspectSections\?\.\(\s*timelineAspectEvents,\s*matchingAspectFacts\.timeZone,\s*generatedContent,\s*skyRegistry\?\.approvedExactSkyAspectCopy,\s*\{ composedLookup: skyRegistry\?\.skyCalendarComposedCard,/u,
     "Historical aspect sections retain their approved exact-copy lookup."
   );
   assert.doesNotMatch(

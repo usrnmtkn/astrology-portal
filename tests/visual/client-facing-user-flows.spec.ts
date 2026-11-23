@@ -1,8 +1,11 @@
 import { expectSkyAspectBody } from "../helpers/sky-aspect-reading";
+import { skyAspectReadingDateLine } from "../../apps/web/src/services/skyAspectRouting";
 import { approvedNatalPilotBody } from "../helpers/natal-approved-pilot.mts";
 import { moonRoutingRecords, moonReaderCompetingRecords } from '../helpers/moon-routing-fixtures';
 import { personalTransitCopySeed, personalTransitId } from '../../apps/web/src/services/personalDailyTransits';
 import { selectMoonTransitVariant } from '../../apps/web/src/content/fallbackArchitectureV3/resolver/moonTransitVariants.mjs';
+import { studioApiStore } from "../helpers/studio-api-store";
+import { natalInsightTopics, natalInsightContentKey } from "../../apps/web/src/content/natalInsightCatalog";
 import { readerResponse } from '../helpers/reader-response';
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import { bundledPublications } from "../helpers/bundled-publications";
@@ -54,7 +57,7 @@ async function expectHousePillsInArticle(page: Page) {
 
 type SeedOptions = {
   pageAnimations?: "on" | "off";
-  synastryFixture?: { body: string; aspect: string; inverse: boolean };
+  synastryFixture?: { body: string; aspect: string; inverse: boolean; readerBody?: string; relationshipType?: string };
   profile?: boolean;
   profileBirthDate?: string;
   profileBirthTime?: string;
@@ -409,8 +412,9 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
         : name === "Imum Coeli" ? normalize(sky.midheavenLongitude! + 180)
         : sky.positions.find(p => p.planet === name)!.longitude!;
       const degrees = ({ conjunction: 0, square: 90, opposition: 180, trine: 120, sextile: 60 } as Record<string, number>)[fixture.aspect];
-      const targetName = fixture.inverse ? "Sun" : fixture.body;
-      const longitude = normalize(pointLongitude(fixture.inverse ? fixture.body : "Sun") + degrees);
+      const readerBody = fixture.readerBody ?? "Sun";
+      const targetName = fixture.inverse ? readerBody : fixture.body;
+      const longitude = normalize(pointLongitude(fixture.inverse ? fixture.body : readerBody) + degrees);
       const friendSky = structuredClone(sky);
       // Avoid filling the 16-card ranking cap with same-chart conjunctions.
       const fixtureOffset = fixture.body === "Imum Coeli" && fixture.aspect === "sextile" ? 47 : 17;
@@ -437,7 +441,7 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
       // selection, card and detail path. They never enter production sources.
       window.localStorage.setItem(`tldrastro:manualCharts:${fixtureUserId}`, JSON.stringify([{
         id: "friend-batch4", ownerUserId: fixtureUserId, chartType: "person", displayName: "Sofia", firstName: "Sofia", lastName: null,
-        relationshipType: "partner", birthDate: "1990-01-01", birthTime: "12:00 PM", birthTimeUnknown: false,
+        relationshipType: fixture.relationshipType ?? "partner", birthDate: "1990-01-01", birthTime: "12:00 PM", birthTimeUnknown: false,
         birthPlace: fixtureLocation.label, birthLocation: fixtureLocation, natalChart: friendSky, notes: null,
         createdAt: "2026-07-16T16:00:00.000Z", updatedAt: "2026-07-16T16:00:00.000Z"
       }]));
@@ -2292,9 +2296,10 @@ test.describe("client-facing user flow case studies", () => {
 
     await selectFriendDetailTab(page, "Composite");
     await expect(page.getByText("What a composite chart is")).toBeVisible();
-    await expect(page.getByRole("button", { name: "Edit Nikki" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "More actions for Nikki" })).toBeVisible();
 
     await page.getByRole("button", { name: "Charts" }).click();
+    await page.getByRole("button", { name: "Open Nikki", exact: true }).click();
     await expect(page.getByRole("button", { name: "More actions for Nikki" })).toBeVisible();
     await page.getByRole("button", { name: "More actions for Nikki" }).click();
     await expect(page.getByRole("menu", { name: "Nikki actions" })).toBeVisible();
@@ -3754,7 +3759,11 @@ test.describe("client-facing user flow case studies", () => {
         const panelBox = await panel.boundingBox();
         expect(Math.abs(headingBox!.x - panelBox!.x), "Friends title shares the directory rail").toBeLessThan(1);
         await expect(heading.locator("h1")).toHaveText("Friends");
-        expect(headingBox!.y + headingBox!.height).toBeLessThan(panelBox!.y);
+        // The approved compact directory carries its visible gap inside the panel.
+        expect(headingBox!.y + headingBox!.height).toBeLessThanOrEqual(panelBox!.y);
+        await expect(panel).toHaveCSS("padding-top", width < 800 ? "16px" : "32px");
+        const labelBox = await panel.getByRole("heading", { name: /^Saved charts/ }).boundingBox();
+        expect(labelBox!.y - headingBox!.y - headingBox!.height).toBeGreaterThanOrEqual(width < 800 ? 16 : 32);
         await page.screenshot({ path: path.join(responsiveScreenshotDir, `friends-list-${theme}-${width}.png`) });
       }
       await page.getByRole("button", { name: "Open Nikki" }).click();
@@ -4533,13 +4542,15 @@ test.describe("client-facing user flow case studies", () => {
     await expectClientRouteLoads(page, "/#friends?tab=charts");
 
     await expect(page.getByText("Nikki")).toBeVisible();
+    await page.getByRole("button", { name: "Open Nikki", exact: true }).click();
     await page.getByRole("button", { name: "More actions for Nikki" }).click();
     await page.getByRole("menuitem", { name: "Delete" }).click();
     await expect(page.getByRole("heading", { name: "Delete Nikki?" })).toBeVisible();
     await expect(page.getByText("This removes the saved chart and cannot be undone.")).toBeVisible();
 
     await page.getByRole("button", { name: "Cancel" }).click();
-    await expect(page.getByText("Nikki")).toBeVisible();
+    await expect(page.getByRole("heading", {name:"Nikki",exact:true})).toBeVisible();
+    await expect(page.getByRole("button", {name:"More actions for Nikki",exact:true})).toBeFocused();
     await assertNoClientErrors();
   });
 
@@ -4550,6 +4561,7 @@ test.describe("client-facing user flow case studies", () => {
     await expectClientRouteLoads(page, "/#friends?tab=charts");
 
     await expect(page.getByText("Nikki")).toBeVisible();
+    await page.getByRole("button", { name: "Open Nikki", exact: true }).click();
     await page.getByRole("button", { name: "More actions for Nikki" }).click();
     await page.getByRole("menuitem", { name: "Edit" }).click();
 
@@ -4561,7 +4573,8 @@ test.describe("client-facing user flow case studies", () => {
     await expect(editChartDialog.getByRole("button", { name: "Save chart" })).toBeVisible();
 
     await editChartDialog.getByRole("button", { name: "Close" }).click();
-    await expect(page.getByText("Nikki")).toBeVisible();
+    await expect(page.getByRole("heading", {name:"Nikki",exact:true})).toBeVisible();
+    await expect(page.getByRole("button", {name:"More actions for Nikki",exact:true})).toBeFocused();
     await assertNoClientErrors();
   });
 
@@ -4788,7 +4801,7 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page.locator("#you-transit-article-title")).toContainText("Sun in Aquarius in the 11th house");
     await expectNoDuplicateArticleHeadings(page, "You natal placement detail");
 
-    await page.getByRole("button", { name: "Back to updates" }).click();
+    await page.getByRole("button", { name: "Back to natal chart" }).click();
     await expect(page.getByRole("region", { name: "You", exact: true })).toBeVisible();
     await assertNoClientErrors();
   });
@@ -4809,16 +4822,16 @@ test.describe("client-facing user flow case studies", () => {
     await aspect.click();
     await expect(page.locator("#you-transit-article-title")).toHaveText(aspectName);
     await expect(page).toHaveURL(/\/aspect\//);
-    await expectAnimatedArticleNavigation(page, () => page.getByRole("button", { name: "Back to updates" }).click(), aspectName);
+    await expectAnimatedArticleNavigation(page, () => page.getByRole("button", { name: "Back to natal chart" }).click(), aspectName);
     await expect(page).toHaveURL(parentUrl);
     await expect(page.locator("#you-transit-article-title")).toHaveText(parentTitle);
     await expectAnimatedArticleNavigation(page, () => page.goForward(), parentTitle);
     await expect(page.locator("#you-transit-article-title")).toHaveText(aspectName);
     await page.reload();
     await expect(page.locator("#you-transit-article-title")).toHaveText(aspectName);
-    await page.getByRole("button", { name: "Back to updates" }).click();
+    await page.getByRole("button", { name: "Back to natal chart" }).click();
     await expect(page.locator("#you-transit-article-title")).toHaveText(parentTitle);
-    await page.getByRole("button", { name: "Back to updates" }).click();
+    await page.getByRole("button", { name: "Back to natal chart" }).click();
     await expect(page).toHaveURL(rootUrl);
     await expect(page.locator("#you-transit-article-title")).toHaveCount(0);
   });
@@ -4838,7 +4851,7 @@ test.describe("client-facing user flow case studies", () => {
       "A philosophy has more value after it has survived contact with a larger world."
     );
     await expect(article.getByText("Natal aspects", { exact: true })).toHaveCount(0);
-    await expect(article.getByRole("heading", { level: 3, name: "Planetary aspects", exact: true })).toHaveCount(1);
+    await expect(article.getByRole("heading", { level: 2, name: "Challenges", exact: true })).toHaveCount(1);
     await assertNoClientErrors();
   });
 
@@ -4877,7 +4890,7 @@ test.describe("client-facing user flow case studies", () => {
     await bigThree.getByRole("button").first().click();
     await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
     await expect(page.getByRole("button", { name: "Close detail" })).toBeVisible();
-    await expect(page.getByRole("heading", { level: 3, name: "Planetary aspects", exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 2, name: "Challenges", exact: true })).toBeVisible();
     await expectNoDuplicateArticleHeadings(page, "Friend natal placement detail");
 
     const bodyType = await page.evaluate(() => {
@@ -5396,8 +5409,47 @@ test.describe("client-facing user flow case studies", () => {
         await page.reload();
         await expect(article).toContainText(source.body_you!);
         await article.screenshot({ path: `test-results/natal-reader-${planet.toLowerCase()}-${width}-${theme}.png` });
-        await page.getByRole("button", { name: "Back to updates" }).click();
+        await page.getByRole("button", { name: "Back to natal chart" }).click();
         await selectYouNatalTab(page);
+      }
+      await noErrors();
+    });
+  }
+
+  for (const width of [390, 1440]) for (const theme of ["light", "dark"] as const) {
+    for (const pilot of [
+      { birthDate: "1997-01-01", placement: "Sun in Capricorn", title: "Sun Conjunction Mercury", key: "sun/mercury" },
+      { birthDate: "1997-01-09", placement: "Uranus in Aquarius", title: "Uranus Conjunction Moon", key: "moon/uranus" }
+    ]) test(`Natal aspect cards end on their practice line ${pilot.key} ${width} ${theme}`, async ({ page }) => {
+      test.setTimeout(120_000);
+      const noErrors = await expectNoClientErrors(page);
+      await page.setViewportSize({ width, height: 1000 });
+      await seedClientState(page, { profile: true, friends: true, friendMatchesProfile: true,
+        profileBirthDate: pilot.birthDate, preloadProfileNatalSky: true, theme });
+      const source = fallbackSourceRowsV3.hookRows.find(row => row.contentKey === `fallback-hook/aspect-pair/${pilot.key}/conjunction`)!;
+      for (const audience of ["you", "friend"]) {
+        const natalRoute = audience === "you" ? "/#you?tab=chart" : "/#friends?tab=charts&chart=friend-nikki&view=natal";
+        await expectClientRouteLoads(page, natalRoute);
+        if (audience === "you") await selectYouNatalTab(page);
+        await page.locator("button.placement-table-row").filter({ hasText: pilot.placement }).first().click();
+        const card = page.getByRole("button", { name: `Read more about ${pilot.title}`, exact: true });
+        const expected = audience === "you" ? source.body_you! : source.body_they!;
+        await expect(card).toBeVisible();
+        await expect(card.getByRole("heading", { name: pilot.title, level: 3, exact: true })).toBeVisible();
+        await expect(card.locator("p")).toHaveText(expected);
+        await expect(card).not.toContainText("running as one instinct");
+        await card.click();
+        const article = page.locator(".sky-detail-article");
+        await expect(article).toContainText(expected);
+        await expect(article).not.toContainText("always on together");
+        await article.screenshot({ path: `test-results/natal-aspect-practice-${audience}-${pilot.key.replace("/", "-")}-${width}-${theme}.png` });
+        await page.reload();
+        await expectClientRouteLoads(page, natalRoute);
+        if (audience === "you") await selectYouNatalTab(page);
+        await page.locator("button.placement-table-row").filter({ hasText: pilot.placement }).first().click();
+        await expect(card.locator("p")).toHaveText(expected);
+        await card.click();
+        await expect(article).toContainText(expected);
       }
       await noErrors();
     });
@@ -5411,7 +5463,7 @@ test.describe("client-facing user flow case studies", () => {
     await selectYouNatalTab(page);
 
     await page.getByRole("button", { name: /Ascendant in/ }).click();
-    await expect(page.getByRole("button", { name: "Back to updates" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Back to natal chart" })).toBeVisible();
     await expectNoDuplicateArticleHeadings(page, "You ascendant placement detail");
     await expectReaderFacingCopy(page.getByRole("region", { name: /Ascendant in/ }), "You ascendant placement fallback detail", 80);
     await assertNoClientErrors();
@@ -5482,7 +5534,86 @@ test("published Uranus Scorpio reader retains the complete owner passage after h
   await expect(article).toBeVisible();
   await expect(article).toContainText(ownerCopy);
   await expect(article).toContainText("Your freedom comes from knowing what has power over you well enough to choose differently.");
+  await expect(article.getByRole("heading", { level: 2, name: "Uranus in the 6th house", exact: true })).toBeVisible();
 });
+
+for (const width of [390, 1440]) for (const theme of ["light", "dark"] as const) {
+  test(`all natal planets retain the shared placement design ${width} ${theme}`, async ({ page }) => {
+    test.setTimeout(180_000);
+    await page.setViewportSize({ width, height: 1000 });
+    await seedClientState(page, { profile: true, profileBirthDate: "1980-02-01", profileBirthTime: "12:00 PM", preloadProfileNatalSky: true, theme });
+    await expectClientRouteLoads(page, "/#you");
+    await selectYouNatalTab(page);
+    let titleStyles: unknown;
+    for (const planet of ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"]) {
+      await page.getByRole("button", { name: new RegExp(`^${planet}(?: Rx)? in `) }).click();
+      const article = page.locator(".you-transit-article-page");
+      await expect(article.locator("h1")).toContainText(planet);
+      const houseHeading = article.getByRole("heading", { level: 2, name: new RegExp(`^${planet} in the \\d+(?:st|nd|rd|th) house$`) });
+      await expect(houseHeading).toBeVisible();
+      // Pin the existing article design as well as cross-planet parity. Comparing
+      // planets only would let an accidental change to every page pass together.
+      const compact = width < 800;
+      await expect(article.locator("h1")).toHaveCSS("font-size", compact ? "34px" : "36px");
+      await expect(article.locator("h1")).toHaveCSS("font-family", /Newsreader/u);
+      await expect(article.locator("h1")).toHaveCSS("text-align", "center");
+      await expect(houseHeading).toHaveCSS("font-size", compact ? "24px" : "28px");
+      await expect(houseHeading).toHaveCSS("font-family", /Newsreader/u);
+      await expect(houseHeading).toHaveCSS("font-weight", "400");
+      const bodyCopy = article.locator(".article-body-inner .article-section p").first();
+      await expect(bodyCopy).toHaveCSS("font-size", compact ? "19px" : "26px");
+      await expect(bodyCopy).toHaveCSS("font-family", /Newsreader/u);
+      await expect(bodyCopy).toHaveCSS("line-height", compact ? "28.5px" : "37.7px");
+      if (planet === "Sun") {
+        await test.step("reject a uniform typography regression", async () => {
+          const override = await page.addStyleTag({ content: ".article-page .article-body-inner .article-section p { font-size: 11px !important; }" });
+          try {
+            await expect(expect(bodyCopy).toHaveCSS("font-size", compact ? "19px" : "26px", { timeout: 100 })).rejects.toThrow();
+          } finally { await override.evaluate(element => element.remove()); }
+          await expect(bodyCopy).toHaveCSS("font-size", compact ? "19px" : "26px");
+        });
+      }
+      const styles = await houseHeading.evaluate(element => {
+        const s = getComputedStyle(element);
+        return [s.fontFamily, s.fontSize, s.fontWeight, s.lineHeight, s.letterSpacing, s.marginTop, s.marginBottom];
+      });
+      if (titleStyles) expect(styles).toEqual(titleStyles); else titleStyles = styles;
+      await expect(article.getByText("Planetary aspects", { exact: true })).toHaveCount(0);
+      await expect(article.getByText("Angles and points", { exact: true })).toHaveCount(0);
+      const groups = article.locator(".article-related-aspects-card");
+      expect(await groups.count()).toBeGreaterThan(0);
+      for (const group of await groups.all()) {
+        expect(await group.getAttribute("aria-labelledby")).toBeTruthy();
+        expect(await group.evaluate(element => element.parentElement?.classList.contains("article-shell"))).toBe(true);
+        expect(await group.evaluate(element => element.previousElementSibling?.tagName)).toBe("H2");
+        await expect(group).toHaveCSS("background-color", theme === "dark" ? "rgb(28, 31, 38)" : "rgb(255, 255, 255)");
+        await expect(group).toHaveCSS("border-radius", "28px");
+        await expect(group).toHaveCSS("padding", compact ? "32px 24px 28px" : "40px 32px 32px");
+        const names = await group.locator("h3").allTextContents();
+        expect(names.length).toBeGreaterThan(0);
+        await expect(group.locator("h4")).toHaveCount(0);
+      }
+      expect(await article.locator("h2.article-related-aspects__label--outside").allTextContents()).toEqual(
+        planet === "Pluto" ? ["Gifts"] : ["Gifts", "Challenges"]
+      );
+      const boxes = await article.locator(".article-card").evaluateAll(elements => elements.map(element => {
+        const b = element.getBoundingClientRect(); return { left: b.left, right: b.right, width: b.width };
+      }));
+      for (const box of boxes) {
+        expect(box.left).toBeGreaterThanOrEqual(0);
+        expect(box.right).toBeLessThanOrEqual(width + 1);
+        expect(Math.abs(box.width - boxes[0].width)).toBeLessThanOrEqual(1);
+        expect(Math.abs(box.width - (compact ? width - 32 : 880))).toBeLessThanOrEqual(1);
+      }
+      if (["Sun", "Uranus"].includes(planet)) {
+        await article.screenshot({ path: `test-results/natal-pattern-${planet.toLowerCase()}-${width}-${theme}.png` });
+        await page.reload(); await expect(houseHeading).toBeVisible();
+      }
+      await page.getByRole("button", { name: "Back to natal chart", exact: true }).click();
+      await selectYouNatalTab(page);
+    }
+  });
+}
 
 test("Chiron Jupiter owner revision renders its complete opening and ending", async ({ page }) => {
   const copy = JSON.parse(readFileSync("docs/content-management/owner-copy/chiron-jupiter-hard-2026-09-07.json", "utf8"));
@@ -5532,9 +5663,18 @@ test("Sky detail hydrates published aspects for its displayed snapshot and dated
     expect(row?.body, `The published fixture must contain ${contentKey}`).toBeTruthy();
     return { contentKey, body: row.body as string };
   };
-  const expectPublishedBody = (body: string) => expect.poll(async () =>
-    (await page.locator(".sky-detail-article p").allTextContents()).join("\n\n"),
-    { timeout: 60_000 }).toContain(body.trim());
+  const normalizeParagraph = (value: string) => value.replace(/\s+/gu, " ").trim();
+  const expectPublishedBody = (body: string) => {
+    const expected = body.split(/\n\s*\n/u).map(normalizeParagraph).filter(Boolean);
+    return expect.poll(async () => {
+      const actual = (await page.locator(".sky-detail-article p").allTextContents()).map(normalizeParagraph);
+      let matched = 0;
+      for (const paragraph of actual) {
+        if (paragraph === expected[matched]) matched += 1;
+      }
+      return matched;
+    }, { timeout: 60_000 }).toBe(expected.length);
+  };
   const publications = snapshot.publications.filter((row: any) => row.content_key.startsWith("sky.aspect."));
   await seedClientState(page, { now: "2026-09-08T14:03:00.000Z", contentPublications: publications });
   const requested = new Set<string>();
@@ -5597,10 +5737,19 @@ test("Sky detail hydrates published aspects for its displayed snapshot and dated
   await keyDates.locator(':scope > summary').click();
   const plutoDate = keyDates.getByRole('link', { name: /Venus.*square.*Pluto/iu }).first();
   await expect(plutoDate).toHaveAttribute('href', /^#sky\/aspect\//);
+  const venusHref = await plutoDate.getAttribute("href");
   await plutoDate.click();
-  await expectPublishedBody(venus.body);
+  // The approved signed Calendar card supersedes the older generic publication
+  // in every Sky article. Keep the entire forecast and details assertion.
+  const cards = JSON.parse(readFileSync("packages/astro-knowledge/data/sky-calendar/composed-cards-v1.json", "utf8")).cards;
+  const card = cards.find((row: any) => row.id === "sky-card/venus/scorpio/square/pluto/aquarius");
+  expect(card).toMatchObject({ ownerApproved: true, servingAuthorized: true });
+  const exactInstant = decodeURIComponent(venusHref!.split(/\/(?:on|at)\//u)[1]);
+  const selectedBody = `${skyAspectReadingDateLine(exactInstant, fixtureLocation.timeZone)}, ${card.forecast[0].toLowerCase()}${card.forecast.slice(1)}\n\n${card.details}`;
+  await expectPublishedBody(selectedBody);
+  expect((await page.locator(".sky-detail-article p").allTextContents()).join("\n\n")).not.toContain(venus.body.trim());
   await page.reload();
-  await expectPublishedBody(venus.body);
+  await expectPublishedBody(selectedBody);
 });
 
 for (const theme of ["light", "dark"] as const) {
@@ -5698,6 +5847,70 @@ test("an open Friends article survives an empty initial dashboard overlay", asyn
     await expect(detail).toContainText(copy);
   }
 });
+
+for (const [width, theme] of [[390, "light"], [390, "dark"], [1440, "light"], [1440, "dark"]] as const) {
+  for (const inverse of [false, true]) {
+    for (const relationshipType of ["friend", "partner", "family"]) {
+      test(`Venus Mars square interpretation ${width} ${theme} ${inverse ? "reverse" : "forward"} ${relationshipType}`, async ({ page }) => {
+        test.setTimeout(90_000);
+        await page.setViewportSize({ width, height: 1000 });
+        await seedClientState(page, { profile: true, preloadProfileNatalSky: true, theme,
+          synastryFixture: { readerBody: "Venus", body: "Mars", aspect: "square", inverse, relationshipType } });
+        const first = inverse ? "Mars" : "Venus";
+        const second = inverse ? "Venus" : "Mars";
+        const title = `Your ${first} square Sofia's ${second}`;
+        const row = fallbackSourceRowsV3.hookRows.find(r => r.contentKey === "fallback-hook/synastry-pair/venus/mars/hard")!;
+        const copy = String(inverse ? row.body_they : row.body_you)
+          .replaceAll(inverse ? "{{holder1}}" : "{{holder2}}", "Sofia");
+        await expectClientRouteLoads(page, "/#friends?tab=charts&chart=friend-batch4&view=compatibility");
+        await expect(page.getByRole("heading", { name: "Planet by planet", exact: true })).toBeVisible();
+        await expect(page.locator(".compatibility-dynamic-row")).toHaveCount(0);
+        const compatibility = page.locator(".friend-compatibility-stage");
+        if (relationshipType !== "family") {
+          await expect(compatibility.getByRole("heading", { name: title, exact: true })).toBeVisible();
+          await expect(compatibility).toContainText(copy);
+          const dynamics = page.getByRole("region", { name: "Compatibility dynamics", exact: true });
+          for (const paragraph of await dynamics.locator("p").all()) {
+            await expect(paragraph).not.toBeEmpty();
+          }
+          const headingStyle = (element: Element) => {
+            const style = getComputedStyle(element);
+            return [style.fontFamily, style.fontSize, style.fontWeight, style.lineHeight, style.letterSpacing,
+              style.marginTop, style.marginBottom, style.textTransform, style.textAlign];
+          };
+          expect(await dynamics.getByRole("heading", { name: "Challenges", level: 2, exact: true }).evaluate(headingStyle))
+            .toEqual(await page.getByRole("heading", { name: "Planet by planet", level: 2, exact: true }).evaluate(headingStyle));
+          await dynamics.screenshot({ path: `test-results/venus-mars-compatibility-${width}-${theme}-${inverse}-${relationshipType}.png` });
+        } else {
+          await expect(compatibility).not.toContainText(copy);
+        }
+        await page.reload();
+        await expect(page.getByRole("heading", { name: "Planet by planet", exact: true })).toBeVisible();
+        if (relationshipType !== "family") {
+          await expect(compatibility.getByRole("heading", { name: title, exact: true })).toBeVisible();
+          await expect(compatibility).toContainText(copy);
+        }
+        await selectFriendDetailTab(page, "Synastry");
+        const synastry = page.getByRole("button", { name: `Open full entry for ${title}`, exact: true });
+        if (relationshipType === "family") {
+          // The current Synastry design retains calculated contact facts when
+          // interpretation copy is unavailable. Family must exclude the prose.
+          await expect(synastry.locator(".reading-story-card__preview")).toHaveCount(0);
+          await expect(page.locator(".friend-synastry-stage")).not.toContainText(copy);
+          return;
+        }
+        await expect(synastry).toContainText(copy);
+        await synastry.scrollIntoViewIfNeeded();
+        await page.screenshot({ path: `test-results/venus-mars-square-${width}-${theme}-${inverse}-${relationshipType}.png` });
+        await synastry.click();
+        const detail = page.locator(".app-shell.mode-detail");
+        await expect(detail).toContainText(copy);
+        await page.reload();
+        await expect(detail).toContainText(copy);
+      });
+    }
+  }
+}
 
 for (const body of ["Ascendant", "Midheaven", "Descendant", "Imum Coeli", "Chiron", "North Node", "South Node", "Lilith"]) {
   for (const aspect of ["conjunction", "square", "opposition", "trine", "sextile"]) {
@@ -6129,7 +6342,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"] as const)
     await expect(page.locator("#you-transit-article-title")).toHaveText(/Mercury Rx in/);
     await expectNoDuplicateArticleHeadings(page, "You retrograde placement");
     await expectSemanticArticleHeadingOrder(page, "You retrograde placement");
-    await page.getByRole("button", { name: "Back to updates" }).click();
+    await page.getByRole("button", { name: "Back to natal chart" }).click();
     await page.getByRole("button", { name: /Ascendant in/ }).click();
     await expect(page.locator("#you-transit-article-title")).toBeVisible();
     await expectNoDuplicateArticleHeadings(page, "You natal placement");
@@ -6464,7 +6677,7 @@ for (const sect of ["day", "night"] as const) test(`Natal approved saved bodies 
       const article = page.locator(audience === "you" ? ".you-transit-article-page" : ".sky-detail-article");
       const addition = article.getByRole("region", { name: sect === "day" ? "Day chart" : "Night chart", exact: true });
       await expect(addition.locator("p")).toHaveText(body(`cms/natal-planet-sect/${audience}/${planet.toLowerCase()}/${sect}`).split(/\n{2,}/u));
-      await page.getByRole("button", { name: audience === "you" ? "Back to updates" : "Close detail", exact: true }).click();
+      await page.getByRole("button", { name: audience === "you" ? "Back to natal chart" : "Close detail", exact: true }).click();
     }
   }
 });
@@ -6604,7 +6817,7 @@ for (const width of [390,1440]) test(`Complete Friend natal placement bodies rea
         await assertCompleteCopy();
         await article.screenshot({path:`test-results/approved-friend-${planet}-${width}-${name}.png`});
       }
-      await page.getByRole('button',{name:audience==='you'?'Back to updates':'Close detail',exact:true}).click();
+      await page.getByRole('button',{name:audience==='you'?'Back to natal chart':'Close detail',exact:true}).click();
     }
   };
   await check('you'); await check('they');
@@ -6676,7 +6889,7 @@ for (const [theme, width] of [["light", 1440], ["dark", 390]] as const) for (con
     expect(await sect.evaluate(precedingCopy)).toEqual(baseCopy);
     expect(await aspects.allTextContents()).toEqual(aspectCopy);
     if (pilot.planet === "Jupiter") {
-      await page.getByRole("button", { name: audience === "you" ? "Back to updates" : "Close detail", exact: true }).click();
+      await page.getByRole("button", { name: audience === "you" ? "Back to natal chart" : "Close detail", exact: true }).click();
       await expect(page).toHaveURL(natalListUrl);
       await expect(article).toHaveCount(0);
       await page.locator("button.placement-table-row").filter({ hasText: /Saturn/ }).first().click();
@@ -6959,7 +7172,7 @@ for (const [width, theme] of [[390, 'dark'], [1440, 'light']] as const) for (con
       await page.reload({ waitUntil: 'domcontentloaded' });
       for (const text of texts) for (const paragraph of text.split('\n\n')) await expect(reading).toContainText(paragraph);
       await page.screenshot({ path: `test-results/saturn-natal-reader-${width}-${theme}-${failure}.png`, fullPage: true });
-      await page.getByRole('button', { name: 'Back to updates', exact: true }).click();
+      await page.getByRole('button', { name: 'Back to natal chart', exact: true }).click();
       await selectYouNatalTab(page);
       await page.getByRole('button', { name: 'Saturn Rx in Virgo', exact: true }).click();
       await expect(reading).toContainText(texts[0]);
@@ -6967,3 +7180,438 @@ for (const [width, theme] of [[390, 'dark'], [1440, 'light']] as const) for (con
     } finally { releaseArticle(); releaseInventory(); }
   });
 }
+for (const theme of ["light", "dark"] as const) {
+  for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844 }]) {
+    test(`natal deeper insights opens private topic pages below empty houses (${theme}, ${viewport.width}px)`, async ({ page }, testInfo) => {
+      test.setTimeout(120_000);
+      await page.setViewportSize(viewport);
+      await seedClientState(page, { profile: true, friends: true, theme, pageAnimations: "off" });
+      await seedSignedInSession(page);
+      const keys: string[] = [];
+      await page.route("**/rest/v1/user_generated_interpretations*", route => {
+        const url = new URL(route.request().url());
+        const key = url.searchParams.get("content_key")?.replace(/^eq\./, "") ?? "";
+        if (!key.startsWith("natal-insight/")) return route.fulfill({ json: [] });
+        keys.push(key);
+        expect(url.searchParams.get("subject_type")).toBe("eq.natal_summary");
+        expect(url.searchParams.get("status")).toBe("eq.LIVE");
+        expect(url.searchParams.get("user_id")).toBe(`eq.${fixtureUserId}`);
+        const audience = key.includes("/they/") ? "friend" : "you";
+        return route.fulfill({ json: [{ id: `private-${audience}`, content_key: key, status: "LIVE", surface: "natal", mode: "article",
+          body: `The saved ${audience} reading, first paragraph.\n\nThe complete second paragraph remains here.`, updated_at: "2026-10-06T00:00:00Z" }] });
+      });
+      for (const audience of ["you", "friend"] as const) {
+        await expectClientRouteLoads(page, audience === "you" ? "/#you?tab=chart" : "/#friends?tab=charts&chart=friend-nikki&view=natal");
+        const section = page.getByRole("region", { name: "Deeper insights", exact: true });
+        await expect(section).toBeVisible();
+        const empty = page.getByRole("region", { name: "Empty houses", exact: true });
+        await expect(empty).toBeVisible();
+        expect((await section.boundingBox())!.y).toBeGreaterThanOrEqual((await empty.boundingBox())!.y + (await empty.boundingBox())!.height);
+        await expect(section.getByRole("button")).toHaveCount(7);
+        await expect(section.locator("details,summary,.planet-placement-list")).toHaveCount(0);
+        expect(await section.evaluate(element => {
+          const properties = ["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing", "textTransform", "textAlign", "marginTop", "marginBottom"] as const;
+          const label = element.querySelector("h2")!;
+          const reference = element.parentElement!.querySelector(".natal-placement-section > h2")!;
+          return properties.filter(property => getComputedStyle(label)[property] !== getComputedStyle(reference)[property]);
+        })).toEqual([]);
+        await section.screenshot({ path: testInfo.outputPath(`${audience}-navigation.png`), animations: "disabled" });
+        await section.locator('[data-insight="emotional-needs"]').focus();
+        await page.keyboard.press("Enter");
+        const reading = page.locator(".natal-insight-reading");
+        await expect(page.getByRole("heading", { name: "Emotional needs", exact: true })).toBeVisible();
+        await expect(reading.locator("p")).toHaveCount(2);
+        await expect(reading).toContainText(`The saved ${audience} reading`);
+        await expectNoHorizontalOverflow(page, `${audience} topic page`);
+        await page.screenshot({ path: testInfo.outputPath(`${audience}-article.png`), animations: "disabled" });
+        await page.reload();
+        await expect(reading).toContainText("The complete second paragraph remains here.");
+        await page.getByRole("button", { name: audience === "you" ? "Back to natal chart" : "Close detail" }).click();
+        await expect(section).toBeVisible();
+      }
+      expect(keys.some(key => /^natal-insight\/you\/emotional-needs\/[a-f0-9]{64}$/.test(key))).toBe(true);
+      expect(keys.some(key => /^natal-insight\/they\/emotional-needs\/[a-f0-9]{64}$/.test(key))).toBe(true);
+    });
+  }
+}
+
+for (const theme of ["light", "dark"] as const) for (const width of [1440, 390]) {
+  test(`natal topic page handles empty draft error and direct-link back (${theme}, ${width}px)`, async ({ page }, testInfo) => {
+    await page.setViewportSize({ width, height: 1000 });
+    await seedClientState(page, { profile: true, theme, pageAnimations: "off" });
+    await seedSignedInSession(page);
+    let mode: "draft" | "error" | "empty" = "draft";
+    await page.route("**/rest/v1/user_generated_interpretations*", route => {
+      if (!new URL(route.request().url()).searchParams.get("content_key")?.includes("natal-insight/")) return route.fulfill({ json: [] });
+      if (mode === "error") return route.fulfill({ status: 503, json: { message: "Synthetic unavailable storage" } });
+      return route.fulfill({ json: mode === "empty" ? [] : [{ id: "private-draft", status: "DRAFT", body: "This draft must stay hidden." }] });
+    });
+    // A transit service failure must not block a directly opened natal topic.
+    await page.route("**/api/content-reader", async route => {
+      const body = route.request().postDataJSON();
+      if (mode === "error" && body?.keys?.some((key: string) => key.startsWith("cms/natal-insight/"))) {
+        return route.fulfill({ status: 503, json: { error: "Synthetic insight storage error" } });
+      }
+      if (body?.surfaces?.includes("you")) return route.fulfill({ status: 503, json: { error: "Synthetic transit error" } });
+      return route.fallback();
+    });
+    await expectClientRouteLoads(page, "/#you/insight/emotional-needs");
+    await expect(page.getByRole("heading", { name: "Emotional needs", exact: true })).toBeVisible();
+    await expect(page.locator(".natal-insight-reading")).toContainText("A personalized reading for this chart is not available yet.");
+    await expect(page.getByText("This draft must stay hidden.", { exact: true })).toHaveCount(0);
+    await expect(page.locator(".natal-insight-reading h2, .natal-insight-reading h3")).toHaveCount(0);
+    await expectNoHorizontalOverflow(page, "Empty natal topic");
+    await page.screenshot({ path: testInfo.outputPath("empty-topic.png") });
+    mode = "error";
+    await page.reload();
+    await expect(page.getByText("This reading could not load.", { exact: true })).toBeVisible();
+    mode = "empty";
+    await page.getByRole("button", { name: "Try again", exact: true }).click();
+    await expect(page.locator(".natal-insight-reading")).toContainText("A personalized reading for this chart is not available yet.");
+    await page.getByRole("button", { name: "Back to natal chart", exact: true }).click();
+    await expect(page.getByRole("region", { name: "Deeper insights", exact: true })).toBeVisible();
+  });
+}
+import { natalInsightSharedFixtureRows, natalInsightGuideFixtureRows } from "../helpers/natal-insight-shared-fixture";
+
+for (const theme of ["light", "dark"] as const) for (const width of [960, 390]) {
+  test(`untimed natal insights use Sun and Moon on You and Friends (${theme}, ${width}px)`, async ({ page }, testInfo) => {
+    test.setTimeout(120_000);
+    await page.setViewportSize({ width, height: 1000 });
+    const guides = natalInsightGuideFixtureRows().map(row => ({ ...row,
+      headline: row.content_key.endsWith("/approach") ? "Your Rising Sign & Chart Ruler" : row.headline
+    }));
+    await seedClientState(page, { profile: true, friends: true, theme, pageAnimations: "off", generatedInterpretations: [...natalInsightSharedFixtureRows(), ...guides] });
+    await seedSignedInSession(page);
+    await page.route("**/rest/v1/user_generated_interpretations*", route => route.fulfill({ json: [] }));
+    await page.addInitScript(() => {
+      const profile = JSON.parse(localStorage.getItem("tldrastro:userProfile")!);
+      profile.charts[0].birthTimeUnknown = true;
+      profile.charts[0].birthTime = "Time unknown";
+      localStorage.setItem("tldrastro:userProfile", JSON.stringify(profile));
+      const key = `tldrastro:manualCharts:${profile.id}`;
+      const friends = JSON.parse(localStorage.getItem(key)!);
+      friends[0].birthTimeUnknown = true;
+      friends[0].birthTime = "Time unknown";
+      // Keep stale angles in the fixture to prove the time flag takes precedence.
+      localStorage.setItem(key, JSON.stringify(friends));
+    });
+    for (const audience of ["you", "friend"]) {
+      await expectClientRouteLoads(page, audience === "you" ? "/#you?tab=chart" : "/#friends?tab=charts&chart=friend-nikki&view=natal");
+      await expect(page.locator('[data-insight="approach"]')).toHaveText("Sun & Moon");
+      await page.locator('[data-insight="approach"]').click();
+      await expect(page.getByRole("heading", { name: "Sun & Moon", exact: true })).toBeVisible();
+      await expect(page.getByText("Birth time is needed to include houses and angles in this reading.", { exact: true })).toBeVisible();
+      const reading = page.locator(".natal-insight-reading");
+      await expect(reading.locator("h2")).toHaveCount(2);
+      expect(await reading.locator("h2").allTextContents()).toEqual([
+        expect.stringMatching(/^Sun in /), expect.stringMatching(/^Moon in /)
+      ]);
+      await expect(page.getByRole("heading", { name: "Your Rising Sign & Chart Ruler", exact: true })).toHaveCount(0);
+      await expect(page.locator(".natal-insight-guide")).toHaveCount(0);
+      await expectNoHorizontalOverflow(page, "Untimed natal insight");
+      await page.screenshot({ path: testInfo.outputPath(`untimed-${audience}.png`), fullPage: true });
+    }
+  });
+}
+
+for (const theme of ["light", "dark"] as const) for (const width of [960, 390]) {
+  test(`shared natal insights compose full pages for You and Friends (${theme}, ${width}px)`, async ({ page }, testInfo) => {
+    test.setTimeout(120_000);
+    await page.setViewportSize({ width, height: 1000 });
+    const guides = natalInsightGuideFixtureRows().map(row => ({ ...row,
+      headline: `Saved ${row.headline}`,
+      body: `Complete ${row.content_key.split("/").at(-1)} guide opening.\n\nComplete ${row.content_key.split("/").at(-1)} guide ending.`
+    }));
+    const sharedRows = natalInsightSharedFixtureRows();
+    const contextualRows = sharedRows.filter(row => row.content_key.includes("/ruler-placement/")).flatMap(row =>
+      [1, 2, 4, 5, 6, 10].map(house => {
+        const parts = row.content_key.split("/");
+        const audience = parts[4] === "you" ? "you" : "friend";
+        parts.splice(5, 0, String(house));
+        return { ...row, id: `${row.id}-house-${house}`, content_key: parts.join("/"),
+          body: `**Complete ${audience} contextual ruler opening.** This fixture applies to source house ${house}. Its final sentence stays editable.` };
+      }));
+    const rows = [...sharedRows, ...contextualRows, ...guides];
+    await seedClientState(page, { profile: true, friends: true, theme, pageAnimations: "off", generatedInterpretations: rows });
+    await seedSignedInSession(page);
+    await page.route("**/rest/v1/user_generated_interpretations*", route => route.fulfill({ json: [] }));
+    for (const audience of ["you", "friend"]) {
+      await expectClientRouteLoads(page, audience === "you" ? "/#you?tab=chart" : "/#friends?tab=charts&chart=friend-nikki&view=natal");
+      for (const topic of ["approach", "emotional-needs", "home-belonging", "creativity-pleasure", "style-expression", "money-resources", "work-direction"]) {
+        const title = guides.find(row => row.content_key.endsWith(`/${topic}`))!.headline;
+        await expect(page.locator(`[data-insight="${topic}"]`)).toHaveText(title);
+        await page.locator(`[data-insight="${topic}"]`).click();
+        await expect(page.getByRole("heading", { name: title, exact: true })).toBeVisible();
+        const article = page.locator(".natal-insight-reading");
+        const guide = page.locator(".natal-insight-guide");
+        await page.getByText("Read the guide", { exact: true }).click();
+        await expect(guide.getByRole("heading")).toHaveCount(0);
+        await expect(page.getByText("How this reading works", { exact: true })).toHaveCount(0);
+        await expect(guide).toContainText(`Complete ${topic} guide opening.`);
+        await expect(guide).toContainText(`Complete ${topic} guide ending.`);
+        await expect(guide.getByRole("listitem")).toHaveCount(0);
+        await expect(guide.locator("p")).toHaveCount(2);
+        await expect(article).toContainText(`${audience === "you" ? "You" : "They"} can read the complete ${topic}`);
+        expect(await guide.evaluate(el => Boolean(el.closest("details")?.open))).toBe(true);
+        if (topic === "approach" && audience === "you" && width === 960) {
+          // A transit-date update must not tear down a natal reading or close
+          // the guide the reader has already opened.
+          const disclosure = page.locator(".natal-reading-guide-disclosure");
+          await disclosure.evaluate(el => el.setAttribute("data-qa-instance", "open-guide"));
+          await page.locator(".sky-header-date-button").click();
+          await page.getByRole("tab", { name: "Tomorrow", exact: true }).click();
+          await expect(page).toHaveURL(/[?&]date=2026-07-17(?:&|#|$)/u);
+          await expect(page.locator(".sky-header-date-button")).toHaveAttribute("aria-label", /Viewing transits for Fri, Jul 17/u);
+          await expect(disclosure).toHaveAttribute("data-qa-instance", "open-guide");
+          await expect(disclosure).toHaveJSProperty("open", true);
+          await expect(article).toContainText("Its final sentence stays editable.");
+        }
+        await expect(article).toContainText("Its final sentence stays editable.");
+        await expect(article).not.toContainText("{{");
+        if (["approach", "home-belonging", "creativity-pleasure", "money-resources", "work-direction"].includes(topic)) {
+          await expect(article).toContainText(`Complete ${audience} `);
+          await expect(article).toContainText("connection through");
+        }
+        if (topic === "work-direction") for (const house of [2, 6, 10]) {
+          await expect(article).toContainText(`Complete ${audience} house ${house} to`);
+          await expect(article).toContainText(`This fixture applies to source house ${house}.`);
+        }
+        if (topic === "money-resources") await expect(article).toContainText("This fixture applies to source house 2.");
+        if (topic === "home-belonging") await expect(article).toContainText("This fixture applies to source house 4.");
+        const headings = article.locator("h2:not(.sr-only), h3");
+        await expect(headings.first()).toBeVisible();
+        if (["home-belonging", "creativity-pleasure", "money-resources"].includes(topic)) {
+          const labels = await headings.allTextContents();
+          expect(labels[0]).toMatch(/^\w+ on the (4th|5th|2nd) house$/);
+          expect(labels[1]).toMatch(/^(Sun|Moon|Mercury|Venus|Mars|Jupiter|Saturn) in \w+, \d+(st|nd|rd|th) house$/);
+
+          expect(await headings.evaluateAll(elements => elements.slice(0, 2).map(e => e.tagName))).toEqual(["H2", "H2"]);
+        }
+        if (topic === "work-direction") {
+          expect(await article.locator("h2").allTextContents()).toEqual(["Public role · 10th house", "Daily work · 6th house", "Money & resources · 2nd house"]);
+          expect(await article.locator("h3").allTextContents()).toEqual(expect.arrayContaining([
+            expect.stringMatching(/^\w+ on the 10th house$/),
+            expect.stringMatching(/^\w+ on the 6th house$/),
+            expect.stringMatching(/^\w+ on the 2nd house$/)
+          ]));
+        }
+        // Saved-chart hydration can briefly reload the reading independently of
+        // its guide. Measure the populated surface, with the same bounded retry
+        // as the reader assertions, instead of racing a one-shot DOM snapshot.
+        await expect(async () => {
+          const type = await guide.locator("p").first().evaluate(el => {
+            const style = getComputedStyle(el);
+            const reference = document.querySelector(".natal-reading-prose p");
+            if (!reference) throw new Error("The reading must retain its narrative paragraphs");
+            const expected = getComputedStyle(reference);
+            const props = ["fontFamily", "fontSize", "fontWeight", "lineHeight", "textTransform", "textAlign", "letterSpacing"] as const;
+            return Object.fromEntries(props.map(p => [p, [style[p], expected[p]]]));
+          });
+          for (const [property, values] of Object.entries(type)) expect(values[0], property).toBe(values[1]);
+        }).toPass({ timeout: 15_000 });
+        for (const paragraph of await article.locator(".natal-reading-prose p").all()) {
+          await expect(paragraph.locator("strong")).toHaveCount(1);
+          expect(await paragraph.evaluate(el => el.firstElementChild?.tagName === "STRONG" && el.firstElementChild.nextSibling?.nodeType === Node.TEXT_NODE)).toBe(true);
+        }
+        if (topic === "approach") {
+          await expect(article.locator("h2")).toHaveCount(3);
+          await expect(article.locator(".natal-reading-label")).toHaveText(["01 · Rising sign", "02 · chart ruler", "03 · Sun sign"]);
+          await expect(article.locator(".natal-insight-reading__section--band")).toHaveCount(1);
+          await expect(page.locator(".natal-reading-article svg, .natal-reading-article img, .natal-reading-article hr")).toHaveCount(0);
+          await expect(page.locator(".topbar")).toBeVisible();
+          await expect(page.locator(".natal-reading-page .floating-back-button")).toBeVisible();
+          await page.evaluate(() => document.fonts.ready);
+          const styles = await article.evaluate(el => {
+            const props = (node: Element) => {
+              const s = getComputedStyle(node);
+              return {family:s.fontFamily,size:s.fontSize,weight:s.fontWeight,leading:s.lineHeight,tracking:s.letterSpacing,color:s.color};
+            };
+            // Compare with the established article components outside the reading
+            // so a page-local font or theme override cannot pass as a shared token.
+            const reference = document.createElement("div");
+            reference.className = "article-page";
+            reference.innerHTML = '<article class="article-card"><h1 class="article-title">Title</h1><div class="article-section"><p>Body</p></div><p class="section-label">Label</p></article>';
+            reference.hidden = true;
+            document.body.append(reference);
+            const band = el.querySelector(".natal-insight-reading__section--band")!;
+            const link = el.querySelector("a")!;
+            const probe = document.createElement("div");
+            probe.style.background = "var(--surface-2)";
+            probe.style.color = "var(--card-title-color)";
+            probe.style.fontFamily = "var(--font-display)";
+            probe.style.fontSize = "var(--article-h2-size)";
+            probe.style.fontWeight = "var(--weight-medium)";
+            probe.style.lineHeight = "var(--leading-h2)";
+            probe.style.letterSpacing = "var(--tracking-title)";
+            reference.append(probe);
+            const paper = getComputedStyle(el.closest("article")!), refPaper = getComputedStyle(reference.querySelector("article")!);
+            const actual = {body:props(el.querySelector(".natal-reading-prose p")!),title:props(document.querySelector(".natal-reading-header h1")!),heading:props(el.querySelector("h2")!),label:props(el.querySelector(".natal-reading-label")!),band:getComputedStyle(band).backgroundColor,paper:paper.backgroundColor,radius:paper.borderRadius};
+            const expected = {body:props(reference.querySelector(".article-section p")!),title:props(reference.querySelector("h1")!),heading:props(probe),label:props(reference.querySelector(".section-label")!),band:getComputedStyle(probe).backgroundColor,paper:refPaper.backgroundColor,radius:refPaper.borderRadius};
+            const result = {actual,expected,lead:props(el.querySelector("strong")!),link:{line:getComputedStyle(link).textDecorationLine,thickness:getComputedStyle(link).textDecorationThickness},padding:getComputedStyle(band).paddingLeft,bodyBackground:getComputedStyle(document.body).backgroundImage};
+            reference.remove();
+            return result;
+          });
+          expect(styles.actual).toEqual(styles.expected);
+          expect(styles.actual.title.family).toContain("Newsreader");
+          expect(styles.actual.label.family).toContain("Geist Mono");
+          expect(styles.lead.weight).toBe("500");
+          expect(styles.lead.color).toBe(styles.actual.title.color);
+          expect(styles.bodyBackground).not.toBe("none");
+          if (width === 390) expect(styles.padding).toBe("24px");
+          expect(styles.link).toEqual({line:"underline",thickness:"1px"});
+          await page.getByText("Read the guide", { exact: true }).click();
+          await page.evaluate(() => window.scrollTo(0, 0));
+          await page.screenshot({ path: testInfo.outputPath(`approach-${audience}.png`), fullPage: true });
+        }
+        // Clicking the guide scrolls the viewport. Return to the article top
+        // before capturing a full-page image with the app's fixed navigation.
+        await page.evaluate(() => window.scrollTo(0, 0));
+        const geometry = await article.evaluate(el => [...el.querySelectorAll(".natal-insight-reading__section")].every(section => {
+          const bounds = section.getBoundingClientRect();
+          const children = [...section.querySelectorAll("h2, h3, .natal-reading-prose p")].map(child => child.getBoundingClientRect());
+          return children.every((child, index) => child.left >= bounds.left && child.right <= bounds.right + 1
+            && child.top >= bounds.top && child.bottom <= bounds.bottom + 1
+            && (!index || child.top >= children[index - 1].bottom));
+        }));
+        expect(geometry, "Placement headings and full paragraphs stay inside their sections without overlapping").toBe(true);
+        if (topic === "home-belonging" && audience === "you") await page.screenshot({ path: testInfo.outputPath("home-structure.png"), fullPage: true });
+        await expect(article.locator(".planet-placement-list,details")).toHaveCount(0);
+        await expectNoHorizontalOverflow(page, "Shared natal essay");
+        await page.getByRole("button", { name: audience === "you" ? "Back to natal chart" : "Close detail" }).click();
+      }
+    }
+    await expectClientRouteLoads(page, "/#you/insight/emotional-needs");
+    await page.reload();
+    await expect(page.locator(".natal-insight-reading")).toContainText("You can read the complete emotional-needs");
+    await expect(page.locator(".natal-insight-guide")).toContainText("Complete emotional-needs guide ending.");
+    const signLink = page.locator(".natal-insight-reading h2 a").first();
+    const destination = await signLink.getAttribute("href");
+    await signLink.click();
+    await expect(page).toHaveURL(new RegExp(`${destination}$`));
+    await expect(page.locator(".learn-article-page")).toBeVisible();
+    await page.goBack();
+    await expect(page.locator(".natal-insight-reading")).toContainText("You can read the complete emotional-needs");
+  });
+}
+
+test("shared natal insight drafts remain hidden on the reader page", async ({ page }) => {
+  await seedClientState(page, { profile: true, pageAnimations: "off", generatedInterpretations: [...natalInsightSharedFixtureRows("DRAFT"), ...natalInsightGuideFixtureRows()] });
+  await seedSignedInSession(page);
+  await page.route("**/rest/v1/user_generated_interpretations*", route => route.fulfill({ json: [] }));
+  await expectClientRouteLoads(page, "/#you/insight/emotional-needs");
+  await expect(page.locator(".natal-insight-reading")).toContainText("A personalized reading for this chart is not available yet.");
+  await expect(page.locator(".natal-insight-reading")).not.toContainText("complete emotional-needs");
+  await expect(page.locator(".natal-insight-guide")).toContainText("Complete emotional-needs guide ending.");
+});
+
+test("natal guides respect publication and recover independently of private readings", async ({ page }) => {
+  let mode: "draft" | "live" | "error" = "draft";
+  await seedClientState(page, { profile: true, pageAnimations: "off" });
+  await seedSignedInSession(page);
+  await page.route("**/rest/v1/user_generated_interpretations*", route => route.fulfill({ status: 503, json: { error: "Private reading unavailable" } }));
+  await page.route("**/api/content-reader", route => mode === "error"
+    ? route.fulfill({ status: 503, json: { error: "Guide unavailable" } })
+    : route.fulfill({ json: readerResponse(natalInsightGuideFixtureRows(mode === "draft" ? "DRAFT" : "LIVE")) }));
+  await expectClientRouteLoads(page, "/#you/insight/emotional-needs");
+  await expect(page.getByText("This reading could not load.", { exact: true })).toBeVisible();
+  await expect(page.getByText("Loading the guide…", { exact: true })).toHaveCount(0);
+  await expect(page.locator(".natal-insight-guide")).toHaveCount(0);
+  mode = "error";
+  await page.reload();
+  await expect(page.getByText("The guide could not load.", { exact: true })).toBeVisible();
+  mode = "live";
+  await page.getByRole("button", { name: "Try loading the guide again", exact: true }).click();
+  await expect(page.locator(".natal-insight-guide")).toContainText("Complete emotional-needs guide ending.");
+  await expect(page.getByText("This reading could not load.", { exact: true })).toBeVisible();
+});
+
+for (const theme of ["light", "dark"] as const) for (const width of [1440, 390]) {
+  test(`approved natal insight passages remain complete (${theme}, ${width}px)`, async ({ page }, testInfo) => {
+    test.setTimeout(120_000);
+    await page.setViewportSize({ width, height: 1000 });
+    const rows = natalInsightSharedFixtureRows();
+    const source = (key: string, field: string) => {
+      const row = fallbackSourceRowsV3.hookRows.find(row => row.contentKey === key) as Record<string, any>;
+      expect(row?.review_status).toBe("approved");
+      expect(row?.[field]).toBeTruthy();
+      return String(row[field]);
+    };
+    for (const row of rows) {
+      if (row.content_key.startsWith("cms/natal-insight/passage/emotional-needs/")) {
+        const sign = row.content_key.split("/").at(-1);
+        row.body = `{{#insightIsYou}}${source(`fallback-hook/natal-you-placement-sign-final/moon/${sign}`, "body")}{{/insightIsYou}}{{^insightIsYou}}${source(`fallback-hook/placement-sentence/moon/${sign}`, "body_they")}{{/insightIsYou}}`;
+      }
+    }
+    await seedClientState(page, { profile: true, friends: true, theme, pageAnimations: "off", generatedInterpretations: rows });
+    await seedSignedInSession(page);
+    await page.route("**/rest/v1/user_generated_interpretations*", route => route.fulfill({ json: [] }));
+    for (const audience of ["you", "friend"]) {
+      await expectClientRouteLoads(page, audience === "you" ? "/#you?tab=chart" : "/#friends?tab=charts&chart=friend-nikki&view=natal");
+      await page.locator('[data-insight="emotional-needs"]').click();
+      const article = page.locator(".natal-insight-reading");
+      const heading = article.locator("h2").first();
+      await expect(heading).toHaveText(/^Moon in /);
+      const sign = (await heading.innerText()).replace('Moon in ', '').toLowerCase();
+      const expected = source(audience === "you" ? `fallback-hook/natal-you-placement-sign-final/moon/${sign}` : `fallback-hook/placement-sentence/moon/${sign}`, audience === "you" ? "body" : "body_they");
+      const expectedParagraphs = expected.split(/\n\n+/);
+      expect((await article.locator(".natal-reading-prose p").allTextContents()).slice(0, expectedParagraphs.length)).toEqual(expectedParagraphs);
+      await expect(article).not.toContainText("A workable day can make room for both.");
+      await expect(article).not.toContainText("{{");
+      await expectNoHorizontalOverflow(page, "Complete natal source passage");
+      await page.screenshot({ path: testInfo.outputPath(`${audience}-approved-emotional-needs.png`), fullPage: true });
+      await page.reload();
+      await expect.poll(async () => (await article.locator(".natal-reading-prose p").allTextContents()).slice(0, expectedParagraphs.length)).toEqual(expectedParagraphs);
+    }
+  });
+}
+
+function completeEmotionalFixtureRows(status = "LIVE") {
+  const signs = ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"];
+  return ["you", "they"].flatMap(audience => signs.flatMap(moon => signs.map(sun => ({
+    ...natalInsightGuideFixtureRows(status)[0], id: `complete-${audience}-${moon}-${sun}`,
+    content_key: `cms/natal-insight/complete/v1/${audience}/emotional-needs/moon-${moon.toLowerCase()}/sun-${sun.toLowerCase()}`,
+    headline: "Complete emotional fixture", body: `### Moon in ${moon}\n\n**Complete ${audience} reading opening.** The entire saved reading continues here.\n\n### Sun in ${sun}\n\n**Complete ${audience} reading ending.** This final sentence stays intact.`
+  }))));
+}
+for (const theme of ["light", "dark"] as const) for (const width of [960, 390]) {
+  test(`complete natal combinations render whole audience readings (${theme}, ${width}px)`, async ({ page }, testInfo) => {
+    test.setTimeout(120_000);
+    await page.setViewportSize({ width, height: 1000 });
+    await seedClientState(page, { profile: true, friends: true, theme, pageAnimations: "off", generatedInterpretations: [...completeEmotionalFixtureRows(), ...natalInsightSharedFixtureRows(), ...natalInsightGuideFixtureRows()] });
+    await seedSignedInSession(page);
+    await page.route("**/rest/v1/user_generated_interpretations*", route => route.fulfill({ json: [] }));
+    for (const audience of ["you", "they"]) {
+      await expectClientRouteLoads(page, audience === "you" ? "/#you?tab=chart" : "/#friends?tab=charts&chart=friend-nikki&view=natal");
+      await page.locator('[data-insight="emotional-needs"]').click();
+      const reading = page.locator(".natal-insight-reading");
+      await expect(reading).toContainText(`Complete ${audience} reading opening.`);
+      await expect(reading).toContainText(`Complete ${audience} reading ending. This final sentence stays intact.`);
+      await expect(reading).not.toContainText("can read the complete emotional-needs");
+      await expect(reading.locator("h2")).toHaveCount(2);
+      const lead = reading.locator(".natal-reading-prose p").first();
+      await expect(lead.locator("strong")).toHaveText(`Complete ${audience} reading opening.`);
+      await expectNoHorizontalOverflow(page, "Complete natal reading");
+      await page.screenshot({ path: testInfo.outputPath(`complete-reading-${audience}.png`), fullPage: true });
+      await page.reload();
+      await expect(reading).toContainText(`Complete ${audience} reading ending. This final sentence stays intact.`);
+    }
+  });
+}
+test("complete natal drafts preserve existing published readings and failed loads retry", async ({ page }) => {
+  await seedClientState(page, { profile: true, pageAnimations: "off", generatedInterpretations: [...completeEmotionalFixtureRows("DRAFT"), ...natalInsightSharedFixtureRows()] });
+  await seedSignedInSession(page);
+  await page.route("**/rest/v1/user_generated_interpretations*", route => route.fulfill({ json: [] }));
+  let fail = true;
+  await page.route("**/api/content-reader", route => {
+    const request = route.request().postDataJSON();
+    return fail && JSON.stringify(request).includes("natal-insight/complete/")
+      ? route.fulfill({ status: 503, json: { error: "Fixture unavailable" } }) : route.fallback();
+  });
+  await expectClientRouteLoads(page, "/#you/insight/emotional-needs");
+  await expect(page.getByText("This reading could not load.", { exact: true })).toBeVisible();
+  fail = false;
+  await page.getByRole("button", { name: "Try again", exact: true }).click();
+  await expect(page.locator(".natal-insight-reading")).toContainText("You can read the complete emotional-needs");
+  await expect(page.locator(".natal-insight-reading")).not.toContainText("Complete you reading opening.");
+});

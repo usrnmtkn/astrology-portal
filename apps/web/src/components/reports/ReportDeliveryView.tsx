@@ -1,30 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { loadReportDelivery, resumeReportEntitlement, type ReportDeliveryPayload } from "../../services/reportFulfillment";
-import { ReportArticle, type ReportDocument } from "./ReportArticle";
+import { ReportArticle } from "./ReportArticle";
 import { ReportStateCard, reportProgressLabel } from "./ReportStateCard";
 import { ReaderUnavailable } from "../ReaderUnavailable";
 import { PageLoadState } from "../PageLoading";
 
 function reportIdFromPath() {
   return window.location.pathname.match(/^\/reports\/([^/]+)$/u)?.[1] ?? "";
-}
-
-export function documentFromDelivery(payload: NonNullable<ReportDeliveryPayload["report"]>): ReportDocument {
-  const overview = payload.units.find((unit) => unit.content_key.endsWith(":overview")) ?? payload.units[0];
-  const chapterUnits = overview ? [overview, ...payload.units.filter(unit => unit !== overview)] : [];
-  const chapters = chapterUnits.flatMap((unit, index) => {
-    const unitId = unit.content_key.split(":").at(-1) ?? String(index);
-    const primary = { id: unitId, kicker: payload.reportDomain.replaceAll("_", " "), title: unit === overview ? "" : unit.headline ?? "", paragraphs: [unit.timing ?? "", unit === overview ? "" : unit.summary ?? "", unit.body ?? ""].filter(Boolean) };
-    const sections = (unit.sections ?? []).map((section, sectionIndex) => ({ id: `${unitId}-${sectionIndex}`, kicker: payload.reportHorizon.replaceAll("_", " "), title: section.heading ?? "", paragraphs: [section.body ?? ""].filter(Boolean) }));
-    return [primary, ...sections].filter(chapter => chapter.title || chapter.paragraphs.length);
-  });
-  return {
-    id: payload.id,
-    reportType: "report",
-    cover: { kicker: payload.reportDomain.replaceAll("_", " "), title: overview?.headline ?? "", subtitle: overview?.summary ?? "", meta: [payload.periodStart, payload.periodEnd] },
-    chapters,
-    colophon: { factsEngine: payload.factsEngine, generatedAt: payload.deliveredAt ?? undefined, entries: [{ label: "Facts hash", value: payload.factsHash }] }
-  };
 }
 
 export function ReportDeliveryView({ reportId: reportIdProp }: { reportId?: string } = {}) {
@@ -65,7 +47,7 @@ export function ReportDeliveryView({ reportId: reportIdProp }: { reportId?: stri
   if (!payload?.ready || !payload.report) return <ReportStateCard title="Preparing your report" loading
     message={payload?.status === "awaiting_birth_data" ? undefined : reportProgressLabel(payload?.status)}
     action={payload?.status === "awaiting_birth_data" ? {label:"Add birth information",href:"/#you"} : undefined}/>;
-  return <ReportArticle report={documentFromDelivery(payload.report)} />;
+  return <ReportArticle report={payload.report.document} />;
 }
 
 export function ReportCheckoutResultView({ result }: { result: "success" | "cancel" }) {

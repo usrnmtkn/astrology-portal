@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 import { compileSkyArticleEdition } from '../../apps/web/src/content/skyArticleTemplateCompiler';
 import { skyIngressEssayFields } from '../../apps/web/src/content/skyIngressEssay.mjs';
 import { readerResponse } from '../helpers/reader-response';
-import { skyPlacementInSignAspectContentKeys } from '../../apps/web/src/services/skyPlacementInSignAspectSections';
+import { skyPlacementInSignAspectContentKeys } from '../../apps/web/src/services/skyPlacementAspectContentKeys';
 import { filterPlacementTimelineEvents, placementArticleTimelineWindow } from '../../apps/web/src/services/skyPlacementArticleTimeline';
 import { contentStudioExactSkyAspectKeys } from '../../apps/web/src/services/skyAspectContent';
 import { expectReadableTheme } from '../helpers/theme-contrast';
@@ -21,7 +21,8 @@ async function createSavedPeriodFixture() {
  const chapterKeys = new Set(skyPlacementInSignAspectContentKeys(filterPlacementTimelineEvents(events, chapter)));
  const activeKeys = new Set(sky.aspects.filter(aspect => aspect.from === 'Mercury' || aspect.to === 'Mercury')
   .flatMap(aspect => contentStudioExactSkyAspectKeys(aspect.from, aspect.type, aspect.to)));
- const extensionKey = skyPlacementInSignAspectContentKeys(events).find(key => !chapterKeys.has(key) && !activeKeys.has(key));
+ const extensionKey = events.flatMap(event => contentStudioExactSkyAspectKeys(event.planet, event.aspect, event.otherPlanet))
+  .find(key => !chapterKeys.has(key) && !activeKeys.has(key));
  expect(extensionKey, 'The real saved visit must need writing outside its selected retrograde chapter').toBeTruthy();
  const edition = await compileSkyArticleEdition({ format: 'ingress-essay-v3', planet: 'mercury', sign: 'cancer', entryYear: 2026,
   validFrom: start.slice(0, 10), validTo: end.slice(0, 10), transitStartInstant: start, transitEndInstant: end,
@@ -47,7 +48,9 @@ async function createSavedPeriodFixture() {
  const publications = [{ content_key: '__content-publication-ledger/v1', state: 'live', revision: 1,
   row_id: null, row_updated_at: null, updated_at: stamp }, ...rows.map(row => ({ content_key: row.content_key, state: 'live', revision: 1,
   row_id: row.id, row_updated_at: stamp, updated_at: stamp }))];
- return { start, end, events, extensionKey: extensionKey!, extension: aspectRows.find(row => row.content_key === extensionKey)!, rows, publications };
+ const extension = aspectRows.find(row => row.content_key === extensionKey);
+ expect(extension, 'The held extension must name an actual published fixture row').toBeTruthy();
+ return { start, end, events, extensionKey: extensionKey!, extension: extension!, rows, publications };
 }
 
 for (const [width, delivery] of [[390, 'late'], [1440, 'completed']] as const) {

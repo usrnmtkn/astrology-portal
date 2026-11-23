@@ -3,20 +3,22 @@ import { isReaderFacingCopy } from "../../content/readerSafety.js";
 import { calendarAspectPublicationKeys } from "../../services/skyAspectContent.js";
 import { withCalendarAspectRetrograde } from "../../services/calendarAspectRetrogradeContent.js";
 import type { LiveGeneratedContent } from "../../services/generatedContent.js";
+import { publicationAllowsContent, type ContentPublication } from "../../content/contentPublicationState.js";
 function recordField(value: unknown): Record<string, unknown> | null {
   return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : null;
 }
 
-export function resolveCalendarAspectPublication(options: { generatedContent: Map<string, LiveGeneratedContent>; first: string; second: string; aspect: string; firstSign: string; secondSign: string; firstMotion?: string | null; secondMotion?: string | null }) {
+export function resolveCalendarAspectPublication(options: { generatedContent: Map<string, LiveGeneratedContent>; first: string; second: string; aspect: string; firstSign: string; secondSign: string; firstMotion?: string | null; secondMotion?: string | null; publications?: ReadonlyMap<string, ContentPublication> }) {
   for (const key of calendarAspectPublicationKeys(options)) {
-    if (isContentRetired(key)) continue;
+    if (options.publications ? options.publications.get(key)?.state === "retired" : isContentRetired(key)) continue;
     const content = options.generatedContent.get(key);
     const source = content?.sourceSnapshot;
     const receipt = recordField(source?.calendarAspectPublication);
     if (!content || content.eventType !== "calendar-aspect-owner-approved-revision"
       || source?.review_status !== "approved" || source?.owner_approved !== true || source?.serving_enabled !== true
       || receipt?.schema !== "content-studio-calendar-publication/v1" || receipt.contentKey !== key
-      || !content.body.trim() || !isReaderFacingCopy(content.body)) continue;
+      || !content.body.trim() || !isReaderFacingCopy(content.body)
+      || !publicationAllowsContent(key, content.id, content.updatedAt, content.targetDate, options.publications)) continue;
     const selected = withCalendarAspectRetrograde(content, options);
     return { content: selected, body: selected.body };
   }

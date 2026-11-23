@@ -1,8 +1,10 @@
 import { readerSession } from "../helpers/reader-session";
+import { healthyEphemerisProbe } from "../helpers/ephemeris-health";
 import { readerResponse } from '../helpers/reader-response';
 import { expect, test, type Page } from '@playwright/test';
 
 async function prepare(page: Page, theme: string, visual?: 'artwork') {
+  await healthyEphemerisProbe(page);
   await page.addInitScript(({ theme, visual }) => {
     localStorage.setItem('tldrastro:theme', theme);
     if (!localStorage.getItem('tldrastro:pageAnimations')) localStorage.setItem('tldrastro:pageAnimations', 'system');
@@ -67,11 +69,13 @@ for (const screen of ['sky', 'friends']) for (const width of [390, 1440]) for (c
       const hiddenShadows = page.locator('.sky-reading-layout__content[aria-hidden="true"] .loading-moon__shadow');
       for (const hidden of await hiddenShadows.all()) await expect(hidden).toHaveCSS('animation-name', 'none');
       const visibleLoading = screen === 'sky' ? loader.locator('.sky-summary-loading') : loader;
+      await expect(page.locator('[data-ephemeris-status="degraded"]')).toHaveCount(0);
       const loaderBounds = await visibleLoading.boundingBox();
       const navigationBounds = await page.locator('.topbar').boundingBox();
       expect(loaderBounds!.y, 'The loading content must clear the fixed navigation').toBeGreaterThanOrEqual(navigationBounds!.y + navigationBounds!.height);
       await page.waitForTimeout(450);
       expect(await visibleLoading.boundingBox()).toEqual(loaderBounds);
+      await expect(page.locator('[data-ephemeris-status="degraded"]')).toHaveCount(0);
       await page.screenshot({ path: info.outputPath('css-loading.png') });
     } finally { blocked.release(); }
     if (screen === 'sky') {

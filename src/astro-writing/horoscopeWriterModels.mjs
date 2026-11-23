@@ -9,7 +9,7 @@ export function horoscopeWriterConfig(choice='current',period='weekly') {
   const selected=HOROSCOPE_WRITERS.find(writer=>writer.id===choice);
   if(!selected)throw new Error('Choose a supported horoscope writing model.');
   if(selected.id==='current')return provider.normalizeProviderConfig(
-    ['monthly','seasonal'].includes(period)?{reasoningEffort:'medium',maxOutputTokens:12000}:{},'writer');
+    ['weekly','monthly','seasonal'].includes(period)?{reasoningEffort:'medium',maxOutputTokens:12000}:{},'writer');
   return {provider:selected.provider,model:selected.model,maxOutputTokens:12000,
     ...(selected.provider==='gemini'?{thinkingLevel:'medium',transport:'stored-interaction/v2'}:{reasoningEffort:'medium'})};
 }

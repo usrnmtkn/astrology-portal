@@ -19,7 +19,7 @@ export function SkyDebilityCard({ generatedContent, positions }: {
   const [definitionOpen, setDefinitionOpen] = useState(false);
   const definitionId = useId();
   const definition = skyDebilityDefinition(generatedContent);
-  if (snapshot.count < 2 || !copy.visible) return null;
+  if (!copy.visible || (snapshot.count < 2 && !copy.interpretationKey)) return null;
   const cardLinks = skyDebilityPlacementLinks(copy.allPlacementKeys, positions);
   const links = skyDebilityPlacementLinks(copy.allPlacementKeys, positions, copy.interpretationKey || copy.classifiedContext ? "reading" : "compact");
   return (

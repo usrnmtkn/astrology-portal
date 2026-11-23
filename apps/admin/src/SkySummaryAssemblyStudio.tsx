@@ -75,7 +75,7 @@ export function SkySummaryAssemblyStudio({ rows, onEdit, busy, sunSign, moonSign
   return <section className="admin-template-reader-drilldown admin-sky-summary-composition" aria-label="Full summary assembly">
     <header className="admin-section-heading-row"><div>
       <h4>Full summary template</h4>
-      <p>Click the white words to edit a sentence around its protected variables. Edit the opening with the Sun and Moon examples below. Paragraph and event controls are available here too.</p>
+      <p>Click the white words to edit a sentence around its protected variables. Use the Sun and Moon example facts above. Paragraph and event controls are available here too.</p>
     </div></header>
     <AssemblySections label="Sky summary paragraph order">
       {layout.split(/\n\s*\n/gu).filter(paragraph => paragraph.trim()).map((paragraph, index) => {

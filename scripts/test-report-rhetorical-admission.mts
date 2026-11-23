@@ -4,7 +4,9 @@ import {assembleReportGenerationPayload} from '../api/_lib/report-generation.ts'
 import {REPORT_JUDGE_CATEGORIES,judgeReportUnit} from '../api/_lib/report-judge.ts';
 import {RHETORICAL_LABELS} from '../src/astro-writing/rhetoricalPatterns.mjs';
 const manifest=JSON.parse(fs.readFileSync('scripts/fixtures/report-judge-complete-unit-regressions-v3.json','utf8'));
-const facts=JSON.parse(fs.readFileSync(manifest.factsSourcePath,'utf8'));
+const referenceFacts=JSON.parse(fs.readFileSync(manifest.factsSourcePath,'utf8'));
+const seasonFacts=JSON.parse(fs.readFileSync('scripts/fixtures/synthetic-report-package1-facts.json','utf8'));
+const facts={...referenceFacts,reportWindow:seasonFacts.reportWindow};
 const payload=assembleReportGenerationPayload({reportId:'00000000-0000-0000-0000-000000000085',reportDomain:'general',reportHorizon:'12_months',unitId:'spring',frozenFacts:facts});
 const draft={headline:'Synthetic check',body:'First synthetic sentence. Second synthetic sentence.',sections:[]};
 const receipt=(label?:string)=>({checks:RHETORICAL_LABELS.map(item=>({label:item,outcome:item===label?'fail':'pass',reason:'Synthetic contract fixture.'})),findings:label?[{label,field:'body',quote:'Second synthetic sentence.',paragraph:draft.body,reason:'Synthetic rhetorical operation.',readerConsequence:'Synthetic loss of meaning.',meaningTest:'Synthetic complete-context test.'}]:[]});

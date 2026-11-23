@@ -13,7 +13,7 @@ export function skyPlacementSelection(positions: PlanetPosition[]) {
 
 export function skyPlacementArticleSelection(route: string, positions: PlanetPosition[]) {
   const [, kind, planet, routeSign] = route.split('/');
-  if (!['placement', 'retrograde'].includes(kind)) return '';
+  if (!['placement', 'retrograde', 'archive'].includes(kind)) return '';
   const position = positions.find(p => slug(p.planet) === planet);
   const sign = kind === 'retrograde' || !routeSign ? position && slug(position.sign) : routeSign;
   if (!planet || !sign) return 'pending';

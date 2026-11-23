@@ -3,6 +3,7 @@ import { test, expect } from '@playwright/test';
 import { fork } from 'node:child_process';
 import path from 'node:path';
 import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
+import { studioBuildAsset } from '../helpers/studio-build-assets';
 
 for (const legacyDraft of [false, true]) for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
  test(`Sky article saves and publishes with ${legacyDraft ? 'legacy draft flags' : 'archived latest revision'} at ${width} ${theme}`, async ({ page }) => {
@@ -37,10 +38,11 @@ for (const legacyDraft of [false, true]) for (const [width, theme] of [[390, 'li
    const recoverChunk = !legacyDraft && width === 1440;
    let missingChunk = recoverChunk;
    const compositionResponses: number[] = [];
+   const compositionAsset = await studioBuildAsset('src/SkyPlacementComposition.tsx');
    page.on('response', response => {
-    if (/\/SkyPlacementComposition-[^/]+\.js$/.test(new URL(response.url()).pathname)) compositionResponses.push(response.status());
+    if (new URL(response.url()).pathname === compositionAsset) compositionResponses.push(response.status());
    });
-   if (recoverChunk) await page.route('**/SkyPlacementComposition-*.js', route => missingChunk
+   if (recoverChunk) await page.route(url => url.pathname === compositionAsset, route => missingChunk
     ? route.fulfill({ status: 503, contentType: 'text/javascript', body: '/* Synthetic optional composition download failure. */' })
     : route.continue());
    await page.goto(process.env.STUDIO_PRODUCTION_ENTRY === '1' ? '/admin/content#sky-writeups' : '/#sky-writeups');

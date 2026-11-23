@@ -1,6 +1,5 @@
 import { FloatingTooltipPortal } from "../../components/ui/FloatingTooltip";
 import { AspectBadge } from "../../components/charts/AspectBadge";
-import { withCalendarAspectRetrograde } from "../../services/calendarAspectRetrogradeContent";
 import {PublishedMonthlyOverview} from './PublishedMonthlyOverview';
 import { calendarWeeklyDayParagraphs } from './calendarWeeklyPresentation';
 import { CalendarPassageProse } from './CalendarPassageProse';
@@ -73,21 +72,21 @@ import {
   fullDetailReaderFacingCopy,
   isReaderFacingCopy
 } from "../../content/readerSafety";
-import { cmsSurfaceKeys, resolveCmsSurfaceOverride } from "../../content/cmsSurfaceOverrides";
+import { cmsSurfaceKeys } from "../../content/cmsSurfaceOverrides";
 import { slugContentPart } from "../../services/generatedContentKeys";
 import { isContentRetired } from "../../content/contentPublicationState";
 import { resolveCalendarAspectPublication } from "./calendarAspectPublication";
-import { calendarAspectPublicationKeys, isSkyAspectRetired, resolveSkyAspectContentStudioExact, resolveSkyAspectGeneratedContent, resolveSkyAspectOwnerAuthoredSigned } from "../../services/skyAspectContent";
+import { skyAspectReadingDateLine, skyAspectPackageCandidates } from "../../services/skyAspectReaderFacts";
+import { resolveSkyAspectMasterOverride, resolveSkyAspectReading } from "../../services/skyAspectReading";
+import { isSkyAspectRetired, resolveSkyAspectContentStudioExact, resolveSkyAspectGeneratedContent } from "../../services/skyAspectContent";
 import {
-  resolveApprovedExactSkyAspectCopy,
-  resolveComposedSkyCalendarCard,
-  selectSkyAspectCopyByPrecedence,
   type ApprovedExactSkyAspectLookup,
   type SkyCalendarComposedCardLookup
 } from "../../services/skyAspectRouting";
 import { zonedDateTimeToUtc } from "../../services/timezones";
 import type { LocationInput } from "../../types";
 import { calendarEventGeneratedContentKeys, calendarContentRequestResolved, type CalendarContentRequest } from "./calendarContentKeys";
+import { resolveCalendarLunationAspectReading } from '../../content/skyLunationAspectReading';
 import {resolveLunationReaderSource} from '../../content/lunationReaderSource';
 import { calendarDayMoonWriting, calendarLunationMacroKey, calendarMoonWritingParagraphs, calendarMoonWritingSequenceWithoutRepeat, type CalendarMoonWritingPiece } from "./calendarDayMoonReading";
 import { calendarDateKeyDistance, calendarLunarDayNumber, calendarMoonCycleFactsForDays, type CalendarMoonCycleFacts } from "./calendarMoonCycle";
@@ -156,7 +155,7 @@ import {
 
 type LunarCalendarStatus = "loading" | "ready" | "error";
 type LunarCalendarViewMode = "week" | "month" | "weekly";
-type CalendarEventProseLayer = "authored" | "fallback";
+type CalendarEventProseLayer = "authored" | "fallback" | "generated";
 
 type NormalizedCalendarEventSection = {
   slot: "description" | "details";
@@ -197,9 +196,9 @@ const viewModeOptions: Array<{ value: LunarCalendarViewMode; label: string }> = 
   { value: "month", label: "Month" }
 ];
 
-// v15 uses native eclipse classification alongside the complete exact events.
-// Earlier cached calendars can retain incorrect eclipse labels.
-const calendarStorageVersion = "v15";
+// v17 combines lunation context with the complete Chiron and node events.
+// Earlier cached calendars can omit events or retain older source identities.
+const calendarStorageVersion = "v17";
 const calendarStorageTtlMs = 12 * 60 * 60_000;
 const enableLunarArcContent = String(import.meta.env.VITE_ENABLE_LUNAR_ARC_CONTENT ?? "true").toLowerCase() !== "false";
 const enableCalendarApi = import.meta.env.PROD
@@ -876,6 +875,12 @@ export function liveCalendarEventContent(
 
     const [first, second] = event.planets;
 
+    const lunar = resolveCalendarLunationAspectReading(event, generatedContent);
+    if (lunar) return lunar.body ? generatedContent.get(lunar.contentKey) ?? null : null;
+
+    const master = resolveSkyAspectMasterOverride({ generatedContent, first, second, aspect: event.aspect, firstSign: event.fromSign ?? "", secondSign: event.toSign ?? "" });
+    if (master) return master.content;
+
     const calendarPublication = resolveCalendarAspectPublication({
       generatedContent, first, second, aspect: event.aspect,
       firstMotion: event.fromMotion, secondMotion: event.toMotion,
@@ -907,22 +912,10 @@ export function liveCalendarEventContent(
   }
 
   for (const contentKey of calendarEventGeneratedContentKeys(event)) {
-    const content = fallbackArchitectureV3AuthoredContentForKey(contentKey);
-
-    if (content && contentMatchesCalendarEventFacts(event, content)) {
-      return content;
-    }
-  }
-
-  if (!generatedContent) {
-    return null;
-  }
-
-  for (const contentKey of calendarEventGeneratedContentKeys(event)) {
-    const content = generatedContent.get(contentKey);
-
-    if (content && contentMatchesCalendarEventFacts(event, content)) {
-      return content;
+    // Retain exact-event key precedence, with a published revision ahead of
+    // the approved bundle for that same identity.
+    for (const content of [generatedContent?.get(contentKey), fallbackArchitectureV3AuthoredContentForKey(contentKey)]) {
+      if (content && contentMatchesCalendarEventFacts(event, content)) return content;
     }
   }
 
@@ -1086,68 +1079,6 @@ function calendarEventPackageDescription(event: LunarCalendarEvent, dateLine = "
   return "";
 }
 
-type CalendarSkyAspectCandidate = {
-  body: string;
-  details?: string;
-  layer: CalendarEventProseLayer;
-  sourceKeys: string[];
-  tier: string;
-};
-
-function calendarSkyAspectPackageCandidates(
-  event: LunarCalendarEvent,
-  dateLine: string
-): {
-  signSpecific: CalendarSkyAspectCandidate | null;
-  phrasebook: CalendarSkyAspectCandidate | null;
-} {
-  const empty = { signSpecific: null, phrasebook: null };
-
-  if (event.type !== "aspect" || !event.planets || !event.aspect) {
-    return empty;
-  }
-
-  const [first, second] = event.planets;
-
-  try {
-    const rendered = calendarFallbackRendererV3.renderSkyAspectCard({
-      a: slugContentPart(first),
-      b: slugContentPart(second),
-      aspect: slugContentPart(event.aspect),
-      aSign: event.fromSign ? slugContentPart(event.fromSign) : undefined,
-      bSign: event.toSign ? slugContentPart(event.toSign) : undefined,
-      dateLine
-    });
-    const body = fullDetailReaderFacingCopy(rendered.parts) ?? "";
-
-    if (!body) {
-      return empty;
-    }
-
-    const isReviewed = rendered.contentKey?.startsWith("fallback-hook/sky-aspect-") ?? false;
-    const isSignSpecific = rendered.contentKey?.startsWith("fallback-hook/sky-aspect-sign/") ?? false;
-    const candidate: CalendarSkyAspectCandidate = {
-      body,
-      layer: "fallback",
-      sourceKeys: [rendered.contentKey ?? rendered.templateKey],
-      tier: isReviewed ? "reviewed-sky-aspect-phrasebook-v1" : "v3-package"
-    };
-
-    if (isSignSpecific) {
-      return { ...empty, signSpecific: candidate };
-    }
-
-    if (isReviewed) {
-      return { ...empty, phrasebook: candidate };
-    }
-
-    return empty;
-  } catch (error) {
-    calendarEventPackageFailure(event, error);
-    return empty;
-  }
-}
-
 function weeklyLunationArticleOpening(event: LunarCalendarEvent) {
   if (event.type !== "lunation" || !event.sign) {
     return "";
@@ -1202,6 +1133,12 @@ export function normalizeCalendarEventSurface(
   if (event.type === "aspect" && event.planets && event.aspect && isSkyAspectRetired(event.planets[0], event.aspect, event.planets[1])) {
     return { surface: "calendar-event", status: "not-servable", sections: [] };
   }
+  if (event.type === 'aspect') {
+    const lunar = resolveCalendarLunationAspectReading(event, generatedContent ?? new Map());
+    if (lunar) return { surface: 'calendar-event', status: lunar.body ? 'servable' : 'not-servable',
+      sections: lunar.body ? [{ slot: 'description', required: false, layer: 'authored',
+        tier: 'content-studio-lunation-aspect', sourceKeys: lunar.sourceKeys, body: lunar.body }] : [] };
+  }
   // Manually authored Calendar entries are complete event write-ups. Preserve
   // every paragraph in the card and slide-out, as we do for exact aspects.
   const wholeEventWriteup = content?.eventType === "calendar_event"
@@ -1213,114 +1150,20 @@ export function normalizeCalendarEventSurface(
       ? [generatedContentParagraphs(content).join("\n\n").trim()]
       : generatedContentParagraphs(content))
   ]);
-  const generatedDescriptionFitsDateContext = dateLine === "Today"
+  const generatedDescriptionFitsDateContext = wholeEventWriteup || dateLine === "Today"
     || weeklyEventDescriptionFitsDateContext(generatedDescription ?? "");
 
   if (event.type === "aspect" && event.planets && event.aspect) {
     const [first, second] = event.planets;
-    if (calendarAspectPublicationKeys({ first, second, aspect: event.aspect,
-      firstSign: event.fromSign ?? "", secondSign: event.toSign ?? "" }).some(isContentRetired)) {
-      return { surface: "calendar-event", status: "not-servable", sections: [] };
-    }
-    const packageCandidates = calendarSkyAspectPackageCandidates(event, dateLine);
-    const composedSlots = {
-      aspect: slugContentPart(event.aspect),
-      dateLine,
-      planetA: first,
-      planetB: second,
-      signA: event.fromSign,
-      signB: event.toSign
-    };
-    const calendarPublication = resolveCalendarAspectPublication({
+    const selected = resolveSkyAspectReading({
       generatedContent: generatedContent ?? (content ? new Map([[content.contentKey, content]]) : new Map()),
-      first, second, aspect: event.aspect,
+      first, second, aspect: event.aspect, dateLine,
+      firstSign: event.fromSign ?? "", secondSign: event.toSign ?? "",
       firstMotion: event.fromMotion, secondMotion: event.toMotion,
-      firstSign: event.fromSign ?? "", secondSign: event.toSign ?? ""
-    });
-    const bundledComposed = resolveComposedSkyCalendarCard({
-      aspect: event.aspect,
-      first,
-      heading: event.title,
-      lookup: composedSkyCalendarCardLookup,
-      second,
-      slots: composedSlots
-    });
-    const composed = calendarPublication ? {
-      body: calendarPublication.body,
-      details: bundledComposed?.details,
-      layer: "authored" as const,
-      sourceKeys: [calendarPublication.content.contentKey],
-      tier: "content-studio-calendar-publication-v1"
-    } : bundledComposed;
-    const exact = resolveApprovedExactSkyAspectCopy({
-      aspect: event.aspect,
-      first,
-      heading: event.title,
-      lookup: approvedExactSkyAspectLookup,
-      second,
-      slots: {
-        aspect: slugContentPart(event.aspect),
-        dateLine,
-        planetA: first,
-        planetATopic: fallbackV3PlanetTopic(first),
-        planetB: second,
-        planetBTopic: fallbackV3PlanetTopic(second),
-        signA: event.fromSign,
-        signB: event.toSign
-      }
-    });
-    const generated = content && generatedDescription && generatedDescriptionFitsDateContext
-      ? {
-          body: generatedDescription,
-          layer: "fallback" as const,
-          sourceKeys: [content.contentKey],
-          tier: "generated-sky-aspect-lint-v1"
-        }
-      : null;
-    const studioExactResolved = content
-      ? resolveSkyAspectContentStudioExact({
-          generatedContent: generatedContent ?? new Map([[content.contentKey, content]]),
-          first,
-          second,
-          aspect: event.aspect,
-          firstMotion: event.fromMotion, secondMotion: event.toMotion,
-          firstSign: event.fromSign ?? "",
-          secondSign: event.toSign ?? "",
-          targetDate: event.dateKey || event.startsAt.slice(0, 10)
-        })
-      : null;
-    const studioExact = studioExactResolved
-      ? {
-          body: studioExactResolved.body,
-          layer: "authored" as const,
-          sourceKeys: [studioExactResolved.content.contentKey],
-          tier: "content-studio-exact-sky-aspect-v1"
-        }
-      : null;
-    const signedStudioResolved = resolveSkyAspectOwnerAuthoredSigned({
-      generatedContent: generatedContent ?? (content ? new Map([[content.contentKey, content]]) : new Map()),
-      first,
-      second,
-      aspect: event.aspect,
-      firstMotion: event.fromMotion, secondMotion: event.toMotion,
-      firstSign: event.fromSign ?? "",
-      secondSign: event.toSign ?? "",
-      targetDate: event.dateKey || event.startsAt.slice(0, 10)
-    });
-    const signedStudio = signedStudioResolved?.content.sourceSnapshot?.contentType === "owner-authored-sky-aspect"
-      ? {
-          body: signedStudioResolved.body,
-          layer: "authored" as const,
-          sourceKeys: [signedStudioResolved.content.contentKey],
-          tier: "content-studio-signed-sky-aspect-v1"
-        }
-      : null;
-    const selected = selectSkyAspectCopyByPrecedence<CalendarSkyAspectCandidate>({
-      composed,
-      signSpecific: packageCandidates.signSpecific,
-      exact: signedStudio ?? studioExact ?? exact,
-      phrasebook: packageCandidates.phrasebook,
-      generated
+      targetDate: event.dateKey || event.startsAt.slice(0, 10),
+      exactLookup: approvedExactSkyAspectLookup, composedLookup: composedSkyCalendarCardLookup,
+      ...skyAspectPackageCandidates({ first, second, aspect: event.aspect, firstSign: event.fromSign ?? "",
+        secondSign: event.toSign ?? "", dateLine }, calendarFallbackRendererV3.renderSkyAspectCard, FallbackV3SourceGapError)
     });
 
     if (!selected) {
@@ -1331,16 +1174,6 @@ export function normalizeCalendarEventSurface(
       };
     }
 
-    // Studio selections already include their motion version (and may combine
-    // both node poles). Only package-selected sources still need this overlay.
-    const usesPackageSource = selected === packageCandidates.signSpecific || selected === bundledComposed;
-    const selectedSource = usesPackageSource
-      ? selected.sourceKeys.map(key => generatedContent?.get(key) ?? (content?.contentKey === key ? content : undefined)).find(Boolean)
-      : undefined;
-    const motionCopy = selectedSource ? withCalendarAspectRetrograde(selectedSource, {
-      first, second, firstMotion: event.fromMotion, secondMotion: event.toMotion
-    }) : null;
-    const selectedBody = motionCopy && motionCopy !== selectedSource ? motionCopy.body : selected.body;
     return {
       surface: "calendar-event",
       status: selected.layer === "authored" ? "servable" : "partial",
@@ -1351,7 +1184,7 @@ export function normalizeCalendarEventSurface(
           layer: selected.layer,
           tier: selected.tier,
           sourceKeys: selected.sourceKeys,
-          body: selectedBody
+          body: selected.body
         },
         // Details only exists on composed two-part cards. Older single-body
         // copy renders exactly as it does today.
@@ -1449,12 +1282,7 @@ export function normalizeCalendarEventSurface(
 }
 
 function calendarCanonicalEventDateLine(event: LunarCalendarEvent, timeZone: string) {
-  return `On ${new Intl.DateTimeFormat("en-US", {
-    timeZone,
-    weekday: "long",
-    month: "long",
-    day: "numeric"
-  }).format(new Date(event.startsAt))}`;
+  return skyAspectReadingDateLine(event.startsAt, timeZone);
 }
 
 function calendarEventEditorialContent(
@@ -2400,7 +2228,7 @@ export function LunarCalendar({
     ].filter((contentKey) => (
       // Signed-off Studio exact revisions can supersede their bundled baseline.
       // Keep requesting these keys even when local approved prose is available.
-      contentKey.startsWith("sky.aspect.") || contentKey.startsWith("authored/sky-lunation-macro/") || !fallbackArchitectureV3AuthoredContentForKey(contentKey)
+      /^sky\.(aspect|station|retrograde)\./u.test(contentKey) || contentKey.startsWith("authored/sky-lunation-macro/") || contentKey.startsWith("authored/station/") || !fallbackArchitectureV3AuthoredContentForKey(contentKey)
     ));
     const firstDate = visibleDays[0]?.dateKey ?? selectedDateKey;
     const lastDate = visibleDays.at(-1)?.dateKey ?? selectedDateKey;

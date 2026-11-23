@@ -12,7 +12,7 @@ import {
 import { isReportUuidSegment, reportShareKeyFromHash } from "../../services/reportLinks";
 import { loadSharedReport, type SharedReportPayload } from "../../services/reportSharing";
 import { ReportArticle } from "./ReportArticle";
-import { documentFromDelivery, ReportDeliveryView } from "./ReportDeliveryView";
+import { ReportDeliveryView } from "./ReportDeliveryView";
 import { GeneratedReportArticle, GeneratedReportDeliveryView } from "./ReportLibraryView";
 
 function DeliveryState({ message }: { message: string }) {
@@ -51,7 +51,7 @@ function SharedReportView({ payload }: { payload: SharedReportPayload }) {
   if (payload.sourceKind === "generated_interpretation") {
     return <GeneratedReportArticle report={payload.report} backHref="/" />;
   }
-  return <ReportArticle report={documentFromDelivery(payload.report)} backHref="/" />;
+  return <ReportArticle report={payload.report.document} backHref="/" />;
 }
 
 export function ReportVanityDeliveryView({ slug }: { slug: string }) {

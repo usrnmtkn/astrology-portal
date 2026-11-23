@@ -1,12 +1,12 @@
 {
   "packageVersion": "v3-2026-11-15-natal-house-only",
-  "contentHash": "f68fdc790659293d6d68572b94fa8e29",
+  "contentHash": "c81964c700d48c7b8b634ed582017957",
   "keyManifestHash": "9db18966aa21a24241ad8de4133ba6f6",
   "keyCount": 9285,
   "runtimeCapability": "sky-placement-on-demand-v1",
   "partitions": {
     "core": {
-      "contentHash": "7ddefa3a0a75df365fe5ecc0cb2a95aa",
+      "contentHash": "e0129974ed3ca4604b38f6cee297c6c4",
       "keyManifestHash": "3497a6f17c029a55fda85c8bacc6d1a1",
       "keyCount": 7492
     },

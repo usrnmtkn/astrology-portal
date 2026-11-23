@@ -21,6 +21,8 @@ The short version:
   exact activation and editable bridge sources, without borrowing bond openings.
 - [Reader-facing content contract](../../CONTENT-CONTRACT.md): the governing
   rules for complete fields, author-final copy, and refusal behavior.
+- [Studio synchronization](./CONTENT_STUDIO_SYNC.md): editorial authority,
+  published GitHub snapshots, exact-head checks and recovery.
 - [Content architecture](./ARCHITECTURE.md): ownership, runtime flow, surface
   wiring, dashboard hydration, and worked examples.
 - [Sky writing systems](./SKY_WRITING_SYSTEMS.md): current contracts, independent
@@ -194,6 +196,13 @@ movement, and both planet/point meanings. These sources affect their other
 usages as well. An aspect without a composed resolver group does not advertise
 unused shared sources. Browsing and opening sources never creates or publishes
 content; the normal draft and owner publication actions remain separate.
+
+When an aspect uses shared writing, **Edit complete write-up** loads the full
+published You and Friend passages through the reader renderer, including the
+template's closing sentence. It opens an unsaved exact-passage draft for that
+aspect. Saving and publishing use the normal version and owner-review checks;
+the shared sources remain unchanged. Unavailable publication state or missing
+reader sources stops the action instead of opening a partial passage.
 
 ### Sky reader preview
 

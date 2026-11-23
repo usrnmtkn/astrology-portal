@@ -1,4 +1,10 @@
 {
+  "git": {
+    "deploymentEnabled": {
+      "data/content-studio-recovery": false,
+      "codex/ephemeris-health-20261116": false
+    }
+  },
   "installCommand": "npm install --include=optional",
   "devCommand": "npm run dev -w @tldr/web -- --port $PORT",
   "buildCommand": "node scripts/vercel-prebuild.mjs && npm run build",
@@ -121,14 +127,14 @@
       "includeFiles": "api/_lib/**/*.{js,ts}"
     },
     "api/admin/generated-content.ts": {
-      "includeFiles": "{node_modules/swisseph-wasm/wasm/*,{api/_lib,artifacts,config,src/*-writing,packages/*/{generated,scripts,data,config,reference,voice,sources/authored/owner-author-book},apps/web/{public/content,src/content},tldr-astro-phrasebank}/**/*.{*js,json,md,ts}}",
+      "includeFiles": "{node_modules/swisseph-wasm/wasm/*,{api/_lib,artifacts,config,src/*-writing,packages/*/{gen*,scripts,data,config,reference,voice,sources/authored/owner-author-book},apps/web/{public,src}/content,tldr-astro-phrasebank,data/writing}/**/*.{*js,json,md,ts}}",
       "maxDuration": 60
     },
     "api/admin/package-source.ts": {
       "includeFiles": "{api/_lib,apps/web/src/content}/**/*.{cjs,js,json,md,mjs,ts}"
     },
     "api/admin/memory-graph.ts": {
-      "includeFiles": "{AGENTS.md,config/agent-memory-sources-v1.json,{docs/{writing,content-management},data/{writing,agent-memory},skills/tldr-astro-*,.agents/skills/satori-writer,tldr-astro-phrasebank,packages/astro-knowledge/review}/**/*.{jsonl,md}}"
+      "includeFiles": "{AGENTS.md,docs/qa/release-queue.md,config/{agent-memory-sources,writing-effective-rules}-v1.json,{docs/{writing,content-management},data/{writing,agent-memory},skills/tldr*,.agents/skills/satori-writer,tldr*phrasebank,packages/*/review}/**/*.{jsonl,md}}"
     },
     "api/calendar-reading.ts": {
       "includeFiles": "node_modules/swisseph-wasm/wasm/*",
@@ -140,6 +146,10 @@
     },
     "api/admin/horoscope-writing.ts": {
       "includeFiles": "{node_modules/swisseph-wasm/wasm/*,{api/_lib,artifacts,config,src/*-writing,packages/*/{generated,scripts,data,config,reference,voice,sources/authored/owner*},apps/web/{public,src}/content,tldr-astro-phrasebank,data/writing}/**/*.{*js,json*,md,ts}}",
+      "maxDuration": 300
+    },
+    "api/admin/planetary-horoscope-writing.ts": {
+      "includeFiles": "{node_modules/swisseph-wasm/wasm/*,{api/_lib,config,src/*-writing,packages/astro-knowledge/{generated,data,voice},tldr-astro-phrasebank,data/writing}/**/*.{*js,json*,md,ts}}",
       "maxDuration": 300
     },
     "api/admin/calendar-lunation-writing.ts": {
@@ -159,7 +169,7 @@
       "maxDuration": 60
     },
     "api/**/*.ts": {
-      "includeFiles": "{api/_lib,artifacts,config,src/astro-writing,packages/astro-knowledge/{generated,scripts,data,config,reference,voice,sources/authored/owner-author-book},apps/web/{public/content,src/content},tldr-astro-phrasebank}/**/*.{cjs,js,json,md,mjs,ts}"
+      "includeFiles": "{api/_lib,artifacts,config,src/astro-writing,packages/astro-knowledge/{generated,scripts,data,config,reference,voice,sources/authored/owner-author-book},apps/web/{public/content,src/content},tldr-astro-phrasebank,data/writing}/**/*.{cjs,js,json,md,mjs,ts}"
     }
   },
   "rewrites": [

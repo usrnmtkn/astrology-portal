@@ -1,13 +1,37 @@
 import assert from "node:assert/strict";
+import { natalAspectCompleteDraft } from "../apps/admin/src/natalAspectSources.ts";
 import {servingPackageRecords} from "../api/_lib/serving-package-records.ts";
+import {natalCompleteEditorTemplate} from "./fixtures/natal-complete-editor-template.mjs";
 import {
   default as handler,
   normalizeNatalPlacementPreviewInput,
   renderNatalPlacementPreview,
-  renderNatalPlacementPreviewState
+  renderNatalPlacementPreviewState,
+  renderNatalAspectFriendDraft
 } from "../api/admin/natal-placement-preview.ts";
 
 const fallbackProvider = "tldrastro-fallback-architecture-v3";
+
+const aspectSelection = { first: "sun", aspect: "conjunction", second: "mercury" };
+const aspectRequest = { kind: "natal-aspect", planet: "sun", aspect: "conjunction", second: "mercury", overrides: [{
+  id: "synthetic-editor-template", status: "LIVE", lane: "serving", provider: fallbackProvider,
+  packageRow: natalCompleteEditorTemplate(servingPackageRecords.get("fallback-template/natal.aspect"))
+}] };
+const aspectInput = normalizeNatalPlacementPreviewInput(aspectRequest);
+const aspectYou = renderNatalPlacementPreviewState(aspectInput).rendered;
+assert.ok(aspectYou.body.startsWith("Your ideas feel like part of who you are"));
+assert.ok(aspectYou.body.endsWith("Synthetic shared closing for your Sun and Mercury."));
+const aspectFriend = renderNatalAspectFriendDraft(aspectInput);
+assert.ok(aspectFriend.body.endsWith("Synthetic shared closing for {{Name}}'s Sun and Mercury."));
+const completeDraft = natalAspectCompleteDraft(aspectSelection, aspectYou.body, aspectFriend.body);
+assert.equal(completeDraft.body, aspectYou.body);
+assert.equal(completeDraft.sections.packageRecord.body_you, aspectYou.body);
+assert.equal(completeDraft.sections.packageRecord.body_they, aspectFriend.body);
+assert.equal(completeDraft.sections.packageRecord.review_status, "needs_review");
+assert.throws(() => natalAspectCompleteDraft(aspectSelection, aspectYou.body, ""), /complete You and Friend/u);
+for (const invalid of [{ planet: "sun", second: "sun", aspect: "square" }, { planet: "fake", second: "moon", aspect: "trine" }, { planet: "sun", second: "mercury", aspect: "fake" }]) {
+  assert.throws(() => normalizeNatalPlacementPreviewInput({ kind: "natal-aspect", ...invalid, overrides: [] }), /different natal bodies/u);
+}
 
 for (const [planet,sign,key] of [
   ['neptune','aquarius','fallback-hook/natal/planet-intro/neptune'],
@@ -84,6 +108,21 @@ try {
     return { status: res.statusCode, payload };
   };
   const selection = { planet: "mars", house: "12", overrides: [] };
+  const houseFetch = globalThis.fetch;
+  globalThis.fetch = async input => {
+    const url = new URL(String(input));
+    assert.equal(url.pathname, "/rest/v1/content_publications");
+    assert.ok(url.searchParams.get("content_key").includes("fallback-template/natal.aspect"));
+    assert.ok(url.searchParams.get("content_key").includes("fallback-hook/aspect-pair/sun/mercury/conjunction"));
+    return Response.json([]);
+  };
+  const aspectResponse = await request(aspectRequest);
+  assert.equal(aspectResponse.status, 200, JSON.stringify(aspectResponse.payload));
+  assert.equal(aspectResponse.payload.rendered.body, aspectYou.body);
+  assert.equal(aspectResponse.payload.friend.body, aspectFriend.body);
+  globalThis.fetch = async () => new Response("{}", { status: 503 });
+  assert.equal((await request({ kind: "natal-aspect", planet: "sun", aspect: "conjunction", second: "mercury", overrides: [] })).status, 503);
+  globalThis.fetch = houseFetch;
   for (const audience of ["you", "they"]) {
     const response = await request({ ...selection, audience });
     assert.equal(response.status, 200, JSON.stringify(response.payload));

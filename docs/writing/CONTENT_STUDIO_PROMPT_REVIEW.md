@@ -1,5 +1,31 @@
 # Content Studio prompt review
 
+## Lunar and horoscope prose development — November 18, 2026
+
+Lunar preparation retains the complete meaning plan, argument and coverage for
+review, validation and hashed provenance. The prose request receives editorial
+direction and factual boundaries instead of that generated paragraph scaffold.
+Compact lunar phase/sign drafting commands are excluded from prose evidence;
+the complete matching saved reading, other complete owner references, matrix
+meanings and verified chart remain available. The automatic dated argument no
+longer turns the phase-action source into its proposed response or ending.
+
+Daily and older Weekly horoscope requests likewise exclude retrieval anchors,
+coverage labels and generated argument/close evidence. Monthly prose receives
+the reviewed scope alongside its existing private synthesis. Seasonal retains
+its existing selected development plan. Weekly V3 retains its saved-brief path.
+All four horoscope authorities and the lunar authority share a prose-development
+boundary: meaning notes are not sentences to paraphrase, another contact must
+add meaning, and advice is conditional. The shared effective-rule renderer also
+qualifies its legacy next-move direction for these forecasts, so a later rule
+cannot reinstate mandatory advice. Fresh horoscope plans bind this version.
+
+Complete saved profiles, owner passages, corrections, calculated facts, schemas,
+model settings, call counts and publication approval remain governed by their
+existing contracts. Intercepted actual-handler/provider tests check delivery
+and preservation; only the owner judges the resulting prose. A private paid
+sample is a separate authorized action, never publication or wording approval.
+
 ## Weekly from complete samples — November 15, 2026
 
 An explicitly saved `WEEKLY PROMPT V3` profile uses one short authority layer
@@ -112,6 +138,7 @@ unchanged. Intercepted-provider checks establish delivery, not improved voice.
 
 | Owner action / surface | Prompt and instruction sources | Contract to preserve |
 | --- | --- | --- |
+| Generate twelve dated planetary horoscopes | `api/admin/planetary-horoscope-writing.ts`; `src/astro-writing/planetaryHoroscopeWriting.mjs` | One sign visit, twelve distinct audiences and calculated houses; complete voice references separate from meaning/facts; exact saved plan hash; one stored writer request; private response checkpoints; manual exact-wording publication. |
 | Rewrite/write a reusable Sky article | `api/admin/sky-article-writing.ts`; `skyArticleTemplateSlotPrompt` in `api/_lib/content-generation.ts` | Existing article context, owner direction, calculated placement validation, reusable transit/season scope; provider `slotValues.articleDraft` becomes the existing `draft` response. |
 | Fill unfinished dated/template fields | `api/admin/sky-article-template-slots.ts`; the same slot prompt builder | Fixed template prose is immutable; return only requested field values, preserving only the separately licensed reader variables. |
 | Horoscope writing profiles | `src/astro-writing/horoscopeWritingProfiles.mjs`; `horoscopePromptVariables.mjs`; `horoscopeDraftInput.mjs` | Exact saved profile revision, four required variables, five optional run variables, complete evidence hashes, audience convention and period-specific output schema. |
@@ -123,6 +150,55 @@ unchanged. Intercepted-provider checks establish delivery, not improved voice.
 The table locates execution inputs. Saved private Studio profiles and feedback
 remain separate from repository defaults; this review does not claim to have
 inspected or updated those live records.
+
+### Planetary event generation contract
+
+The pre-existing four-period horoscope writer does not accept a planetary visit,
+and the Sky article writer creates collective articles rather than twelve sign
+readings. The dedicated planetary adapter therefore has its own event-scoped
+request. It does not add a fifth saved period profile or reuse an article's
+argument/outline gate for short house forecasts.
+
+`preparePlanetaryHoroscopeWriting` selects complete eligible same-audience
+forecast units through the existing seasonal evidence integrity loader and
+owner-rejection exclusion. They supply voice only. Reviewed planet/sign meaning
+and complete neutral house records supply interpretation; a server-calculated
+and signed event supplies timing and audience houses. Existing durable correction
+selection, effective rule governance, Ghostwriting guidance and active scoped
+private feedback remain distinct inputs. No model call selects or approves the
+sources. Historical astrology, narrative scenarios and instructions inside the
+references cannot become current facts or override the new schema.
+
+The single OpenAI background request uses strict JSON Schema for twelve
+`{sign, house, headline, body}` readings. Application validation additionally
+requires each sign exactly once and its actual calculated house. Existing
+forecast claim validation accepts an explicit calculated anchor for this adapter;
+its default Sun/Moon anchors and all four existing period contracts are retained.
+This visit-only packet cannot license additional aspects, station timing,
+whole-visit retrograde claims, personal biography or guaranteed outcomes.
+
+The handler captures the exact request and source hashes in a private reservation
+before dispatch, and the full stored response before interpretation. Transport
+retrieval can be retried without a new writer call. There are zero automatic
+generation retries, model judges or rewrites. Structurally complete sets with
+findings stay private and editable; original responses remain recoverable. Owner
+publication is a separate action over the complete saved wording.
+
+Publication first preserves the complete authoring snapshot in a hash-verified
+private ARCHIVED/reference record. The serving row receives a narrow publication
+snapshot with a reference to that record. This preserves private paid responses
+and corrections across both initial publication and replacement revisions; they
+are absent from the LIVE row as well as the projected reader transport.
+
+Actual-handler fixture cases cover denied access, free event/plan preparation,
+all eight planets, twelve complete evidence hashes, stale plans and versions,
+single dispatch, retrieval after reload, invalid structured output, truncation,
+wrong houses, uncertain outcomes, exact publication and private revisions.
+Reader cases cover all twelve full passages and their final sentences, date and
+return-visit identity, and exclusion of provider/private metadata. These tests
+verify delivery and application behavior. A live provider call and the owner's
+judgment are still needed to assess prose quality; fixture checks do not make
+that claim or grant permission for a billed sample.
 
 ## October 21, 2026 season meaning and dated context
 

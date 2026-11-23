@@ -12,6 +12,7 @@ const snapshotLoader = generated + fs.readFileSync("apps/web/src/services/offlin
 const vocabulary = fs.readFileSync("apps/web/src/services/planetTopicVocabulary.ts", "utf8");
 const taglines = fs.readFileSync("apps/web/src/services/natalPlacementTaglines.ts", "utf8");
 const exporter = fs.readFileSync("scripts/refresh-content-studio-last-known-good.mjs", "utf8");
+const publisher = fs.readFileSync("scripts/publish-content-studio-snapshot.mjs", "utf8");
 
 assert.equal(snapshot.schema, "content-studio-last-known-good-v2");
 assert.equal(snapshot.rowCount, snapshot.rows.length);
@@ -43,18 +44,19 @@ for (const row of snapshot.rows) {
 }
 assert.equal(snapshot.sourceRevision, maxRevision);
 assert.match(workflow, /schedule:[\s\S]*cron:/u);
-assert.match(workflow, /refresh-content-studio-last-known-good\.mjs/u);
+assert.match(workflow, /publish-content-studio-snapshot\.mjs/u);
+assert.match(publisher, /refresh-content-studio-last-known-good\.mjs/u);
 assert.doesNotMatch(workflow, /SUPABASE_SERVICE_ROLE_KEY/u, "Nightly fallback must not require service-role access.");
-assert.match(workflow, /apps\/web\/public\/content-studio-last-known-good\.json/u);
-assert.match(workflow, /pull-requests: write/u, "The snapshot publisher must use main's required PR process.");
-assert.match(workflow, /gh pr create --base main/u);
-assert.match(workflow, /gh pr merge[^\n]*--match-head-commit/u, "Only the validated snapshot commit may merge.");
+assert.match(publisher, /recoverySnapshotPath/u);
+assert.doesNotMatch(workflow, /pull-requests: write/u, "Recovery data must not depend on PR approval.");
+assert.doesNotMatch(workflow, /(?:actions|checks|statuses): write/u, "Snapshot preparation must not control validation or release.");
+assert.doesNotMatch(workflow, /workflow_run:/u, "Check completion belongs to the existing release coordinator.");
 assert.doesNotMatch(workflow, /\n\s+git push\s*\n/u, "The workflow must not push directly to protected main.");
 assert.match(exporter, /api\/content-reader/u, "Nightly fallback must use the controlled public reader endpoint.");
 assert.doesNotMatch(exporter, /rest\/v1\/generated_interpretations/u, "No raw authoring reads in public exports.");
 assert.match(exporter, /page === maxPages - 1/u, "Export refuses a truncated inventory.");
 for (const row of snapshot.rows) assert.deepEqual(row, projectReaderRow(row), `${row.content_key}: private fields in downloadable snapshot`);
-assert.match(snapshotLoader, /fetch\("\/content-studio-last-known-good\.json"/u, "The LKG snapshot must be fetched as a static asset, not bundled into application JS.");
+assert.match(snapshotLoader, /recoverySnapshotUrl, "\/content-studio-last-known-good\.json"/u, "Independent recovery must retain the shipped static fallback.");
 assert.doesNotMatch(snapshotLoader, /import\([^)]*content-studio-last-known-good\.json/u);
 assert.ok(!fs.existsSync("apps/web/src/services/contentStudioLastKnownGood.ts"), "LKG must not create a standalone JavaScript chunk.");
 assert.match(generated, /loadContentStudioLastKnownGoodCoreBundle/u);

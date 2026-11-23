@@ -1,0 +1,52 @@
+{
+  "schema": "synastry-voice-approval/v1",
+  "sourceId": "private:writing/synastry/approved-ten-20261023",
+  "sourceUri": "thread:01a15c03-cf10-71e3-b5e9-798c9f87bd3b",
+  "sourceDate": "2026-10-23",
+  "approvalToolCall": "call_dbde683ecad34036a709b8b3520b50fb",
+  "exactOwnerAnswer": "Use the second attachment: Ten Synastry Readings (Recommended)",
+  "ownerStatementSha256": "0228ba107272aa0cfb02a5ea1ddbca008583160d826fea1fc51c9a67d485c0ac",
+  "sourceSha256": "46090094f05dd3e713f630b1a1defb57a25cdc25243cdcb5a5fe6945996b55bc",
+  "references": [
+    {
+      "caseId": "sun__moon__soft__body_you",
+      "textSha256": "343290c8421ad1c0f1783f971254b99cf9f46822519525433fe918ea44e2677d"
+    },
+    {
+      "caseId": "sun__moon__soft__body_they",
+      "textSha256": "be3d8c9593e62824407131b2adfaf4d71027cbe7eac20bb24688b83c6784b4fd"
+    },
+    {
+      "caseId": "moon__mars__hard__body_they",
+      "textSha256": "3b0dce05478f6bd841559a14e95a427431611e567b149fcfd70ab768e9d2bb7e"
+    },
+    {
+      "caseId": "moon__mars__hard__body_you",
+      "textSha256": "72e53adc5ee3109933dd2ff69056548722f404bfdea56a202b6ac78d6f972877"
+    },
+    {
+      "caseId": "moon__saturn__soft__body_they",
+      "textSha256": "bccc23fdd7a760b87de36c29fb04d5b46df01244ed85c1fb4d13532288400fb2"
+    },
+    {
+      "caseId": "moon__saturn__soft__body_you",
+      "textSha256": "b515396dde6b2947f798ba0e7b6df14c51c9d06ad9c0cfddbb86be891c433d0f"
+    },
+    {
+      "caseId": "mercury__venus__soft__body_you",
+      "textSha256": "0db90e7cd0b72f8b530ce76185763f7b18df867275c546f35b9fc75767c8dda0"
+    },
+    {
+      "caseId": "mercury__venus__soft__body_they",
+      "textSha256": "7bc1c15b01275d012d832bbcf0cfd149c4ecaee1265f3dd93e5a862a0093913e"
+    },
+    {
+      "caseId": "venus__saturn__hard__body_they",
+      "textSha256": "d52ffb4b2eddea9ac0ddfbd2df026aa5410c8ca4dea33c54176e017792d47dac"
+    },
+    {
+      "caseId": "venus__saturn__hard__body_you",
+      "textSha256": "a468171b48dedba15111b006779b023ee15cf0d89c9968f798173be019f81a28"
+    }
+  ]
+}

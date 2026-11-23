@@ -43,20 +43,37 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     await expect(body).toHaveCSS('font-weight', '400');
     await expect(body).toHaveCSS('line-height', width < 800 ? '28.5px' : '37.7px');
     await expect(body).toHaveCSS('letter-spacing', width < 800 ? 'normal' : '-0.13px');
-    // This saved natal reading has no visible body headings. Its related
-    // section retains the H2/H3/H4 hierarchy without adding a new title.
-    await expect(article.locator('.article-body-inner > .article-section h2')).toHaveCount(0);
-    const related = article.locator('.article-related-aspect-row').first();
-    await expect(related.locator('h4')).toHaveCSS('font-family', width < 800 ? /system-ui/ : /Newsreader/);
-    await expect(related.locator('h4')).toHaveCSS('font-size', width < 800 ? '17px' : '28px');
-    await expect(related.locator('h4')).toHaveCSS('font-weight', width < 800 ? '600' : '400');
+    // Owner-approved restoration: exact and generic natal sources share the
+    // house H2 and outside-card Gifts/Challenges H2 with H3 member titles.
+    const houseHeading = article.locator('.article-body-inner > .article-section h2');
+    await expect(houseHeading).toHaveText(/^Sun in the \d+(?:st|nd|rd|th) house$/);
+    await expect(houseHeading).toHaveCSS('font-family', /Newsreader/);
+    await expect(houseHeading).toHaveCSS('font-size', width < 800 ? '24px' : '28px');
+    await expect(houseHeading).toHaveCSS('font-weight', '400');
+    const related = article.locator('.article-related-aspect-row').filter({ has: page.locator('p') }).first();
+    await expect(related.locator('h3')).toHaveCSS('font-family', width < 800 ? /system-ui/ : /Newsreader/);
+    await expect(related.locator('h3')).toHaveCSS('font-size', width < 800 ? '17px' : '28px');
+    await expect(related.locator('h3')).toHaveCSS('font-weight', width < 800 ? '600' : '400');
     await expect(related.locator('p').first()).toHaveCSS('font-size', width < 800 ? '19px' : '20px');
     await expect(related.locator('p').first()).toHaveCSS('line-height', width < 800 ? '28.5px' : '29px');
     await expect(article.locator('.article-eyebrow').first()).toHaveCSS('font-family', /Geist Mono/);
     const outline = await article.locator('h1, h2, h3, h4').evaluateAll(nodes => nodes.map(node => ({ tag: node.tagName, text: node.textContent })));
     expect(outline[0].tag).toBe('H1');
-    expect(outline.find(node => node.tag === 'H2')?.text).toBeTruthy();
-    expect(outline.findIndex(node => node.tag === 'H3')).toBeLessThan(outline.findIndex(node => node.tag === 'H4'));
+    expect(outline[1]).toEqual({ tag: 'H2', text: await houseHeading.textContent() });
+    let categoryIndex = -1;
+    for (let index = 2; index < outline.length; index++) {
+      const heading = outline[index];
+      if (heading.tag === 'H2') {
+        const nextCategory = ['Gifts', 'Challenges'].indexOf(heading.text ?? '');
+        expect(nextCategory).toBeGreaterThan(categoryIndex);
+        categoryIndex = nextCategory;
+        expect(outline[index + 1]?.tag).toBe('H3');
+      } else {
+        expect(heading.tag).toBe('H3');
+        expect(categoryIndex).toBeGreaterThan(-1);
+      }
+    }
+    expect(categoryIndex).toBeGreaterThan(-1);
     const savedBody = await body.textContent();
     await article.screenshot({ path: `test-results/article-typography-${width}-${theme}.png` });
     await related.click();
@@ -277,9 +294,10 @@ for (const width of [320, 390, 768, 1440]) for (const theme of ['light', 'dark']
         const element = (await first.boundingBox())!;
         return element.y - nav.y - nav.height;
       };
-      const expectedGap = label === 'Saved chart' ? 40 : width <= 720 ? 64 : 80;
+      const directory = label === 'Circle' || label === 'Charts';
+      const expectedGap = label === 'Saved chart' ? 40 : directory ? 32 : width <= 720 ? 64 : 80;
       await expect.poll(gap, { message: `${label} uses its approved navigation clearance` }).toBeCloseTo(expectedGap, 0);
-      if (label !== 'Saved chart') gaps.push(await gap());
+      if (label !== 'Saved chart' && !directory) gaps.push(await gap());
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), label).toBe(true);
       await page.screenshot({ path: `test-results/design-page-clearance-${label.toLowerCase()}-${width}-${theme}.png` });
     }
@@ -467,7 +485,7 @@ for (const width of [320, 390, 960, 1440]) for (const theme of ['light', 'dark']
   await expect(title).toHaveText(friendName);
   await expect(profile.locator('.compatibility-card').first()).toBeVisible({timeout: 60_000});
   const tabs = profile.getByRole('tablist', {name: 'Chart profile sections', exact: true});
-  const edit = profile.getByRole('button', {name: `Edit ${friendName}`, exact: true});
+  const edit = profile.getByRole('button', {name: `More actions for ${friendName}`, exact: true});
   await expect(title).toHaveCSS('font-family', /Newsreader/);
   await expect(title).toHaveCSS('font-size', width > 800 ? '44px' : '34px');
   await expect(title).toHaveCSS('font-weight', '400');
@@ -495,7 +513,7 @@ for (const width of [320, 390, 960, 1440]) for (const theme of ['light', 'dark']
   await expect(profile.locator('.compatibility-card').first()).toHaveCSS('background-color', cardSurface.background);
   await expect(profile.locator('.compatibility-card').first()).toHaveCSS('box-shadow', cardSurface.shadow);
   const bodyBefore = await profile.locator('.compatibility-card p').allTextContents();
-  await edit.click(); await expect(page.getByRole('dialog')).toBeVisible(); await page.keyboard.press('Escape'); await expect(edit).toBeFocused();
+  await edit.click(); await page.getByRole('menuitem', {name:'Edit', exact:true}).click(); await expect(page.getByRole('dialog')).toBeVisible(); await page.keyboard.press('Escape'); await expect(edit).toBeFocused();
   for (const name of ['Compatibility', 'Transits', 'Natal', 'Synastry', 'Composite']) {
     const tab = tabs.getByRole('tab', {name, exact: true, includeHidden: true});
     if (await tab.isVisible()) await tab.click();
@@ -604,7 +622,7 @@ for(const width of [390,1440]) for(const theme of ['light','dark']) {
   const placements=(await profile.locator('.natal-placement-sections').boundingBox())!;
   expect(chart.y).toBeGreaterThanOrEqual((await profile.locator('.friend-profile-heading').boundingBox())!.y+(await profile.locator('.friend-profile-heading').boundingBox())!.height);
   expect(placements.y).toBeGreaterThanOrEqual(chart.y+chart.height);
-  let box=(await profile.boundingBox())!,edit=(await profile.getByRole('button',{name:'Edit Fixture Event',exact:true}).boundingBox())!;
+  let box=(await profile.boundingBox())!,edit=(await profile.getByRole('button',{name:'More actions for Fixture Event',exact:true}).boundingBox())!;
   expect(Math.abs(edit.x+edit.width-box.x-box.width)).toBeLessThan(1);
   await page.screenshot({path:`test-results/design-friend-event-${width}-${theme}.png`});
   await page.goto('/?date=2026-10-13#friends?tab=charts&chart=fixture-missing&view=natal');
@@ -2203,7 +2221,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     await checkNoDividers();
     await article.locator('.article-related-aspect-row').first().click();
     await expect(article.locator('h1')).not.toHaveText(title!);
-    await page.getByRole('button', { name: 'Back to updates', exact: true }).click();
+    await page.getByRole('button', { name: 'Back to natal chart', exact: true }).click();
     await expect(article.locator('h1')).toHaveText(title!);
     await checkNoDividers();
   });

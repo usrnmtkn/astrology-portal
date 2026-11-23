@@ -1,6 +1,9 @@
 import { reportFulfillmentConfig } from "./report-fulfillment-config.js";
 import { createReportMailProvider, type ReportMailProvider } from "./report-mail.js";
-import type { SupabaseReportAdmin } from "./supabase-report-admin.ts";
+import type { SupabaseReportAdmin } from "./supabase-report-admin.js";
+import { buildReviewedReportDocument, resolveReviewedDeliveryBytes, reviewedReportDocumentBytes, reviewedReportDocumentHash, type ReviewedReportDocument } from "./report-review-document.js";
+import { reportUnitIds } from "./report-unit-order.js";
+import type { ReportDomain, ReportHorizon } from "./report-types.js";
 
 export type ReleasableReport = {
   id: string;
@@ -9,6 +12,12 @@ export type ReleasableReport = {
   report_domain: string;
   report_horizon: string;
   prompt_versions: Record<string, unknown>;
+  period_start: string;
+  period_end: string;
+  facts_engine: string;
+  facts_hash: string;
+  review_document_bytes?: string | null;
+  review_document_hash?: string | null;
 };
 
 export async function releaseReviewedReport(input: {
@@ -20,7 +29,27 @@ export async function releaseReviewedReport(input: {
 }) {
   if (input.report.fulfillment_status !== "needs_review") throw new Error("Only a gate-passed needs_review report can be released.");
   const deliveredAt = new Date().toISOString();
-  await input.admin.update("user_reports", `id=eq.${input.report.id}`, { status: "live", fulfillment_status: "live", delivered_at: deliveredAt });
+  const rows = await input.admin.request<Array<{ content_key: string; headline: string; summary: string; body: string; sections: Array<{ heading?: string; body?: string }> | null; source_snapshot: { renderMetadata?: { timing?: unknown } } | null }>>(
+    `user_generated_interpretations?subject_id=eq.${input.report.id}&subject_type=eq.report_unit&status=eq.DRAFT&select=content_key,headline,summary,body,sections,source_snapshot,display_order&order=display_order.asc.nullslast`
+  );
+  const byId = new Map(rows.map((row) => [row.content_key.replace(`report:${input.report.id}:`, ""), row]));
+  const units = reportUnitIds(input.report.report_domain as ReportDomain, input.report.report_horizon as ReportHorizon).map((unitId) => {
+    const row = byId.get(unitId);
+    if (!row) throw new Error(`REPORT_RELEASE_REVIEW_ARTIFACT_INCOMPLETE: missing ${unitId}.`);
+    return { unitId, draft: { headline: row.headline, summary: row.summary, body: row.body, timing: typeof row.source_snapshot?.renderMetadata?.timing === "string" ? row.source_snapshot.renderMetadata.timing : "", sections: row.sections ?? [] } };
+  });
+  const reviewDocument = input.report.review_document_bytes && input.report.review_document_hash
+    ? resolveReviewedDeliveryBytes(input.report.review_document_bytes, input.report.review_document_hash)
+    : buildReviewedReportDocument({
+    id: input.report.id, reportDomain: input.report.report_domain, reportHorizon: input.report.report_horizon,
+    periodStart: input.report.period_start, periodEnd: input.report.period_end, factsEngine: input.report.facts_engine,
+    factsHash: input.report.facts_hash, units
+    }) as ReviewedReportDocument;
+  await input.admin.update("user_reports", `id=eq.${input.report.id}`, {
+    status: "live", fulfillment_status: "live", delivered_at: deliveredAt,
+    review_document: reviewDocument, review_document_bytes: reviewedReportDocumentBytes(reviewDocument),
+    review_document_hash: reviewedReportDocumentHash(reviewDocument)
+  });
   const config = reportFulfillmentConfig();
   const combinationKey = `${input.report.report_domain}:${input.report.report_horizon}:${String(input.report.prompt_versions.canonical ?? "")}`;
   const samples = await input.admin.request<Array<{ id: string }>>(`report_audit_samples?select=id&combination_key=eq.${encodeURIComponent(combinationKey)}`);

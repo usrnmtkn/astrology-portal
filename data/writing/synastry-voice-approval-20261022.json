@@ -1,0 +1,42 @@
+{
+  "schema": "synastry-voice-approval/v1",
+  "sourceId": "private:writing/synastry/approved-sample-20261022",
+  "sourceUri": "thread:01a15c03-cf10-71e3-b5e9-798c9f87bd3b",
+  "sourceDate": "2026-10-22",
+  "approvalToolCall": "call_523ff83c43574e3eab4fe2bdeb55d597",
+  "exactOwnerAnswer": "Approve all eight as written",
+  "references": [
+    {
+      "caseId": "moon__mercury__hard__body_they",
+      "textSha256": "cef0c8556b08a318a65c48874ce29272d2e7b640cb96b441e471056e72a91fe8"
+    },
+    {
+      "caseId": "moon__mercury__hard__body_you",
+      "textSha256": "8de3bcb15d2d009a55524296e6f5459b952c9598452a78872c5531a63caf81d6"
+    },
+    {
+      "caseId": "moon__venus__soft__body_they",
+      "textSha256": "ee3bbfa006dfd6500552064a0dd27da8c6c8026a14453d53fcaa6be5e0a35d6f"
+    },
+    {
+      "caseId": "moon__venus__soft__body_you",
+      "textSha256": "d85f779fa2cddc8d48908da4e3dbecd62d00dc91a2410fabbfd6663708a01296"
+    },
+    {
+      "caseId": "sun__saturn__hard__body_they",
+      "textSha256": "01a722536700001d09ab155d2b30b6d0c223c3dcf28efbfbd693348e1809af3c"
+    },
+    {
+      "caseId": "sun__saturn__hard__body_you",
+      "textSha256": "4294c8035c6f339ebc74ae320c7efa964c0596b43d932ec0d226ffdc88243c93"
+    },
+    {
+      "caseId": "venus__mars__conjunction__body_they",
+      "textSha256": "1139fca6b38c639b44cb65c400482b63fabd382d1fb1d134f0c677e6c35fd429"
+    },
+    {
+      "caseId": "venus__mars__conjunction__body_you",
+      "textSha256": "2bee5c1b7654d0bf3896f28cdafba9b796c92ad06c483c55dc0d8430591a8b4f"
+    }
+  ]
+}

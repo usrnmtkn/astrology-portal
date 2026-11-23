@@ -63,6 +63,11 @@ const failures = Object.entries(budgets).flatMap(([metric, limit]) => (
     ? [`${metric}: ${formatBytes(measurements[metric])} (${measurements[metric]} bytes) exceeds ${formatBytes(limit)} (${limit} bytes) by ${measurements[metric] - limit} bytes`]
     : []
 ));
+for(const item of javaScriptFiles) {
+  if(fs.readFileSync(path.join(distRoot,item.file),'utf8').includes('Saved result verification failed. Reopen it from Daily writing.')) {
+    failures.push('Private saved-result validation must stay on the server, outside Studio client assets.');
+  }
+}
 if (Object.keys(manifest).some(key => key.endsWith('/anonymousReaderTransport.ts'))) {
   failures.push('Standalone Studio includes the public reader startup transport.');
 }
@@ -91,7 +96,7 @@ if (!moonSourceFile?.endsWith(".json") || !fs.existsSync(path.join(distRoot, moo
 }
 
 // Lunar editors receive the effective guidance through the authenticated API.
-if (javaScriptFiles.filter(item => /\/ReusableLunationWritingStudio-/.test(item.file)).some(item =>
+if (javaScriptFiles.some(item =>
   fs.readFileSync(path.join(distRoot, item.file), 'utf8').includes('ATMOSPHERIC AND EMOTIONAL FILLER'))) {
   failures.push('Lunar editor identity must not bundle server editorial policy.');
 }
@@ -102,6 +107,7 @@ if (javaScriptFiles.some(item => /fallbackArchitectureV3DeferredBundle-/.test(it
 }
 
 const forbiddenEntryMarkers = [
+  "Saved result verification failed. Reopen it from Daily writing.",
   "Fallback composition check",
   "bundled-deferred-core-rows-v3",
   "bundled-sky-core-rows-v3",
@@ -137,6 +143,7 @@ if (initialChunks.has('src/studioRevisionPublication.ts')) failures.push('Revisi
 if (initialChunks.has("src/SkyPlacementWorkspace.tsx")) failures.push("The dated Sky workspace must remain deferred from Studio startup.");
 if (initialChunks.has("src/FallbackHoroscopeStudio.tsx")) failures.push("The fallback horoscope library must remain deferred from Studio startup.");
 if(initialChunks.has('src/MoonHoroscopesStudio.tsx')||!manifest['src/MoonHoroscopesStudio.tsx']?.isDynamicEntry)failures.push('The dated Moon horoscope editor must remain an independently deferred entry.');
+if(initialChunks.has('src/PlanetaryHoroscopesStudio.tsx'))failures.push('Planetary horoscope generation must remain deferred from Studio startup.');
 if (initialChunks.has("src/SkyDebilityDatePreview.tsx")) failures.push("The dignity date preview must remain deferred from Studio startup.");
 if (memoryGraphFiles.length !== 1) failures.push('Expected one deferred memory graph route with its renderer.');
 for (const key of initialChunks) {
@@ -184,6 +191,8 @@ const expectedDynamicEntries = [
   "src/DatedLunationWritingStudio.tsx",
   "src/StudioFormattingEditor.tsx",
   "src/HoroscopeEditionsStudio.tsx",
+  "src/PlanetaryHoroscopesStudio.tsx",
+  "src/SynastryWriterReadiness.tsx",
   "src/SeasonArticleWorkspace.tsx",
   "src/CompositionMapWorkspace.tsx",
   "src/SkyPlacementComposition.tsx",

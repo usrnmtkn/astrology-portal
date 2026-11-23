@@ -1,0 +1,36 @@
+{
+  "schema": "natal-complete-editor-bundle-cost/v1",
+  "date": "2026-11-20",
+  "baseRevision": "ad25950d8d7bd599485dba49343fedc9c5986f6c",
+  "runtimeRevision": "46d6dbe29ee160e3f781632c524c7de96c77fedb",
+  "profile": "Separate locked npm-ci worktrees; canonical npm run qa:release-builds; native ARM64 Node22.20.0; identical CI=true and visual-smoke public inputs; ordinary prerequisite builds. No build metadata normalization.",
+  "control": {
+    "entryRawBytes": 844154,
+    "entryGzipBytes": 245830,
+    "totalJavaScriptGzipBytes": 935523,
+    "files": 81
+  },
+  "candidate": {
+    "entryRawBytes": 844325,
+    "entryGzipBytes": 245889,
+    "totalJavaScriptGzipBytes": 936118,
+    "files": 81
+  },
+  "measuredAggregateCost": 595,
+  "previousAggregateLimit": 935795,
+  "allocation": 500,
+  "newAggregateLimit": 936295,
+  "remainingAggregateHeadroom": 177,
+  "authorization": {
+    "source": "thread:01a1fa37-6d7e-7942-9aa1-c7260a84bb59",
+    "request": "The web bundle remains 168 bytes above its existing limit after removing redundant code. The release runbook requires approval for a measured budget increase. May I allocate up to 500 aggregate compressed bytes for the complete-write-up editor, while keeping every startup, styling, and individual-chunk limit unchanged?",
+    "answer": "Approve the measured allowance"
+  },
+  "scope": "Use the approved allowance only for standalone Studio aggregate JavaScript. Both integrated Web profiles pass their existing limits and receive no allocation. The 595-byte measured Studio feature cost consumes 95 bytes of prior headroom in addition to the approved 500-byte allowance. Startup raw/gzip, largest chunk, CSS, Web and every other limit stay unchanged.",
+  "retainedFailure": {
+    "aggregateGzipBytes": 936118,
+    "limit": 935795,
+    "overage": 323
+  },
+  "claim": "Measured requested editor cost; not a performance improvement or replacement for exact-head gates."
+}

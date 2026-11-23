@@ -24,7 +24,17 @@ async function approve(id:string){
  const plan=await action(id,'prepare',{writerChoice:'gemini'});assert.equal(plan.status,200,JSON.stringify(plan.payload));
  const start=await action(id,'start-batch',{approvedPlanHash:plan.payload.plan.planHash});assert.equal(start.status,202,JSON.stringify(start.payload));await runWeeklyHoroscopeBatch(id,{maxSteps:2,wait:async()=>{}});assert.equal(latest(id).source_snapshot.horoscopeGeneration.weeklyEditorial.plan.status,'passed');return plan.payload.plan.planHash;
 }
-const worker=(id:string,maxSteps=100)=>runWeeklyHoroscopeBatch(id,{maxSteps,wait:async()=>{}});
+const worker=async(id:string,maxSteps?:number)=>{
+ if(maxSteps!==undefined)return runWeeklyHoroscopeBatch(id,{maxSteps,wait:async()=>{}});
+ // A durable batch may span cron invocations. Keep the full retained history
+ // and real production deadlines; do not require one host-speed-dependent
+ // invocation to finish all twelve signs.
+ for(let invocation=0;invocation<100;invocation++){
+  const result=await runWeeklyHoroscopeBatch(id,{maxSteps:2,wait:async()=>{}});
+  if(result.state!=='running')return result;
+ }
+ throw new Error('Synthetic durable batch did not finish within 100 bounded workers');
+};
 const id=await create('2026-10-05');
 // Reproduce an old edition's nested history before running the real handlers.
 // Generation, editor retrieval, manual saves and reload must see the full text;
@@ -50,7 +60,7 @@ let row=latest(id),generation=row.source_snapshot.horoscopeGeneration;
 assert.equal(generation.batch.status,'complete');assert.equal(generation.batch.attempted.length,12);
 assert(row.sections.horoscopeEdition.passages.every((p:any)=>p.body.trim()&&p.headline.trim()));
 assert.equal(transport.requests.length,12);assert.equal(writerFixture.reviewCalls,12);assert.equal(writerFixture.batchCalls,2);assert.equal(generation.weeklyEditorial.review.status,'passed');
-assert(transport.requests.slice(0,12).every(({request}:any)=>request.input.includes('SHARED WEEKLY CONCERNS\n')&&request.input.includes('CURRENT SIGN CONCERN\n')),'Native Gemini requests receive the shared concerns');
+assert(transport.requests.slice(0,12).every(({request}:any)=>!request.input.includes('SHARED WEEKLY CONCERNS\n')&&request.input.includes('CURRENT SIGN CONCERN\n')),'Native Gemini writers receive their own sign concern rather than all twelve plans');
 assert.equal(row.status,'DRAFT');assert.equal(row.published_at??null,null);
 assert.deepEqual(generation.failures,[retainedHistory],'Every original history field survives the complete batch');
 assert(Buffer.byteLength(JSON.stringify(store.rows.get(id)))<2_000_000);

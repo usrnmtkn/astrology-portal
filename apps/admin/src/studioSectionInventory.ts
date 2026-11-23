@@ -53,7 +53,11 @@ export const STUDIO_PLANETARY_STATION_PREFIXES = ["authored/station/", "sky.stat
 
 export const STUDIO_NATAL_ASPECT_PREFIXES = ["fallback-hook/natal-aspect-lived/", "natal.aspect."] as const;
 
+// Complete combinations have their own bounded paging in the natal finder.
 export const STUDIO_NATAL_CHART_PREFIXES = [
+  "cms/natal-insight/you/",
+  "cms/natal-insight/they/",
+  "cms/natal-insight/passage/",
   "fallback-hook/natal/planet-intro/",
   "fallback-hook/natal-you-placement-",
   "fallback-template/natal.planet-in-sign",

@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 
 function builder(source, start, end) {
   const first = source.indexOf(start);
@@ -7,18 +8,18 @@ function builder(source, start, end) {
   return source.slice(first, last);
 }
 
-export function assertSkyStudioAuthority(app, calendar) {
-  const sky = builder(app, 'function approvedExactSkyAspectWritingSection(', '\nfunction reviewedSkyAspectWritingSection(');
-  assert.match(sky, /const signedStudio = options \? resolveSkyAspectOwnerAuthoredSigned\(options\) : null;/u);
-  assert.match(sky, /const studio = signedStudio \?\? \(options \? resolveSkyAspectContentStudioExact\(options\) : null\);/u);
-  assert.match(sky, /if \(studio\) \{\s*return \{[^}]*tier: signedStudio \? "content-studio-signed-sky-aspect-v1" : "content-studio-exact-sky-aspect-v1",[^}]*sourceKeys: \[studio\.content\.contentKey\],[^}]*body: studio\.body\s*\};\s*\}/u);
-  assert.ok(sky.indexOf('if (studio)') < sky.indexOf('const registry = contentRegistryFor("sky")'));
-  assert.ok(sky.indexOf('const registry = contentRegistryFor("sky")') < sky.indexOf('resolveApprovedExactSkyAspectCopy({'));
-
+export function assertSkyStudioAuthority(app, calendar, shared = fs.readFileSync('apps/web/src/services/skyAspectReading.ts', 'utf8')) {
+  const sky = builder(app, 'function normalizeSkyAspectSurface(', '\nfunction skyAspectSeriesLine(');
   const card = builder(calendar, 'export function normalizeCalendarEventSurface(', '\nfunction calendarCanonicalEventDateLine(');
-  assert.match(card, /const studioExactResolved = content\s*\? resolveSkyAspectContentStudioExact\(/u);
-  assert.match(card, /const studioExact = studioExactResolved\s*\? \{[^}]*body: studioExactResolved\.body,[^}]*tier: "content-studio-exact-sky-aspect-v1"/u);
-  assert.match(card, /const signedStudioResolved = resolveSkyAspectOwnerAuthoredSigned\(/u);
-  assert.match(card, /const signedStudio = signedStudioResolved\?\.content\.sourceSnapshot\?\.contentType === "owner-authored-sky-aspect"\s*\? \{[^}]*body: signedStudioResolved\.body,[^}]*tier: "content-studio-signed-sky-aspect-v1"/u);
-  assert.match(card, /const selected = selectSkyAspectCopyByPrecedence<CalendarSkyAspectCandidate>\(\{\s*composed,\s*signSpecific: packageCandidates\.signSpecific,\s*exact: signedStudio \?\? studioExact \?\? exact,/u);
+  for (const surface of [sky, card]) assert.match(surface, /const selected = (?:registry\?\.)?resolveSkyAspectReading(?:\?\.)?\(\{/u);
+  assert.match(sky, /exactLookup: registry\?\.approvedExactSkyAspectCopy/u);
+  assert.match(sky, /composedLookup: registry\?\.skyCalendarComposedCard/u);
+  assert.match(card, /exactLookup: approvedExactSkyAspectLookup, composedLookup: composedSkyCalendarCardLookup/u);
+  assert.match(shared, /const signed = resolveSkyAspectOwnerAuthoredSigned\(options\)/u);
+  assert.match(shared, /const studioSelected = signed \?\? studio/u);
+  assert.match(shared, /const exact: SkyAspectReading \| null = studioSelected\s*\? \{ body: studioSelected\.body, layer: "authored"/u);
+  assert.match(shared, /tier: signed \? "content-studio-signed-sky-aspect-v1" : "content-studio-exact-sky-aspect-v1"/u);
+  assert.match(shared, /sourceKeys: \[studioSelected\.content\.contentKey\]/u);
+  assert.match(shared, /: allowed\(resolveApprovedExactSkyAspectCopy\(/u);
+  assert.match(shared, /selectSkyAspectCopyByPrecedence<SkyAspectReading>\(\{ composed, exact,/u);
 }

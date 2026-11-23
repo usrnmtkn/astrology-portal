@@ -1,10 +1,23 @@
 export const WEEKLY_OWNER_DIRECTION='weekly-owner-direction/v1';
+export const WEEKLY_SIGN_CONTEXT='weekly-sign-context/v1';
 export const WEEKLY_DIRECTION_CHECKS=['concern','stakes','observation','ending'];
 
 export function weeklyOwnerDirection(prepared,sign){
   if(prepared.edition.window.period!=='weekly')return null;
   const edits=(prepared.weeklyBatchPlan?.ownerEdits??prepared.weeklyConcernEdits)?.[sign];
   return edits?{version:WEEKLY_OWNER_DIRECTION,sign,coreConcern:edits.coreConcern,stakes:edits.stakes,distinctiveObservation:edits.distinctiveObservation}:null;
+}
+
+export function weeklySignConcern(prepared,sign){
+  if(prepared.edition.window.period!=='weekly')return null;
+  const selected=prepared.weeklyBatchPlan?.concerns.find(concern=>concern.sign===sign);
+  if(!selected)return null;
+  const {priorQuote,priorEditionId,priorSign,weekDifference,...concern}=selected;
+  if(!weeklyOwnerDirection(prepared,sign))return concern;
+  // Exact owner direction is supplied once, after the factual plan and prose
+  // evidence. Other signs and historical comparison notes stay with the planner.
+  const {coreConcern,stakes,distinctiveObservation,...development}=concern;
+  return development;
 }
 
 export function weeklyDirectionWriterInput(direction){
