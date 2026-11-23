@@ -298,6 +298,10 @@ test("sign out during migration cannot restore Friends", async ({ page }) => {
   await page.getByRole("menuitem", { name: "Account", exact: true }).click();
   await page.getByRole("button", { name: "Sign out", exact: true }).click();
   await expect(page.getByRole("button", { name: `Open ${fixtureFriendName}`, exact: true })).not.toBeVisible();
+  const signedOutDialog = page.getByRole("dialog", { name: "Create an account", exact: true });
+  await expect(signedOutDialog).toBeVisible();
+  await signedOutDialog.getByRole("button", { name: "Close", exact: true }).click();
+  await expect(signedOutDialog).not.toBeVisible();
   await page.getByRole("button", { name: "Friends", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Sign in to see your friends", exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: `Open ${fixtureFriendName}`, exact: true })).not.toBeVisible();
