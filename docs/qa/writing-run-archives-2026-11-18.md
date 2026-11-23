@@ -112,6 +112,14 @@ comparison with the accepted Linux design. Strict no-overlap, full viewport
 containment and all numeric thresholds remain unchanged. Complete affected
 consumer reruns remain required; this record does not claim them passed.
 
+The complete corrected browser groups through design handoff passed on
+`e21c1bea5803e99303fd59e4853778d8b1c46270`. The final mobile group exposed
+two location-change timeouts because its build lacked the synthetic Mapbox token
+already supplied by the dedicated connection-transit configuration. The run was
+stopped after 24 passes, two failures and one interrupted case; 327 cases did not
+run. The mobile configuration now enables the same intercepted provider fixture.
+Its full profile matrix must pass again; no runtime behavior or timeout changed.
+
 Complete affected-consumer preflight, canonical builds, hosted exact-head gates
 and production acceptance remain pending at this integration checkpoint. Earlier
 local/source receipts retain their original revision and scope.
