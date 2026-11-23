@@ -13,7 +13,7 @@ export function staticBrotliAssetsPlugin() {
       await Promise.all(Object.values(bundle).filter(item => /^assets\/.+\.(?:js|css)$/u.test(item.fileName)).map(async item => {
         const bytes = Buffer.from(item.type === "chunk" ? item.code : item.source);
         this.emitFile({ type: "asset", fileName: `${item.fileName}.br`, source: await compress(bytes, {
-          params: { [constants.BROTLI_PARAM_QUALITY]: 11, [constants.BROTLI_PARAM_MODE]: constants.BROTLI_MODE_TEXT }
+          params: { [constants.BROTLI_PARAM_QUALITY]: 10, [constants.BROTLI_PARAM_MODE]: constants.BROTLI_MODE_TEXT }
         }) });
       }));
     } }
