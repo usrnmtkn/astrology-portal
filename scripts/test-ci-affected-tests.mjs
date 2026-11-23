@@ -4,7 +4,7 @@ import {mkdtempSync,mkdirSync,writeFileSync,readFileSync,rmSync,realpathSync} fr
 import {tmpdir} from 'node:os';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {createAffectedPlan,createDependencyGraph,revisionRange} from './ci-affected-tests.mjs';
+import {createAffectedPlan,createDependencyGraph,configuredBrowserSpecs,browserJobCatalog,revisionRange} from './ci-affected-tests.mjs';
 import {validateTestPlan,apiTestCommands,preflightInventory} from './ci-test-plan.mjs';
 import {checkAffectedApiGate} from './check-affected-api-gate.mjs';
 import {runAffectedPlaywright} from './run-affected-playwright.mjs';
@@ -12,6 +12,27 @@ import {runAffectedPlaywright} from './run-affected-playwright.mjs';
 const head=execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
 const pkg=JSON.parse(readFileSync('package.json','utf8'));
 const planFor=files=>createAffectedPlan({files,head,base:head,previousPackage:JSON.parse(execFileSync('git',['show','HEAD:package.json'],{encoding:'utf8'}))});
+const authSources=['tests/studio-auth/studio-owner-login.spec.ts','tests/studio-auth/unsaved-ingress-preview.spec.ts'];
+const authConfig=planFor(['playwright.studio-auth.config.ts']);
+assert.deepEqual(authConfig.browserSpecs,authSources,'The actual Studio auth config must retain its canonical tracked testDir paths');
+assert(authConfig.browserJobs.length,'Canonical Studio auth sources must retain their workflow mapping');
+const authSource=readFileSync('playwright.studio-auth.config.ts','utf8');
+assert.deepEqual(configuredBrowserSpecs(authSource,[...authSources,...authSources.map(file=>file.replace('tests/studio-auth/','tests/visual/'))]),authSources,'A same-basename visual file must not shadow the configured Studio auth directory');
+const collision=['tests/visual/a.spec.ts','tests/studio-auth/a.spec.ts'];
+assert.deepEqual(configuredBrowserSpecs("export default {testMatch:['a.spec.ts']};",collision),[collision[0]],'An inherited/default config retains the visual directory');
+assert.deepEqual(configuredBrowserSpecs("export default {testDir:'./tests/visual',testMatch:['a.spec.ts']};",collision),[collision[0]]);
+assert.deepEqual(configuredBrowserSpecs("export default {testDir:'./tests/studio-auth',testMatch:['a.spec.ts']};",collision),[collision[1]]);
+assert.deepEqual(configuredBrowserSpecs(readFileSync('playwright.memory.config.ts','utf8'),collision),[],'A separately registered config without testMatch retains the existing explicit-command selection behavior');
+assert.throws(()=>configuredBrowserSpecs("export default {testDir:'./tests/studio-auth',testMatch:['missing.spec.ts']};",collision),/must be tracked/,'Missing sources fail closed instead of disappearing from coverage');
+const fullBrowserPlan=planFor(['vercel.json']);
+for(const source of authSources) {
+  assert(fullBrowserPlan.browserSpecs.includes(source),'Shared fallback must retain the complete Studio auth consumers');
+  assert(!fullBrowserPlan.browserSpecs.includes(source.replace('tests/studio-auth/','tests/visual/')),'Do not invent visual aliases for Studio auth consumers');
+}
+const trackedSpecs=execFileSync('git',['ls-files','-z'],{encoding:'utf8'}).split('\0').filter(file=>/^tests\/(?:visual|studio-auth)\/[^/]+\.spec\.ts$/u.test(file));
+const workflowSources=Object.values(browserJobCatalog(process.cwd(),pkg.scripts,trackedSpecs)).flat();
+for(const source of authSources)assert(workflowSources.includes(source),'The workflow catalog must name the real auth source');
+assert.equal(new Set(fullBrowserPlan.browserSpecs).size,fullBrowserPlan.browserSpecs.length,'Canonical sources may not duplicate a basename alias');
 const documentation=planFor(['docs/qa/example.md']);
 assert.equal(documentation.apiCommands.length,0);assert.equal(documentation.browserJobs.length,0);
 const browser=planFor(['tests/visual/studio-owner-publishing.spec.ts']);
@@ -232,6 +253,21 @@ try {
     assert.equal(result.status,0,result.stderr);
   }
   assert.equal(readFileSync(log,'utf8'),'A','Balanced actual CLI runs the selected file once and accepts proved empty shards');
+  write('tests/studio-auth/a.spec.ts',source('AUTH_A'));
+  write('playwright.fixture-auth.config.ts',`export default {testDir:'./tests/studio-auth',reporter:'list',workers:1,outputDir:${JSON.stringify(path.join(directory,'auth-results'))}};`);
+  writeFileSync(log,'');
+  const authSelected={...selected,browserSpecs:['tests/studio-auth/a.spec.ts']};
+  assert.equal(runAffectedPlaywright(['-c',path.join(directory,'playwright.fixture-auth.config.ts')],{plan:authSelected}),0);
+  assert.equal(readFileSync(log,'utf8'),'AUTH_A','The actual affected CLI must execute the canonical auth file without running its same-basename visual neighbor');
+  write('playwright.studio-admin-flows.config.ts',readFileSync(path.join(directory,'playwright.fixture-auth.config.ts'),'utf8'));
+  writeFileSync(log,'');
+  const authBalancedPlan={...balancedPlan,browserSpecs:authSelected.browserSpecs};
+  for(const shard of ['1/7','7/7']) {
+    const code=`import{main}from ${JSON.stringify(balanced)};process.exitCode=main(['--config','playwright.studio-admin-flows.config.ts',${JSON.stringify(shard)}],{cli:${JSON.stringify(cli)}});`;
+    const result=spawnSync(process.execPath,['--input-type=module','-e',code],{cwd:directory,env:{PATH:process.env.PATH,CI_AFFECTED_TEST_PLAN:JSON.stringify(authBalancedPlan)},encoding:'utf8'});
+    assert.equal(result.status,0,result.stderr);
+  }
+  assert.equal(readFileSync(log,'utf8'),'AUTH_A','Balanced selection preserves the complete canonical auth file and accepts only proved empty shards');
   write('tests/visual/a.spec.ts',`import{test}from ${JSON.stringify(playwright)};test('failed affected case',()=>{throw new Error('Synthetic selected failure');});`);
   assert.notEqual(runAffectedPlaywright(['-c',path.join(directory,'playwright.config.ts')],{plan:selected,execute:(...args)=>spawnSync(args[0],args[1],{stdio:'pipe'})}),0,'Browser failure must propagate');
 } finally {rmSync(directory,{recursive:true,force:true});}

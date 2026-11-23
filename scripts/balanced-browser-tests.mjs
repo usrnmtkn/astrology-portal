@@ -27,7 +27,7 @@ export function balanceTestFiles(tests, count, timings, independentFiles = []) {
   assert.equal(new Set(tests).size, tests.length, 'Duplicate test identities');
   const files = new Map();
   for (const name of tests) {
-    const file = name.match(/tests\/visual\/[^›]+\.spec\.ts/u)?.[0];
+    const file = name.match(/tests\/(?:visual|studio-auth)\/[^›]+\.spec\.ts/u)?.[0];
     assert(file, 'Missing test file identity');
     const group = independentFiles.includes(file) ? name : file;
     files.set(group, [...(files.get(group) ?? []), name]);
@@ -59,7 +59,9 @@ export function identities(report,{testListFiles=false}={}) {
     for (const spec of suite.specs ?? []) {
       for (const test of spec.tests) {
         const project = test.projectName ? `[${test.projectName}] › ` : '';
-        const file=testListFiles?spec.file:`tests/visual/${spec.file.replace(/^.*tests\/visual\//u, '')}`;
+        const directory=report.config?.rootDir?.replaceAll('\\','/').match(/(?:^|\/)(tests\/(?:visual|studio-auth))\/?$/u)?.[1]??'tests/visual';
+        const reported=spec.file.replaceAll('\\','/');
+        const file=testListFiles?spec.file:reported.match(/(?:^|\/)(tests\/(?:visual|studio-auth)\/[^/]+\.spec\.ts)$/u)?.[1]??`${directory}/${reported}`;
         names.push(project + `${file} › ${[...nested, spec.title].join(' › ')}`);
       }
     }
@@ -76,7 +78,7 @@ export function withShardLists(bins, run, {preservePaths=false}={}) {
   try {
     const files = bins.map((bin, index) => {
       const file = join(directory, `shard-${index + 1}.txt`);
-      writeFileSync(file, bin.tests.map(name => preservePaths?name:name.replace('tests/visual/', '')).join('\n') + '\n');
+      writeFileSync(file, bin.tests.map(name => preservePaths?name:name.replace(/tests\/(?:visual|studio-auth)\//u, '')).join('\n') + '\n');
       return file;
     });
     return run(files);
@@ -117,7 +119,7 @@ export function main(args,{cli='node_modules/@playwright/test/cli.js'}={}) {
   }[config] ?? [];
   for (const file of independentFiles) if(tests.some(name=>name.includes(file)))assertIndependentBrowserFile(readFileSync(file, 'utf8'), file);
   const groupCount=byFile?new Set(tests.map(name=>{
-    const file=name.match(/tests\/visual\/[^›]+\.spec\.ts/u)[0];return independentFiles.includes(file)?name:file;
+    const file=name.match(/tests\/(?:visual|studio-auth)\/[^›]+\.spec\.ts/u)[0];return independentFiles.includes(file)?name:file;
   })).size:tests.length;
   const activeCount=plan?Math.min(count,groupCount):count;
   const bins = byFile ? balanceTestFiles(tests, activeCount, timings, independentFiles) : balanceTests(tests, activeCount, timings);
