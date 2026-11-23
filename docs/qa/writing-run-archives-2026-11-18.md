@@ -98,6 +98,20 @@ A separate model-choice launch failed at the sandbox IPC prerequisite and passed
 unchanged outside that sandbox. These initial failures remain recorded; they do
 not replace the required corrected-candidate inventory or hosted gates.
 
+On corrected `95585eb099145390a27c0a06ce8c622e212b6a62`, all 117 affected
+API consumers passed, including ten repair-dependent/prerequisite reruns. The
+sanctioned private worker collected and passed all 23 protected Studio-auth cases;
+its keeper must confirm dependency stability for any later test-only revision.
+The first five public browser groups retained their failures: an obsolete Darwin
+Friends reference, a cross-frame geometry measurement, four Personal Transit
+cases whose forked store omitted archives, and one viewport assertion affected
+by restored vertical scroll after reload. The repair models the synthetic archive,
+measures both adjacent rectangles atomically, reveals the tab strip while proving
+its horizontal scroll is unchanged, and updates only the Darwin reference after
+comparison with the accepted Linux design. Strict no-overlap, full viewport
+containment and all numeric thresholds remain unchanged. Complete affected
+consumer reruns remain required; this record does not claim them passed.
+
 Complete affected-consumer preflight, canonical builds, hosted exact-head gates
 and production acceptance remain pending at this integration checkpoint. Earlier
 local/source receipts retain their original revision and scope.

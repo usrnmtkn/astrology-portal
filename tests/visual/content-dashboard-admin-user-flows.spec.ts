@@ -9959,6 +9959,13 @@ for (const [theme, width] of [["light", 390], ["dark", 390], ["light", 1440], ["
     await expect(workspace).toContainText(`Saved final revision ${index}.`);
     await page.reload();
     await expect(page.getByRole("tab", { name: selection.area === "rulership" ? "Rulership" : "Day & night", exact: true })).toHaveAttribute("aria-selected", "true");
+    // Reload may restore the document's vertical position at the edited passage.
+    // Reveal the strip without changing its own horizontal scroll position.
+    expect(await page.getByRole("tablist", { name: "Natal Chart writing areas", exact: true }).evaluate(list => {
+      const left = list.scrollLeft;
+      list.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "instant" });
+      return list.scrollLeft === left;
+    })).toBe(true);
     await expect(page.getByRole("tab", { name: selection.area === "rulership" ? "Rulership" : "Day & night", exact: true })).toBeInViewport({ ratio: 1 });
     await expect(workspace.getByLabel("Natal reading passage", { exact: true })).toHaveValue(selection.passage);
     await expect(workspace).toContainText(`Saved final revision ${index}.`);
