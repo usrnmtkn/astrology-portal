@@ -373,6 +373,7 @@ export async function processReportFulfillmentJob(input: {
   };
   const authorizedCall: ReportModelCall = (modelInput) => providerCall({
     ...modelInput,
+    archiveContext: {...modelInput.archiveContext, surface:'purchased-reports',jobId:input.job.id,reportId:report.id},
     beforeProviderCall: async (attempt) => {
       // The governed evidence/validation gate must run before deadline logic,
       // pricing, or the authorization ledger can consume a call.

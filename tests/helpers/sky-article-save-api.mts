@@ -57,6 +57,7 @@ globalThis.fetch = async (input: any, options: any = {}) => {
  const operation = await store.publication(input, options); if (operation) return operation;
  const reader = await readerRouteResponse(input, options); if (reader) return reader;
  const url = new URL(String(input));
+ const archived = await store.writingRuns.handle(url,options); if (archived) return archived;
  if (process.env.STUDIO_SESSION_FIXTURE === '1' && url.pathname === '/auth/v1/user') {
    return options.headers?.authorization === `Bearer ${sessionFixture.token}`
      ? Response.json({id:'fixture-owner',app_metadata:{role:'admin'}})

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {GHOSTWRITING_SKILL_INSTRUCTIONS} from '../src/astro-writing/ghostwritingSkill.mjs';
-import {rows,invoke,providerFixture,feedbackFixture} from '../tests/helpers/lunation-writing-api.mts';
+import {rows,invoke,providerFixture,feedbackFixture,writingRuns} from '../tests/helpers/lunation-writing-api.mts';
 import {calculateLunationArticleFacts,lunationArticleEvents,verifiedLunationEclipse} from '../api/_lib/lunation-article-facts';
 import {prepareLunationArticle,writeLunationArticle,lunationArticleHash} from '../src/astro-writing/lunationArticleWriting.mjs';
 
@@ -50,6 +50,10 @@ for(const month of ['2026-08','2026-09']){
     const generated=await action('generate',{approvedPlanHash:row.source_snapshot.lunationWriting.planHash});
     assert.equal(generated.status,202,JSON.stringify(generated.payload));row=generated.payload.rows[0];
     assert.equal(providerFixture.calls,priorCalls+1);
+    const archived=[...writingRuns.rows.values()].at(-1)!;
+    assert.deepEqual(JSON.parse(archived.request_body),providerFixture.requests.at(-1));
+    assert.equal(archived.context.contentKey,row.content_key);
+    assert.equal(archived.context.operationId,row.source_snapshot.lunationWriting.active.id);
     assert.equal((await action('generate',{approvedPlanHash:row.source_snapshot.lunationWriting.planHash})).status,409);
     assert.equal((await action('save',{headline:'Race',body:'Must not replace in-flight copy'})).status,409);
     const prompt=providerFixture.requests.at(-1).input;

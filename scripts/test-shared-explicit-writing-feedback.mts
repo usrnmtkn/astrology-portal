@@ -4,6 +4,10 @@ import {generateWithOpenAI,generateWithClaude,generateSkyArticleTemplateSlots} f
 import {buildPersonalTransitWriterContext} from '../api/_lib/personal-transit-writer-context.js';
 import {syntheticTransitSources} from './fixtures/personal-transit-writing.mjs';
 import {encodedSynastryVoice,installSyntheticSynastryApproval} from '../tests/fixtures/synastry-approved-voice.cjs';
+import {withWritingRunStore} from '../src/astro-writing/writingRunArchive.cjs';
+import {writingRunArchiveFixture} from '../tests/helpers/writing-run-archive.mjs';
+
+await withWritingRunStore(writingRunArchiveFixture().store, async () => {
 const restoreApprovalFixture=installSyntheticSynastryApproval();
 
 Object.assign(process.env,{NODE_ENV:'test',OPENAI_API_KEY:'synthetic',ANTHROPIC_API_KEY:'synthetic',
@@ -64,3 +68,5 @@ try{
  }
 }finally{globalThis.fetch=originalFetch;restoreApprovalFixture();}
 console.log('PASS actual Synastry, Personal Transit and Sky template provider boundaries receive scoped complete feedback; storage failures stop before paid requests. All network intercepted; no prose generated.');
+
+});

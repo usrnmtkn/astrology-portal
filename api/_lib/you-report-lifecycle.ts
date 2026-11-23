@@ -313,7 +313,7 @@ export async function runYouReportJobs(input: {
     };
     try {
       if (deadline - Date.now() < 60_000) throw new TransitReadingCheckpointYield();
-      const generated = await withTransitReadingCheckpoints({ admin, family: "you", jobId: job.id, attempt: job.checkpoint_attempt ?? 1, deadline,
+      const generated = await withTransitReadingCheckpoints({ admin, family: "you", surface: `you-${job.report_window}`, jobId: job.id, attempt: job.checkpoint_attempt ?? 1, deadline,
         onProgress: saveProgress
       }, () => generateYouTransitReadingForUser({
         userId: job.user_id,

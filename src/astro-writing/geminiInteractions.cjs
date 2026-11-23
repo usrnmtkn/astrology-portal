@@ -1,4 +1,5 @@
 "use strict";
+const {archivedWritingFetch} = require('./writingRunArchive.cjs');
 
 const GEMINI_INTERACTIONS_URL = "https://generativelanguage.googleapis.com/v1beta/interactions";
 const DEFAULT_GEMINI_MODEL = "gemini-3.6-flash";
@@ -74,19 +75,20 @@ async function callGeminiInteractions({
   systemInstruction,
   input,
   thinkingLevel = "high",
+  role = 'WRITER', surface = 'offline-writing', family = 'offline-writing', archiveContext = {},
   fetchImpl = globalThis.fetch
 }) {
   if (!apiKey) throw new Error("Gemini Interactions request requires an API key.");
   if (typeof fetchImpl !== "function") throw new Error("Gemini Interactions request requires fetch.");
   const body = buildGeminiInteractionBody({ model, systemInstruction, input, thinkingLevel });
-  const response = await fetchImpl(GEMINI_INTERACTIONS_URL, {
+  const response = await archivedWritingFetch(GEMINI_INTERACTIONS_URL, {
     method: "POST",
     headers: {
       "content-type": "application/json",
       "x-goog-api-key": apiKey
     },
     body: JSON.stringify(body)
-  });
+  }, {provider:'gemini',role,surface,family,context:archiveContext,fetchImpl});
   let payload;
   try {
     payload = await response.json();

@@ -100,6 +100,10 @@
   height: auto;
 }
 
+.friend-chart-page.friend-profile-view .friend-profile-intro {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 .relationship-explainer-card {
   display: grid;
   grid-template-columns: max-content minmax(0, 1fr);
@@ -150,7 +154,9 @@
 
 .relationship-explainer-card__copy {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   min-width: 0;
+  overflow-wrap: anywhere;
   gap: calc(var(--space-2) + var(--space-1) / 2);
 }
 

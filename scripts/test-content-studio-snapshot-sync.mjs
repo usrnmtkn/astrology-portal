@@ -6,7 +6,7 @@ import { execFileSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { recoveryDeploymentConfig } from '../apps/web/src/content/contentStudioRecovery.mjs';
-import { readPublicationSnapshot, publicationSnapshotIdentity, assertStablePublicationSnapshot, validateRecoverySnapshot } from './lib/content-studio-snapshot.mjs';
+import { readPublicationSnapshot, publicationSnapshotIdentity, assertStablePublicationSnapshot, validateRecoverySnapshot, publishedSnapshotPath, publishedSnapshotSchema } from './lib/content-studio-snapshot.mjs';
 import { publishContentStudioSnapshot, snapshotBranch, snapshotPath } from './publish-content-studio-snapshot.mjs';
 
 const ledger = { content_key: '__content-publication-ledger/v1', state: 'live', revision: 1, updated_at: '2026-01-01T00:00:00Z' };
@@ -57,6 +57,7 @@ for (const mutate of [
   const invalid = structuredClone(snapshot); mutate(invalid);
   assert.throws(() => validateRecoverySnapshot(invalid, projectReaderRow), /Invalid public recovery snapshot/u);
 }
+const archive = { ...snapshot, schema: publishedSnapshotSchema };
 const directory = mkdtempSync(path.join(tmpdir(), 'studio-recovery-contract-'));
 const git = args => execFileSync('git', args, { maxBuffer: 128 * 1024 * 1024, encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }).trim();
 try {
@@ -75,6 +76,7 @@ try {
   const env = { ...process.env, GITHUB_REPOSITORY: 'usrnmtkn/astrology-portal', GITHUB_REF: 'refs/heads/main',
     GITHUB_EVENT_NAME: 'schedule', GITHUB_SHA: sourceHead };
   let exportSnapshot = original;
+  let exportArchive = JSON.stringify(archive) + '\n';
   let failExport = false;
   let failPrivacy = false;
   let raceAtRead = 0;
@@ -87,6 +89,8 @@ try {
       if (args[0].endsWith('refresh-content-studio-last-known-good.mjs')) {
         if (failExport) throw new Error('Synthetic reader outage');
         writeFileSync(snapshotPath, exportSnapshot);
+        assert.ok(args.includes('--published-output'));
+        writeFileSync(args[args.indexOf('--published-output') + 1], exportArchive);
       }
       return '';
     }
@@ -98,25 +102,53 @@ try {
     }
     return execFileSync(command, args, { maxBuffer: 128 * 1024 * 1024, encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'], ...options }).trim();
   };
+  const migrationIndex = path.join(directory, 'migration-index');
+  const migrationGit = args => execFileSync('git', args, { encoding: 'utf8', env: { ...process.env, GIT_INDEX_FILE: migrationIndex } }).trim();
+  writeFileSync(path.join(directory, 'disabled.json'), recoveryDeploymentConfig);
+  const legacyBlob = git(['hash-object', '-w', snapshotPath]);
+  const configBlob = git(['hash-object', '-w', path.join(directory, 'disabled.json')]);
+  migrationGit(['read-tree', '--empty']);
+  migrationGit(['update-index', '--add', '--cacheinfo', `100644,${legacyBlob},${snapshotPath}`]);
+  migrationGit(['update-index', '--add', '--cacheinfo', `100644,${configBlob},vercel.json`]);
+  const legacyHead = git(['commit-tree', migrationGit(['write-tree']), '-m', 'Synthetic legacy public recovery']);
+  git(['push', 'origin', `${legacyHead}:refs/heads/${snapshotBranch}`]);
+  const migrated = publishContentStudioSnapshot({ run, env });
+  assert.equal(git(['rev-parse', `${migrated.head}^`]), legacyHead, 'Upgrade appends to the existing two-file history.');
+  assert.deepEqual(git(['ls-tree', '-r', '--name-only', migrated.head]).split('\n'), [snapshotPath, publishedSnapshotPath, 'vercel.json']);
+  git(['push', 'origin', `:refs/heads/${snapshotBranch}`]); // Isolated fixture reset only.
   const first = publishContentStudioSnapshot({ run, env });
   assert.equal(first.state, 'synchronized');
   assert.equal(git(['rev-parse', 'HEAD']), sourceHead, 'The source checkout never switches to data.');
   assert.equal(readFileSync(snapshotPath, 'utf8'), original, 'Source snapshot is restored after publication.');
-  assert.deepEqual(git(['ls-tree', '-r', '--name-only', first.head]).split('\n'), [snapshotPath, 'vercel.json']);
+  assert.deepEqual(git(['ls-tree', '-r', '--name-only', first.head]).split('\n'), [snapshotPath, publishedSnapshotPath, 'vercel.json']);
   assert.equal(git(['show', `${first.head}:vercel.json`]), recoveryDeploymentConfig.trim());
   assert.equal(git(['rev-list', '--count', first.head]), '1', 'The first data commit has no application ancestry.');
   const noChange = publishContentStudioSnapshot({ run, env });
   assert.equal(noChange.head, first.head, 'Unchanged publication metadata does not produce another commit.');
+  const dated = { ...snapshot.rows[0], id: 'dated-fixture', content_key: 'calendar/day/2026-11-21', target_date: '2026-11-21' };
+  const datedArchive = { ...archive, rowCount: archive.rowCount + 1, rows: [...archive.rows, dated],
+    publications: [...archive.publications, { ...published, content_key: dated.content_key, row_id: dated.id, row_updated_at: dated.updated_at }] };
+  // Pair ledgers must agree, even for a key outside the runtime recovery subset.
+  exportArchive = JSON.stringify(datedArchive) + '\n';
+  assert.throws(() => publishContentStudioSnapshot({ run, env }), /changed during export/u);
+  exportArchive = JSON.stringify({ ...datedArchive, publications: archive.publications }) + '\n';
+  const archiveOnly = publishContentStudioSnapshot({ run, env });
+  assert.notEqual(archiveOnly.head, first.head, 'A dated-only change must produce a data commit.');
+  assert.equal(git(['rev-parse', `${archiveOnly.head}^`]), first.head);
+  assert.equal(git(['show', `${archiveOnly.head}:${snapshotPath}`]), original.trim(), 'Dated publication does not modify runtime recovery.');
+  assert.deepEqual(JSON.parse(git(['show', `${archiveOnly.head}:${publishedSnapshotPath}`])).rows.at(-1), dated);
+  assert.equal(publishContentStudioSnapshot({ run, env }).head, archiveOnly.head, 'An unchanged complete archive creates no extra commit.');
   const next = structuredClone(snapshot);
   next.publications.push({ ...retired, content_key: 'cms/new-retirement-only' });
   exportSnapshot = JSON.stringify(next) + '\n';
+  exportArchive = JSON.stringify({ ...next, schema: publishedSnapshotSchema }) + '\n';
   failPrivacy = true;
   assert.throws(() => publishContentStudioSnapshot({ run, env }), /privacy rejection/u);
   assert.equal(readFileSync(snapshotPath, 'utf8'), original);
   failPrivacy = false;
   const second = publishContentStudioSnapshot({ run, env });
   assert.notEqual(second.head, first.head, 'Retirement-only updates must be backed up.');
-  assert.equal(git(['rev-parse', `${second.head}^`]), first.head, 'Recovery history is append-only.');
+  assert.equal(git(['rev-parse', `${second.head}^`]), archiveOnly.head, 'Recovery history is append-only.');
   assert.equal(JSON.parse(git(['show', `${second.head}:${snapshotPath}`])).publications.at(-1).state, 'retired');
   failExport = true;
   assert.throws(() => publishContentStudioSnapshot({ run, env }), /reader outage/u);
@@ -125,6 +157,7 @@ try {
   failExport = false;
   next.publications.at(-1).revision += 1;
   exportSnapshot = JSON.stringify(next) + '\n';
+  exportArchive = JSON.stringify({ ...next, schema: publishedSnapshotSchema }) + '\n';
   raceAtRead = headReads + 2;
   const pushesBeforeRace = calls.filter(call => call[1] === 'push').length;
   assert.throws(() => publishContentStudioSnapshot({ run, env }), /competing publisher/u);

@@ -8,6 +8,10 @@ import { RHETORICAL_LABELS, RHETORICAL_WRITER_POLICY } from '../src/astro-writin
 import { SKY_ASPECT_WRITING_STANDARD, SKY_ASPECT_STANDARD_SHA256, isCollectiveSkyAspectInput } from '../src/astro-writing/skyAspectEditorialAuthority.cjs';
 import { governedInstructionsForRole } from '../src/astro-writing/openAIResponses.cjs';
 import { runStudioSkyWriting } from '../api/_lib/sky-studio-writing.js';
+import {withWritingRunStore} from '../src/astro-writing/writingRunArchive.cjs';
+import {writingRunArchiveFixture} from '../tests/helpers/writing-run-archive.mjs';
+
+await withWritingRunStore(writingRunArchiveFixture().store, async () => {
 
 const require = createRequire(import.meta.url);
 const generator = require('../packages/astro-knowledge/scripts/generate-sky-aspect-cards.js');
@@ -106,3 +110,5 @@ try {
   const count=requests.length;assert.equal((await generate({surface:'sky',mode:'feed',eventType:'aspect',facts:{}},false)).statusCode,401);assert.equal(requests.length,count);
   console.log('PASS Sky/Calendar standard: exact owner source, 10 actual-handler provider cases, both CMS provider transports, full source/fact delivery, optional endings/paragraphs, retained scope/schema/owner boundary. All provider responses intercepted; zero paid calls.');
 } finally {globalThis.fetch=originalFetch;}
+
+});

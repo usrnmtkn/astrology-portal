@@ -7206,7 +7206,14 @@ for (const theme of ["light", "dark"] as const) {
         await expect(section).toBeVisible();
         const empty = page.getByRole("region", { name: "Empty houses", exact: true });
         await expect(empty).toBeVisible();
-        expect((await section.boundingBox())!.y).toBeGreaterThanOrEqual((await empty.boundingBox())!.y + (await empty.boundingBox())!.height);
+        // Hydration can move both sections between separate protocol calls.
+        // Measure their strict no-overlap relationship in the same frame.
+        await expect.poll(() => section.evaluate(element => {
+          const references = [...element.ownerDocument.querySelectorAll<HTMLElement>(".natal-empty-houses")]
+            .filter(reference => reference.getClientRects().length);
+          if (references.length !== 1) return Number.NEGATIVE_INFINITY;
+          return element.getBoundingClientRect().top - references[0].getBoundingClientRect().bottom;
+        })).toBeGreaterThanOrEqual(0);
         await expect(section.getByRole("button")).toHaveCount(7);
         await expect(section.locator("details,summary,.planet-placement-list")).toHaveCount(0);
         expect(await section.evaluate(element => {

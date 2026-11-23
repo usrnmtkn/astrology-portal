@@ -79,7 +79,7 @@ export async function weeklyEditorialOperation({action,row:initial,persist,prepa
   // reservation remains held until retrieval or explicit aged release.
   try{
     const {response,payload}=await startHoroscopeResponse({config,role,request,instructions,
-      context:{editionId:row.id,operationId:operation.id,requestHash:operation.requestHash}});
+      context:{period:row.sections.horoscopeEdition.window.period,contentKey:row.content_key,editionId:row.id,operationId:operation.id,requestHash:operation.requestHash}});
     if(!response.ok||typeof payload.id!=='string'||!/^resp_[A-Za-z0-9_-]+$/u.test(payload.id))
       throw new AdminHttpError(503,'The shared request outcome is unknown. Check saved progress before retrying.');
     await save({...gate,pending:{...operation,state:'running',responseId:payload.id}});

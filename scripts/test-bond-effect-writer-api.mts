@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
 import { Readable } from "node:stream";
 import fs from "node:fs";
+import {withWritingRunStore} from '../src/astro-writing/writingRunArchive.cjs';
+import {writingRunArchiveFixture} from '../tests/helpers/writing-run-archive.mjs';
+
+await withWritingRunStore(writingRunArchiveFixture().store, async () => {
 
 process.env.CONTENT_GENERATION_SECRET = "bond-writer-fixture";
 process.env.SUPABASE_URL = "https://bond-writer.invalid";
@@ -54,3 +58,5 @@ try {
   assert.equal(calls, 2);
   console.log("PASS actual bond writer handler: exact and grouped aspects, governed meaning, full owner evidence, name agreement, no save/publish, and authorization.");
 } finally { globalThis.fetch = originalFetch; }
+
+});

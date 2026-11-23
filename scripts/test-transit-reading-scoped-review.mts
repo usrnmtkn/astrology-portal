@@ -8,6 +8,10 @@ import { generateGovernedTransitReading, isTransitReadingJudgeBlockedError, type
 import { withTransitReadingCheckpoints as resume, previousTransitReadingCorrectionFeedback as priorFeedback,
   TransitReadingCheckpointYield, checkpointTransitReadingModel as step } from "../api/_lib/transit-reading-checkpoints.js";
 import type { SupabaseReportAdmin } from "../api/_lib/supabase-report-admin.js";
+import {withWritingRunStore} from '../src/astro-writing/writingRunArchive.cjs';
+import {writingRunArchiveFixture} from '../tests/helpers/writing-run-archive.mjs';
+
+await withWritingRunStore(writingRunArchiveFixture().store, async () => {
 
 // The actual governed kernel, owner corpus, model adapter and review/correction
 // pipeline run here. Only HTTP/storage are synthetic. Never contacts a provider.
@@ -229,3 +233,5 @@ try {
   globalThis.fetch = originalFetch;
   envKeys.forEach((key, i) => { if (priorEnv[i] === undefined) delete process.env[key]; else process.env[key] = priorEnv[i]; });
 }
+
+});

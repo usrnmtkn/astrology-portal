@@ -12,6 +12,7 @@ export function callOpenAIResponses<T = {status?: string; id?: unknown; [key: st
   governedInstructions?: string;
   surface?: string;
   family?: string;
+  archiveContext?: Record<string, unknown>;
   fetchImpl?: typeof fetch;
 }): Promise<{
   response: Response;
@@ -23,5 +24,5 @@ export function callOpenAIResponses<T = {status?: string; id?: unknown; [key: st
 export const startStoredWritingResponse: typeof callOpenAIResponses;
 export function storedWritingResponse(options: {apiKey: string; responseId: string; cancel?: boolean; fetchImpl?: typeof fetch}): Promise<Response>;
 
-export function startStoredNativeWritingResponse(options: { provider: string; apiKey: string; role: AstrologyProseRole; request: Record<string, unknown>; governedInstructions: string; surface?: string; family?: string; signal?: AbortSignal; fetchImpl?: typeof fetch }): Promise<Response>;
+export function startStoredNativeWritingResponse(options: { provider: string; apiKey: string; role: AstrologyProseRole; request: Record<string, unknown>; governedInstructions: string; surface?: string; family?: string; signal?: AbortSignal; archiveContext?: Record<string, unknown>; fetchImpl?: typeof fetch }): Promise<Response>;
 export function storedNativeWritingResponse(options: { provider: string; apiKey: string; responseId: string; cancel?: boolean; signal?: AbortSignal; fetchImpl?: typeof fetch }): Promise<Response>;

@@ -141,6 +141,18 @@ try {
   assert(graph.reaches(['tests/test.mjs'],new Set(['src/shared.ts'])),'Transitive source and JS-to-TS resolution');
   assert(graph.reaches(['tests/test.mjs'],new Set(['apps/web/supabase/migrations/example.sql'])),'SQL dependency');
   assert(graph.reaches(['tests/sql-only.mts'],new Set(['apps/web/supabase/migrations/example.sql'])),'Literal migration catalog');
+  write('tests/admin-directory.mts',"import fs from 'node:fs'; fs.readdirSync('api/admin');");
+  write('tests/admin-directory-wrapper.mts',"import './admin-directory.mts';");
+  write('tests/admin-directory-label.mts',"const label='api/admin';");
+  write('api/admin/existing.ts',"import '../../src/shared';");
+  const directoryGraph=createDependencyGraph(directory,[...fixtureFiles]);
+  for(const entry of ['api/admin/new.ts','api/admin/removed.ts']) {
+    assert(directoryGraph.reaches(['tests/admin-directory-wrapper.mts'],new Set([entry])),`${entry} must invalidate stale directory-consumer evidence even when absent from the current file list`);
+  }
+  assert(directoryGraph.reaches(['tests/admin-directory.mts'],new Set(['src/shared.ts'])),'Dynamically enumerated handler imports remain dependencies');
+  assert(!directoryGraph.reaches(['tests/admin-directory.mts'],new Set(['api/other/new.ts'])),'Unrelated directories do not invalidate this consumer');
+  assert(directoryGraph.reaches(['tests/admin-directory.mts'],new Set(['api/admin/new-directory/new.ts'])),'A new descendant can introduce a directory entry absent from the tracked file list');
+  assert(!directoryGraph.reaches(['tests/admin-directory-label.mts'],new Set(['api/admin/new.ts'])),'A directory label is not a filesystem read');
   assert(!graph.reaches(['tests/test.mjs'],new Set(['src/other.ts'])));
 
   write('src/types-only.ts',"import type {Value} from './shared.js'; export {type Value as Other} from './shared.js';");

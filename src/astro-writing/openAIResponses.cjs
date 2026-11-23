@@ -1,4 +1,5 @@
 "use strict";
+const {archivedWritingFetch} = require('./writingRunArchive.cjs');
 
 const {
   candidateCardAstrologyWritingInstructions,
@@ -117,6 +118,7 @@ async function callOpenAIResponses({
   governedInstructions = "",
   surface = "",
   family = "",
+  archiveContext = {},
   fetchImpl = globalThis.fetch
 }) {
   if (!apiKey) throw new Error("OpenAI Responses request requires an API key.");
@@ -141,14 +143,14 @@ async function callOpenAIResponses({
       family: context.family
     })
   };
-  const response = await fetchImpl("https://api.openai.com/v1/responses", {
+  const response = await archivedWritingFetch("https://api.openai.com/v1/responses", {
     method: "POST",
     headers: {
       authorization: `Bearer ${apiKey}`,
       "content-type": "application/json"
     },
     body: JSON.stringify(body)
-  });
+  }, {provider:'openai',role,surface:context.surface,family:context.family,context:archiveContext,fetchImpl});
   const payload = await response.json();
   return { response, payload, role, instructions: body.instructions };
 }
@@ -193,7 +195,7 @@ function nativeWritingHeaders(provider, apiKey) {
     ? {"content-type":"application/json", "x-goog-api-key":apiKey, "Api-Revision":"2026-05-20"}
     : {"content-type":"application/json", "x-api-key":apiKey, "anthropic-version":"2023-06-01"};
 }
-async function startStoredNativeWritingResponse({provider, apiKey, role, request, governedInstructions, surface, family, signal, fetchImpl=globalThis.fetch}) {
+async function startStoredNativeWritingResponse({provider, apiKey, role, request, governedInstructions, surface, family, signal, archiveContext={}, fetchImpl=globalThis.fetch}) {
   if (!governedInstructions?.trim()) throw new Error("A stored writing request needs its governed instructions.");
   const canonical = governedInstructionsForRole(role, {governedInstructions, surface, family});
   const system = provider === "gemini" ? request?.system_instruction : request?.system;
@@ -206,7 +208,8 @@ async function startStoredNativeWritingResponse({provider, apiKey, role, request
   }
   if (provider === "anthropic" && request.stream !== true) throw new Error("A stored Claude writing request needs its reserved stream transport.");
   const headers = nativeWritingHeaders(provider, apiKey);
-  return fetchImpl(NATIVE_WRITING_ENDPOINTS[provider], {method:"POST", headers, body:JSON.stringify(request), signal});
+  return archivedWritingFetch(NATIVE_WRITING_ENDPOINTS[provider], {method:"POST", headers, body:JSON.stringify(request), signal},
+    {provider,role,surface,family,context:archiveContext,fetchImpl});
 }
 async function storedNativeWritingResponse({provider, apiKey, responseId, cancel=false, signal, fetchImpl=globalThis.fetch}) {
   if (provider !== "gemini" || !/^[A-Za-z0-9_-]{1,512}$/u.test(responseId ?? "")) throw new Error("A confirmed stored Gemini response is required.");

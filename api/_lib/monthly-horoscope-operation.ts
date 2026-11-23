@@ -66,7 +66,7 @@ export async function monthlyHoroscopeOperation({action,row:initialRow,persist,p
     const request=operation.phase==='synthesis'?preparedRequest:await hydrateWritingFeedbackRequest(preparedRequest,operation.receipt.feedback);
     operation={...operation,state:'starting',responseId:null,providerResult:null,requestHash:hash({request,instructions}),startedAt:new Date().toISOString()};
     await saveOperation(); // CAS reservation precedes each potentially billed request.
-    const {response,payload}=await startHoroscopeResponse({config:operation.config,role,request,instructions,context:{editionId:row.id,operationId:operation.id,requestHash:operation.requestHash}});
+    const {response,payload}=await startHoroscopeResponse({config:operation.config,role,request,instructions,context:{period:row.sections.horoscopeEdition.window.period,contentKey:row.content_key,editionId:row.id,operationId:operation.id,requestHash:operation.requestHash}});
     if(!response.ok){
       if(response.status>=400&&response.status<500)readHoroscopeProviderResult({...payload,status:'failed'},{format:operation.outputFormat,facts:operation.synthesisFacts});
       throw new AdminHttpError(503,'The request outcome is unknown. Check saved progress before continuing; a duplicate request will not be started.');

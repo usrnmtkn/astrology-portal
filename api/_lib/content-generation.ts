@@ -1,3 +1,4 @@
+import {archivedWritingFetch} from '../../src/astro-writing/writingRunArchive.cjs';
 import { GenerationProviderError } from "./generation-provider-error.js";
 import {writingExport} from '../../src/astro-writing/writingExport.mjs';
 import {approvedVoiceStyleReference,approvedVoiceStylePrompt} from '../../src/astro-writing/approvedVoiceStyle.mjs';
@@ -5405,6 +5406,7 @@ async function reviewColdRenderedContentWithOpenAI({
   const model = process.env.OPENAI_REVIEW_MODEL ?? process.env.OPENAI_JUDGE_MODEL ?? "gpt-5.6-terra";
   assertProductionRoleGate(productionGate, "COLD_REVIEWER", input, draft, meaningPlan);
   const { response, payload } = await callOpenAIResponses({
+    archiveContext: {surface: input.surface, family: input.eventType, contentKey: input.contentKey},
     apiKey,
     role: "COLD_REVIEWER",
     request: {
@@ -5458,6 +5460,7 @@ async function reviewGeneratedContentWithOpenAI({
   const model = process.env.OPENAI_REVIEW_MODEL ?? process.env.OPENAI_JUDGE_MODEL ?? "gpt-5.6-terra";
   assertProductionRoleGate(productionGate, "REVIEWER", input, draft, meaningPlan);
   const { response, payload } = await callOpenAIResponses({
+    archiveContext: {surface: input.surface, family: input.eventType, contentKey: input.contentKey},
     apiKey,
     role: "REVIEWER",
     ...editorialInstructionContext(input),
@@ -5536,6 +5539,7 @@ async function planGeneratedContentWithOpenAI({
   const reasoningEffort = configuredOpenAiReasoningEffort(model);
   assertProductionRoleGate(productionGate, "MEANING_PLANNER", input);
   const { response, payload } = await callOpenAIResponses({
+    archiveContext: {surface: input.surface, family: input.eventType, contentKey: input.contentKey},
     apiKey,
     role: "MEANING_PLANNER",
     ...editorialInstructionContext(input),
@@ -5610,6 +5614,7 @@ async function reviseGeneratedContentWithOpenAI({
   const reasoningEffort = configuredOpenAiReasoningEffort(model);
   assertProductionRoleGate(productionGate, "REVISER", input, draft, meaningPlan);
   const { response, payload } = await callOpenAIResponses({
+    archiveContext: {surface: input.surface, family: input.eventType, contentKey: input.contentKey},
     apiKey,
     role: "REVISER",
     ...editorialInstructionContext(input),
@@ -5689,6 +5694,7 @@ export async function writeSynastryBodyWithOpenAI(input: GenerateContentInput, r
   const gate = prepareProductionPreCallGate(projected);
   assertProductionRoleGate(gate, "WRITER", projected);
   return callOpenAIResponses({ apiKey: requireEnv("OPENAI_API_KEY"), role: "WRITER",
+    archiveContext: {surface: projected.surface, family: projected.eventType, contentKey: projected.contentKey},
     ...editorialInstructionContext(projected), request });
 }
 
@@ -5729,6 +5735,7 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
   recordLegacyPromptShadow(evidenceShadow, legacyPrompt);
   assertProductionRoleGate(productionGate, "WRITER", input);
   const { response, payload } = await callOpenAIResponses({
+    archiveContext: {surface: input.surface, family: input.eventType, contentKey: input.contentKey},
     apiKey,
     role: "WRITER",
     ...editorialInstructionContext(input),
@@ -5849,7 +5856,7 @@ export async function generateWithClaude(input: GenerateContentInput): Promise<S
       : [publicWriterPrompt, writingFeedback?.prompt].filter(Boolean).join("\n\n");
     if (attempt === 0) recordLegacyPromptShadow(evidenceShadow, legacyPrompt);
     assertProductionRoleGate(productionGate, "WRITER", input);
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
+    const response = await archivedWritingFetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
         "x-api-key": apiKey,
@@ -5887,7 +5894,7 @@ export async function generateWithClaude(input: GenerateContentInput): Promise<S
           name: "tldr_astro_generated_content"
         }
       })
-    });
+    }, {provider:'anthropic',role:'WRITER',surface:input.surface??'sky',family:input.eventType??'sky-article-slots',context:{contentKey:input.contentKey}});
 
     const payload = await response.json() as {
       id?: string;
@@ -6220,6 +6227,7 @@ export async function generateSkyArticleTemplateSlots(input: GenerateSkyArticleT
       ? process.env.OPENAI_INGRESS_REASONING_EFFORT ?? (model === defaultIngressOpenAiModel ? 'xhigh' : undefined) : undefined);
     assertProductionRoleGate(productionGate, "WRITER", generationInput);
     const { response, payload } = await callOpenAIResponses({
+      archiveContext: {surface: generationInput.surface, family: generationInput.eventType, contentKey: input.templateKey},
       apiKey,
       role: "WRITER",
       ...(datedIngress ? { surface: 'sky', family: 'sky-ingress-essay' } : {}),
@@ -6273,7 +6281,7 @@ export async function generateSkyArticleTemplateSlots(input: GenerateSkyArticleT
   const apiKey = requireEnv("ANTHROPIC_API_KEY");
   const model = process.env.ANTHROPIC_MODEL ?? defaultClaudeModel;
   assertProductionRoleGate(productionGate, "WRITER", generationInput);
-  const response = await fetch("https://api.anthropic.com/v1/messages", {
+  const response = await archivedWritingFetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: {
       "x-api-key": apiKey,
@@ -6294,7 +6302,7 @@ export async function generateSkyArticleTemplateSlots(input: GenerateSkyArticleT
       }],
       tool_choice: { type: "tool", name: "tldr_astro_sky_article_template_slots" }
     })
-  });
+  }, {provider:'anthropic',role:'WRITER',surface:generationInput.surface,family:generationInput.eventType,context:{contentKey:input.templateKey}});
   const payload = await response.json() as {
     id?: string;
     content?: Array<{ type?: string; name?: string; input?: { slotValues?: unknown } }>;

@@ -79,7 +79,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
     operation={id:randomUUID(),startedAt:new Date().toISOString(),actor,responseId:null,...prepared};
     // Compare-and-swap reserves the request before any paid dispatch, including concurrent tabs.
     await persist({...row.sections,run:{...row.sections.run,active:operation}});
-    const {response,payload}=await responses.startStoredWritingResponse({apiKey,role:'WRITER',surface:'calendar-daily',family:'calendar-daily',request:prepared.request,governedInstructions:prepared.instructions,fetchImpl:(url:any,options:any)=>fetch(url,{...options,signal:AbortSignal.timeout(25000)})});
+    const {response,payload}=await responses.startStoredWritingResponse({archiveContext:{contentKey:row.content_key,operationId:operation.id},apiKey,role:'WRITER',surface:'calendar-daily',family:'calendar-daily',request:prepared.request,governedInstructions:prepared.instructions,fetchImpl:(url:any,options:any)=>fetch(url,{...options,signal:AbortSignal.timeout(25000)})});
     if(!response.ok||typeof payload.id!=='string'||!/^resp_[A-Za-z0-9_-]+$/u.test(payload.id))throw new AdminHttpError(503,'No writer result was confirmed. The saved request stays reserved; no retry was made.');
     operation={...operation,responseId:payload.id};
     await persist({...row.sections,run:{...row.sections.run,active:operation}});

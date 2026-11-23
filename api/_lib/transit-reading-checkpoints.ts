@@ -1,3 +1,4 @@
+import {withWritingRunContext, WritingRunArchiveError} from '../../src/astro-writing/writingRunArchive.cjs';
 import { AsyncLocalStorage } from "node:async_hooks";
 import { createHash } from "node:crypto";
 import type { SupabaseReportAdmin } from "./supabase-report-admin.js";
@@ -12,6 +13,7 @@ export const TRANSIT_READING_INVOCATION_BUDGET_MS = 240_000;
 type Context = {
   admin: SupabaseReportAdmin;
   family: "you" | "friend";
+  surface?: string;
   jobId: string;
   attempt: number;
   step: number;
@@ -40,7 +42,7 @@ export class TransitReadingCheckpointStopped extends Error {
 }
 
 export function withTransitReadingCheckpoints<T>(
-  input: Pick<Context, "admin" | "family" | "jobId" | "attempt" | "onProgress"> & { deadline?: number },
+  input: Pick<Context, "admin" | "family" | "surface" | "jobId" | "attempt" | "onProgress"> & { deadline?: number },
   run: () => Promise<T>
 ): Promise<T> {
   return context.run({ ...input, reviewMode: transitReadingReviewMode(), releasePolicy: transitReadingReleasePolicy(), judgeCalls: { facts: 0, writing: 0 }, writerCalls: 0,
@@ -166,7 +168,7 @@ export async function checkpointTransitReadingModel<T>(
   let providerReturned = false;
   try {
     if (Date.now() >= scope.deadline) throw new TransitReadingCheckpointStopped("Report checkpoint reservation exhausted the worker time budget.");
-    const result = await call({ ...input, signal: controller.signal, disableFallback: true });
+    const result = await withWritingRunContext({surface:scope.surface??(scope.family==='friend'?'friends-transit':'you-transit'),jobId:scope.jobId,attempt:scope.attempt,step,checkpointId:reserved.id},()=>call({ ...input, signal: controller.signal, disableFallback: true }));
     providerReturned = true;
     const rows = await scope.admin.update<Checkpoint<T>>("transit_report_model_checkpoints", `id=eq.${reserved.id}&state=eq.started`, {
       state: "complete", response: result, completed_at: new Date().toISOString()
@@ -182,7 +184,8 @@ export async function checkpointTransitReadingModel<T>(
     // successful provider response may be ambiguous.
     // A thrown database/network error after the provider returns is also an
     // ambiguous persistence state, even if it is an ordinary Error instance.
-    const unsafeReplay = providerReturned || controller.signal.aborted || error instanceof TransitReadingCheckpointStopped;
+    const unsafeReplay = providerReturned || controller.signal.aborted || error instanceof TransitReadingCheckpointStopped
+      || error instanceof WritingRunArchiveError && error.phase === 'after_dispatch';
     const failedRows = await scope.admin.update("transit_report_model_checkpoints", `id=eq.${reserved.id}&state=eq.started`, {
       state: "failed", error: (error instanceof Error ? error.message : "Model step failed").slice(0, 2000),
       completed_at: new Date().toISOString()

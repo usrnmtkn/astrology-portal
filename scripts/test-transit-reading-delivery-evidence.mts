@@ -9,6 +9,10 @@ import { decideTransitReadingRelease, transitReadingReleasePolicy } from "../api
 import { assertGeneratedReportJudgeEvidence } from "../api/_lib/transit-reading-judge-evidence.ts";
 import { reportJudgeSourcePointerSchema, resolveReportJudgeSourcePointers } from "../api/_lib/transit-reading-source-citations.ts";
 import { transitReadingModelRequestHash } from "../api/_lib/transit-reading-checkpoints.ts";
+import {withWritingRunStore} from '../src/astro-writing/writingRunArchive.cjs';
+import {writingRunArchiveFixture} from '../tests/helpers/writing-run-archive.mjs';
+
+await withWritingRunStore(writingRunArchiveFixture().store, async () => {
 
 const draft = { headline: "Synthetic record", summary: "The shipment remains pending.",
   body: "The shipment arrives Friday. If a decision is needed, check its status. The arrangement is asking you to comply. It is settled and stable." };
@@ -113,3 +117,5 @@ try {
   }
 }
 console.log("Evidence delivery: score independence, claim evidence, rule scope, schema, historical isolation and prompts passed. No semantic calibration claim.");
+
+});
