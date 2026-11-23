@@ -88,6 +88,16 @@ exact request bodies, selected evidence, writer/judge history, profiles and
 feedback are excluded. The newer Synastry body path now carries its content key
 into the archive and verifies the exact dispatched request through fixture storage.
 The admission, workflow syntax, drift and public synchronization contracts pass.
+The combined `1e6520d676aa90160c8a3c589676ec6e1fc54f86` preflight passed all
+12 canonical build phases and source, built Web/Studio privacy, and CSS checks.
+Its first API batch exposed three lunar-writer fixture failures: the isolated
+Lunation store did not model the new archive table. The helper now uses the
+existing synthetic archive store; complete lunar writing, rejection, and saved
+writing reruns passed, including dispatched request and operation correlation.
+A separate model-choice launch failed at the sandbox IPC prerequisite and passed
+unchanged outside that sandbox. These initial failures remain recorded; they do
+not replace the required corrected-candidate inventory or hosted gates.
+
 Complete affected-consumer preflight, canonical builds, hosted exact-head gates
 and production acceptance remain pending at this integration checkpoint. Earlier
 local/source receipts retain their original revision and scope.
