@@ -298,9 +298,12 @@ test("sign out during migration cannot restore Friends", async ({ page }) => {
   await page.getByRole("menuitem", { name: "Account", exact: true }).click();
   await page.getByRole("button", { name: "Sign out", exact: true }).click();
   await expect(page.getByRole("button", { name: `Open ${fixtureFriendName}`, exact: true })).not.toBeVisible();
+  await page.getByRole("button", { name: "Friends", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Sign in to see your friends", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: `Open ${fixtureFriendName}`, exact: true })).not.toBeVisible();
   await page.waitForTimeout(3500);
   await expect(page.getByRole("button", { name: `Open ${fixtureFriendName}`, exact: true })).not.toBeVisible();
-  await expect(page.getByRole("button", { name: "Friends", exact: true })).not.toBeVisible();
+  await expect(page.getByRole("heading", { name: "Sign in to see your friends", exact: true })).toBeVisible();
 });
 
 test("Friends report request carries complete approved detail beyond its card previews", async ({ page }) => {
