@@ -177,6 +177,12 @@ Keep the scope affected; this rule does not require a routine complete-suite run
   measure budgets through the canonical command. Even a two-byte
   excess in the applicable profile is a failure; a budget change needs its
   existing measured-cost approval rather than an automatic cap increase.
+  Git tree equality alone does not establish identical budget inputs: the
+  knowledge build's `generatedAt` changes dependency chunk hashes and imported
+  filenames. A same-source, same-profile control reproduced a seven-byte gzip
+  change with identical code after filename normalization. Preserve meaningful
+  headroom in every profile and require the actual merge build to pass; do not
+  treat an earlier near-limit measurement as proof for regenerated artifacts.
 - **Runner and preview readiness:** validate the selected Playwright image and
   browser setup. For local checks, verify the actual launcher's Node architecture
   matches its native dependencies, including subprocesses launched by Python.
