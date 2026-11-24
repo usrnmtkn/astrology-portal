@@ -1,6 +1,7 @@
 import {showSavedHoroscopeEditions} from '../helpers/horoscope-edition-navigation';
 import {test,expect,type Page} from '@playwright/test';
 import {decodeWeeklyHistoryRow} from '../../api/_lib/horoscope-history-storage';
+import {syntheticHoroscopeVoiceReview} from '../helpers/horoscope-voice-review-fixture.mjs';
 import {fork} from 'node:child_process';
 import path from 'node:path';
 import {routeStudioInventoryApi} from '../helpers/studio-inventory-route';
@@ -39,7 +40,7 @@ async function fixture(page:Page,missing=1,unknown=false,period='weekly',session
     if(unknown)await call({method:'writer-state',body:{unknownNext:true}});
     if(startWriting){const start=period==='seasonal'?await call({method:'legacy-seasonal-request',body:{id,sign:edition.passages[12-missing].sign,approvedPlanHash:plan.payload.plan.planHash}}):await action('generate',{sign:edition.passages[12-missing].sign,approvedPlanHash:plan.payload.plan.planHash});expect(start.status).toBe(unknown?200:202);}
     if(unknown)await call({method:'interrupted-horoscope-start',body:{id}});
-    const state={failPoll:false,failRead:false,failDiagnosis:false,conflictPoll:false,holdPoll:false,held:false,release:()=>{}};
+    const state={failPoll:false,failRead:false,failDiagnosis:false,conflictPoll:false,holdPoll:false,held:false,release:()=>{},reviewResult:null as ((request:any)=>any)|null};
     await routeStudioInventoryApi(page,{call:async(message)=>{
       if(state.failRead&&message.method==='GET'&&message.url&&new URL(message.url,'http://fixture').searchParams.has('id'))return {status:503,payload:{ok:false,error:'Fixture connection unavailable.'}};
       return call(message);
@@ -49,6 +50,13 @@ async function fixture(page:Page,missing=1,unknown=false,period='weekly',session
       if(body.action==='diagnose'&&state.failDiagnosis){state.failDiagnosis=false;await route.fulfill({status:503,json:{ok:false,error:'Fixture diagnosis unavailable.'}});return true;}
       if(body.action==='poll'&&state.failPoll){state.failPoll=false;await route.fulfill({status:503,json:{ok:false,error:'Fixture connection interrupted.'}});return true;}
       if(body.action==='poll'&&state.conflictPoll){state.conflictPoll=false;expect((await action('poll')).status).toBe(202);await finishReview();}
+      if(body.action==='poll'&&state.reviewResult){
+        const active=(await latest()).source_snapshot.horoscopeGeneration.active;
+        if(active?.phase==='review'&&active.reviewRequest){
+          const result=state.reviewResult(active.reviewRequest);state.reviewResult=null;
+          await call({method:'writer-state',body:{nextReviewResult:result}});
+        }
+      }
       const result=await call({method:'writing',body,...(session?{headers:route.request().headers()}:{})});
       if(body.action==='poll'&&state.holdPoll&&result.status<300){state.holdPoll=false;state.held=true;await new Promise<void>(resolve=>{state.release=resolve;});}
       await route.fulfill({status:result.status,json:result.payload}).catch(()=>{});return true;
@@ -65,7 +73,14 @@ for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
   const f=await fixture(page,2,false,'weekly',false,false);try{
    const finding={label:'CORRECTIO',field:'body',quote:'You can read the complete aquarius fixture opening.',paragraph:'You can read the complete aquarius fixture opening.',reason:'Synthetic contextual diagnosis for this fixture.',readerConsequence:'The synthetic correction adds no meaning.',meaningTest:'No factual precision is supplied in this fixture.'};
    const review={checks:['CORRECTIO','TRICOLON','PURPLE_PROSE'].map(label=>({label,outcome:label==='CORRECTIO'?'fail':'pass',reason:'Synthetic transport fixture.'})),findings:[finding]};
-   await f.call({method:'writer-state',body:{nextReviewResult:{status:'completed',output:[{type:'message',content:[{type:'output_text',text:JSON.stringify(review)}]}]}}});
+   // Complete the current intercepted schema from its exact saved request.
+   // These synthetic passes exercise transport, not editorial quality.
+   f.state.reviewResult=request=>{
+    const input=JSON.parse(request.input),paragraph=input.candidate.body.split(/\n\s*\n/u).at(-1);
+    const weeklyDirection=request.text.format.schema.properties.weeklyDirection?{weeklyDirection:Object.fromEntries(['concern','stakes','observation','ending'].map(key=>[key,{outcome:'pass',quote:paragraph,paragraph,reason:'Synthetic transport fixture.'}]))}:{};
+    const voiceReview=request.text.format.schema.properties.voiceReview?{voiceReview:syntheticHoroscopeVoiceReview(input)}:{};
+    return {status:'completed',output:[{type:'message',content:[{type:'output_text',text:JSON.stringify({...review,...weeklyDirection,...voiceReview})}]}]};
+   };
    const studio=await f.open();
    await expect(studio.getByText(/Up to 6 paid AI requests/)).toBeVisible();
    await studio.getByLabel('I approve this writing plan for generation.').check();
