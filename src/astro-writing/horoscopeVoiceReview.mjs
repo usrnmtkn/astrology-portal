@@ -59,7 +59,9 @@ export function horoscopeVoiceReferences(evidence) {
   }
   return references;
 }
-const eligibleIndices=text=>voiceParagraphs(text).flatMap((p,i)=>/^(?:aries|taurus|gemini|cancer|leo|virgo|libra|scorpio|sagittarius|capricorn|aquarius|pisces)(?:\s*(?:&|\/)?\s*(?:[a-z]+\s+)?rising)?\s*$/iu.test(p.trim())?[]:[i]);
+const signTitle=/^(?:\d{4}-\d{2}-\d{2}\s*·\s*)?(aries|taurus|gemini|cancer|leo|virgo|libra|scorpio|sagittarius|capricorn|aquarius|pisces)(?:\s*(?:&|\/)\s*\1)?(?:\s+rising)?\s*$/iu;
+const headingOnly=text=>text.trim().split(/\r?\n/u).every(line=>/^#{1,6}[ \t]+\S/u.test(line.trim())||signTitle.test(line.trim()));
+const eligibleIndices=text=>voiceParagraphs(text).flatMap((p,i)=>headingOnly(p)?[]:[i]);
 export const horoscopeVoiceReferenceInventory=evidence=>horoscopeVoiceReferences(evidence).map(({id,role,sourcePath,location,text})=>({id,role,sourcePath,location,eligibleParagraphs:eligibleIndices(text)}));
 
 export function validateHoroscopeVoiceReview(value,candidate,evidence) {
@@ -80,7 +82,7 @@ export function validateHoroscopeVoiceReview(value,candidate,evidence) {
     if(!Number.isInteger(v.candidateParagraph)||!Number.isInteger(v.referenceParagraph)||!cp||!rp||!reference
       ||!eligibleIndices(reference.text).includes(v.referenceParagraph)||reference.text===candidate.body
       ||typeof v.candidateQuote!=='string'||!v.candidateQuote.trim()||!cp.includes(v.candidateQuote)
-      ||typeof v.referenceQuote!=='string'||!v.referenceQuote.trim()||!rp.includes(v.referenceQuote)
+      ||typeof v.referenceQuote!=='string'||!v.referenceQuote.trim()||headingOnly(v.referenceQuote)||!rp.includes(v.referenceQuote)
       ||key==='ending'&&v.candidateParagraph!==paragraphs.length-1)invalid();
     result[key]={...v,candidateParagraphText:cp,referenceParagraphText:rp,referenceRole:reference.role};
   }

@@ -84,6 +84,20 @@ test('the named Weekly V2 primary remains eligible with exact prose and its orig
   assert.equal(refs[0].role,'current owner-designated complete example');
   assert(!refs[0].text.includes('APPROVED EXAMPLE'));
 });
+test('Markdown, dated and multiline sign headings cannot supply voice evidence',()=>{
+  for(const title of ['#### Capricorn / Capricorn Rising','Aries\nAries & Aries Rising','2026-11-23 · Aries & Aries Rising','### Original source heading']){
+    const text=title+'\n\nThe complete source observation develops here.';
+    const e={...evidence,ownerExamples:[{id:'original',text,role:'primary owner passage'}]};
+    assert.deepEqual(horoscopeVoiceReferenceInventory(e)[0].eligibleParagraphs,[1]);
+    const report=syntheticHoroscopeVoiceReview({candidate,evidence:e});
+    assert.equal(report.author_voice.referenceParagraph,1);
+  }
+  const text='#### Capricorn / Capricorn Rising\nThe complete source observation develops here.';
+  const e={...evidence,ownerExamples:[{id:'original',text,role:'primary owner passage'}]};
+  const report=syntheticHoroscopeVoiceReview({candidate,evidence:e});
+  report.author_voice.referenceQuote='#### Capricorn / Capricorn Rising';
+  assert.throws(()=>validateHoroscopeVoiceReview(report,candidate,e),/invalid_horoscope_voice_review/u);
+});
 
 const benchmark=()=>({cases:['rejected','reference','unlabelled'].map(id=>({id,candidate:{body:`Complete synthetic ${id} reading.`}})),
   labels:['rejected','reference','unlabelled'].map((id,i)=>({id,textSha256:hash(`Complete synthetic ${id} reading.`),

@@ -73,7 +73,7 @@ function proseFinding(f:any,title:string,key:string|number) {
 
 function HoroscopeReviewHolds({holds,locked,active,canRecover,onRecover,onEdit,onReject}:{holds:[string,any][];locked:boolean;active:boolean;canRecover:(held:any)=>boolean;onRecover:(sign:string)=>void;onEdit:(sign:string,held:any)=>void;onReject:(sign:string)=>void}) {
   return <>{holds.map(([sign,held])=><section key={sign} aria-label={`${horoscopeSignLabel(sign)} prose review`}>
-    <h3>{horoscopeSignLabel(sign)} {held.code==='voice_review_required'?'needs voice review':['rhetorical_pattern','weekly_direction_drift'].includes(held.code)?'needs a prose edit':'prose check did not finish'}</h3><p>{held.message}</p>
+    <h3>{horoscopeSignLabel(sign)} {held.code==='voice_review_required'?'needs voice review':['rhetorical_pattern','weekly_direction_drift','daily_output_boundary'].includes(held.code)?'needs a prose edit':'prose check did not finish'}</h3><p>{held.message}</p>
     {(held.review?.rhetoric?.findings??[]).map((f:any,i:number)=>proseFinding(f,f.label,i))}
     {Object.entries(held.review?.weeklyDirection??{}).map(([key,f]:any)=>f.outcome==='fail'?proseFinding(f,key,key):null)}
     {Object.entries(held.review?.voiceReview??{}).map(([key,f]:any)=>f.outcome==='pass'?null:proseFinding(f,

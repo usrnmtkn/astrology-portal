@@ -5,8 +5,9 @@ import {routeStudioInventoryApi} from '../helpers/studio-inventory-route';
 import {showSavedHoroscopeEditions} from '../helpers/horoscope-edition-navigation';
 import {emptyHoroscopeEdition,horoscopeEditionBody,horoscopeEditionKey} from '../../apps/web/src/content/horoscopeEditions.mjs';
 import {syntheticHoroscopeVoiceReview} from '../helpers/horoscope-voice-review-fixture.mjs';
+import {decodeWeeklyHistoryRow} from '../../api/_lib/horoscope-history-storage';
 
-for(const [width,theme] of [[390,'light'],[1440,'dark']] as const){
+for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dark']] as const){
  for(const kind of ['boundary','voice'])test(`Daily ${kind} hold preserves editing and reload ${width} ${theme}`,async({page})=>{
   const child=fork(path.resolve('tests/helpers/sky-article-save-api.mts'),[],{env:{...process.env,HOROSCOPE_WRITER_FIXTURE:'1'},execArgv:['--import','tsx'],stdio:['ignore','pipe','pipe','ipc']});
   let sequence=0,stderr='';const pending=new Map<number,any>();
@@ -50,6 +51,7 @@ for(const [width,theme] of [[390,'light'],[1440,'dark']] as const){
     await expect(held.locator('blockquote').first()).toHaveText(candidate.body.split('\n\n').at(-1)!);
     const comparison=held.locator('details summary');await comparison.click();
     await expect(held.locator('details[open] blockquote')).toBeVisible();
+    await expect(held.locator('details[open] blockquote')).not.toHaveText(/^#{1,6}\s/u);
    }
    const style=await heading.evaluate(el=>{const s=getComputedStyle(el);return [s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing,s.margin,s.textAlign];});
    await page.screenshot({path:`test-results/daily-${kind}-held-${width}-${theme}.png`,fullPage:true});
@@ -62,7 +64,7 @@ for(const [width,theme] of [[390,'light'],[1440,'dark']] as const){
    await studio.getByRole('button',{name:'Save edition draft',exact:true}).click();
    await studio.getByRole('button',{name:'4 · Publish',exact:true}).click();
    await expect(studio.getByRole('button',{name:'Publish edition',exact:true})).toBeDisabled();
-   const latest=async()=>(await call({method:'rows'})).find((r:any)=>r.id===id);
+   const latest=async()=>decodeWeeklyHistoryRow((await call({method:'rows'})).find((r:any)=>r.id===id));
    let saved=await latest();expect(saved.status).toBe('DRAFT');expect(saved.sections.horoscopeEdition.passages[0].body).toBe(edited);
    expect(saved.source_snapshot.horoscopeGeneration.candidateHolds.aries).toBeUndefined();
    expect(saved.sections.horoscopeEdition.passages.slice(1)).toEqual(edition.passages.slice(1));
