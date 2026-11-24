@@ -4,6 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { gunzipSync } from "node:zlib";
 import { previewCompressionPlugin } from "./preview-compression-plugin.mjs";
+import './test-static-brotli-assets.mjs';
 
 const directory = await mkdtemp(join(tmpdir(), "reader-preview-"));
 try {

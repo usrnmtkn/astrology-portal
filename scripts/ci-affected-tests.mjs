@@ -27,6 +27,19 @@ const uiSurfaces = [
   ['reports?', /(?:features\/reports\/|components\/reports\/|routes\/ReportRoute\.|styles\/(?:reports?-|you-reports\.))/u]
 ];
 
+export function configuredBrowserSpecs(source, specs) {
+  const directory=path.posix.normalize(source.match(/\btestDir:\s*['"]([^'"]+)['"]/u)?.[1]??'tests/visual').replace(/\/$/u,'');
+  const available=specs.filter(file=>path.posix.dirname(file)===directory);
+  const names=specsSelectedByConfig(source,available.map(file=>path.posix.basename(file)));
+  if(!names.length)return [];
+  assert(/^tests\/(?:visual|studio-auth)$/u.test(directory),'Unsupported browser test directory');
+  return names.map(name=>{
+    const file=`${directory}/${name}`;
+    assert(available.includes(file),`Configured browser source must be tracked: ${file}`);
+    return file;
+  });
+}
+
 export function browserJobCatalog(root, scripts, specs) {
   const workflow = readFileSync(path.join(root,'.github/workflows/visual-smoke.yml'),'utf8');
   const source = workflow.slice(workflow.indexOf('jobs:\n')+6);
@@ -36,9 +49,9 @@ export function browserJobCatalog(root, scripts, specs) {
   for (const [,name,body] of sections) {
     if (['scope','browser-release-gate'].includes(name)) continue;
     const text = expandNpmScripts(expandMatrixValues(body),scripts);
-    const selected = new Set(specs.filter(file => text.includes(path.basename(file))));
+    const selected = new Set(specs.filter(file => text.includes(file)));
     for (const config of configs.filter(file => text.includes(file))) {
-      for (const spec of specsSelectedByConfig(readFileSync(path.join(root,config),'utf8'),specs.map(file=>path.basename(file)))) selected.add(`tests/visual/${spec}`);
+      for (const spec of configuredBrowserSpecs(readFileSync(path.join(root,config),'utf8'),specs)) selected.add(spec);
     }
     jobs[name] = [...selected].sort();
   }
@@ -206,7 +219,7 @@ export function createAffectedPlan({root=process.cwd(),files,head,base,previousP
   apiCommandShards(commands.join(' && '));
   const tracked=execFileSync('git',['ls-files','-z'],{cwd:root,encoding:'utf8'}).split('\0').filter(Boolean);
   const universe=[...new Set([...tracked,...files])];
-  const specs=tracked.filter(file=>/^tests\/visual\/[^/]+\.spec\.ts$/u.test(file)&&existsSync(path.join(root,file)));
+  const specs=tracked.filter(file=>/^tests\/(?:visual|studio-auth)\/[^/]+\.spec\.ts$/u.test(file)&&existsSync(path.join(root,file)));
   const jobs=browserJobCatalog(root,pkg.scripts,specs);
   const runnableSpecs=new Set(Object.values(jobs).flat());
   const graph=createDependencyGraph(root,universe);
@@ -225,8 +238,8 @@ export function createAffectedPlan({root=process.cwd(),files,head,base,previousP
       for(const command of commands)if(graph.reaches(commandSources(command,pkg.scripts),new Set([file])))api.add(command);
       continue;
     }
-    if(file.startsWith('tests/visual/')) {
-      const snapshot=file.match(/^(tests\/visual\/[\w.-]+\.spec\.ts)-snapshots\//u)?.[1];
+    if(/^tests\/(?:visual|studio-auth)\//u.test(file)) {
+      const snapshot=file.match(/^(tests\/(?:visual|studio-auth)\/[\w.-]+\.spec\.ts)-snapshots\//u)?.[1];
       if(runnableSpecs.has(snapshot??file))selected.add(snapshot??file);
       continue;
     }
@@ -248,7 +261,7 @@ export function createAffectedPlan({root=process.cwd(),files,head,base,previousP
     for(const spec of runnableSpecs)if(graph.reachesBrowser([spec],changed,webUi.test(file))){selected.add(spec);known=true;browserKnown=true;}
     if(/^playwright\..*\.config\.ts$/u.test(file)) {
       if(file==='playwright.config.ts')for(const spec of runnableSpecs)selected.add(spec);
-      else for(const spec of specsSelectedByConfig(readFileSync(path.join(root,file),'utf8'),specs.map(file=>path.basename(file))))selected.add(`tests/visual/${spec}`);
+      else for(const spec of configuredBrowserSpecs(readFileSync(path.join(root,file),'utf8'),specs))selected.add(spec);
       continue;
     }
     if(file.startsWith('apps/admin/')) {
@@ -279,7 +292,7 @@ export function createAffectedPlan({root=process.cwd(),files,head,base,previousP
   }
   if(all){commands.forEach(command=>api.add(command));runnableSpecs.forEach(spec=>selected.add(spec));build=true;}
   const apiCommands=commands.filter(command=>api.has(command));
-  const postgres=all||files.some(file=>!file.startsWith('tests/visual/')&&/content.*publication|generated-content\.ts$|content_studio|private_revisions.*\.sql$|test-content-studio-publication-concurrency/u.test(file));
+  const postgres=all||files.some(file=>!/^tests\/(?:visual|studio-auth)\//u.test(file)&&/content.*publication|generated-content\.ts$|content_studio|private_revisions.*\.sql$|test-content-studio-publication-concurrency/u.test(file));
   const weeklyPostgres=all||files.some(file=>/weekly.*checkpoint|test-weekly-checkpoint-postgres/u.test(file));
   const variables=all||files.some(file=>/studio[-/]variable|studioVariable/u.test(file));
   const shards=apiCommands.length?apiCommandShards(apiCommands.join(' && ')): [[],[],[]];
@@ -310,7 +323,8 @@ if(import.meta.url===pathToFileURL(process.argv[1]??'').href) {
     process.exitCode=report.status==='PASS'?0:1;
   } else {
   const outputs={test_plan:JSON.stringify(plan),api_needed:String(plan.apiShards.length>0),api_shards:JSON.stringify(plan.apiShards)};
-  for(const job of Object.keys(browserJobCatalog(process.cwd(),JSON.parse(readFileSync('package.json','utf8')).scripts,plan.browserSpecs)))outputs[job.replaceAll('-','_')]=String(plan.browserJobs.includes(job));
+  const catalogSpecs=execFileSync('git',['ls-files','-z'],{encoding:'utf8'}).split('\0').filter(file=>/^tests\/(?:visual|studio-auth)\/[^/]+\.spec\.ts$/u.test(file)&&existsSync(file));
+  for(const job of Object.keys(browserJobCatalog(process.cwd(),JSON.parse(readFileSync('package.json','utf8')).scripts,catalogSpecs)))outputs[job.replaceAll('-','_')]=String(plan.browserJobs.includes(job));
   const lines=Object.entries(outputs).map(([key,value])=>`${key}=${value}`).join('\n')+'\n';
   if(process.env.GITHUB_OUTPUT)appendFileSync(process.env.GITHUB_OUTPUT,lines);
   console.log(JSON.stringify(process.argv[2]==='--json'?plan:{head:plan.head,changedFiles:plan.files.length,apiCommands:plan.apiCommands.length,apiShards:plan.apiShards,browserSpecs:plan.browserSpecs.length,browserJobs:plan.browserJobs,reasons:plan.reasons}));

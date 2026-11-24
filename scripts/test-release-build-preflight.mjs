@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import './test-checked-web-build.mjs';
 import {readFileSync} from 'node:fs';
 import {releaseBuildEnvironment,releaseBuildPreflight} from './release-build-preflight.mjs';
 

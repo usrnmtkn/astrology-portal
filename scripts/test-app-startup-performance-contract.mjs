@@ -20,6 +20,10 @@ const bundle = {
     facadeModuleId: "/repo/apps/web/src/App.tsx", dynamicImports: ["assets/article.js"]
   }),
   "assets/react.js": chunk("assets/react.js", ["assets/app.js"]),
+  "assets/writing.js": chunk("assets/writing.js", ["assets/react.js", "assets/markdown.js"], {
+    modules: { "/repo/src/shared/components/FormattedWritingContent.tsx": {} }
+  }),
+  "assets/markdown.js": chunk("assets/markdown.js", []),
   "assets/article.js": chunk("assets/article.js", []),
   "assets/placements.js": chunk("assets/placements.js", ["assets/react.js"], {
     modules: { "/repo/apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-rows-v3.json": {} },
@@ -28,7 +32,7 @@ const bundle = {
 };
 const [hint] = preloadPlugin.transformIndexHtml.handler("", { bundle });
 for (const [pathname, hash, expected] of [
-  ["/", "", 5], ["/", "#sky", 5], ["/", "#/sky/", 5], ["/", "#sky/placement/sun/virgo", 6], ["/", "#sky/placement/north-node", 6], ["/", "#sky/retrograde/venus", 6], ["/", "#sky/archive/sun/virgo/2026", 0], ["/", "#sky/placement/sun/virgo/extra", 0],
+  ["/", "", 7], ["/", "#sky", 7], ["/", "#/sky/", 7], ["/", "#sky/placement/sun/virgo", 8], ["/", "#sky/placement/north-node", 8], ["/", "#sky/retrograde/venus", 8], ["/", "#sky/archive/sun/virgo/2026", 0], ["/", "#sky/placement/sun/virgo/extra", 0],
   ["/admin/content", "#sky", 0], ["/", "#calendar", 0], ["/", "#you", 0]
 ]) {
   const links = [];
@@ -57,6 +61,8 @@ for (const saved of ['profile', 'friends', 'calendar', 'horoscopes', 'account', 
 assert.throws(() => preloadPlugin.transformIndexHtml.handler("", { bundle: {} }), /locate/);
 const { "assets/placements.js": _placements, ...withoutPlacements } = bundle;
 assert.throws(() => preloadPlugin.transformIndexHtml.handler("", { bundle: withoutPlacements }), /placement rows/);
+const { "assets/writing.js": _writing, ...withoutWriting } = bundle;
+assert.throws(() => preloadPlugin.transformIndexHtml.handler("", { bundle: withoutWriting }), /writing renderer/);
 
 const pinnedPlugin = skyEntryPreloadPlugin({ VERCEL_SKEW_PROTECTION_ENABLED: "1", VERCEL_DEPLOYMENT_ID: "dpl_sky_fixture" });
 const [pinnedHint, , pinnedBootstrap] = pinnedPlugin.transformIndexHtml.handler("", { bundle });

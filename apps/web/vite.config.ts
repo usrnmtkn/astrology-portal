@@ -9,6 +9,7 @@ import { appStartupHtmlPlugin } from "../../scripts/app-startup-html-plugin.mjs"
 import { deploymentAssetsPlugin } from "../../scripts/deployment-assets-plugin.mjs";
 import { skyEntryPreloadPlugin } from "../../scripts/sky-entry-preload-plugin.mjs";
 import { previewCompressionPlugin } from "../../scripts/preview-compression-plugin.mjs";
+import { staticBrotliAssetsPlugin } from "../../scripts/static-brotli-assets-plugin.mjs";
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -221,6 +222,7 @@ export default defineConfig(({ mode }) => {
       memoryGraphReferencePlugin(),
       appStartupHtmlPlugin(),
       deploymentAssetsPlugin(),
+      staticBrotliAssetsPlugin(),
       readerStartupLoadingStylesPlugin(),
       skyEntryPreloadPlugin(),
       previewCompressionPlugin(),

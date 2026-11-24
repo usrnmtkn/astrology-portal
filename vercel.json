@@ -12,6 +12,98 @@
   "framework": "vite",
   "headers": [
     {
+      "source": "/assets/:asset([A-Za-z0-9_.-]+-[A-Za-z0-9_-]{8}).css",
+      "has": [
+        {
+          "type": "header",
+          "key": "accept-encoding",
+          "value": "^(?:.*,[\\t ]*)?[bB][rR][\\t ]*(?:;[\\t ]*[qQ][\\t ]*=[\\t ]*(?:1(?:\\.0{0,3})?|0\\.(?!0{1,3}(?:[\\t ]*,|[\\t ]*$))[0-9]{1,3}))?[\\t ]*(?:,.*)?$"
+        }
+      ],
+      "headers": [
+        {
+          "key": "Content-Encoding",
+          "value": "br"
+        }
+      ]
+    },
+    {
+      "source": "/assets/:asset([A-Za-z0-9_.-]+-[A-Za-z0-9_-]{8}).js",
+      "has": [
+        {
+          "type": "header",
+          "key": "accept-encoding",
+          "value": "^(?:.*,[\\t ]*)?[bB][rR][\\t ]*(?:;[\\t ]*[qQ][\\t ]*=[\\t ]*(?:1(?:\\.0{0,3})?|0\\.(?!0{1,3}(?:[\\t ]*,|[\\t ]*$))[0-9]{1,3}))?[\\t ]*(?:,.*)?$"
+        }
+      ],
+      "headers": [
+        {
+          "key": "Content-Encoding",
+          "value": "br"
+        }
+      ]
+    },
+    {
+      "source": "/assets/:asset.css.br",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/css; charset=utf-8"
+        },
+        {
+          "key": "Content-Encoding",
+          "value": "br"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable, no-transform"
+        },
+        {
+          "key": "Vary",
+          "value": "Accept-Encoding"
+        }
+      ]
+    },
+    {
+      "source": "/assets/:asset.css",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/css; charset=utf-8"
+        }
+      ]
+    },
+    {
+      "source": "/assets/:asset.js.br",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/javascript; charset=utf-8"
+        },
+        {
+          "key": "Content-Encoding",
+          "value": "br"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable, no-transform"
+        },
+        {
+          "key": "Vary",
+          "value": "Accept-Encoding"
+        }
+      ]
+    },
+    {
+      "source": "/assets/:asset.js",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/javascript; charset=utf-8"
+        }
+      ]
+    },
+    {
       "source": "/wasm/:version/:asset",
       "headers": [
         {
@@ -101,6 +193,7 @@
       "maxDuration": 15
     },
     "api/sky-reader.ts": {
+      "regions": ["pdx1"],
       "includeFiles": "{api/_lib/local-env.ts,node_modules/swisseph-wasm/wasm/*,server/initial-sky-reader/dist/**}",
       "maxDuration": 15
     },
@@ -218,6 +311,42 @@
     {
       "path": "/api/cron/publish-sky-articles",
       "schedule": "* * * * *"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/assets/([A-Za-z0-9_.-]+-[A-Za-z0-9_-]{8}\\.js)",
+      "has": [
+        {
+          "type": "header",
+          "key": "accept-encoding",
+          "value": "^(?:.*,[\\t ]*)?[bB][rR][\\t ]*(?:;[\\t ]*[qQ][\\t ]*=[\\t ]*(?:1(?:\\.0{0,3})?|0\\.(?!0{1,3}(?:[\\t ]*,|[\\t ]*$))[0-9]{1,3}))?[\\t ]*(?:,.*)?$"
+        }
+      ],
+      "dest": "/assets/$1.br",
+      "headers": {
+        "Content-Encoding": "br",
+        "Content-Type": "application/javascript; charset=utf-8",
+        "Cache-Control": "public, max-age=31536000, immutable, no-transform",
+        "Vary": "Accept-Encoding"
+      }
+    },
+    {
+      "src": "/assets/([A-Za-z0-9_.-]+-[A-Za-z0-9_-]{8}\\.css)",
+      "has": [
+        {
+          "type": "header",
+          "key": "accept-encoding",
+          "value": "^(?:.*,[\\t ]*)?[bB][rR][\\t ]*(?:;[\\t ]*[qQ][\\t ]*=[\\t ]*(?:1(?:\\.0{0,3})?|0\\.(?!0{1,3}(?:[\\t ]*,|[\\t ]*$))[0-9]{1,3}))?[\\t ]*(?:,.*)?$"
+        }
+      ],
+      "dest": "/assets/$1.br",
+      "headers": {
+        "Content-Encoding": "br",
+        "Content-Type": "text/css; charset=utf-8",
+        "Cache-Control": "public, max-age=31536000, immutable, no-transform",
+        "Vary": "Accept-Encoding"
+      }
     }
   ]
 }

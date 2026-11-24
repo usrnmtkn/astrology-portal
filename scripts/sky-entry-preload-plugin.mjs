@@ -44,6 +44,10 @@ export function skyEntryPreloadPlugin(env = process.env) {
           throw new Error("Sky data entry must start independently of the component entry.");
         }
         visit(app.fileName);
+        const writing = Object.values(bundle).find(chunk => chunk.type === "chunk"
+          && Object.keys(chunk.modules ?? {}).some(id => id.endsWith("/shared/components/FormattedWritingContent.tsx")));
+        if (!writing) throw new Error("Sky preload could not locate the complete writing renderer.");
+        visit(writing.fileName);
         const appFiles = [...files].map(file => deploymentAssetUrl(file, env));
         const readerStyles = Object.values(bundle).find(asset => asset.type === "asset"
           && /^assets\/styles-[^/]+\.css$/u.test(asset.fileName));

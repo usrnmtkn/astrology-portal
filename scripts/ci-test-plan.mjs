@@ -18,7 +18,7 @@ export function validateTestPlan(plan, {head, commands} = {}) {
     assert.equal(new Set(plan[key]).size, plan[key].length, `Duplicate ${key}`);
   }
   assert(plan.files.every(file => file && !file.startsWith('/') && !file.split('/').includes('..')), 'Invalid changed path');
-  assert(plan.browserSpecs.every(file => /^tests\/visual\/[\w.-]+\.spec\.ts$/u.test(file)), 'Invalid browser source');
+  assert(plan.browserSpecs.every(file => /^tests\/(?:visual|studio-auth)\/[\w.-]+\.spec\.ts$/u.test(file)), 'Invalid browser source');
   if (commands) assert(plan.apiCommands.every(command => commands.includes(command)), 'Unknown API command');
   for (const key of ['postgres', 'weeklyPostgres', 'variables']) assert.equal(typeof plan[key], 'boolean');
   assert(Array.isArray(plan.apiShards) && plan.apiShards.every(shard => [1, 2, 3].includes(shard)));
@@ -42,7 +42,7 @@ export function affectedTestPlan(env = process.env) {
 export function affectedBrowserIdentities(identities, plan) {
   if (!plan) return identities;
   const selected = new Set(plan.browserSpecs);
-  return identities.filter(identity => selected.has(identity.match(/tests\/visual\/[^›]+\.spec\.ts/u)?.[0]));
+  return identities.filter(identity => selected.has(identity.match(/tests\/(?:visual|studio-auth)\/[^›]+\.spec\.ts/u)?.[0]));
 }
 
 // An inventory of evidence for this existing plan; this does not execute tests.
