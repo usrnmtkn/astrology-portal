@@ -75,6 +75,12 @@ test('negative evidence and self-comparison cannot become voice references',()=>
   assert.equal(horoscopeVoiceReferences(e).length,0);
   const self={...evidence,ownerExamples:[{id:'original',text:candidate.body}]};
   assert.throws(()=>validateHoroscopeVoiceReview(syntheticHoroscopeVoiceReview({candidate,evidence:self}),candidate,self),/invalid_horoscope_voice_review/u);
+  const titleOnlyDifference={...evidence,ownerExamples:[{id:'original',text:'### Aries & Aries Rising\n\n'+candidate.body}]};
+  assert.throws(()=>validateHoroscopeVoiceReview(syntheticHoroscopeVoiceReview({candidate,evidence:titleOnlyDifference}),candidate,titleOnlyDifference),/invalid_horoscope_voice_review/u);
+  const padded={...evidence,ownerExamples:[{id:'original',text:'Aries & Aries Rising\n\n  '+candidate.body.replaceAll('\n\n','\n\n\n')+'\n'}]};
+  assert.throws(()=>validateHoroscopeVoiceReview(syntheticHoroscopeVoiceReview({candidate,evidence:padded}),candidate,padded),/invalid_horoscope_voice_review/u);
+  const leaked={...evidence,ownerExamples:[...evidence.ownerExamples,{id:'held-out-case',text:candidate.headline+'\n\n'+candidate.body}]};
+  assert.throws(()=>validateHoroscopeVoiceReview(syntheticHoroscopeVoiceReview({candidate,evidence:leaked}),candidate,leaked),/invalid_horoscope_voice_review/u,'A held-out case cannot remain in the positive corpus even when another reference is cited');
 });
 test('the named Weekly V2 primary remains eligible with exact prose and its original role',()=>{
   const sourceGuidance=`OWNER-DESIGNATED WEEKLY ARIES VOICE EXAMPLE\nAPPROVED EXAMPLE — VERBATIM\n${reference}\nEND OF ARIES EXAMPLE`;

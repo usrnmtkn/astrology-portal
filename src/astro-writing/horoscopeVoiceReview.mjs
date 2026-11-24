@@ -61,6 +61,8 @@ export function horoscopeVoiceReferences(evidence) {
 }
 const signTitle=/^(?:\d{4}-\d{2}-\d{2}\s*·\s*)?(aries|taurus|gemini|cancer|leo|virgo|libra|scorpio|sagittarius|capricorn|aquarius|pisces)(?:\s*(?:&|\/)\s*\1)?(?:\s+rising)?\s*$/iu;
 const headingOnly=text=>text.trim().split(/\r?\n/u).every(line=>/^#{1,6}[ \t]+\S/u.test(line.trim())||signTitle.test(line.trim()));
+// Comparison-only identity: original source text and its hash remain intact.
+const proseBody=text=>voiceParagraphs(text).filter(p=>!headingOnly(p)).join(' ').replace(/\s+/gu,' ').trim();
 const eligibleIndices=text=>voiceParagraphs(text).flatMap((p,i)=>headingOnly(p)?[]:[i]);
 export const horoscopeVoiceReferenceInventory=evidence=>horoscopeVoiceReferences(evidence).map(({id,role,sourcePath,location,text})=>({id,role,sourcePath,location,eligibleParagraphs:eligibleIndices(text)}));
 
@@ -68,6 +70,7 @@ export function validateHoroscopeVoiceReview(value,candidate,evidence) {
   const invalid=()=>{throw new Error('invalid_horoscope_voice_review');};
   if(!value||typeof value!=='object'||Object.keys(value).length!==keys.length||keys.some(k=>!value[k]))invalid();
   const paragraphs=voiceParagraphs(candidate.body),references=horoscopeVoiceReferences(evidence);
+  if(references.some(r=>proseBody(r.text)===proseBody(candidate.body)))invalid();
   const result={};
   for(const key of keys){
     const v=value[key];
@@ -80,7 +83,7 @@ export function validateHoroscopeVoiceReview(value,candidate,evidence) {
     const reference=references.find(r=>r.id===v.referenceId);
     const cp=paragraphs[v.candidateParagraph],rp=voiceParagraphs(reference?.text)[v.referenceParagraph];
     if(!Number.isInteger(v.candidateParagraph)||!Number.isInteger(v.referenceParagraph)||!cp||!rp||!reference
-      ||!eligibleIndices(reference.text).includes(v.referenceParagraph)||reference.text===candidate.body
+      ||!eligibleIndices(reference.text).includes(v.referenceParagraph)
       ||typeof v.candidateQuote!=='string'||!v.candidateQuote.trim()||!cp.includes(v.candidateQuote)
       ||typeof v.referenceQuote!=='string'||!v.referenceQuote.trim()||headingOnly(v.referenceQuote)||!rp.includes(v.referenceQuote)
       ||key==='ending'&&v.candidateParagraph!==paragraphs.length-1)invalid();
