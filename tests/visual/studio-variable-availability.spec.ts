@@ -28,6 +28,8 @@ for(const width of [390,1440]) for(const theme of ['light','dark']) test(`Find, 
     }});
     await page.goto('/admin/content#exact-content?category=Natal+Chart&planet=saturn&sign=virgo&house=4');
     const card=page.locator('.admin-natal-source-card').filter({has:page.locator('code').filter({hasText:key})});
+    // Full source hydration replaces inventory cards and changes their layout.
+    await expect(card.getByRole('textbox',{name:'4th house meaning: You copy',exact:true})).toHaveValue(original.body_you);
     await card.getByRole('button',{name:/Edit|Load and edit/}).click();
     const editor=page.getByRole('dialog',{name:'Generated content editor',exact:true});
     const field=editor.getByRole('textbox',{name:'Reader phrase · You',exact:true});
@@ -51,6 +53,7 @@ for(const width of [390,1440]) for(const theme of ['light','dark']) test(`Find, 
     await expect.poll(async()=>{const rows=await store.call({method:'rows'});return rows.find((row:any)=>row.id===fixture.id)?.sections.packageDraft.body_you;}).toBe(you);
     if(await editor.isVisible())await editor.getByRole('button',{name:'Close',exact:true}).click();
     await page.reload();
+    await expect(card.getByRole('textbox',{name:'4th house meaning: You copy',exact:true})).toHaveValue(you);
     await card.getByRole('button',{name:/Edit|Load and edit/}).click();
     await expect(field).toHaveValue(you);
     await expect(editor.getByRole('textbox',{name:'Reader phrase · They',exact:true})).toHaveValue(they);
