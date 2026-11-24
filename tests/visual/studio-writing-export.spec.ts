@@ -54,7 +54,7 @@ for(const period of ['daily','weekly','monthly','seasonal'])for(const [width,the
    const complete=await input.inputValue();
    expect(complete).toContain(f.profile.voiceGuidance);expect(complete).toContain('### Output format');
    if(['daily','weekly'].includes(period)){
-    expect(complete).toContain('WRITING PLAN FOR REVIEW — SCOPE');
+    expect(complete).toContain('EDITORIAL SCOPE FOR REVIEW');
     expect(complete).toContain('RETRIEVED HISTORICAL OWNER READINGS — VOICE SUPPORT');
     expect(complete).not.toContain('SHARED FIVE-ROLE EVIDENCE\n');
     expect(complete).not.toContain('Once you choose a situation, develop the people');
