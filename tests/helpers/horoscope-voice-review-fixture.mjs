@@ -13,3 +13,14 @@ export function syntheticHoroscopeVoiceReview({candidate,evidence},outcome='pass
       :{outcome:'unassessed',candidateParagraph:null,candidateQuote:'',referenceId:null,referenceParagraph:null,referenceQuote:'',reason:'Synthetic fixture has no eligible reference.'}];
   }));
 }
+
+// Explicit opt-in for custom transport results, including durable server batches.
+// Handcrafted malformed responses without the flag remain unchanged.
+export function syntheticHoroscopeReviewContext(request) {
+  const paragraph=JSON.parse(request.input).candidate.body.split(/\n\s*\n/u).at(-1);
+  const properties=request.text.format.schema.properties;
+  return {
+    ...(properties.weeklyDirection?{weeklyDirection:Object.fromEntries(['concern','stakes','observation','ending'].map(key=>[key,{outcome:'pass',quote:paragraph,paragraph,reason:'Synthetic transport fixture, not a prose-quality judgment.'}]))}:{}),
+    ...(properties.voiceReview?{voiceReview:syntheticHoroscopeVoiceReview(JSON.parse(request.input))}:{})
+  };
+}

@@ -1,5 +1,4 @@
 import {weeklyBatchFixtureResult} from '../helpers/weekly-editorial-result.mts';
-import {syntheticHoroscopeVoiceReview} from '../helpers/horoscope-voice-review-fixture.mjs';
 import {test,expect,type Page} from '@playwright/test';
 import {fork} from 'node:child_process';
 import path from 'node:path';
@@ -25,22 +24,10 @@ async function fixture(page:Page,complete=true){
  if(complete)edition.passages.forEach((p:any)=>{p.headline=`Synthetic ${p.sign} reading`;p.body=`The ${p.sign} plan has its own subject. You should say what you want.`;});
  const created=await call({method:'POST',body:{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',status:'DRAFT',lane:'serving',headline:'Synthetic editorial gate edition',body:horoscopeEditionBody(edition),sections:{horoscopeEdition:edition},facts:{horoscopeBrief:{brief,signature}},sourceSnapshot:{horoscopeOutlines:{}}}});expect(created.status).toBe(200);const id=created.payload.rows[0].id;
  const latest=async()=>decodeWeeklyHistoryRow((await call({method:'rows'})).find((row:any)=>row.id===id));
- const reviewState={result:null as ((request:any)=>any)|null};
- await routeStudioInventoryApi(page,{call,answer:async(route,url)=>{
-  if(url.pathname!=='/api/admin/horoscope-writing')return false;
-  const body=route.request().postDataJSON();
-  if(body.action==='poll'&&reviewState.result){
-   const active=(await latest()).source_snapshot.horoscopeGeneration.active;
-   if(active?.phase==='review'&&active.reviewRequest){
-    const result=reviewState.result(active.reviewRequest);reviewState.result=null;
-    await call({method:'writer-state',body:{nextReviewResult:result}});
-   }
-  }
-  const result=await call({method:'writing',body});await route.fulfill({status:result.status,json:result.payload});return true;
- }});
+ await routeStudioInventoryApi(page,{call,answer:async(route,url)=>{if(url.pathname!=='/api/admin/horoscope-writing')return false;const result=await call({method:'writing',body:route.request().postDataJSON()});await route.fulfill({status:result.status,json:result.payload});return true;}});
  await page.addInitScript(()=>localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture'));
  const open=async()=>{await page.goto('/admin/content#horoscopes');const studio=page.getByRole('region',{name:'Horoscope editions'});await showSavedHoroscopeEditions(page,studio);await studio.locator('.admin-horoscope-saved button').first().click();return studio;};
- return {child,call,latest,open,edition,reviewState};
+ return {child,call,latest,open,edition};
  }catch(error){child.kill();throw error;}
 }
 for(const width of [390,1440])for(const theme of ['light','dark']){
@@ -144,8 +131,7 @@ for(const [width,theme] of [[390,'light'],[1440,'dark']] as const){
    await expect(gate.getByRole('button',{name:'Save Aries concern',exact:true})).toBeDisabled();
    const paragraph='Your saved fixture ends here.',reason='The ending switches to a task instead of developing the saved observation.';
    const weeklyDirection=Object.fromEntries(['concern','stakes','observation','ending'].map(key=>[key,{outcome:key==='ending'?'fail':'pass',quote:paragraph,paragraph,reason:key==='ending'?reason:'Synthetic transport-only assessment.'}]));
-   // Bind synthetic transport evidence to the current saved candidate and sources.
-   f.reviewState.result=request=>({status:'completed',output:[{type:'message',content:[{type:'output_text',text:JSON.stringify({checks:['CORRECTIO','TRICOLON','PURPLE_PROSE'].map(label=>({label,outcome:'pass',reason:'Synthetic transport fixture.'})),findings:[],weeklyDirection,voiceReview:syntheticHoroscopeVoiceReview(JSON.parse(request.input))})}]}]});
+   await f.call({method:'writer-state',body:{nextReviewResult:{fixtureReviewContext:true,status:'completed',output:[{type:'message',content:[{type:'output_text',text:JSON.stringify({checks:['CORRECTIO','TRICOLON','PURPLE_PROSE'].map(label=>({label,outcome:'pass',reason:'Synthetic transport fixture.'})),findings:[],weeklyDirection})}]}]}}});
    await studio.getByLabel('I approve this writing plan for generation.').check();
    await studio.getByRole('button',{name:'Generate Aries',exact:true}).click();
    const held=studio.getByRole('region',{name:'Aries prose review'});
