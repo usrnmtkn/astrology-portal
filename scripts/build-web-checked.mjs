@@ -10,7 +10,8 @@ const commands=[['types',[require.resolve('typescript/bin/tsc')]],['bundle',[joi
 // the build succeeds only after both the typecheck and full bundle succeed.
 export async function checkedWebBuild(jobs=commands,{onPhase=phase=>console.error(JSON.stringify(phase))}={}){
   const children=[];
-  const forward=signal=>children.forEach(child=>child.kill(signal));
+  let interrupted=false;
+  const forward=signal=>{interrupted=true;children.forEach(child=>child.kill(signal));};
   const interrupt=()=>forward('SIGINT'),terminate=()=>forward('SIGTERM');
   process.on('SIGINT',interrupt);process.on('SIGTERM',terminate);
   try{
@@ -19,7 +20,7 @@ export async function checkedWebBuild(jobs=commands,{onPhase=phase=>console.erro
       child.on('error',()=>resolve(1));
       child.on('close',(code,signal)=>{const status=code??1;onPhase({phase:`web-${phase}`,status,signal,seconds:(performance.now()-start)/1000});resolve(status);});
     })));
-    return results.find(status=>status!==0)??0;
+    return interrupted?1:results.find(status=>status!==0)??0;
   }finally{process.off('SIGINT',interrupt);process.off('SIGTERM',terminate);}
 }
 
