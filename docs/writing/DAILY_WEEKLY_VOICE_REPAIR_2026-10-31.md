@@ -7,6 +7,19 @@ the existing source and prompt cleanup with current main's Weekly V3 route.
 
 ## November 18 offline implementation using the fixed benchmark
 
+Release integration on November 23 retains current main's writing-run archives,
+forecast prose-development policy, Monthly/Seasonal scope and configurable
+validation anchor. Both compact writers receive that existing development policy
+once through the shared composition standard. Weekly prose receives its own
+event bindings and any exact saved owner direction; the complete generated
+twelve-sign plan and historical comparison analysis stay with planning/review.
+
+The affected selector now recognizes registered Node writing tests by their
+actual command consumers. Unmapped tests retain conservative full coverage.
+The offline benchmark CLI has a synthetic subprocess regression with no provider
+environment, preserving labels and refusing missing assessment evidence. These
+integration checks do not establish a voice match or authorize paid tests.
+
 The owner authorized repairing the actual writers, judge and tuning offline,
 with no further paid tests and with approved examples intact. This supersedes
 the audit-only freeze below. No provider requests, training jobs, key reads,

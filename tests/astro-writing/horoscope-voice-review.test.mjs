@@ -1,6 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
+import {spawnSync} from 'node:child_process';
+import {mkdtempSync,writeFileSync,readFileSync,rmSync} from 'node:fs';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
 import {HOROSCOPE_VOICE_REVIEW,HOROSCOPE_VOICE_CRITERIA} from '../../src/astro-writing/horoscopeVoiceStandard.mjs';
 import {horoscopeVoiceReferences,horoscopeVoiceReferenceInventory,validateHoroscopeVoiceReview} from '../../src/astro-writing/horoscopeVoiceReview.mjs';
 import {horoscopeReviewInput,horoscopeReviewInstructions,horoscopeReviewSchema,readHoroscopeReview,horoscopeReviewValidationCode} from '../../src/astro-writing/horoscopeRhetoricalReview.mjs';
@@ -106,4 +110,17 @@ test('offline tuning preserves owner labels, rejects identity drift, and cannot 
 });
 test('shared rubric is qualitative and includes all five benchmark concerns',()=>{
   assert.deepEqual(Object.keys(HOROSCOPE_VOICE_CRITERIA),['interpretation_specificity','development','author_voice','unsupported_story','ending']);
+});
+test('the offline benchmark CLI rejects missing evidence without provider access or label mutation',()=>{
+  const dir=mkdtempSync(join(tmpdir(),'horoscope-voice-benchmark-'));
+  try{
+    const bank=benchmark(),cases=join(dir,'cases.json'),labels=join(dir,'labels.json'),out=join(dir,'result.json');
+    const original=JSON.stringify({labels:bank.labels});
+    writeFileSync(cases,JSON.stringify({cases:bank.cases}));writeFileSync(labels,original);
+    const result=spawnSync(process.execPath,['scripts/check-horoscope-voice-benchmark.mjs','--cases',cases,'--labels',labels,'--out',out],{encoding:'utf8',env:{PATH:process.env.PATH}});
+    assert.equal(result.status,2,result.stderr);
+    const report=JSON.parse(readFileSync(out,'utf8'));
+    assert.equal(report.missing,3);assert.equal(report.tuningEligible,false);assert.equal(report.newModelCalls,0);
+    assert.equal(readFileSync(labels,'utf8'),original);
+  }finally{rmSync(dir,{recursive:true,force:true});}
 });

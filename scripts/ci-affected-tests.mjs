@@ -273,6 +273,9 @@ export function createAffectedPlan({root=process.cwd(),files,head,base,previousP
       continue;
     }
     if(/^scripts\/test-/u.test(file))continue;
+    // Registered Node writing tests select their actual command consumers.
+    // An unknown test still reaches the conservative fallback below.
+    if(/^tests\/astro-writing\/.*\.test\.[cm]?[jt]s$/u.test(file)&&known)continue;
     if(file.startsWith('tests/helpers/')){if(!known){all=true;reasons.push(`unmapped test dependency: ${file}`);}continue;}
     if(file.startsWith('apps/web/supabase/migrations/')) {if(!known){all=true;reasons.push(`unmapped migration: ${file}`);}continue;}
     all=true;reasons.push(`shared or unclassified dependency: ${file}`);
