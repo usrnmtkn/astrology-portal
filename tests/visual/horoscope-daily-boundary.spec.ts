@@ -48,7 +48,7 @@ for(const [width,theme] of [[390,'light'],[1440,'dark']] as const){
    await expect(heading).toBeVisible();await expect(held).toContainText(kind==='voice'?'Synthetic closing lesson':'numbered house');
    if(kind==='voice'){
     await expect(held.locator('blockquote').first()).toHaveText(candidate.body.split('\n\n').at(-1)!);
-    const comparison=held.locator('summary').filter({hasText:'Reference comparison:'});await comparison.click();
+    const comparison=held.locator('details summary');await comparison.click();
     await expect(held.locator('details[open] blockquote')).toBeVisible();
    }
    const style=await heading.evaluate(el=>{const s=getComputedStyle(el);return [s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing,s.margin,s.textAlign];});

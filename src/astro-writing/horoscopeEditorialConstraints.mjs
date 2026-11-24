@@ -16,10 +16,9 @@ export function horoscopeVocabularyFindings(passage,period) {
       const code=value[0].toLowerCase()==='x'?parseInt(value.slice(1),16):Number(value);
       return code>0&&code<=0x10ffff?String.fromCodePoint(code):'';
     }).replace(/[\u200b-\u200d\ufeff]/gu,'');
-    const banned=text.match(/(?<![\p{L}\p{N}_])(?:whether|shrink|steady|fondness|pleasure|bond|preferences?|labor|out\s+loud)(?![\p{L}\p{N}_])/iu);
-    const punctuation=/--/u.test(text)?'the double hyphen':/!/u.test(text)?'the exclamation mark':/[()]/u.test(text)?'the parenthetical aside':null;
-    return banned||punctuation
-      ? [{category:'horoscope_required_vocabulary',field,detail:`Remove ${banned?'“'+banned[0]+'”':punctuation} from the ${field}. Recast the sentence without changing its meaning.`,governanceTier:'blocking'}] : [];
+    const banned=text.match(/(?<![\p{L}\p{N}_])(?:whether|shrink|steady|fondness|pleasure|bond|preferences?|labor|out\s+loud)(?![\p{L}\p{N}_])|--|[!()]/iu);
+    return banned
+      ? [{category:'horoscope_required_vocabulary',field,detail:`Remove “${banned[0]}” from the ${field}. Recast the sentence without changing its meaning.`,governanceTier:'blocking'}] : [];
   });
 }
 

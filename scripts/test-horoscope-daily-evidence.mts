@@ -95,7 +95,8 @@ for(const optional of [false,true]){
   assert.equal(row.status,'DRAFT');assert.equal(row.source_snapshot.horoscopeGeneration.active.receipt.ownerApproved,false);
   const componentMeanings=section(input,'DAILY PLANET AND SIGN DEFINITIONS — MEANING ONLY');
   const sourceDefinitions=prepared.sources.filter((s:any)=>/primitives\/(?:planets|signs)[.]json$/u.test(s.path));
-  assert.equal(sourceDefinitions.length,2,'Both existing KB definition files are pinned in the plan source hash');
+  assert.equal(new Set(sourceDefinitions.map((s:any)=>s.path)).size,2,'Both existing KB definition files are pinned for component meaning and configuration research');
+  for(const path of new Set(sourceDefinitions.map((s:any)=>s.path)))assert.equal(new Set(sourceDefinitions.filter((s:any)=>s.path===path).map((s:any)=>s.sha256)).size,1,'Shared source roles retain one exact file hash');
   for(const definition of componentMeanings.records){
    assert(context&&prepared.entries[0].developments.events.concat(prepared.entries[0].developments.background).some((d:any)=>(d.placements??[d]).some((p:any)=>p.planet===definition.planet&&p.sign===definition.sign)));
    assert(definition.signDefinition.sourceRecordSha256);assert.equal(definition.signDefinition.sourceId,definition.sign);

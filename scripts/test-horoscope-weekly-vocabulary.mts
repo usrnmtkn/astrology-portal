@@ -11,6 +11,7 @@ for(const value of ['whether','Whether','WHETHER','(whether)','whe&#116;her','wh
 }
 assert.deepEqual(horoscopeVocabularyFindings({body:'You can review the weather.'},'weekly'),[]);
 for(const body of ['You prefer the window seat.','You enjoy laboratory work.','Your neighborhood has changed.'])assert.deepEqual(horoscopeVocabularyFindings({body},'weekly'),[]);
+for(const mark of ['--','!','(',')'])assert(horoscopeVocabularyFindings({body:`You can inspect ${mark} this exact mark.`},'weekly')[0].detail.includes(`“${mark}”`),'The diagnostic identifies the exact prohibited mark');
 installHoroscopeWriterFixture();
 const packet=await prepareHoroscopeBrief(new URL('http://localhost/?period=weekly&date=2026-10-05&timeZone=America/New_York'));
 const edition=emptyHoroscopeEdition(packet.brief.window);

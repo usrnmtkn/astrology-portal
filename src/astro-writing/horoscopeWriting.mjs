@@ -266,10 +266,12 @@ export function horoscopeWriterContextInput(input,prepared,sign) {
   const selected=weeklySignConcern(prepared,sign);
   const concern=selected?weeklyWriterConcerns([selected])[0]:null;
   const direction=weeklyOwnerDirection(prepared,sign);
+  const feedbackMarker=prepared.edition.window.period==='weekly'&&prepared.feedbackReceipt
+    ?explicitFeedbackMarker(prepared.feedbackReceipt,{horoscopeSign:sign}):prepared.explicitFeedbackMarker;
   return [input,...(concern?[
       `CURRENT SIGN EVENT BINDINGS\n${JSON.stringify(concern)}`,
       'These are this sign\'s fact bindings. The complete shared plan and historical comparison remain with planning and review. Current saved owner direction, complete references and scoped corrections govern this reading; generated planning prose is not reader wording or a paragraph script.'
-    ]:[]),...(prepared.previousReadings?[weeklyPreviousReadingsInput(prepared.previousReadings)]:[]),...(prepared.explicitFeedbackMarker?[prepared.explicitFeedbackMarker]:[]),...(direction?[weeklyDirectionWriterInput(direction)]:[])].join('\n\n');
+    ]:[]),...(prepared.previousReadings?[weeklyPreviousReadingsInput(prepared.previousReadings)]:[]),...(feedbackMarker?[feedbackMarker]:[]),...(direction?[weeklyDirectionWriterInput(direction)]:[])].join('\n\n');
 }
 
 /** The writer and unsigned export must receive identical fact projections. */
