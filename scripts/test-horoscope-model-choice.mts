@@ -79,8 +79,8 @@ const step=async(id:string)=>{
 };
 
 // Verify the actual OpenAI dispatch, not only the configuration helper. Weekly
-// leaves more of its bounded output budget for prose; Daily keeps its setting.
-for(const [period,effort] of [['daily','xhigh'],['weekly','medium']]){
+// and Daily leave more of their bounded output budget for reader prose.
+for(const [period,effort] of [['daily','medium'],['weekly','medium']]){
   const id=await create(period,'2026-11-23'),prepared=await action(id,'prepare');
   const started=await action(id,'generate',{sign:'aries',approvedPlanHash:prepared.payload.plan.planHash});
   assert.equal(started.status,202,JSON.stringify(started.payload));

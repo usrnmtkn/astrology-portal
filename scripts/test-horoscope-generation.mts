@@ -117,7 +117,7 @@ for(const request of writerFixture.requests.values()){
  }
  assert(request.input.indexOf(section[0])>request.input.indexOf('CONTENT STUDIO WRITING INSTRUCTIONS'),'Current saved editorial guidance precedes automatic historical retrieval');
  assert.deepEqual(row.source_snapshot.horoscopeGeneration.readings[request.sign].sourceIds.slice(0,3),passages.map((e:any)=>e.id));
- assert.equal(row.source_snapshot.horoscopeGeneration.readings[request.sign].version,'horoscope-writer/v44-current-ending');
+ assert.equal(row.source_snapshot.horoscopeGeneration.readings[request.sign].version,'horoscope-writer/v49-source-led-voice-review');
 }
 // The lunation is distinct from the Monday snapshot Moon. Houses must bind to
 // the named subject, rather than matching the Sun's house or any available house.

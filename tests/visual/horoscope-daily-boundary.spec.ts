@@ -4,9 +4,10 @@ import path from 'node:path';
 import {routeStudioInventoryApi} from '../helpers/studio-inventory-route';
 import {showSavedHoroscopeEditions} from '../helpers/horoscope-edition-navigation';
 import {emptyHoroscopeEdition,horoscopeEditionBody,horoscopeEditionKey} from '../../apps/web/src/content/horoscopeEditions.mjs';
+import {syntheticHoroscopeVoiceReview} from '../helpers/horoscope-voice-review-fixture.mjs';
 
 for(const [width,theme] of [[390,'light'],[1440,'dark']] as const){
- test(`Daily required-rule hold preserves editing and reload ${width} ${theme}`,async({page})=>{
+ for(const kind of ['boundary','voice'])test(`Daily ${kind} hold preserves editing and reload ${width} ${theme}`,async({page})=>{
   const child=fork(path.resolve('tests/helpers/sky-article-save-api.mts'),[],{env:{...process.env,HOROSCOPE_WRITER_FIXTURE:'1'},execArgv:['--import','tsx'],stdio:['ignore','pipe','pipe','ipc']});
   let sequence=0,stderr='';const pending=new Map<number,any>();
   child.stderr?.on('data',value=>stderr+=value);
@@ -22,9 +23,17 @@ for(const [width,theme] of [[390,'light'],[1440,'dark']] as const){
    const action=async(action:string,extra:any={})=>{const r=await call({method:'writing',body:{action,id,expectedUpdatedAt:row.updated_at,...extra}});if(r.payload.rows?.[0])row=r.payload.rows[0];return r;};
    const plan=await action('prepare');expect(plan.status).toBe(200);
    await action('generate',{sign:'aries',approvedPlanHash:plan.payload.plan.planHash});
-   const candidate={headline:'Aries & Aries Rising',body:'The Moon enters Cancer and your fourth house tonight. You can decide whether to continue.'};
+   const candidate={headline:'Aries & Aries Rising',body:kind==='boundary'?'The Moon enters Cancer and your fourth house tonight. You can decide whether to continue.':'You can read the complete synthetic observation.\n\nYour synthetic ending explains a universal lesson.'};
    await call({method:'writer-state',body:{nextResult:{status:'completed',output:[{type:'message',content:[{type:'output_text',text:JSON.stringify(candidate)}]}]}}});
-   expect((await action('poll')).status).toBe(200);
+   expect((await action('poll')).status).toBe(kind==='boundary'?200:202);
+   if(kind==='voice'){
+    const raw=(await call({method:'rows'})).find((r:any)=>r.id===id);
+    const input=JSON.parse(raw.source_snapshot.horoscopeGeneration.active.reviewRequest.input),voiceReview=syntheticHoroscopeVoiceReview(input);
+    voiceReview.ending.outcome='revise';voiceReview.ending.reason='Synthetic closing lesson replaces the particular observation.';
+    const value={checks:['CORRECTIO','TRICOLON','PURPLE_PROSE'].map(label=>({label,outcome:'pass',reason:'Synthetic transport assertion.'})),findings:[],voiceReview};
+    await call({method:'writer-state',body:{nextReviewResult:{status:'completed',output:[{type:'message',content:[{type:'output_text',text:JSON.stringify(value)}]}]}}});
+    expect((await action('continue')).status).toBe(202);expect((await action('poll')).status).toBe(200);
+   }
    expect(row.source_snapshot.horoscopeGeneration.candidateHolds.aries.candidate).toEqual(candidate);
    await page.setViewportSize({width,height:1000});
    await page.addInitScript(theme=>{localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture');localStorage.setItem('tldrastro:studio-theme',theme);},theme);
@@ -35,10 +44,15 @@ for(const [width,theme] of [[390,'light'],[1440,'dark']] as const){
    const studio=page.getByRole('region',{name:'Horoscope editions'});
    const open=async()=>{await page.goto('/admin/content#horoscopes');await showSavedHoroscopeEditions(page,studio);await studio.getByRole('button',{name:/^Synthetic Daily boundary edition/}).click();};
    await open();
-   const held=studio.getByRole('region',{name:'Aries prose review'}),heading=held.getByRole('heading',{level:3,name:'Aries needs a prose edit'});
-   await expect(heading).toBeVisible();await expect(held).toContainText('numbered house');
+   const held=studio.getByRole('region',{name:'Aries prose review'}),heading=held.getByRole('heading',{level:3,name:kind==='voice'?'Aries needs voice review':'Aries needs a prose edit'});
+   await expect(heading).toBeVisible();await expect(held).toContainText(kind==='voice'?'Synthetic closing lesson':'numbered house');
+   if(kind==='voice'){
+    await expect(held.locator('blockquote').first()).toHaveText(candidate.body.split('\n\n').at(-1)!);
+    const comparison=held.locator('summary').filter({hasText:'Reference comparison:'});await comparison.click();
+    await expect(held.locator('details[open] blockquote')).toBeVisible();
+   }
    const style=await heading.evaluate(el=>{const s=getComputedStyle(el);return [s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing,s.margin,s.textAlign];});
-   await page.screenshot({path:`test-results/daily-boundary-held-${width}-${theme}.png`,fullPage:true});
+   await page.screenshot({path:`test-results/daily-${kind}-held-${width}-${theme}.png`,fullPage:true});
    await page.reload();await expect(heading).toBeVisible();
    expect(await heading.evaluate(el=>{const s=getComputedStyle(el);return [s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing,s.margin,s.textAlign];})).toEqual(style);
    await held.getByRole('button',{name:'Edit saved Aries draft',exact:true}).click();
@@ -54,11 +68,11 @@ for(const [width,theme] of [[390,'light'],[1440,'dark']] as const){
    expect(saved.sections.horoscopeEdition.passages.slice(1)).toEqual(edition.passages.slice(1));
    await page.reload();await studio.getByRole('button',{name:'3 · Review',exact:true}).click();await expect(studio.getByLabel('Complete reading')).toHaveValue(edited);
    saved=await latest();expect(saved.source_snapshot.horoscopeGeneration.candidateResolutions.at(-1).resolution).toBe('owner_edited');
-   expect(saved.source_snapshot.horoscopeGeneration.failures.find((f:any)=>f.code==='daily_output_boundary').candidate).toEqual(candidate);
+   expect(saved.source_snapshot.horoscopeGeneration.failures.find((f:any)=>f.code===(kind==='voice'?'voice_review_required':'daily_output_boundary')).candidate).toEqual(candidate);
    expect(saved.source_snapshot.horoscopeGeneration.lastError).toBeNull();
-   expect(await call({method:'writer-state'})).toMatchObject({calls:1,reviewCalls:0});
+   expect(await call({method:'writer-state'})).toMatchObject({calls:1,reviewCalls:kind==='voice'?1:0});
    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
-   await page.screenshot({path:`test-results/daily-boundary-${width}-${theme}.png`,fullPage:true});
+   await page.screenshot({path:`test-results/daily-${kind}-${width}-${theme}.png`,fullPage:true});
   }finally{await page.unrouteAll({behavior:'wait'});child.kill();}
  });
 }

@@ -43,8 +43,8 @@ for(const [index,choice] of ['current','gemini','claude','current'].entries()){
  for(const old of ['AVAILABLE OWNER LINES\n','GOVERNED RETRIEVAL ANCHOR','FORECAST COVERAGE\n','"recognition":','"response":'])assert(!input.includes(old),old);
  assert(!instructions.includes('GHOSTWRITER CRAFT GUIDANCE'));
  for(const formula of ['REVISION STANDARD:','SHARED RHETORICAL POLICY','A possible example can name an action'])assert(!instructions.includes(formula),'The shared replacement recipe cannot override the complete saved Daily guide');
- const scope=JSON.parse(input.split('OWNER-APPROVED WRITING PLAN — SCOPE\n')[1].split('\n')[0]);
- assert.equal(scope.ownerDirection,null);assert(!('thesis' in scope)&&!('recognition' in scope)&&!('response' in scope));
+ const scope=JSON.parse(input.split('REVIEWED EDITORIAL SCOPE\n')[1].split('\n')[0]);
+ assert.equal(scope.direction,null);assert(!('thesis' in scope)&&!('recognition' in scope)&&!('response' in scope));
  const sourceRoles=JSON.parse(input.split('SOURCE AUTHORITY AND ROLES\n')[1].split('\n')[0]);
  assert(!sourceRoles.some((entry:any)=>entry.sourceKind==='current-approved-argument-and-close'));
  const facts=JSON.parse(input.split('CALCULATED FACTS\n')[1].split('\n')[0]);

@@ -85,7 +85,7 @@ export function assertHoroscopeRequestEvidence(input, additionalLabels=[]) {
   if(scopeMatch){
     const scope=JSON.parse(scopeMatch[1]);
     assert.deepEqual(Object.keys(scope).sort(),['boundaries','direction']);
-    assert(scope.direction?.trim()&&scope.boundaries?.trim(),'Reviewed scope retains direction and factual boundaries');
+    assert((scope.direction===null||scope.direction?.trim())&&scope.boundaries?.trim(),'Reviewed scope retains any actual owner direction and factual boundaries');
     assert(!input.includes('current-approved-argument-and-close'),'Generated argument prose stays outside the writer packet');
   }
   if(/(?:DAILY|WEEKLY) COMPLETE SOURCE PASSAGES\n/u.test(input)) {

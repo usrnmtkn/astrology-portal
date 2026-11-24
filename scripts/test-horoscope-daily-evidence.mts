@@ -101,7 +101,7 @@ for(const optional of [false,true]){
    assert(definition.signDefinition.sourceRecordSha256);assert.equal(definition.signDefinition.sourceId,definition.sign);
    assert(!Object.hasOwn(definition,'house'),'The sign definition cannot supply a house');
   }
-  assert.equal(row.source_snapshot.horoscopeGeneration.active.receipt.version,'horoscope-writer/v56-writer-role');
+  assert.equal(row.source_snapshot.horoscopeGeneration.active.receipt.version,'horoscope-writer/v59-source-led-voice-review');
  }
 }
 // Exercise all audiences with the actual governed corpus, without changing
@@ -123,7 +123,7 @@ for(const sign of edition.passages.map((p:any)=>p.sign)){
  assertHoroscopeRequestEvidence(request.input,['primaryOwnerVoiceSources','supportingOwnerVoiceSources']);
 }
 assert.deepEqual(prepared.entries.map((e:any)=>e.ownerContext),before,'Daily serialization never mutates selected evidence or audit receipts');
-assert.equal(horoscopeWritingVersionFor('weekly'),'horoscope-writer/v44-current-ending');
+assert.equal(horoscopeWritingVersionFor('weekly'),'horoscope-writer/v49-source-led-voice-review');
 assert.equal(horoscopeWritingVersionFor('monthly'),'horoscope-writer/v24-monthly-evidence-refs');
 assert.equal(horoscopeWritingVersionFor('seasonal'),'horoscope-writer/v23-seasonal-evidence-refs');
 console.log('PASS Daily evidence: actual handler, all three intercepted providers, both profile-variable modes, all twelve audiences, complete source/hash/metadata preservation, resolvable references, authorization and unchanged saved prose. Zero paid calls.');

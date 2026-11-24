@@ -273,6 +273,7 @@ export function createAffectedPlan({root=process.cwd(),files,head,base,previousP
       continue;
     }
     if(/^scripts\/test-/u.test(file))continue;
+    if(/^scripts\/check-/u.test(file)&&known)continue;
     // Registered Node writing tests select their actual command consumers.
     // An unknown test still reaches the conservative fallback below.
     if(/^tests\/astro-writing\/.*\.test\.[cm]?[jt]s$/u.test(file)&&known)continue;

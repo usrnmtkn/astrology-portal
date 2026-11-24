@@ -36,8 +36,7 @@ export function buildCompactHoroscopeDraftInput({context,task,target,engineFacts
     ...(compactVoiceInInstructions(writingProfile.profile)?{voiceGuidanceView:compactVoiceMaterialReference(writingProfile.profile)}:{}),
     ...(selectedWeekly?{sourceGuidanceView:selectedWeekly.sourceGuidance}:{}),
     ...(!designatedWeekly?{primarySourceLabel:historicalLabel}:{})});
-  const scope={ownerDirection:engineFacts.ownerOutline??null,scope_guard:argumentOutline.scope_guard,
-    ...(argumentOutline.approvedOutlineHash?{approvedOutlineHash:argumentOutline.approvedOutlineHash}:{})};
+  const scope={direction:engineFacts.ownerOutline??null,boundaries:argumentOutline.scope_guard};
   const archiveMaterial=compactVoiceArchiveMaterial(writingProfile.profile);
   return [
     'SURFACE\nhoroscopes','CONTENT FAMILY\nhoroscope','REGISTER\nsecond_person',
@@ -53,7 +52,7 @@ export function buildCompactHoroscopeDraftInput({context,task,target,engineFacts
     `RENDER TARGET\n${JSON.stringify(target)}`,
     ...(!variables.uses('governedFacts')?[factsText]:[]),
     ...(archiveMaterial?[archiveMaterial]:[]),
-    `${argumentOutline.approvedOutlineHash?'OWNER-APPROVED WRITING PLAN':'WRITING PLAN FOR REVIEW'} — SCOPE\n${JSON.stringify(scope)}`,
+    `${argumentOutline.approvedOutlineHash?'REVIEWED EDITORIAL SCOPE':'EDITORIAL SCOPE FOR REVIEW'}\n${JSON.stringify(scope)}`,
     ...(!variables.uses('ownerCorrections')?[`CURRENT OWNER CORRECTIONS\n${JSON.stringify(evidence.corrections)}`]:[]),
     ...(!designatedWeekly&&evidence.rejectedExamples?.length?[`REJECTED READINGS — NEGATIVE EVIDENCE ONLY\n${JSON.stringify(evidence.rejectedExamples)}`]:[])
   ].join('\n\n');

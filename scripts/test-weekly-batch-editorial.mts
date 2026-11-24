@@ -57,10 +57,10 @@ for(const facts of JSON.parse(requests[0].input).facts){
 reviewInput=JSON.parse(requests[1].input);
 assert.deepEqual(JSON.parse(requests[1].input).existingReadings,row.sections.horoscopeEdition.passages,'Judge sees every complete reading');
 assert.deepEqual(JSON.parse(requests[1].input).profile,row.source_snapshot.studioWritingProfile.profile,'Judge sees the entire saved profile');
-const writerConcerns=gate.plan.concerns.map(({priorQuote,priorEditionId,priorSign,weekDifference,...concern}:any)=>concern);
+const writerConcerns=gate.plan.concerns.map(({sign,eventIds}:any)=>({sign,eventIds}));
 for(const request of writerFixture.requests.values()){
  assert(!request.input.includes('SHARED WEEKLY CONCERNS\n'),'An individual writer does not receive all twelve planning stories');
- assert(request.input.includes(`CURRENT SIGN CONCERN\n${JSON.stringify(writerConcerns.find((c:any)=>c.sign===request.sign))}`));
+ assert(request.input.includes(`CURRENT SIGN EVENT BINDINGS\n${JSON.stringify(writerConcerns.find((c:any)=>c.sign===request.sign))}`));
  const snapshot=row.source_snapshot.horoscopeGeneration.readings[request.sign].previousReadings;
  assert.deepEqual(snapshot.readings.map((p:any)=>p.sign),HOROSCOPE_SIGNS.slice(0,HOROSCOPE_SIGNS.indexOf(request.sign)));
  assert(request.input.includes(JSON.stringify({previousReadings:snapshot})),'The actual writer receives the saved exact snapshot');
@@ -147,11 +147,11 @@ await action(native,'plan-weekly',{approvedPlanHash:nativePlan.payload.plan.plan
 const nativeEdits={coreConcern:'Exact native owner concern.',stakes:'Exact native owner stakes.',distinctiveObservation:'Exact native owner observation.'};
 const nativeSaved=await action(native,'save-weekly-concern',{sign:'pisces',concern:nativeEdits,approvedPlanHash:nativePlan.payload.plan.planHash});assert.equal(nativeSaved.status,200);
 await action(native,'start-batch',{approvedPlanHash:nativeSaved.payload.plan.planHash});assert.equal((await runWeeklyHoroscopeBatch(native,{maxSteps:100,wait:()=>new Promise(resolve=>setTimeout(resolve,5))})).state,'complete');
-assert.equal(nativeTransport.requests.length,1);assert(!nativeTransport.requests[0].request.messages[0].content.includes('OWNER-EDITED WEEKLY CONCERNS\n'));assert(!nativeTransport.requests[0].request.messages[0].content.includes('SHARED WEEKLY CONCERNS\n'));assert(nativeTransport.requests[0].request.messages[0].content.includes('CURRENT SIGN CONCERN\n'));
+assert.equal(nativeTransport.requests.length,1);assert(!nativeTransport.requests[0].request.messages[0].content.includes('OWNER-EDITED WEEKLY CONCERNS\n'));assert(!nativeTransport.requests[0].request.messages[0].content.includes('SHARED WEEKLY CONCERNS\n'));assert(nativeTransport.requests[0].request.messages[0].content.includes('CURRENT SIGN EVENT BINDINGS\n'));
 assert(nativeTransport.requests[0].request.messages[0].content.endsWith(weeklyDirectionWriterInput({version:WEEKLY_OWNER_DIRECTION,sign:'pisces',...nativeEdits})),'Native Claude receives the current sign directions after all other context');
 assert.equal(latest(native).source_snapshot.horoscopeGeneration.readings.pisces.rhetoricalReview.weeklyDirection.ending.outcome,'pass');
 assert.equal(nativeTransport.requests[0].request.system,withCompactVoiceInstructions(horoscopeProseInstructions('weekly'),latest(native).source_snapshot.studioWritingProfile.profile),'Native Claude retains the complete current Weekly authority and saved Voice rather than a retired scope snippet');
-const nativeScope=JSON.parse(nativeTransport.requests[0].request.messages[0].content.split('OWNER-APPROVED WRITING PLAN — SCOPE\n').at(-1).split('\n')[0]);
+const nativeScope=JSON.parse(nativeTransport.requests[0].request.messages[0].content.split('REVIEWED EDITORIAL SCOPE\n').at(-1).split('\n')[0]);
 assert(!Object.hasOwn(nativeScope,'recognition'),'The native writer receives approved scope rather than a generated psychological-revelation assignment');
 assert(nativeTransport.requests[0].request.messages[0].content.includes(JSON.stringify({previousReadings:latest(native).source_snapshot.horoscopeGeneration.readings.pisces.previousReadings})));
 assert.deepEqual(latest(native).sections.horoscopeEdition.passages.slice(0,11),nativeExisting);
@@ -230,7 +230,7 @@ assert.equal((await action(editable,'save-weekly-concern',{sign:'aries',concern:
 assert.equal((await worker(editable)).state,'complete');
 for(const request of [...writerFixture.requests.values()].slice(editedRequests)){
  assert(!request.input.includes('OWNER-EDITED WEEKLY CONCERNS\n'));
- const concern=JSON.parse(request.input.split('CURRENT SIGN CONCERN\n')[1].split('\n')[0]);
+ const concern=JSON.parse(request.input.split('CURRENT SIGN EVENT BINDINGS\n')[1].split('\n')[0]);
  assert.equal(concern.sign,request.sign);for(const key of ['coreConcern','stakes','distinctiveObservation','weekDifference','priorQuote'])assert(!Object.hasOwn(concern,key));
  for(const [other,fields]of Object.entries(edits) as any){
   for(const text of Object.values(fields) as string[])assert.equal(request.input.split(text).length-1,other===request.sign?1:0,'Each exact owner direction appears only in its own sign request, once');

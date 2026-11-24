@@ -101,7 +101,7 @@ try{
       assert(prose.instructions.includes('complete saved Weekly guide govern'));
       assert(prose.instructions.includes('Explicitly owner-designated Weekly examples take priority'));
       assert(!prose.input.includes('Once you choose a situation, develop the people'));
-      const scope=JSON.parse(prose.input.split('OWNER-APPROVED WRITING PLAN — SCOPE\n')[1].split('\n')[0]);
+      const scope=JSON.parse(prose.input.split('REVIEWED EDITORIAL SCOPE\n')[1].split('\n')[0]);
       assert(!Object.hasOwn(scope,'recognition')&&!Object.hasOwn(scope,'complication')&&!Object.hasOwn(scope,'response'),'Generated recognition and ending scripts stay outside the Weekly writer');
       const facts=JSON.parse(prose.input.split('CALCULATED FACTS\n')[1].split('\n')[0]);
       assert.equal(facts.signs.length,1);assert.equal(facts.signs[0].sign,'aries');assert.equal(packet.brief.signs.length,12);

@@ -37,10 +37,10 @@ for(const period of ['monthly','seasonal'])if(![...store.rows.values()].some(row
 const untouched=[...store.rows.values()].filter(row=>['monthly','seasonal'].some(period=>row.content_key===HOROSCOPE_PROFILE_PREFIX+period)).map(row=>structuredClone(row));
 const requests:any[]=[],artifacts:any[]=[];
 const unsigned=(input:string)=>{
-  const label='OWNER-APPROVED WRITING PLAN — SCOPE\n',start=input.lastIndexOf(label),end=input.indexOf('\n',start+label.length);
+  const label='REVIEWED EDITORIAL SCOPE\n',start=input.lastIndexOf(label),end=input.indexOf('\n',start+label.length);
   assert(start>=0);const finish=end<0?input.length:end;
   const {approvedOutlineHash,...scope}=JSON.parse(input.slice(start+label.length,finish));
-  return input.slice(0,start)+'WRITING PLAN FOR REVIEW — SCOPE\n'+JSON.stringify(scope)+input.slice(finish);
+  return input.slice(0,start)+'EDITORIAL SCOPE FOR REVIEW\n'+JSON.stringify(scope)+input.slice(finish);
 };
 const intercepted=globalThis.fetch;
 globalThis.fetch=async(input:any,options:any={})=>{

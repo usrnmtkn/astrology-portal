@@ -20,10 +20,10 @@ assert.throws(()=>horoscopeWriterContextInput('Complete synthetic current reques
 },'taurus'),/missing this sign/,'A missing own-sign binding must stop before spend rather than rely on another sign’s plan');
 const savedProfiles=new Map();
 const normalize=(input:string)=>{
-  const label='OWNER-APPROVED WRITING PLAN — SCOPE\n',start=input.lastIndexOf(label),end=input.indexOf('\n',start+label.length);
+  const label='REVIEWED EDITORIAL SCOPE\n',start=input.lastIndexOf(label),end=input.indexOf('\n',start+label.length);
   assert(start>=0);const finish=end<0?input.length:end;
   const {approvedOutlineHash,...scope}=JSON.parse(input.slice(start+label.length,finish));
-  return input.slice(0,start)+'WRITING PLAN FOR REVIEW — SCOPE\n'+JSON.stringify(scope)+input.slice(finish);
+  return input.slice(0,start)+'EDITORIAL SCOPE FOR REVIEW\n'+JSON.stringify(scope)+input.slice(finish);
 };
 let cases=0;
 for(const mode of ['daily','daily-variables','daily-selected-comparisons','daily-selected-comparisons-instruction-voice','weekly','weekly-v2','weekly-v2-selected','weekly-v2-selected-comparisons','weekly-v2-selected-comparisons-instruction-voice'])for(const [date,timeZone] of [['2026-10-29','America/New_York'],['2026-11-16','Asia/Tokyo']]){
@@ -58,7 +58,7 @@ for(const mode of ['daily','daily-variables','daily-selected-comparisons','daily
   const exported=await invokeHoroscopeWriting({action:'export',id:row.id,expectedUpdatedAt:row.updated_at});
   assert.equal(exported.status,200,JSON.stringify(exported.payload));
   const value=exported.payload.writingExport;
-  assert(value.text.includes('WRITING PLAN FOR REVIEW — SCOPE'),'The actual unsigned plan is labeled for review');
+  assert(value.text.includes('EDITORIAL SCOPE FOR REVIEW'),'The actual unsigned plan is labeled for review');
   assert(value.text.includes(complete),'A plan-like header inside a protected example cannot be rewritten by export');
   for(const sign of ['taurus','gemini','cancer']){
     const prepared={...prepareHoroscopeWriting(row),previousReadings:horoscopePreviousReadings(row,sign)};
@@ -92,10 +92,10 @@ for(const mode of ['daily','daily-variables','daily-selected-comparisons','daily
     }else assert(request.input.includes(profile.sourceGuidance),'Unrecognized collections keep their existing full transport');
     assert(request.input.includes(JSON.stringify(aries.body).slice(1,-1)),'Complete earlier reading remains comparison data');
     for(const legacy of ['SHARED FIVE-ROLE EVIDENCE\n','FORECAST COVERAGE\n','AVAILABLE OWNER LINES\n','GOVERNED RETRIEVAL ANCHOR','Once you choose a situation, develop the people','GHOSTWRITER CRAFT GUIDANCE','REVISION STANDARD:'])assert(!request.input.includes(legacy)&&!request.instructions.includes(legacy),legacy);
-    const planStart=request.input.lastIndexOf('OWNER-APPROVED WRITING PLAN — SCOPE\n');
+    const planStart=request.input.lastIndexOf('REVIEWED EDITORIAL SCOPE\n');
     const scope=JSON.parse(request.input.slice(planStart).split('\n')[1]);
-    assert.deepEqual(Object.keys(scope).sort(),['approvedOutlineHash','ownerDirection','scope_guard']);
-    assert.equal(scope.ownerDirection,sign==='taurus'?direction:null,'Only an actual owner outline enters the prose scope');
+    assert.deepEqual(Object.keys(scope).sort(),['boundaries','direction']);
+    assert.equal(scope.direction,sign==='taurus'?direction:null,'Only an actual owner outline enters the prose scope');
     const style=JSON.parse(request.input.match(/OWNER-APPROVED STYLE REFERENCE\n([^\n]+)/u)[1]);
     assert.equal(style.reference.ownerAuthored,false);assert.equal(style.reference.factUseAuthorized,false);
     assert(style.sourceUse.includes('Supporting style'));
