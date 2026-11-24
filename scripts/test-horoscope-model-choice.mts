@@ -158,15 +158,15 @@ assert.equal(latest(id).source_snapshot.horoscopeGeneration.active,null);
 
 transport.geminiDelay=10;
 const claudePlan=await action(id,'prepare',{writerChoice:'claude'});transport.claudeError=true;transport.claudeDelay=100;
-await action(id,'generate',{sign:'gemini',approvedPlanHash:claudePlan.payload.plan.planHash});
 const failureCalls=writerFixture.calls;
+await action(id,'generate',{sign:'gemini',approvedPlanHash:claudePlan.payload.plan.planHash});
 for(let attempts=0;attempts<40;attempts++){
   result=await action(id,'poll');
   if(result.status!==202)break;
   await new Promise(resolve=>setTimeout(resolve,15));
 }
 assert.equal(result.status,422);
-assert.equal(writerFixture.calls,failureCalls,'Waiting for the failed stream never creates another writer');
+assert.equal(writerFixture.calls,failureCalls+1,'Only the initial dispatch creates a writer while waiting for the failed stream');
 assert.equal(latest(id).source_snapshot.horoscopeGeneration.lastError.diagnostic.errorCode,'claude_connection_interrupted');
 transport.claudeError=false;transport.claudeDelay=10;
 const failedOperation=latest(id).source_snapshot.horoscopeGeneration.lastError.operation;
