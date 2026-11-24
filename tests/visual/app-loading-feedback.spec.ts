@@ -366,6 +366,77 @@ test("an unavailable entry bundle attempts one guarded recovery before manual re
   expect(navigations).toBe(2);
 });
 
+test("a preload failure during document navigation cannot reload the departing reader", async ({ page }) => {
+  const documents: string[] = [];
+  let failureDelivered = false;
+  let releaseDocument!: () => void;
+  const heldDocument = new Promise<void>(resolve => { releaseDocument = resolve; });
+  await page.exposeFunction("recordNavigationPreloadFailure", () => {
+    failureDelivered = true;
+    releaseDocument();
+  });
+  page.on("request", request => {
+    if (request.isNavigationRequest() && request.frame() === page.mainFrame()) documents.push(request.url());
+  });
+  await page.goto("/#friends");
+  const friends = page.getByRole("heading", { name: "Sign in to see your friends", exact: true });
+  await expect(friends).toBeVisible();
+  await page.route(/\/\?date=2026-09-09$/u, async route => {
+    await heldDocument;
+    await route.continue().catch(() => {});
+  });
+  await page.evaluate(() => window.addEventListener("beforeunload", () => {
+    // Run after beforeunload dispatch, while the requested document is held.
+    window.setTimeout(() => {
+      void (window as any).recordNavigationPreloadFailure();
+      window.dispatchEvent(Object.assign(new Event("vite:preloadError", { cancelable: true }), {
+        payload: new TypeError("Importing a module script failed.")
+      }));
+    }, 0);
+  }, { once: true }));
+  try {
+    await page.goto("/?date=2026-09-09#friends");
+  } finally { releaseDocument(); }
+  await expect(page).toHaveURL(/\/\?date=2026-09-09#friends$/u);
+  await expect(friends).toBeVisible();
+  expect(failureDelivered).toBe(true);
+  expect(documents.map(url => new URL(url).search)).toEqual(["", "?date=2026-09-09"]);
+});
+
+test("cancelling an unsaved navigation preserves active reader asset recovery", async ({ page }) => {
+  let documents = 0;
+  page.on("request", request => {
+    if (request.isNavigationRequest() && request.frame() === page.mainFrame()) documents++;
+  });
+  await page.goto("/#friends");
+  const friends = page.getByRole("heading", { name: "Sign in to see your friends", exact: true });
+  await expect(friends).toBeVisible();
+  await friends.click();
+  await page.evaluate(() => window.addEventListener("beforeunload", event => {
+    event.preventDefault();
+    event.returnValue = "";
+  }, { once: true }));
+  const dialogPromise = page.waitForEvent("dialog");
+  const cancelled = page.evaluate(() => { window.location.href = "/?date=2026-09-09#friends"; });
+  const dialog = await dialogPromise;
+  expect(dialog.type()).toBe("beforeunload");
+  await dialog.dismiss();
+  await cancelled;
+  // Finish the same task turn that observes the completed prompt dispatch.
+  await page.evaluate(() => new Promise<void>(resolve => window.setTimeout(resolve, 0)));
+  await expect(page).toHaveURL(/\/#friends$/u);
+  const beforeRecovery = documents;
+  await Promise.all([
+    page.waitForEvent("framenavigated", frame => frame === page.mainFrame()),
+    page.evaluate(() => window.dispatchEvent(Object.assign(new Event("vite:preloadError", { cancelable: true }), {
+      payload: new TypeError("Importing a module script failed.")
+    })))
+  ]);
+  await expect(friends).toBeVisible();
+  await expect(page).toHaveURL(/\/#friends$/u);
+  expect(documents).toBe(beforeRecovery + 1);
+});
+
 test("blocked web fonts do not block startup or reader content", async ({ page }) => {
   let release!: () => void;
   const held = new Promise<void>(resolve => { release = resolve; });
