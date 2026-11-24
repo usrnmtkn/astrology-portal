@@ -60,14 +60,15 @@ assert.deepEqual(reviewInput.priorWeeks,JSON.parse(original),'Planner and final 
 assert.deepEqual(reviewInput.profile,profile,'The complete current saved profile also reaches the full-set reviewer');
 for(const request of writerFixture.requests.values()){
  assert(!request.input.includes('\"priorQuote\":'),'Historical citation fields are not writer voice or meaning inputs');
- const concern=JSON.parse(request.input.split('CURRENT SIGN CONCERN\n')[1].split('\n')[0]);
- const {priorQuote,priorEditionId,priorSign,weekDifference,...expectedConcern}=plan.concerns.find((item:any)=>item.sign===request.sign);
- assert.deepEqual(concern,expectedConcern,'The writer receives only its own current concern; historical comparison stays with planner and reviewer');
- assert(!request.input.includes('SHARED WEEKLY CONCERNS\n'));
- for(const key of ['priorQuote','priorEditionId','priorSign','weekDifference'])assert(!Object.hasOwn(concern,key));
- for(const field of ['voiceGuidance','structure','sourceGuidance'] as const)assert(request.input.includes(profile[field]),`Complete ${field} reaches the actual writer`);
- assert(request.instructions.includes('An opening may need several connected sentences'));
- assert(request.instructions.includes('without requiring a psychological revelation'),'The ordinary-language correction belongs in prose authority, not raw planning fields');
+ assert(!request.input.includes('SHARED WEEKLY EVENT BINDINGS\n'));
+ const concern=JSON.parse(request.input.split('CURRENT SIGN EVENT BINDINGS\n')[1].split('\n')[0]);
+ assert.equal(concern.sign,request.sign);
+ assert.equal(Object.keys(concern).sort().join(','),'eventIds,sign','Only this sign’s fact binding reaches prose; the full plan stays with planning/review');
+ for(const field of ['structure','sourceGuidance'] as const)assert(request.input.includes(profile[field]),`Complete ${field} reaches the actual writer`);
+ assert.equal(request.instructions.split(profile.voiceGuidance).length-1,1,'The complete saved Voice reaches the actual writer as instructions exactly once');
+ assert(!request.input.includes(profile.voiceGuidance));
+ assert(request.instructions.includes('complete saved Weekly guide govern'));
+ assert(!request.input.includes('without requiring a psychological revelation'),'Generated recognition prose stays in planning, outside the actual writer for both profile modes');
  assert(!request.input.includes('Let the ending follow from the recognition developed in this reading'));
 }
 assert.equal(writerFixture.batchCalls,2);assert.equal(writerFixture.calls,12);assert.equal(writerFixture.reviewCalls,12,'No extra judge, retry or rewrite calls');

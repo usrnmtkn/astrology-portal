@@ -44,7 +44,8 @@ export async function handleStudioWritingProfiles(req: IncomingMessage, storage:
     content_key: HOROSCOPE_PROFILE_PREFIX + profile.period, surface: "sky", mode: "article", target_date: null,
     status: "DRAFT", lane: "reference", event_type: "studio-writing-profile", provider: "manual-admin", prompt_version: "horoscope-writing-profile-v1",
     headline: `${profile.period} horoscope writing`, body: "", summary: "", sections: { writingProfile: profile },
-    source_snapshot: { writingProfileRevision: saved.revision + 1, previousProfileSha256: saved.id ? saved.sha256 : null }, updated_at: updatedAt
+    source_snapshot: { writingProfileRevision: saved.revision + 1, previousProfileSha256: saved.id ? saved.sha256 : null,
+      ...(saved.id && ["daily", "weekly"].includes(profile.period) ? {previousWritingProfile: saved} : {}) }, updated_at: updatedAt
   };
   const params = saved.id ? new URLSearchParams({ id: `eq.${saved.id}`, content_key: `eq.${row.content_key}`, updated_at: `eq.${saved.updatedAt}`, status: "eq.DRAFT", lane: "eq.reference", mode: "eq.article" }) : new URLSearchParams();
   const result = await storage(params, { method: saved.id ? "PATCH" : "POST", body: JSON.stringify(row) });

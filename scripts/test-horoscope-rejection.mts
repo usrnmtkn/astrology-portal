@@ -87,7 +87,9 @@ for(const period of ['daily','weekly','seasonal'] as const){
   assert(prose.input.includes('Fixture latest instructions.'),'Private replacement writer uses latest saved instructions');
   assert.equal(row.sections.horoscopeEdition.passages.find((p:any)=>p.sign==='aries').body,'','Private candidate cannot replace a rejected reader draft');
  }else{
-  assert([...writerFixture.requests.values()].at(-1).input.includes('Fixture latest instructions.'),'Replacement requests use the latest saved instructions');
+  const replacement=[...writerFixture.requests.values()].at(-1);
+  assert.equal(replacement.instructions.split(profile.voiceGuidance).length-1,1,'Replacement requests use the complete latest saved Voice as instructions');
+  assert(!replacement.input.includes(profile.voiceGuidance));
   assert(row.sections.horoscopeEdition.passages.find((p:any)=>p.sign==='aries').body.includes('complete aries fixture opening'));
  }
  const beforeAll=structuredClone(row),beforeVersion=row.updated_at;

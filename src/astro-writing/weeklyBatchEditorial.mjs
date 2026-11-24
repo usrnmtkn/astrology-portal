@@ -75,7 +75,8 @@ Report exact quotes from the affected current readings, identify their signs, an
 export function weeklyEditorialInput(prepared,row,phase){
   return {stage:phase,comparisonContract:WEEKLY_CROSS_WEEK_EDITORIAL,window:prepared.edition.window,profile:prepared.writingProfile.profile,
     currentCorrections:prepared.explicitFeedbackMarker??'',correctionReceipt:prepared.feedbackReceipt??null,sourceHash:prepared.sourceHash,
-    facts:prepared.entries.map(e=>({sign:e.sign,developments:e.developments})),
+    facts:prepared.entries.map(e=>({sign:e.sign,developments:e.developments,
+      ...(e.configurationEvidence?{configurationEvidence:e.configurationEvidence}:{})})),
     existingReadings:row.sections.horoscopeEdition.passages,
     priorWeeks:prepared.weeklyComparison??{version:'weekly-prior-editions/v1',editions:[],availability:'This legacy approval has no prior-edition snapshot. Do not claim a historical comparison.'},
     sharedConcerns:row.source_snapshot?.horoscopeGeneration?.weeklyEditorial?.plan?.concerns??[],

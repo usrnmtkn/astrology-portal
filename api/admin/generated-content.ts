@@ -3641,7 +3641,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
       resolutions.push({sign,operationId:held.operation.id,resolution:'owner_edited',resolvedAt:new Date().toISOString(),ownerApproved:false});
     }
     patch.source_snapshot={...separatedArticle.source_snapshot,horoscopeGeneration:{...generation,candidateHolds,candidateResolutions:resolutions,
-      lastError:generation.lastError?.operation?.phase==='review'&&!candidateHolds[generation.lastError.operation.sign]?null:generation.lastError}};
+      lastError:(generation.lastError?.operation?.phase==='review'||generation.lastError?.code==='daily_output_boundary')&&!candidateHolds[generation.lastError.operation.sign]?null:generation.lastError}};
   }
   if (editsHoroscopeEdition && generation?.lastError?.code === 'required_punctuation') {
     const sign = generation.lastError.operation?.sign;

@@ -2,8 +2,8 @@ import {prepareDraftRequest} from '../../src/astro-writing/generateDraft.mjs';
 import {getContentSpine} from '../../src/astro-writing/spineRegistry.mjs';
 import {hydrateExplicitWritingFeedback} from '../../src/astro-writing/explicitWritingFeedback.mjs';
 import {writingExport,unapprovedWritingInput} from '../../src/astro-writing/writingExport.mjs';
-import {horoscopeWriterContextInput} from '../../src/astro-writing/horoscopeWriting.mjs';
-import {weeklyPreviousReadings} from '../../src/astro-writing/weeklyPreviousReadings.mjs';
+import {horoscopeWriterContextInput,horoscopeWriterEngineFacts} from '../../src/astro-writing/horoscopeWriting.mjs';
+import {horoscopePreviousReadings} from '../../src/astro-writing/horoscopePreviousReadings.mjs';
 
 /** Prepare unsigned writing material. Never use the Generate/approval path to
  * inspect it: that would fabricate an owner ruling just to display a prompt. */
@@ -14,10 +14,11 @@ export function horoscopeWritingExport(prepared:any,row?:any) {
       argumentOutline:entry.argumentOutline,spine:getContentSpine('horoscope'),
       writingProfile:prepared.writingProfile,family:'horoscope',surface:'horoscopes',register:'second_person',
       target:{surface:'horoscopes',route:'horoscopes',renderer:'HoroscopeReader',contentKeyFamily:'horoscope',temporality:'current_sky',voiceMode:'second_person'},
-      engineFacts:{...prepared.brief,...(prepared.meaningResearchBySign?{meaningResearchBySign:prepared.meaningResearchBySign}:{}),risingSign:entry.sign,anchor:entry.anchor,house:entry.house,developments:entry.developments,seasonalMeaning:entry.seasonalMeaning},
+      engineFacts:horoscopeWriterEngineFacts(prepared,entry),
       task:entry.sign==='overview'?`Write one shared ${period==='seasonal'?'season introduction':'calendar-month overview'} for readers of all signs in ${timeZone}. Do not assign a personal house or rising sign.`:`Write one complete ${period} horoscope for ${entry.sign} rising in ${timeZone}.`});
-    const previousReadings=row?weeklyPreviousReadings(row,entry.sign):null;
-    const value=hydrateExplicitWritingFeedback({input:horoscopeWriterContextInput(unapprovedWritingInput(request.input),{...prepared,previousReadings},entry.sign)},prepared.feedbackReceipt,prepared.explicitFeedbackRows);
+    const previousReadings=row?horoscopePreviousReadings(row,entry.sign):null;
+    const input=['daily','weekly'].includes(period)?request.input:unapprovedWritingInput(request.input);
+    const value=hydrateExplicitWritingFeedback({input:horoscopeWriterContextInput(input,{...prepared,previousReadings},entry.sign)},prepared.feedbackReceipt,prepared.explicitFeedbackRows);
     return {label:entry.sign,...request,input:value.input};
   });
   return writingExport({title:`${period[0].toUpperCase()+period.slice(1)} horoscope writing plan · ${prepared.edition.window.startsAt} · ${timeZone}`,requests,

@@ -65,9 +65,15 @@ function HoroscopeRejectionHistory({rejections,period}:{rejections:any[];period:
 
 function HoroscopeReviewHolds({holds,locked,active,canRecover,onRecover,onEdit,onReject}:{holds:[string,any][];locked:boolean;active:boolean;canRecover:(held:any)=>boolean;onRecover:(sign:string)=>void;onEdit:(sign:string,held:any)=>void;onReject:(sign:string)=>void}) {
   return <>{holds.map(([sign,held])=><section key={sign} aria-label={`${horoscopeSignLabel(sign)} prose review`}>
-    <h3>{horoscopeSignLabel(sign)} {['rhetorical_pattern','weekly_direction_drift'].includes(held.code)?'needs a prose edit':'prose check did not finish'}</h3><p>{held.message}</p>
+    <h3>{horoscopeSignLabel(sign)} {held.code==='voice_review_required'?'needs voice review':['rhetorical_pattern','weekly_direction_drift'].includes(held.code)?'needs a prose edit':'prose check did not finish'}</h3><p>{held.message}</p>
     {(held.review?.rhetoric?.findings??[]).map((finding:any,index:number)=><div key={index}><strong>{finding.label}</strong><blockquote>{finding.quote}</blockquote><p>{finding.reason} {finding.readerConsequence}</p></div>)}
     {Object.entries(held.review?.weeklyDirection??{}).filter(([,finding]:any)=>finding.outcome==='fail').map(([key,finding]:any)=><div key={key}><strong>{key}</strong><blockquote>{finding.quote}</blockquote><p>{finding.reason}</p></div>)}
+    {Object.entries(held.review?.voiceReview??{}).filter(([,finding]:any)=>finding.outcome!=='pass').map(([key,finding]:any)=><div key={key}>
+      <strong>{key.replaceAll('_',' ')}{finding.outcome==='unassessed'?' — not assessed':''}</strong>
+      {finding.candidateParagraphText&&<blockquote>{finding.candidateParagraphText}</blockquote>}
+      <p>{finding.reason}</p>
+      {finding.referenceParagraphText&&<details><summary>Reference comparison: {finding.referenceId}</summary><p>{finding.referenceRole}</p><blockquote>{finding.referenceParagraphText}</blockquote></details>}
+    </div>)}
     {canRecover(held)&&<StudioButton disabled={locked||active} onClick={()=>onRecover(sign)}>Check saved {horoscopeSignLabel(sign)} prose review</StudioButton>}
     <StudioButton disabled={locked} onClick={()=>onEdit(sign,held)}>Edit saved {horoscopeSignLabel(sign)} draft</StudioButton>
     <StudioButton disabled={locked} onClick={()=>onReject(sign)}>Reject {horoscopeSignLabel(sign)} draft</StudioButton>
@@ -97,6 +103,7 @@ export default function HoroscopeGenerationDetails({view,...props}:{view:"eviden
     return <>
       <p aria-live="polite">{state==='approval'?`Check the plan approval box to ${retrySign?'retry':'continue'}.`:generationNotices[state]}</p>
       {showBudget&&<p>{period==='seasonal'?`Up to ${(retrySign?1:available)*30} paid AI requests: at most 3 plans and 3 prose candidates per reading, independently evaluated. Candidates stay private.`:period==='weekly'?`Up to ${2*available+2} paid AI requests: one twelve-sign plan, drafts and prose checks, then a full-set review.`:period==='monthly'?'Up to 3 paid AI requests: plan, draft and prose check. Matching saved plans are reused.':period==='daily'?`Up to ${2*available+1} paid AI requests: a draft and prose check per reading, then one review of all twelve for repeated interpretations, openings and endings.`:`Up to ${2*(retrySign?1:available)} paid AI requests: a draft and prose check per reading.`}{period!=='seasonal'&&' No automatic rewrites or paid retries. You approve wording.'}</p>}
+      {showBudget&&['daily','weekly'].includes(period)&&<p>New per-reading prose checks compare interpretation and voice with your examples and check rhetorical patterns. These are advisory findings; they do not train the writer or approve wording. Previously saved requests retain their original checks.</p>}
 
     </>;
   }

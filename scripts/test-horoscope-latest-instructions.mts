@@ -54,12 +54,23 @@ for(const period of ['daily','weekly','monthly','seasonal'] as const){
  assert(style.reference.text.endsWith('the part you wanted to do in the first place.'));
  assert.equal(actualDraft.split('OWNER-APPROVED STYLE REFERENCE\n').length-1,1);
  assert.equal(refreshed.payload.plan.readings[0].approvedStyleReference.textSha256,style.reference.textSha256);
- const neutral=JSON.parse(actualDraft.match(/NEUTRAL HELLENISTIC MEANING SUPPORT\n([^\n]+)/u)![1]);
- assert.equal(neutral.role,'meaning-only');assert.equal(neutral.receipt.positiveVoiceEvidence,false);
- assert(neutral.records.some((r:any)=>r.id==='HB-26'));
- assert(refreshed.payload.plan.readings[0].meaningSupport.frameworkSha256===neutral.receipt.frameworkSha256);
- assert(!neutral.records.some((r:any)=>r.id==='HB-08'||r.id.startsWith('HB-HOUSE-')));
- assert((period==='monthly'?active.draftRequest:period==='seasonal'?editorialFixtureRows.get(active.id).state.input.template:writerFixture.requests.get(active.responseId)).input.includes(horoscopeEditorialPrompt(second.profile)));
+ if(['daily','weekly'].includes(period)){
+  assert(!actualDraft.includes('NEUTRAL HELLENISTIC MEANING SUPPORT'));
+  assert.equal(refreshed.payload.plan.readings[0].meaningSupport.projectionOnly,true);
+  assert.deepEqual(refreshed.payload.plan.readings[0].meaningSupport.recordIds,[]);
+ }else{
+  const neutral=JSON.parse(actualDraft.match(/NEUTRAL HELLENISTIC MEANING SUPPORT\n([^\n]+)/u)![1]);
+  assert.equal(neutral.role,'meaning-only');assert.equal(neutral.receipt.positiveVoiceEvidence,false);
+  assert(neutral.records.some((r:any)=>r.id==='HB-26'));
+  assert(refreshed.payload.plan.readings[0].meaningSupport.frameworkSha256===neutral.receipt.frameworkSha256);
+  assert(!neutral.records.some((r:any)=>r.id==='HB-08'||r.id.startsWith('HB-HOUSE-')));
+ }
+ const delivered=period==='monthly'?active.draftRequest:period==='seasonal'?editorialFixtureRows.get(active.id).state.input.template:writerFixture.requests.get(active.responseId);
+ if(['daily','weekly'].includes(period)){
+  assert(delivered.instructions.includes(second.profile.voiceGuidance));
+  assert(!delivered.input.includes(second.profile.voiceGuidance));
+  for(const field of ['structure','sourceGuidance'])assert(delivered.input.includes(second.profile[field]));
+ }else assert(delivered.input.includes(horoscopeEditorialPrompt(second.profile)));
  const third=await saveProfile(second,`Future ${period} guidance.`);
  const pinned=await action('prepare');assert.equal(pinned.status,200);
  assert.equal(pinned.payload.rows[0].updated_at,row.updated_at);
@@ -129,7 +140,8 @@ for(const period of ['monthly','seasonal']){
  assert.deepEqual(store.rows.get(weeklyRow.id),weeklyRow,'Preparing Weekly must not adopt another period’s profile');
  assert.deepEqual(await captureRequest(planned.payload.rows[0]),requestBefore,'Weekly facts, sources, instructions, schema and complete provider input must remain identical');
 }
-assert(requestBefore.input.includes(horoscopeEditorialPrompt(weeklyProfile.profile)));
+assert(requestBefore.instructions.includes(weeklyProfile.profile.voiceGuidance));
+for(const field of ['structure','sourceGuidance'])assert(requestBefore.input.includes(weeklyProfile.profile[field]));
 assert(!requestBefore.input.includes('ONLY monthly'));
 assert(!requestBefore.input.includes('ONLY seasonal'));
 assert.deepEqual(requestBefore.schema.required,['headline','body'],'Weekly retains its sign-reading output, without the Monthly TLDR field');

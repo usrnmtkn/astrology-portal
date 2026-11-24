@@ -7,7 +7,7 @@ export function horoscopePunctuationFindings(passage) {
 }
 
 // Explicit Weekly owner prohibition, not a score for voice or prose quality.
-export const WEEKLY_REQUIRED_VOCABULARY_RULE = 'REQUIRED WEEKLY WORDING: Never use the word "whether" in the headline or body, including quotations. Recast the sentence in plain language while preserving its meaning. This explicit owner prohibition overrides historical examples. Preserve the complete source passages unchanged.';
+export const WEEKLY_REQUIRED_VOCABULARY_RULE = 'REQUIRED WEEKLY WORDING: Do not use whether, shrink, steady, fondness, pleasure, bond, preference, preferences, labor, or the phrase out loud in new headlines or bodies, including quotations. Do not use double hyphens, exclamation marks or parenthetical asides. Reconsider the sentence in ordinary language without changing its meaning; do not mechanically exchange synonyms. Current explicit owner exclusions override historical examples. Preserve complete source passages unchanged.';
 
 export function horoscopeVocabularyFindings(passage,period) {
   if(period!=='weekly')return [];
@@ -16,8 +16,10 @@ export function horoscopeVocabularyFindings(passage,period) {
       const code=value[0].toLowerCase()==='x'?parseInt(value.slice(1),16):Number(value);
       return code>0&&code<=0x10ffff?String.fromCodePoint(code):'';
     }).replace(/[\u200b-\u200d\ufeff]/gu,'');
-    return /(?<![\p{L}\p{N}_])whether(?![\p{L}\p{N}_])/iu.test(text)
-      ? [{category:'horoscope_required_vocabulary',field,detail:`Remove “whether” from the ${field}. Recast the sentence without changing its meaning.`,governanceTier:'blocking'}] : [];
+    const banned=text.match(/(?<![\p{L}\p{N}_])(?:whether|shrink|steady|fondness|pleasure|bond|preferences?|labor|out\s+loud)(?![\p{L}\p{N}_])/iu);
+    const punctuation=/--/u.test(text)?'the double hyphen':/!/u.test(text)?'the exclamation mark':/[()]/u.test(text)?'the parenthetical aside':null;
+    return banned||punctuation
+      ? [{category:'horoscope_required_vocabulary',field,detail:`Remove ${banned?'“'+banned[0]+'”':punctuation} from the ${field}. Recast the sentence without changing its meaning.`,governanceTier:'blocking'}] : [];
   });
 }
 

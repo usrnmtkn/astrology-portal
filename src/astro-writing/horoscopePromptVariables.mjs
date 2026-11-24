@@ -1,6 +1,7 @@
 import {createHash} from 'node:crypto';
 import {horoscopeEditorialPrompt, HOROSCOPE_RUN_PROMPT_VARIABLES} from './horoscopeWritingProfiles.mjs';
 import {studioWritingProfileReceipt} from './studioWritingProfileReceipt.mjs';
+import {compactVoiceInInstructions,withoutLegacyVoiceMarker} from './compactVoiceInstructions.mjs';
 
 const digest=text=>createHash('sha256').update(text).digest('hex');
 const empty=label=>`No ${label} were selected for this writing run.`;
@@ -25,17 +26,24 @@ export function horoscopeProfileEvidence(sourceGuidance) {
 }
 
 /** Values come from the selected, governed run context, never template names or URLs. */
-export function buildHoroscopePromptVariables({writingProfile,context,primaryPassages,supportingPassages,factsText}) {
+export function buildHoroscopePromptVariables({writingProfile,context,primaryPassages,supportingPassages,factsText,primarySourceLabel=null,sourceGuidanceView=null,voiceGuidanceView=null}) {
   studioWritingProfileReceipt(writingProfile,{allowStarter:true});
   const profile=writingProfile.profile;
+  // Change only the engine heading attached to this run variable, before any
+  // protected guide/source text is inserted. Never rewrite expanded prose.
+  const originalTemplate=compactVoiceInInstructions(profile)?withoutLegacyVoiceMarker(profile.prompt):profile.prompt;
+  const template=primarySourceLabel?originalTemplate.replace(/(^|\n)COMPLETE OWNER HOROSCOPES — PRIMARY PROSE EXAMPLES\r?\n(?=\{\{\s*primaryOwnerVoiceSources\s*\}\})/gu,
+    (_,start)=>`${start}${primarySourceLabel}\n`):originalTemplate;
+  const editorialProfile={...profile,prompt:template,...(sourceGuidanceView!==null?{sourceGuidance:sourceGuidanceView}:{}),
+    ...(voiceGuidanceView!==null?{voiceGuidance:voiceGuidanceView}:{})};
   const names=new Set([...profile.prompt.matchAll(/\{\{\s*([^{}]+?)\s*\}\}/gu)].map(m=>m[1]));
   const uses=name=>names.has(name);
   const active=HOROSCOPE_RUN_PROMPT_VARIABLES.some(uses);
   // Integrity applies even when the saved prompt uses only the original four variables.
   const selected=horoscopeProfileEvidence(profile.sourceGuidance);
-  if(!active)return {prompt:horoscopeEditorialPrompt(profile),uses,active};
-  if(!primaryPassages?.length || !Array.isArray(supportingPassages) || !Array.isArray(context.corrections) || !factsText?.trim())throw new Error('The horoscope writing run is missing its governed facts or owner evidence.');
-  let sourceGuidance=profile.sourceGuidance;
+  if(!active)return {prompt:horoscopeEditorialPrompt(editorialProfile),uses,active};
+  if((!primaryPassages?.length&&!selected.passages.length) || !Array.isArray(supportingPassages) || !Array.isArray(context.corrections) || !factsText?.trim())throw new Error('The horoscope writing run is missing its governed facts or owner evidence.');
+  let sourceGuidance=editorialProfile.sourceGuidance;
   for(const [name,text,label] of [['ownerPositiveComparisons',selected.comparisons,'OWNER POSITIVE COMPARISONS'],['ownerCorrections',selected.corrections,'OWNER CORRECTIONS']]){
     if(uses(name)&&text)sourceGuidance=sourceGuidance.replace(text,`The complete saved material is supplied under ${label}.\n\n`);
   }
@@ -46,5 +54,5 @@ export function buildHoroscopePromptVariables({writingProfile,context,primaryPas
     ownerCorrections:[`SELECTED OWNER CORRECTIONS\n${JSON.stringify(context.corrections)}`,...(selected.corrections?[selected.corrections]:[])].join('\n\n'),
     governedFacts:factsText
   };
-  return {prompt:horoscopeEditorialPrompt({...profile,sourceGuidance},runVariables),uses,active};
+  return {prompt:horoscopeEditorialPrompt({...editorialProfile,sourceGuidance},runVariables),uses,active};
 }

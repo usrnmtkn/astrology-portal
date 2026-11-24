@@ -42,14 +42,39 @@ export function horoscopeRequestMeaningPassages(input) {
   return passages;
 }
 
+export function horoscopeRequestSourcePassages(input) {
+  const match=input.match(/(DAILY|WEEKLY) COMPLETE SOURCE PASSAGES\n([^\n]+)\n\n/u);
+  assert(match,'Full-source index is present');
+  return JSON.parse(match[2]).map(source=>{
+    if(source.completeTextRef){
+      assert.equal(source.completeTextRef,source.id);
+      const begin=`BEGIN COMPLETE ${match[1]} SOURCE ${source.id}\n`,end=`\nEND COMPLETE ${match[1]} SOURCE ${source.id}`;
+      assert.equal(input.split(begin).length,2,'The complete body has one definition');
+      assert.equal(input.split(end).length,2,'The complete body has one ending');
+      const start=input.indexOf(begin)+begin.length,finish=input.indexOf(end,start);
+      assert(finish>=start,'The complete source body is bounded');
+      source={...source,text:input.slice(start,finish)};
+    }
+    assert.equal(createHash('sha256').update(source.text).digest('hex'),source.sha256);
+    return source;
+  });
+}
+
 export function resolveHoroscopeRequestPassage(input,passage) {
   if(!passage.completePassageRef)return passage.text;
-  const match=input.match(/(?:DAILY|WEEKLY) COMPLETE SOURCE PASSAGES\n([^\n]+)\n\n/u);
-  assert(match,'Full-source index is present');
-  const source=JSON.parse(match[1]).find(p=>p.id===passage.completePassageRef);
+  const source=horoscopeRequestSourcePassages(input).find(p=>p.id===passage.completePassageRef);
   assert(source,'Complete passage reference resolves');
   assert.equal(createHash('sha256').update(source.text).digest('hex'),source.sha256);
   return source.text;
+}
+
+export function horoscopeRequestPassageMetadata(input,passage) {
+  const match=input.match(/SOURCE AUTHORITY AND ROLES\n([^\n]+)\n\n/u);
+  if(!match)return passage;
+  const value=JSON.parse(match[1]).find(p=>p.id===passage.id&&p.completePassageRef===passage.completePassageRef);
+  assert(value,'Every prose reference retains its complete authority metadata');
+  const {uses,...metadata}=value;
+  return metadata;
 }
 
 // Inspect the provider-bound request, not just the selected primary source list.
@@ -64,7 +89,7 @@ export function assertHoroscopeRequestEvidence(input, additionalLabels=[]) {
     assert(!input.includes('current-approved-argument-and-close'),'Generated argument prose stays outside the writer packet');
   }
   if(/(?:DAILY|WEEKLY) COMPLETE SOURCE PASSAGES\n/u.test(input)) {
-    const sources=JSON.parse(input.match(/(?:DAILY|WEEKLY) COMPLETE SOURCE PASSAGES\n([^\n]+)\n\n/u)[1]);
+    const sources=horoscopeRequestSourcePassages(input);
     assert.equal(new Set(sources.map(p=>p.id)).size,sources.length);
     assert.equal(new Set(sources.map(p=>p.text)).size,sources.length,'Transport serializes each distinct complete body once');
     for(const p of sources)assert.equal(createHash('sha256').update(p.text).digest('hex'),p.sha256);
@@ -75,7 +100,7 @@ export function assertHoroscopeRequestEvidence(input, additionalLabels=[]) {
       if(value.completePassageRef){assert(!Object.hasOwn(value,'text'));assert(resolveHoroscopeRequestPassage(input,value).trim());used.add(value.completePassageRef);}
       for(const child of Object.values(value))visit(child);
     };
-    for(const label of ['COMPLETE OWNER HOROSCOPES — PRIMARY PROSE EXAMPLES','SUPPORTING OWNER PASSAGES','SHARED FIVE-ROLE EVIDENCE','RELEVANT OWNER PASSAGES','SAME-FAMILY OWNER PASSAGES','REGISTER REFERENCE','AVAILABLE OWNER LINES',...additionalLabels]){
+    for(const label of ['SOURCE AUTHORITY AND ROLES','RETRIEVED HISTORICAL OWNER READINGS — VOICE SUPPORT','COMPLETE OWNER HOROSCOPES — PRIMARY PROSE EXAMPLES','SUPPORTING OWNER PASSAGES','SHARED FIVE-ROLE EVIDENCE','RELEVANT OWNER PASSAGES','SAME-FAMILY OWNER PASSAGES','REGISTER REFERENCE','AVAILABLE OWNER LINES',...additionalLabels]){
       const match=input.match(new RegExp(`${label}\\n([^\\n]+)\\n\\n`,'u'));
       if(match)visit(JSON.parse(match[1]));
     }

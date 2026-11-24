@@ -6,6 +6,9 @@ import {emptyHoroscopeEdition,horoscopeEditionBody} from '../apps/web/src/conten
 import {defaultHoroscopeProfile} from '../src/astro-writing/horoscopeWritingProfiles.mjs';
 import {prepareHoroscopeWriting,writeHoroscopeSign} from '../src/astro-writing/horoscopeWriting.mjs';
 import {usesWeeklyFromSamples,weeklyFromSamplesFacts,weeklyFromSamplesResearch,WEEKLY_FROM_SAMPLES_AUTHORITY} from '../src/astro-writing/weeklyFromSamples.mjs';
+import {HOROSCOPE_ENDING_GUIDANCE} from '../src/astro-writing/horoscopeEndingGuidance.mjs';
+import {PUBLIC_HOROSCOPE_EVIDENCE_BOUNDARY} from '../src/astro-writing/compactReferenceLearning.mjs';
+import {HOROSCOPE_SOURCE_LED_COMPOSITION,HOROSCOPE_VOICE_REVIEW} from '../src/astro-writing/horoscopeVoiceStandard.mjs';
 import {buildHoroscopeProviderRequest,horoscopeProviderRequestSnapshot} from '../api/_lib/horoscope-provider-codecs';
 import {horoscopeWritingExport} from '../api/_lib/horoscope-writing-export';
 
@@ -32,6 +35,10 @@ const client=Object.assign(async request=>{captured=request;throw new Intercepte
 await assert.rejects(()=>writeHoroscopeSign(prepared,'aries',{approvedPlanHash:prepared.planHash,approvalReference:'thread:synthetic-owner-requested-test',writerClient:client}),Intercepted);
 assert.deepEqual(row,before,'Preparation and intercepted drafting do not modify saved source rows.');
 assert.equal(captured.instructions,WEEKLY_FROM_SAMPLES_AUTHORITY);
+assert.equal(captured.instructions.split(HOROSCOPE_SOURCE_LED_COMPOSITION).length-1,1);
+assert.equal(captured.reviewEvidence.voiceReviewContract,HOROSCOPE_VOICE_REVIEW);
+assert.equal(captured.instructions.split(HOROSCOPE_ENDING_GUIDANCE).length-1,1,'The V3 route receives the same current ending rule as the other horoscope writers');
+assert.equal(captured.instructions.split(PUBLIC_HOROSCOPE_EVIDENCE_BOUNDARY).length-1,1,'The V3 writer receives the existing evidence boundary before composing; conditional wording cannot establish conduct.');
 assert(captured.input.includes(source),'Complete source text reaches the writer.');
 assert(!captured.input.includes('OWNER-APPROVED WRITING PLAN'));
 assert(!captured.input.includes('NEUTRAL HELLENISTIC MEANING SUPPORT'));

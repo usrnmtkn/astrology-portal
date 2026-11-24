@@ -53,6 +53,13 @@ for(const period of ['daily','weekly','monthly','seasonal'])for(const [width,the
    const input=control.getByLabel('Complete writing plan',{exact:true});await expect(input).not.toHaveValue('');
    const complete=await input.inputValue();
    expect(complete).toContain(f.profile.voiceGuidance);expect(complete).toContain('### Output format');
+   if(['daily','weekly'].includes(period)){
+    expect(complete).toContain('WRITING PLAN FOR REVIEW — SCOPE');
+    expect(complete).toContain('RETRIEVED HISTORICAL OWNER READINGS — VOICE SUPPORT');
+    expect(complete).not.toContain('SHARED FIVE-ROLE EVIDENCE\n');
+    expect(complete).not.toContain('Once you choose a situation, develop the people');
+   }
+   if(period==='daily')expect(complete).toContain('DAILY PLANET AND SIGN DEFINITIONS — MEANING ONLY');
    for(const passage of f.edition.passages)expect(complete).toContain(`## ${passage.sign}\n`);
    await control.getByRole('button',{name:'Copy all',exact:true}).click();
    await expect(control.getByRole('status')).toHaveText('Complete writing plan copied.');

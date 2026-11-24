@@ -27,18 +27,36 @@ for(const period of ['daily','weekly','monthly','seasonal']){
  assert.deepEqual({calls:value.providerCalls,saved:value.saved,published:value.published},{calls:0,saved:false,published:false});
  assert.equal(JSON.stringify([...store.rows]),before,'Export cannot save an approval, alter a profile or reserve a writer');
  assert.equal((await invokeHoroscopeWriting({action:'export',id:row.id,expectedUpdatedAt:'stale'})).status,409);
+ if(period==='daily'){
+  const current=structuredClone(store.rows.get(row.id));
+  const aries=current.sections.horoscopeEdition.passages[0];
+  aries.headline='Synthetic saved Daily Aries';aries.body='Complete synthetic Daily opening.\n\nIts final sentence is comparison data.';
+  current.body=horoscopeEditionBody(current.sections.horoscopeEdition);current.updated_at=new Date(Date.parse(current.updated_at)+1).toISOString();store.rows.set(row.id,current);
+  const snapshot=JSON.stringify([...store.rows]);
+  const withEarlier=await invokeHoroscopeWriting({action:'export',id:row.id,expectedUpdatedAt:current.updated_at});
+  assert.equal(withEarlier.status,200,JSON.stringify(withEarlier.payload));
+  assert(withEarlier.payload.writingExport.text.includes('EARLIER COMPLETED DAILY READINGS — COMPARISON DATA'));
+  assert(withEarlier.payload.writingExport.text.includes(JSON.stringify(aries.body).slice(1,-1)));
+  assert.equal(JSON.stringify([...store.rows]),snapshot,'Daily comparison export stays read-only');
+ }
  if(period==='weekly'){
   const plan=await invokeHoroscopeWriting({action:'prepare',id:row.id,expectedUpdatedAt:row.updated_at});assert.equal(plan.status,200);
   let current=structuredClone(store.rows.get(row.id));
   assert.equal((await runHoroscopeWriting({action:'start-batch',id:row.id,expectedUpdatedAt:current.updated_at,approvedPlanHash:plan.payload.plan.planHash},'synthetic-owner')).status,202);
   await runWeeklyHoroscopeBatch(row.id,{maxSteps:2,wait:async()=>{}});
   current=structuredClone(store.rows.get(row.id));
-  const concern=current.source_snapshot.horoscopeGeneration.weeklyEditorial.plan.concerns[0].coreConcern;
+  const shared=current.source_snapshot.horoscopeGeneration.weeklyEditorial.plan.concerns;
   const aries=current.sections.horoscopeEdition.passages[0];aries.headline='Synthetic saved Aries';aries.body='Complete synthetic earlier reading opening.\n\nIts complete final sentence remains comparison data.';
   current.body=horoscopeEditionBody(current.sections.horoscopeEdition);current.updated_at=new Date(Date.parse(current.updated_at)+1).toISOString();store.rows.set(row.id,current);
   const snapshot=JSON.stringify([...store.rows]),calls=writerFixture.batchCalls;
   const withPlan=await invokeHoroscopeWriting({action:'export',id:row.id,expectedUpdatedAt:current.updated_at});assert.equal(withPlan.status,200,JSON.stringify(withPlan.payload));
-  assert(withPlan.payload.writingExport.text.includes(concern),'An already generated shared plan is included');
+  assert(!withPlan.payload.writingExport.text.includes('SHARED WEEKLY EVENT BINDINGS\n'));
+  for(const {sign,eventIds} of shared){
+   const unit=withPlan.payload.writingExport.units.find((u:any)=>u.label===sign);
+   const input=withPlan.payload.writingExport.text.slice(unit.start,unit.end);
+   assert(input.includes(`CURRENT SIGN EVENT BINDINGS\n${JSON.stringify({sign,eventIds})}`),'Each exported writer unit receives its own exact selected event binding');
+  }
+  for(const concern of shared)assert(!withPlan.payload.writingExport.text.includes(concern.coreConcern),'Generated abstract concern prose stays in private planning and review');
   assert(withPlan.payload.writingExport.text.includes(JSON.stringify(aries.body).slice(1,-1)),'Complete earlier readings retain their comparison-only role');
   assert(withPlan.payload.writingExport.text.includes('EARLIER COMPLETED WEEKLY READINGS — COMPARISON DATA'));
   assert.equal(writerFixture.batchCalls,calls);assert.equal(JSON.stringify([...store.rows]),snapshot);

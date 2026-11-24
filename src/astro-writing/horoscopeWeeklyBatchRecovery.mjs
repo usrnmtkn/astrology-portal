@@ -65,7 +65,7 @@ export function horoscopeWeeklyBatchRecovery(previous,current,{action,sign,planH
         return copy;
       };
       candidateHeld=Boolean(saved&&candidateHold.failedAt)
-        &&['rhetorical_pattern','rhetorical_review_unavailable','rhetorical_review_interrupted'].includes(candidateHold.code)
+        &&['rhetorical_pattern','weekly_direction_drift','voice_review_required','rhetorical_review_unavailable','rhetorical_review_interrupted'].includes(candidateHold.code)
         &&canonical(fixed(saved))===canonical(fixed(old))
         &&(!old.responseId||old.responseId===saved.responseId)
         &&(!old.requestHash||old.requestHash===saved.requestHash)

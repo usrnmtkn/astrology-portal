@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {syntheticHoroscopeVoiceReview} from '../tests/helpers/horoscope-voice-review-fixture.mjs';
 import {store,installHoroscopeWriterFixture,writerFixture,weeklyBatchFixtureResult} from '../tests/helpers/sky-article-save-api.mts';
 import {emptyHoroscopeEdition,horoscopeEditionBody,horoscopeEditionKey} from '../apps/web/src/content/horoscopeEditions.mjs';
 import {runHoroscopeWriting} from '../api/admin/horoscope-writing';
@@ -9,6 +10,8 @@ import {WEEKLY_PLAN_CHECKS,WEEKLY_REVIEW_CHECKS,validateWeeklyEditorialResult,we
 import {readerRouteResponse} from '../tests/helpers/content-reader-route.mjs';
 import {installAlternativeHoroscopeProviders} from '../tests/helpers/horoscope-provider-fixture.mts';
 import {defaultHoroscopeProfile} from '../src/astro-writing/horoscopeWritingProfiles.mjs';
+import {horoscopeProseInstructions} from '../src/astro-writing/horoscopeProseInstructions.mjs';
+import {withCompactVoiceInstructions} from '../src/astro-writing/compactVoiceInstructions.mjs';
 import {HOROSCOPE_SIGNS} from '../apps/web/src/content/horoscopeEditions.mjs';
 import {WEEKLY_OWNER_DIRECTION,WEEKLY_DIRECTION_CHECKS,weeklyDirectionWriterInput,validateWeeklyDirection,weeklyOwnerDirection} from '../src/astro-writing/weeklyConcernDirection.mjs';
 import {horoscopeReviewSchema,horoscopeReviewInstructions,HOROSCOPE_REVIEW_SCHEMA,readHoroscopeReview} from '../src/astro-writing/horoscopeRhetoricalReview.mjs';
@@ -46,6 +49,11 @@ assert.equal(writerFixture.calls,12);assert.equal(writerFixture.reviewCalls,12);
 assert.equal(row.status,'DRAFT');assert.equal(gate.review.ownerApproved,false);
 const requests=[...writerFixture.batchRequests.values()];
 assert.equal(JSON.parse(requests[0].input).facts.length,12);
+for(const facts of JSON.parse(requests[0].input).facts){
+ assert.equal(facts.configurationEvidence.risingSign,facts.sign,'The actual shared planner receives each sign’s configuration research before choosing a concern.');
+ assert(facts.configurationEvidence.chartRuler.planet);
+ assert(facts.configurationEvidence.conditionMeaning.text,'Condition labels retain their neutral meaning source.');
+}
 reviewInput=JSON.parse(requests[1].input);
 assert.deepEqual(JSON.parse(requests[1].input).existingReadings,row.sections.horoscopeEdition.passages,'Judge sees every complete reading');
 assert.deepEqual(JSON.parse(requests[1].input).profile,row.source_snapshot.studioWritingProfile.profile,'Judge sees the entire saved profile');
@@ -142,8 +150,9 @@ await action(native,'start-batch',{approvedPlanHash:nativeSaved.payload.plan.pla
 assert.equal(nativeTransport.requests.length,1);assert(!nativeTransport.requests[0].request.messages[0].content.includes('OWNER-EDITED WEEKLY CONCERNS\n'));assert(!nativeTransport.requests[0].request.messages[0].content.includes('SHARED WEEKLY CONCERNS\n'));assert(nativeTransport.requests[0].request.messages[0].content.includes('CURRENT SIGN CONCERN\n'));
 assert(nativeTransport.requests[0].request.messages[0].content.endsWith(weeklyDirectionWriterInput({version:WEEKLY_OWNER_DIRECTION,sign:'pisces',...nativeEdits})),'Native Claude receives the current sign directions after all other context');
 assert.equal(latest(native).source_snapshot.horoscopeGeneration.readings.pisces.rhetoricalReview.weeklyDirection.ending.outcome,'pass');
-assert(nativeTransport.requests[0].request.system.includes('An opening may need several connected sentences'),'The native Claude system retains the Weekly opening correction');
-assert(nativeTransport.requests[0].request.system.includes('without requiring a psychological revelation'),'The native Claude prose authority retains the ordinary-language correction');
+assert.equal(nativeTransport.requests[0].request.system,withCompactVoiceInstructions(horoscopeProseInstructions('weekly'),latest(native).source_snapshot.studioWritingProfile.profile),'Native Claude retains the complete current Weekly authority and saved Voice rather than a retired scope snippet');
+const nativeScope=JSON.parse(nativeTransport.requests[0].request.messages[0].content.split('OWNER-APPROVED WRITING PLAN — SCOPE\n').at(-1).split('\n')[0]);
+assert(!Object.hasOwn(nativeScope,'recognition'),'The native writer receives approved scope rather than a generated psychological-revelation assignment');
 assert(nativeTransport.requests[0].request.messages[0].content.includes(JSON.stringify({previousReadings:latest(native).source_snapshot.horoscopeGeneration.readings.pisces.previousReadings})));
 assert.deepEqual(latest(native).sections.horoscopeEdition.passages.slice(0,11),nativeExisting);
 // Existing in-flight batches keep their pinned request and paid-stage budget.
@@ -250,7 +259,7 @@ for(let steps=0;latest(directed).source_snapshot.horoscopeGeneration.active&&ste
  if(active.phase==='review'&&!injected){
   const paragraph=active.candidate.body.split(/\n\s*\n/u).at(-1);
   const weeklyDirection=Object.fromEntries(WEEKLY_DIRECTION_CHECKS.map(key=>[key,{outcome:key==='ending'?'fail':'pass',quote:paragraph,paragraph,reason:key==='ending'?'The final paragraph substitutes a practical task for the saved observation.':'Synthetic transport-only assessment.'}]));
-  writerFixture.nextReviewResult=output({checks:['CORRECTIO','TRICOLON','PURPLE_PROSE'].map(label=>({label,outcome:'pass',reason:'Synthetic transport fixture.'})),findings:[],weeklyDirection});injected=true;
+  writerFixture.nextReviewResult=output({checks:['CORRECTIO','TRICOLON','PURPLE_PROSE'].map(label=>({label,outcome:'pass',reason:'Synthetic transport fixture.'})),findings:[],weeklyDirection,voiceReview:syntheticHoroscopeVoiceReview(JSON.parse(active.reviewRequest.input))});injected=true;
  }
  const result=await action(directed,active.state==='ready'?'continue':'poll');assert(result.status<400,JSON.stringify(result.payload));
  await new Promise(resolve=>setTimeout(resolve,5));

@@ -8,6 +8,7 @@ import {horoscopePendingReadings} from '../src/astro-writing/horoscopeRecovery.m
 import {HOROSCOPE_RHETORICAL_REVIEW,LEGACY_HOROSCOPE_RHETORICAL_REVIEW,horoscopeReviewHash} from '../src/astro-writing/horoscopeRhetoricalReview.mjs';
 
 import {horoscopeWeeklyBatchRecovery} from '../src/astro-writing/horoscopeWeeklyBatchRecovery.mjs';
+import {syntheticHoroscopeVoiceReview} from '../tests/helpers/horoscope-voice-review-fixture.mjs';
 installHoroscopeWriterFixture();
 const deployment=JSON.parse(fs.readFileSync('vercel.json','utf8'));
 const packaged=new Set(fs.globSync(deployment.functions['api/admin/horoscope-writing.ts'].includeFiles));
@@ -26,13 +27,15 @@ const generation=()=>row.source_snapshot.horoscopeGeneration;
 const providerResult=(value:any)=>({status:'completed',output:[{type:'message',content:[{type:'output_text',text:JSON.stringify(value)}]}]});
 const draft=async(sign:string,legacy=false)=>{
  assert.equal((await action('generate',{sign,approvedPlanHash:plan.planHash})).status,202);
- if(legacy){store.rows.get(row.id).source_snapshot.horoscopeGeneration.active.reviewVersion=LEGACY_HOROSCOPE_RHETORICAL_REVIEW;row=structuredClone(store.rows.get(row.id));}
+ if(legacy){const op=store.rows.get(row.id).source_snapshot.horoscopeGeneration.active;op.reviewVersion=LEGACY_HOROSCOPE_RHETORICAL_REVIEW;delete op.reviewEvidence.voiceReviewContract;row=structuredClone(store.rows.get(row.id));}
  assert.equal((await action('poll')).status,202);
  assert.equal(generation().active.phase,'review');assert.equal(generation().active.state,'ready');
  assert.equal(row.sections.horoscopeEdition.passages.find((p:any)=>p.sign===sign).body,'');
 };
 await draft('aries');
 const ready=generation().active;
+assert.equal(ready.receipt.writerEvaluationCoverage.voiceMatch,'not_evaluated','A writer-only factual pass cannot establish voice quality');
+assert.equal(ready.receipt.writerEvaluationCoverage.rhetoricalPatterns,'not_run','The saved writer receipt describes its own stage');
 assert.equal(writerFixture.calls,1);assert.equal(writerFixture.reviewCalls,0);
 await action('poll');await action('poll');
 assert.equal(writerFixture.reviewCalls,0,'Reload/progress retrieval never launches review');
@@ -42,6 +45,8 @@ const frozen=JSON.parse(ready.reviewRequest.input);
 assert.deepEqual(frozen.candidate,ready.candidate);
 assert(frozen.evidence.ownerExamples.length>=3);
 assert(frozen.evidence.ownerExamples.every((e:any)=>e.text.trim().length>0));
+assert(ready.reviewRequest.schema.required.includes('voiceReview'),'Fresh requests assess whole-reading voice in the existing check');
+assert(frozen.voiceReferences.length>0);
 assert.deepEqual(frozen.evidence.engineFacts.window,edition.window);
 assert(!ready.reviewRequest.instructions.includes('SKY PLACEMENT ARTICLE SPINE'));
 assert(!ready.reviewRequest.instructions.includes('cold_rendered_prose'),'The targeted review must not import the broader article rubric');
@@ -81,13 +86,15 @@ await action('continue');
 assert.equal(writerFixture.reviewRequests.get(generation().active.responseId).instructions,frozenLegacyInstructions);
 await action('poll');
 assert.equal(generation().readings.taurus.rhetoricalReview.rhetoricalBlocked,false);
+assert.equal(generation().readings.taurus.rhetoricalReview.coverage.voiceMatch,'not_evaluated','A completed rhetorical pass still cannot certify the owner voice');
+assert.equal(generation().readings.taurus.rhetoricalReview.coverage.trainingUpdate,'none');
 assert.equal(generation().readings.taurus.rhetoricalReview.ownerApproved,false);
 assert.equal(row.status,'DRAFT');assert(generation().candidateHolds.aries,'Another sign succeeding must not erase held candidates');
 
 writerFixture.nextResult=providerResult({headline:'Gemini & Gemini Rising',body:'Saturn reminds you to honor your boundaries.'});
 await draft('gemini');const candidate=generation().active.candidate;await action('continue');
 const evidence={quote:candidate.body.split('\n')[0],passageReason:'The generic planetary reminder substitutes for astrological interpretation.',materialEffect:'The complete passage supplies no situation in which the boundary matters.',legitimateReading:'The fixture supplies no necessary third distinction.',plainAlternative:'The fixture describes one concrete behavior.',replacementEffect:'Removing Saturn leaves the same stock instruction; no surrounding behavior supplies its missing meaning.'};
-writerFixture.nextResult=providerResult({checks:['CORRECTIO','TRICOLON','PURPLE_PROSE'].map(label=>({label,outcome:label==='PURPLE_PROSE'?'fail':'pass',reason:'Synthetic diagnosis.'})),findings:['PURPLE_PROSE','GENERIC_ASTROLOGY'].map(label=>({label,field:'body',quote:evidence.quote,paragraph:evidence.quote,reason:evidence.passageReason,readerConsequence:evidence.materialEffect,meaningTest:evidence.replacementEffect}))});
+writerFixture.nextResult=providerResult({checks:['CORRECTIO','TRICOLON','PURPLE_PROSE'].map(label=>({label,outcome:label==='PURPLE_PROSE'?'fail':'pass',reason:'Synthetic diagnosis.'})),findings:['PURPLE_PROSE','GENERIC_ASTROLOGY'].map(label=>({label,field:'body',quote:evidence.quote,paragraph:evidence.quote,reason:evidence.passageReason,readerConsequence:evidence.materialEffect,meaningTest:evidence.replacementEffect})),voiceReview:syntheticHoroscopeVoiceReview(JSON.parse(generation().active.reviewRequest.input))});
 await action('poll');
 assert.deepEqual(generation().candidateHolds.gemini.review.rhetoric.findings.map((f:any)=>f.label),['PURPLE_PROSE','GENERIC_ASTROLOGY']);
 const beforePaid=writerFixture.calls+writerFixture.reviewCalls;
@@ -157,6 +164,23 @@ const mixed={...row.sections.horoscopeEdition,passages:row.sections.horoscopeEdi
 result=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,sections:{horoscopeEdition:mixed},body:horoscopeEditionBody(mixed)});
 assert.equal(result.status,200,JSON.stringify(result.payload));row=result.payload.rows[0];
 assert(!generation().candidateHolds.cancer);assert.equal(generation().lastError,null);assert(generation().candidateHolds.sagittarius);
+
+// Full-reading voice findings use the existing single review, preserve the
+// complete candidate, and do not hold other signs or create rewrite calls.
+for(const [sign,outcome] of [['aquarius','revise'],['pisces','unassessed']]){
+ await draft(sign);const operation=structuredClone(generation().active);await action('continue');
+ const input=JSON.parse(operation.reviewRequest.input),voiceReview=syntheticHoroscopeVoiceReview(input);
+ voiceReview.ending=outcome==='revise'?{...voiceReview.ending,outcome:'revise'}:{outcome:'unassessed',candidateParagraph:null,candidateQuote:'',referenceId:null,referenceParagraph:null,referenceQuote:'',reason:'Synthetic missing comparison.'};
+ writerFixture.nextResult=providerResult({checks:['CORRECTIO','TRICOLON','PURPLE_PROSE'].map(label=>({label,outcome:'pass',reason:'Synthetic transport assertion.'})),findings:[],voiceReview});
+ const before=structuredClone(row),calls=writerFixture.calls+writerFixture.reviewCalls;
+ await action('poll');const held=generation().candidateHolds[sign];
+ assert.equal(held.code,'voice_review_required');assert.equal(held.review.voiceDecision,outcome);
+ assert.equal(held.review.coverage.voiceCalibration,'unverified');assert.equal(held.review.ownerApproved,false);
+ assert.deepEqual(held.candidate,operation.candidate);
+ assert(horoscopeWeeklyBatchRecovery(before,row,{action:'poll',sign,planHash:plan.planHash}));
+ await action('poll');assert.equal(writerFixture.calls+writerFixture.reviewCalls,calls);
+ assert(!horoscopePendingReadings(row.sections.horoscopeEdition,generation()).some((p:any)=>p.sign===sign));
+}
 
 // Original generated copy and overlapping diagnostics survive rejection history.
 result=await action('reject',{sign:'aries'});assert.equal(result.status,200,JSON.stringify(result.payload));

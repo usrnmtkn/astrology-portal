@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import {store,editorialFixtureRows,explicitWritingFeedbackFixture as fixture,installHoroscopeWriterFixture,invokeHoroscopeWritingWithReview as invoke,writerFixture} from '../tests/helpers/sky-article-save-api.mts';
 import {prepareHoroscopeBrief} from '../api/_lib/horoscope-editions';
-import {emptyHoroscopeEdition,horoscopeEditionBody,horoscopeEditionKey} from '../apps/web/src/content/horoscopeEditions.mjs';
+import {emptyHoroscopeEdition,horoscopeEditionBody,horoscopeEditionKey,HOROSCOPE_SIGNS} from '../apps/web/src/content/horoscopeEditions.mjs';
+import {horoscopeFeedbackUnit} from '../src/astro-writing/horoscopeFeedbackUnits.mjs';
 import {defaultHoroscopeProfile} from '../src/astro-writing/horoscopeWritingProfiles.mjs';
 
 installHoroscopeWriterFixture();process.env.STUDIO_MEMORY_FEEDBACK_ENABLED='true';
@@ -11,6 +12,8 @@ const feedback=(id:string,target:string)=>({id,version:1,status:'active',kind:'r
 for(const period of ['daily','weekly','monthly','seasonal'] as const){
  fixture.rows=[feedback('fixture-all','writing/all'),feedback(`fixture-${period}`,`horoscope/${period}`),
   feedback('fixture-unrelated',period==='monthly'?'horoscope/weekly':'horoscope/monthly')];
+ const collection=HOROSCOPE_SIGNS.map(sign=>{const label=sign[0].toUpperCase()+sign.slice(1);return `${label} & ${label} Rising\n\nPRIVATE complete ${sign} rejected opening.\n\nPRIVATE complete ${sign} rejected ending.\n\n`;}).join('');
+ fixture.rows[1].rejected_text=collection;
  const packet=await prepareHoroscopeBrief(new URL(`http://localhost/?period=${period}&date=2026-10-01&timeZone=America/New_York`));
  const edition=emptyHoroscopeEdition(packet.brief.window),profile=defaultHoroscopeProfile(period);
  if(period==='weekly')profile.prompt='WEEKLY PROMPT V2\n'+profile.prompt;
@@ -62,10 +65,16 @@ for(const period of ['daily','weekly','monthly','seasonal'] as const){
  assert(sent.includes(`PRIVATE updated direction for ${period}.`));
  assert(!sent.includes('PRIVATE synthetic correction fixture-unrelated.'));
  assert(!sent.includes('[PRIVATE_OWNER_WRITING_FEEDBACK:'));
+ if(['daily','weekly'].includes(period)){
+  const unit=horoscopeFeedbackUnit(collection,edition.passages[0].sign);
+  assert(sent.includes(JSON.stringify(unit.text).slice(1,-1)),'The actual provider receives the whole requested-sign rejection');
+  assert(sent.includes(unit.selection.originalRejectedTextSha256),'The projection retains the full original source hash');
+  assert(!sent.includes('PRIVATE complete taurus rejected opening.'),'Other signs remain in the feedback source, outside this single-sign request');
+ }else assert(sent.includes(JSON.stringify(collection).slice(1,-1)),'Other periods retain their original full feedback transport');
  const callsAfter=writerFixture.calls;
  fixture.rows=[];const completed=await action('poll');assert.equal(completed.status,200,JSON.stringify(completed.payload));row=completed.payload.rows[0];
  assert.equal(writerFixture.calls,callsAfter,'Polling only retrieves the reserved output');
  assert.equal(row.source_snapshot.horoscopeGeneration.readings[edition.passages[0].sign].feedback.selected.length,2);
  assert(!JSON.stringify(row).includes('PRIVATE updated direction'));
 }
-console.log('PASS actual horoscope handlers: all four periods receive scoped private feedback; stale-plan and storage failures before dispatch; actual provider delivery; immutable monthly continuation after retirement; no feedback bodies in edition rows.');
+console.log('PASS actual horoscope handlers: all four periods receive scoped private feedback; complete requested-sign negative units for Daily/Weekly, original full collection for Monthly; stale-plan and storage failures before dispatch; actual provider delivery; immutable monthly continuation after retirement; no feedback bodies in edition rows.');
