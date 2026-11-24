@@ -157,12 +157,18 @@ result=await action(id,'release',{acknowledgeUnknownOutcome:true});assert.equal(
 assert.equal(latest(id).source_snapshot.horoscopeGeneration.active,null);
 
 transport.geminiDelay=10;
-const claudePlan=await action(id,'prepare',{writerChoice:'claude'});transport.claudeError=true;
+const claudePlan=await action(id,'prepare',{writerChoice:'claude'});transport.claudeError=true;transport.claudeDelay=100;
 await action(id,'generate',{sign:'gemini',approvedPlanHash:claudePlan.payload.plan.planHash});
-await new Promise(resolve=>setTimeout(resolve,30));
-result=await action(id,'poll');assert.equal(result.status,422);
+const failureCalls=writerFixture.calls;
+for(let attempts=0;attempts<40;attempts++){
+  result=await action(id,'poll');
+  if(result.status!==202)break;
+  await new Promise(resolve=>setTimeout(resolve,15));
+}
+assert.equal(result.status,422);
+assert.equal(writerFixture.calls,failureCalls,'Waiting for the failed stream never creates another writer');
 assert.equal(latest(id).source_snapshot.horoscopeGeneration.lastError.diagnostic.errorCode,'claude_connection_interrupted');
-transport.claudeError=false;
+transport.claudeError=false;transport.claudeDelay=10;
 const failedOperation=latest(id).source_snapshot.horoscopeGeneration.lastError.operation;
 const resultBefore=structuredClone(latest(id));
 await saveHoroscopeStreamResult({editionId:id,operationId:failedOperation.id,requestHash:failedOperation.requestHash},{id:failedOperation.responseId,status:'completed',output:[]});
