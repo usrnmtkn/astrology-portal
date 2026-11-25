@@ -143,3 +143,71 @@ console.log("PASS startup and mounted auth-route exclusion, editor protection an
     ["https://fixture.example.test/assets/App-fixture.js", "https://fixture.example.test/assets/sky-fixture.js"]);
 }
 console.log("PASS bounded same-origin module refresh, completed bodies and manual startup recovery.");
+
+// Run the actual startup owner and mounted adapter through browser lifecycle
+// signals. A cancelled import in an obsolete document must not replace the
+// navigation that cancelled it, while active readers retain their one retry.
+for (const owner of ["startup", "mounted"]) {
+  const createReader = (modern = true) => {
+    let reloads = 0;
+    const listeners = new Map(), navigationListeners = new Map(), tasks = [];
+    const add = (map, name, callback) => map.set(name, [...map.get(name) ?? [], callback]);
+    const location = Object.assign(new URL("/?date=2030-01-01#you", "https://fixture.example.test"), { reload: () => reloads++ });
+    const history = { state: {}, replaceState(value) { this.state = value; } };
+    const window = { location, history, localStorage: { getItem: () => null },
+      addEventListener: (name, callback) => add(listeners, name, callback), setTimeout: callback => tasks.push(callback),
+      ...(modern ? { navigation: { addEventListener: (name, callback) => add(navigationListeners, name, callback) } } : {}) };
+    const context = { window, location, history, URLSearchParams, queueMicrotask, module: { exports: {} }, exports: {},
+      document: { getElementById: () => null, querySelector: () => null,
+        documentElement: { dataset: {}, toggleAttribute() {} } },
+      matchMedia: () => ({ matches: false, addEventListener() {} }),
+      MutationObserver: class { observe() {} }, clearTimeout() {} };
+    const source = owner === "startup" ? startup + "\nglobalThis.recover = reloadReaderRouteOnce;"
+      : "(() => {" + startup + "})();\n" + recovery.outputFiles[0].text + "\nglobalThis.recover = module.exports.reloadReaderRouteOnce;";
+    runInNewContext(source, context);
+    return { recover: context.recover, reloads: () => reloads, flushTasks: () => { while (tasks.length) tasks.shift()(); },
+      dispatch: (name, event = {}) => listeners.get(name)?.forEach(callback => callback(event)),
+      navigate: (signal, sameDocument = false) => navigationListeners.get("navigate")?.forEach(callback => callback({ signal, destination: { sameDocument } })) };
+  };
+  let reader = createReader(), first = new AbortController();
+  reader.navigate(first.signal);
+  assert.equal(reader.recover(), false, `${owner}: cancelled optional imports cannot reload a leaving document`);
+  assert.equal(reader.reloads(), 0);
+  first.abort();
+  assert.equal(reader.recover(), true, `${owner}: cancelling navigation restores genuine active-page recovery`);
+  assert.equal(reader.recover(), false, `${owner}: the existing cooldown still permits only one retry`);
+
+  reader = createReader();
+  reader.navigate(new AbortController().signal, true);
+  assert.equal(reader.recover(), true, `${owner}: ordinary hash/history updates do not disable recovery`);
+
+  reader = createReader();
+  first = new AbortController();
+  reader.navigate(first.signal);
+  reader.navigate(new AbortController().signal);
+  first.abort();
+  assert.equal(reader.recover(), false, `${owner}: an older cancellation cannot clear the newer navigation`);
+  reader.dispatch("pagehide", { persisted: true });
+  reader.dispatch("pageshow", { persisted: true });
+  assert.equal(reader.recover(), true, `${owner}: a restored reader can recover again`);
+
+  reader = createReader();
+  // The browser cancels an unsaved-change prompt before firing navigate.
+  reader.dispatch("beforeunload", { defaultPrevented: true });
+  reader.flushTasks();
+  assert.equal(reader.recover(), true, `${owner}: a cancelled unsaved-navigation prompt leaves the reader active`);
+  reader = createReader();
+  reader.navigate(new AbortController().signal);
+  reader.dispatch("beforeunload", { defaultPrevented: true });
+  reader.flushTasks();
+  assert.equal(reader.recover(), true, `${owner}: prompt cancellation also clears a native signal that did not abort`);
+  reader = createReader(false);
+  reader.dispatch("beforeunload");
+  reader.flushTasks();
+  assert.equal(reader.recover(), false, `${owner}: browser-initiated legacy navigation is protected before pagehide`);
+  reader.dispatch("pagehide");
+  assert.equal(reader.recover(), false, `${owner}: legacy hidden documents cannot start another reload`);
+  reader.dispatch("pageshow", { persisted: true });
+  assert.equal(reader.recover(), true, `${owner}: legacy restoration retains recovery`);
+}
+console.log("PASS navigation ownership, cancellation, overlapping navigation and restored reader recovery.");

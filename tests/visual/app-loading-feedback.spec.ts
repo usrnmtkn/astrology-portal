@@ -2,6 +2,7 @@ import { expect, test, type Page } from "@playwright/test";
 import { writeFile } from "node:fs/promises";
 import { readFileSync } from "node:fs";
 import { readerResponse } from '../helpers/reader-response';
+import { healthyEphemerisProbe } from '../helpers/ephemeris-health';
 
 const weekGuidance = (page: Page, dateKey: string) => page.locator(`#calendar-day-group-${dateKey} .calendar-day-group__blurb`);
 const dayGuidance = (page: Page) => page.locator("[data-calendar-date] [data-guidance-key]").first();
@@ -11,6 +12,20 @@ test.beforeEach(async ({ page }) => {
   await page.route("**/rest/v1/**", route => route.fulfill({ json: [] }));
   await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse([]) }));
 });
+
+for (const cancellation of ['Execution context was destroyed, most likely because of a navigation', 'Cannot find context with specified id']) {
+  test(`a cancelled health probe settles reader route cleanup: ${cancellation}`, async ({ page }) => {
+    await healthyEphemerisProbe({
+      route: page.route.bind(page),
+      isClosed: page.isClosed.bind(page),
+      evaluate: async () => { throw new Error(cancellation); }
+    });
+    const failed = page.waitForEvent('requestfailed', request => request.url() === 'https://health-fixture.example.test/api/health?scope=ephemeris');
+    await page.evaluate(() => { void fetch('https://health-fixture.example.test/api/health?scope=ephemeris').catch(() => {}); });
+    expect((await failed).failure()).not.toBeNull();
+    await page.unrouteAll({ behavior: 'wait' });
+  });
+}
 
 test("offline snapshot publication keeps complete Calendar guidance available during live API failure", async ({ page }) => {
   test.setTimeout(60_000);
@@ -364,6 +379,77 @@ test("an unavailable entry bundle attempts one guarded recovery before manual re
   await expect(page.getByRole("button", { name: "Reload page" })).toBeVisible();
   await page.waitForTimeout(500);
   expect(navigations).toBe(2);
+});
+
+test("a preload failure during document navigation cannot reload the departing reader", async ({ page }) => {
+  const documents: string[] = [];
+  let failureDelivered = false;
+  let releaseDocument!: () => void;
+  const heldDocument = new Promise<void>(resolve => { releaseDocument = resolve; });
+  await page.exposeFunction("recordNavigationPreloadFailure", () => {
+    failureDelivered = true;
+    releaseDocument();
+  });
+  page.on("request", request => {
+    if (request.isNavigationRequest() && request.frame() === page.mainFrame()) documents.push(request.url());
+  });
+  await page.goto("/#friends");
+  const friends = page.getByRole("heading", { name: "Sign in to see your friends", exact: true });
+  await expect(friends).toBeVisible();
+  await page.route(/\/\?date=2026-09-09$/u, async route => {
+    await heldDocument;
+    await route.continue().catch(() => {});
+  });
+  await page.evaluate(() => window.addEventListener("beforeunload", () => {
+    // Run after beforeunload dispatch, while the requested document is held.
+    window.setTimeout(() => {
+      void (window as any).recordNavigationPreloadFailure();
+      window.dispatchEvent(Object.assign(new Event("vite:preloadError", { cancelable: true }), {
+        payload: new TypeError("Importing a module script failed.")
+      }));
+    }, 0);
+  }, { once: true }));
+  try {
+    await page.goto("/?date=2026-09-09#friends");
+  } finally { releaseDocument(); }
+  await expect(page).toHaveURL(/\/\?date=2026-09-09#friends$/u);
+  await expect(friends).toBeVisible();
+  expect(failureDelivered).toBe(true);
+  expect(documents.map(url => new URL(url).search)).toEqual(["", "?date=2026-09-09"]);
+});
+
+test("cancelling an unsaved navigation preserves active reader asset recovery", async ({ page }) => {
+  let documents = 0;
+  page.on("request", request => {
+    if (request.isNavigationRequest() && request.frame() === page.mainFrame()) documents++;
+  });
+  await page.goto("/#friends");
+  const friends = page.getByRole("heading", { name: "Sign in to see your friends", exact: true });
+  await expect(friends).toBeVisible();
+  await friends.click();
+  await page.evaluate(() => window.addEventListener("beforeunload", event => {
+    event.preventDefault();
+    event.returnValue = "";
+  }, { once: true }));
+  const dialogPromise = page.waitForEvent("dialog");
+  const cancelled = page.evaluate(() => { window.location.href = "/?date=2026-09-09#friends"; });
+  const dialog = await dialogPromise;
+  expect(dialog.type()).toBe("beforeunload");
+  await dialog.dismiss();
+  await cancelled;
+  // Finish the same task turn that observes the completed prompt dispatch.
+  await page.evaluate(() => new Promise<void>(resolve => window.setTimeout(resolve, 0)));
+  await expect(page).toHaveURL(/\/#friends$/u);
+  const beforeRecovery = documents;
+  await Promise.all([
+    page.waitForEvent("framenavigated", frame => frame === page.mainFrame()),
+    page.evaluate(() => window.dispatchEvent(Object.assign(new Event("vite:preloadError", { cancelable: true }), {
+      payload: new TypeError("Importing a module script failed.")
+    })))
+  ]);
+  await expect(friends).toBeVisible();
+  await expect(page).toHaveURL(/\/#friends$/u);
+  expect(documents).toBe(beforeRecovery + 1);
 });
 
 test("blocked web fonts do not block startup or reader content", async ({ page }) => {

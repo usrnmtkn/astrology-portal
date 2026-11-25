@@ -4,6 +4,43 @@ const startup = document.getElementById("app-startup");
 const readerRecoveryHistoryKey = "__tldrastroReaderPageRecovery";
 const readerRecoveryCooldownMs = 2 * 60 * 1000;
 const recoverableReaderHash = /^#\/?(?:you|sky|calendar|friends)(?:[/?]|$)/u;
+let leavingDocument = false;
+let pendingNavigation = null;
+const markDocumentLeaving = (event) => {
+  leavingDocument = true;
+  const navigation = pendingNavigation;
+  // WebKit runs microtasks between listeners; wait for the prompt owner too.
+  window.setTimeout(() => {
+    // A prompt owns cancellation. Do not leave its active document disabled.
+    if (event.defaultPrevented || event.returnValue) {
+      leavingDocument = false;
+      if (pendingNavigation === navigation) pendingNavigation = null;
+      watchDocumentNavigation();
+    }
+  }, 0);
+};
+const watchDocumentNavigation = () => window.addEventListener("beforeunload", markDocumentLeaving, { once: true });
+watchDocumentNavigation();
+// Cancelled imports belong to the navigation that cancelled them. Native
+// cancellation signals also keep an unsaved-navigation cancellation usable.
+window.navigation?.addEventListener("navigate", (event) => {
+  if (event.destination.sameDocument || event.signal.aborted) return;
+  const signal = event.signal;
+  pendingNavigation = signal;
+  signal.addEventListener("abort", () => {
+    if (pendingNavigation === signal) {
+      pendingNavigation = null;
+      leavingDocument = false;
+      watchDocumentNavigation();
+    }
+  }, { once: true });
+});
+window.addEventListener("pagehide", () => { leavingDocument = true; });
+window.addEventListener("pageshow", () => {
+  leavingDocument = false;
+  pendingNavigation = null;
+  watchDocumentNavigation();
+});
 const failedPageAssets = new Set();
 const rememberPageAsset = (href) => {
   const url = new URL(href, location.href);
@@ -47,7 +84,7 @@ const readerRecoveryRoute = () => {
   return location.hash === "" || recoverableReaderHash.test(location.hash);
 };
 const reloadReaderRouteOnce = () => {
-  if (!readerRecoveryRoute()) return false;
+  if (leavingDocument || pendingNavigation || !readerRecoveryRoute()) return false;
   const route = `${location.pathname}${location.hash}`;
   const now = Date.now();
   try {
