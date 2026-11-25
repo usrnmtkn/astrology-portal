@@ -131,7 +131,7 @@ for(const [width,theme] of [[390,'light'],[1440,'dark']] as const){
    await expect(gate.getByRole('button',{name:'Save Aries concern',exact:true})).toBeDisabled();
    const paragraph='Your saved fixture ends here.',reason='The ending switches to a task instead of developing the saved observation.';
    const weeklyDirection=Object.fromEntries(['concern','stakes','observation','ending'].map(key=>[key,{outcome:key==='ending'?'fail':'pass',quote:paragraph,paragraph,reason:key==='ending'?reason:'Synthetic transport-only assessment.'}]));
-   await f.call({method:'writer-state',body:{nextReviewResult:{status:'completed',output:[{type:'message',content:[{type:'output_text',text:JSON.stringify({checks:['CORRECTIO','TRICOLON','PURPLE_PROSE'].map(label=>({label,outcome:'pass',reason:'Synthetic transport fixture.'})),findings:[],weeklyDirection})}]}]}}});
+   await f.call({method:'writer-state',body:{nextReviewResult:{fixtureReviewContext:true,status:'completed',output:[{type:'message',content:[{type:'output_text',text:JSON.stringify({checks:['CORRECTIO','TRICOLON','PURPLE_PROSE'].map(label=>({label,outcome:'pass',reason:'Synthetic transport fixture.'})),findings:[],weeklyDirection})}]}]}}});
    await studio.getByLabel('I approve this writing plan for generation.').check();
    await studio.getByRole('button',{name:'Generate Aries',exact:true}).click();
    const held=studio.getByRole('region',{name:'Aries prose review'});

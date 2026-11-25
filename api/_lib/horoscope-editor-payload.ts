@@ -5,7 +5,7 @@ import {decodeWeeklyHistoryRow} from './horoscope-history-storage.js';
 
 const pick=(value:any,keys:string[])=>value?Object.fromEntries(keys.filter(key=>value[key]!==undefined).map(key=>[key,value[key]])):value;
 const operation=(value:any)=>pick(value,['id','sign','workflow','phase','state','startedAt','responseId','requestHash','planHash','config','writerModel','reviewVersion','startupDiagnostic']);
-const receipt=(value:any)=>value?{...pick(value,['operationId','responseId','config','lint','completedAt','bodyHash','rhetoricalReview']),hasOwnerEvidence:Boolean(value.ownerEvidence)}:value;
+const receipt=(value:any)=>value?{...pick(value,['operationId','responseId','config','lint','completedAt','bodyHash','writerEvaluationCoverage','rhetoricalReview']),hasOwnerEvidence:Boolean(value.ownerEvidence)}:value;
 const failure=(value:any)=>value?{...pick(value,['code','message','diagnostic','candidate','review','failedAt']),operation:operation(value.operation),receipt:receipt(value.receipt)}:value;
 const map=(values:any,project:(v:any)=>any)=>Object.fromEntries(Object.entries(values??{}).map(([key,value])=>[key,project(value)]));
 /** A transport view of the decoded row. Complete requests, receipts and history
@@ -13,7 +13,11 @@ const map=(values:any,project:(v:any)=>any)=>Object.fromEntries(Object.entries(v
 export function horoscopeEditorRow(row:any){
   if(row?.inventory_only)return row;
   const period=row?.sections?.horoscopeEdition?.window?.period;
-  if(period!=='weekly'&&!(period==='daily'&&row.source_snapshot?.horoscopeGeneration?.dailyEditorial))return row;
+  const savedGeneration=row.source_snapshot?.horoscopeGeneration;
+  const dailyComparison=period==='daily'&&(savedGeneration?.active?.receipt?.previousReadings
+    ||Object.values(savedGeneration?.readings??{}).some((value:any)=>value?.previousReadings)
+    ||Object.values(savedGeneration?.candidateHolds??{}).some((value:any)=>value?.receipt?.previousReadings));
+  if(period!=='weekly'&&!(period==='daily'&&(savedGeneration?.dailyEditorial||dailyComparison)))return row;
   row=decodeWeeklyHistoryRow(row);
   const snapshot=row.source_snapshot??{},generation=snapshot.horoscopeGeneration;
   return {...row,source_snapshot:{...pick(snapshot,['horoscopeOutlines','studioWritingProfile','editorialImport','horoscopeWriterChoice','studioOwnerApproval','targetRowId','targetRowUpdatedAt','targetContentKey']),

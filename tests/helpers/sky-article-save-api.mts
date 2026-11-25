@@ -1,4 +1,5 @@
 import {weeklyBatchFixtureResult} from './weekly-editorial-result.mts';
+import {syntheticHoroscopeReviewContext} from './horoscope-voice-review-fixture.mjs';
 import {dailyBatchFixtureResult} from './daily-editorial-result.mts';
 export {weeklyBatchFixtureResult} from './weekly-editorial-result.mts';
 import horoscopeWriter from '../../api/admin/horoscope-writing';
@@ -222,10 +223,15 @@ export function installHoroscopeWriterFixture(){
    if(writerFixture.nextResult){const result=writerFixture.nextResult;writerFixture.nextResult=null;return Response.json({id,...result});}
    if(writerFixture.terminalNext){writerFixture.terminalNext=false;return Response.json({id,status:'failed',error:{message:'Fixture provider could not finish this reading.'}});}
    if(request.instructions.startsWith('SHARED SEMANTIC RHETORICAL REVIEW')){
-     if(writerFixture.nextReviewResult){const value=writerFixture.nextReviewResult;writerFixture.nextReviewResult=null;return Response.json({id,...value});}
-     const paragraph=JSON.parse(request.input).candidate.body.split(/\n\s*\n/u).at(-1);
-     const weeklyDirection=request.text.format.schema.properties.weeklyDirection?{weeklyDirection:Object.fromEntries(['concern','stakes','observation','ending'].map(key=>[key,{outcome:'pass',quote:paragraph,paragraph,reason:'Synthetic transport fixture, not a prose-quality judgment.'}]))}:{};
-     return Response.json({id,status:'completed',usage:{input_tokens:60,output_tokens:10},output:[{type:'message',content:[{type:'output_text',text:JSON.stringify({checks:['CORRECTIO','TRICOLON','PURPLE_PROSE'].map(label=>({label,outcome:'pass',reason:'Synthetic transport fixture.'})),findings:[],...weeklyDirection})}]}]});
+     if(writerFixture.nextReviewResult){
+       const {fixtureReviewContext,...value}=writerFixture.nextReviewResult;writerFixture.nextReviewResult=null;
+       if(fixtureReviewContext===true)for(const message of value.output??[])for(const content of message.content??[]){
+         if(content.type==='output_text')content.text=JSON.stringify({...syntheticHoroscopeReviewContext(request),...JSON.parse(content.text)});
+       }
+       return Response.json({id,...value});
+     }
+     const context=syntheticHoroscopeReviewContext(request);
+     return Response.json({id,status:'completed',usage:{input_tokens:60,output_tokens:10},output:[{type:'message',content:[{type:'output_text',text:JSON.stringify({checks:['CORRECTIO','TRICOLON','PURPLE_PROSE'].map(label=>({label,outcome:'pass',reason:'Synthetic transport fixture.'})),findings:[],...context})}]}]});
    }
    if(request.instructions.startsWith('SEASONAL PRIVATE EDITORIAL AUTHORITY')){
      const input=JSON.parse(request.input),required=request.text.format.schema.required;

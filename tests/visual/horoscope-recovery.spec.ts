@@ -65,7 +65,7 @@ for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
   const f=await fixture(page,2,false,'weekly',false,false);try{
    const finding={label:'CORRECTIO',field:'body',quote:'You can read the complete aquarius fixture opening.',paragraph:'You can read the complete aquarius fixture opening.',reason:'Synthetic contextual diagnosis for this fixture.',readerConsequence:'The synthetic correction adds no meaning.',meaningTest:'No factual precision is supplied in this fixture.'};
    const review={checks:['CORRECTIO','TRICOLON','PURPLE_PROSE'].map(label=>({label,outcome:label==='CORRECTIO'?'fail':'pass',reason:'Synthetic transport fixture.'})),findings:[finding]};
-   await f.call({method:'writer-state',body:{nextReviewResult:{status:'completed',output:[{type:'message',content:[{type:'output_text',text:JSON.stringify(review)}]}]}}});
+   await f.call({method:'writer-state',body:{nextReviewResult:{fixtureReviewContext:true,status:'completed',output:[{type:'message',content:[{type:'output_text',text:JSON.stringify(review)}]}]}}});
    const studio=await f.open();
    await expect(studio.getByText(/Up to 6 paid AI requests/)).toBeVisible();
    await studio.getByLabel('I approve this writing plan for generation.').check();

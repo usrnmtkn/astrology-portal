@@ -8,8 +8,11 @@ export {HOROSCOPE_WRITERS} from './horoscopeWriterCatalog.mjs';
 export function horoscopeWriterConfig(choice='current',period='weekly') {
   const selected=HOROSCOPE_WRITERS.find(writer=>writer.id===choice);
   if(!selected)throw new Error('Choose a supported horoscope writing model.');
+  // Extra-high inherited reasoning can consume the entire output allowance
+  // before producing horoscope prose, including the Weekly from-samples
+  // route. Planning and independent review remain separate.
   if(selected.id==='current')return provider.normalizeProviderConfig(
-    ['weekly','monthly','seasonal'].includes(period)?{reasoningEffort:'medium',maxOutputTokens:12000}:{},'writer');
+    ['daily','weekly','monthly','seasonal'].includes(period)?{reasoningEffort:'medium',maxOutputTokens:12000}:{},'writer');
   return {provider:selected.provider,model:selected.model,maxOutputTokens:12000,
     ...(selected.provider==='gemini'?{thinkingLevel:'medium',transport:'stored-interaction/v2'}:{reasoningEffort:'medium'})};
 }

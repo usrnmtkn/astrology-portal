@@ -5,11 +5,13 @@ import {horoscopeVocabularyFindings,WEEKLY_REQUIRED_VOCABULARY_RULE} from '../sr
 import {emptyHoroscopeEdition,horoscopeEditionBody,horoscopeEditionKey} from '../apps/web/src/content/horoscopeEditions.mjs';
 import {prepareHoroscopeWriting,writeHoroscopeSign} from '../src/astro-writing/horoscopeWriting.mjs';
 
-for(const value of ['whether','Whether','WHETHER','(whether)','whe&#116;her','whe&#x74;her','whe\u200bther'])for(const field of ['headline','body']){
+for(const value of ['whether','Whether','WHETHER','(whether)','whe&#116;her','whe&#x74;her','whe\u200bther','shrink','steady','fondness','pleasure','bond','preference','preferences','out loud','labor','A double -- hyphen','An exclamation!','A (parenthetical) aside'])for(const field of ['headline','body']){
  assert.equal(horoscopeVocabularyFindings({[field]:value},'weekly').length,1);
  for(const period of ['daily','monthly','seasonal'])assert.deepEqual(horoscopeVocabularyFindings({[field]:value},period),[]);
 }
 assert.deepEqual(horoscopeVocabularyFindings({body:'You can review the weather.'},'weekly'),[]);
+for(const body of ['You prefer the window seat.','You enjoy laboratory work.','Your neighborhood has changed.'])assert.deepEqual(horoscopeVocabularyFindings({body},'weekly'),[]);
+for(const mark of ['--','!','(',')'])assert(horoscopeVocabularyFindings({body:`You can inspect ${mark} this exact mark.`},'weekly')[0].detail.includes(`“${mark}”`),'The diagnostic identifies the exact prohibited mark');
 installHoroscopeWriterFixture();
 const packet=await prepareHoroscopeBrief(new URL('http://localhost/?period=weekly&date=2026-10-05&timeZone=America/New_York'));
 const edition=emptyHoroscopeEdition(packet.brief.window);
@@ -28,7 +30,7 @@ for(const [sign,immediate] of [['aries',false],['taurus',true]] as const){
  assert.equal(generation.active,null);assert.equal(generation.lastError,null);
  assert.equal(row.sections.horoscopeEdition.passages.find((p:any)=>p.sign===sign).body,body);
  assert.equal(receipt.lint.passed,false);assert(receipt.lint.violations.some((v:any)=>v.category==='horoscope_required_vocabulary'&&v.governanceTier==='blocking'));
- assert.equal(writerFixture.calls,calls+1);assert(writerFixture.requests.get(receipt.responseId).input.includes(WEEKLY_REQUIRED_VOCABULARY_RULE));
+ assert.equal(writerFixture.calls,calls+1);assert(writerFixture.requests.get(receipt.responseId).instructions.includes(WEEKLY_REQUIRED_VOCABULARY_RULE),'The actual provider system enforces the complete Weekly wording rule');
 }
 // The vocabulary finding does not stall the next sign or cause a retry.
 let plan=await action('prepare');row=plan.payload.rows?.[0]??row;

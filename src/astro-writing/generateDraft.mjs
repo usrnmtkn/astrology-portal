@@ -1,4 +1,5 @@
 import {approvedVoiceStyleReference,renderApprovedVoiceStyleReference} from './approvedVoiceStyle.mjs';
+import {HOROSCOPE_VOICE_REVIEW} from './horoscopeVoiceStandard.mjs';
 import {horoscopeEvidenceReceipt,assertHoroscopeEvidenceDelivered} from './horoscopeEvidenceReceipt.mjs';
 import {buildLunationArticleInput,LUNATION_ARTICLE_SCHEMA} from "./lunationArticleInput.mjs";
 import { candidateCardAstrologyWritingInstructions, canonicalAstrologyWritingInstructions } from "./canonicalInstructions.mjs";
@@ -20,6 +21,9 @@ import { assertLunationWritingFacts } from './lunationWritingFacts.mjs';
 import {composeMonthlyHoroscopeDraft} from './monthlyHoroscopeFormat.mjs';
 import { LUNATION_EDITORIAL_AUTHORITY } from './lunationEditorialConstraints.mjs';
 import {buildHellenisticMeaningSupport,hellenisticMeaningPrompt} from './hellenisticMeaningSupport.mjs';
+import {DAILY_HOROSCOPE_INSTRUCTIONS} from './dailyHoroscopeDraft.mjs';
+import {dailyWriterValidationSources,dailyWriterSourceSelection,dailyCurrentMeaningContext} from './dailyHoroscopeEvidence.mjs';
+import {withCompactVoiceInstructions} from './compactVoiceInstructions.mjs';
 import {HOROSCOPE_PROSE_INSTRUCTIONS_VERSION,usesRefinedHoroscopeProse,horoscopeProseInstructions,renderHoroscopeProseAppendices} from './horoscopeProseInstructions.mjs';
 import {usesWeeklyFromSamples,WEEKLY_FROM_SAMPLES_AUTHORITY} from './weeklyFromSamples.mjs';
 
@@ -237,13 +241,20 @@ export function prepareDraftRequest({
   const seasonalPreparation=family==='horoscope'&&engineFacts?.window?.period==='seasonal'
     ? {context,task,engineFacts,argumentOutline,writingProfile,meaningSupport,approvedStyleReference,proseInstructionsVersion:HOROSCOPE_PROSE_INSTRUCTIONS_VERSION}:null;
   const draftInput=buildDraftInput({ plan, context, task, target: resolvedTarget, family, register, surface, familyContext, engineFacts, argumentSource, argumentOutline, spine, writingProfile });
-  const refined=family==='horoscope'&&usesRefinedHoroscopeProse(engineFacts?.window?.period);
+  const daily=family==='horoscope'&&engineFacts?.window?.period==='daily';
+  const dailyVoiceSelection=daily?dailyCurrentMeaningContext(dailyWriterSourceSelection(context,{writingProfile}),engineFacts):null;
+  const reviewOwnerExamples=dailyVoiceSelection?.writerSourceSelection.designatedExamples.length
+    ?horoscopeEvidenceReceipt(context,writingProfile).passages:(dailyVoiceSelection??context).sameFamilyExamples;
+  const refined=daily||family==='horoscope'&&usesRefinedHoroscopeProse(engineFacts?.window?.period);
+  const compact=family==='horoscope'&&['daily','weekly'].includes(engineFacts?.window?.period);
+  const appendices=refined?renderHoroscopeProseAppendices({meaningSupport,approvedStyleReference,...(compact?{period:engineFacts.window.period}:{})}):null;
   const weeklyFromSamples=family==='horoscope'&&usesWeeklyFromSamples(writingProfile?.profile);
-  const input=weeklyFromSamples?draftInput:seasonalPreparation?draftInput:refined?[draftInput,renderHoroscopeProseAppendices({meaningSupport,approvedStyleReference})].filter(Boolean).join('\n\n')
+  const input=weeklyFromSamples?draftInput:seasonalPreparation?draftInput:refined?(compact?[appendices,draftInput]:[draftInput,appendices]).filter(Boolean).join('\n\n')
     :[draftInput,hellenisticMeaningPrompt({facts:engineFacts??{},plan,family,surface}),renderApprovedVoiceStyleReference(approvedStyleReference)].filter(Boolean).join('\n\n');
   const ownerEvidence=family==='horoscope'&&engineFacts?.window?.period==='weekly'
-    ?assertHoroscopeEvidenceDelivered(horoscopeEvidenceReceipt(context,writingProfile),input):null;
-  const instructions=weeklyFromSamples?WEEKLY_FROM_SAMPLES_AUTHORITY:refined?horoscopeProseInstructions(engineFacts.window.period):withGhostwritingSkill(effectiveRulePrompt(baseInstructions, { surface, family }));
+    ?assertHoroscopeEvidenceDelivered(horoscopeEvidenceReceipt(context,writingProfile,engineFacts.risingSign),input):null;
+  const proseInstructions=daily?DAILY_HOROSCOPE_INSTRUCTIONS:refined?horoscopeProseInstructions(engineFacts.window.period):withGhostwritingSkill(effectiveRulePrompt(baseInstructions, { surface, family }));
+  const instructions=weeklyFromSamples?WEEKLY_FROM_SAMPLES_AUTHORITY:compact?withCompactVoiceInstructions(proseInstructions,writingProfile.profile):proseInstructions;
   const request = {
     stage: "draft",
     role,
@@ -251,10 +262,13 @@ export function prepareDraftRequest({
     input,
     ...(ownerEvidence?{ownerEvidence}:{}),
     schema: resolvedSchema,
+    ...(daily?{dailyValidationSources:dailyWriterValidationSources(context,writingProfile,engineFacts)}:{}),
     ...(seasonalPreparation?{seasonalPreparation}:{}),
     ...(family==='horoscope'?{reviewEvidence:{
-      ownerExamples:context.sameFamilyExamples,corrections:context.corrections,approvedStyleReference,
-      writingProfile,argumentOutline,engineFacts,
+      ownerExamples:reviewOwnerExamples,corrections:context.corrections,approvedStyleReference,
+      ...(compact?{voiceReviewContract:HOROSCOPE_VOICE_REVIEW}:{}),
+      ...(dailyVoiceSelection?{writerSourceSelection:dailyVoiceSelection.writerSourceSelection,writerMeaningSelection:dailyVoiceSelection.writerMeaningSelection}:{}),
+      writingProfile,argumentOutline,engineFacts,...(weeklyFromSamples?{weeklyFromSamples:true}:{}),
       // Complete texts already travel in ownerExamples and writingProfile.
       // Carry provenance without duplicating the corpus in the paid review input.
       ...(ownerEvidence?{rejectedExamples:context.rejectedExamples??[],ownerEvidence:{version:ownerEvidence.version,route:ownerEvidence.route,

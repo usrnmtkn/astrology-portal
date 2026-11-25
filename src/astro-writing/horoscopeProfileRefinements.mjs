@@ -1,40 +1,15 @@
 import {validateHoroscopeProfile} from './horoscopeWritingProfiles.mjs';
 import {MONTHLY_TLDR_GUIDANCE} from './monthlyHoroscopeFormat.mjs';
+import {compactHoroscopeGuidance} from './compactHoroscopeGuidance.mjs';
 
 // Explicit proposal builders, never applied during request assembly or saved
 // automatically. Complete private examples are supplied by the review tooling.
 export function proposeWeeklyProfile({profile,demonstrations,languageRules}) {
   if(profile.period!=='weekly'||!demonstrations?.trim()||!languageRules?.trim())throw new Error('Supply the complete Weekly demonstrations and current language rules.');
+  const guidance=compactHoroscopeGuidance('weekly',{runVariables:true});
   return validateHoroscopeProfile({...profile,
-    voiceGuidance:`Write in the owner's direct, warm, slightly blunt and dry voice. Speak to the reader like a friend who understands them without judging. Learn vocabulary and movement from the complete approved Weekly readings and demonstrations.
-
-Follow one recognizable concern supported by this week's astrology. Open with the situation and make it clear. Related events can develop, complicate or change it; do not invent an incident, habit or causal link to make unrelated life areas fit one story. Explain the supported reason behind a feeling or behavior, with warmth. Keep unknown history, circumstances and motives open.
-
-Let each sentence add meaning. A selected event needs an understandable contribution to this reading, not an obligatory sentence translating what the example already showed. Use familiar details when they clarify the concern. Connect thoughts naturally and vary sentence length; full sentences and contractions are welcome. Keep the emotional scale proportional to the facts.
-
-End by turning the developed point, or with one small action tied to this week, as the saved format requires. Do not add another moral, reassurance or explanation afterward. A demonstrated line belongs only when this reading has built its situation; do not transfer the example's biography or astrology.
-
-COMPLETE WEEKLY LANGUAGE DEMONSTRATIONS
-${demonstrations}
-
-CURRENT LANGUAGE RULES
-${languageRules}`,
-    prompt:`WEEKLY PROMPT V2
-Write the {{period}} reading for the requested rising sign.
-
-FACTS
-{{governedFacts}}
-
-STRUCTURE
-{{structure}}
-
-HOW TO WRITE
-{{voiceGuidance}}
-
-SOURCES
-{{sourceGuidance}}
-
-Before returning, check that the reader can recognize the week's concern, each selected event contributes meaning, and every aspect, participant, house and weekday matches the supplied facts. Follow the saved opening and ending format. Return only the supplied schema's reader fields.`});
+    voiceGuidance:`${guidance.voiceGuidance}\n\nCURRENT LANGUAGE RULES\n${languageRules}\n\nRETAINED SAVED-GUIDE SOURCE EXAMPLES\nCOMPLETE WEEKLY LANGUAGE DEMONSTRATIONS\n${demonstrations}`,
+    prompt:guidance.prompt});
 }
 
 export function proposeMonthlyProfile(profile) {

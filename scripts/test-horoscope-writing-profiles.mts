@@ -43,6 +43,7 @@ for (const action of ['publish', 'retire']) {
 }
 const race = await Promise.all(['A', 'B'].map(suffix => invoke('POST', {profile: {...profile, voiceGuidance: profile.voiceGuidance + suffix}, expectedUpdatedAt: saved.updatedAt})));
 assert.deepEqual(race.map(r => r.status).sort(), [200, 409], 'Concurrent saves cannot overwrite each other');
+assert.deepEqual(store.rows.get(saved.id).source_snapshot.previousWritingProfile,saved,'The winning Daily/Weekly save archives the complete original guide, including examples');
 saved = race.find(r => r.status === 200)!.payload.profile;
 assert.equal(saved.revision, 2);
 for (const period of ['daily', 'monthly', 'seasonal'] as const) assert.equal((await invoke('POST', {profile: defaultHoroscopeProfile(period), expectedUpdatedAt: null})).status, 200);
@@ -68,6 +69,7 @@ assert.equal('profile' in candidate.studioWritingProfile, false);
 const edited = {...saved.profile, prompt: saved.profile.prompt + '\nFixture changed instruction.'};
 const updated = await invoke('POST', {profile: edited, expectedUpdatedAt: saved.updatedAt});
 assert.equal(updated.status, 200);
+assert.deepEqual(store.rows.get(saved.id).source_snapshot.previousWritingProfile,saved,'History stores one complete predecessor without recursively duplicating older archives');
 await generateDraft({...args, writingProfile: updated.payload.profile});
 assert(seen.includes('Fixture changed instruction.'));
 assert.notEqual(updated.payload.profile.sha256, candidate.studioWritingProfile.sha256);

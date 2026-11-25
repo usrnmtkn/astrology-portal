@@ -6,6 +6,8 @@ import {HOROSCOPE_PUNCTUATION_RULE,WEEKLY_REQUIRED_VOCABULARY_RULE,SEASONAL_FACT
 import {buildHoroscopePromptVariables} from './horoscopePromptVariables.mjs';
 import {buildSeasonalDraftInput} from './seasonalDraftInput.mjs';
 import {dailyHoroscopeEvidence} from './dailyHoroscopeEvidence.mjs';
+import {buildCompactHoroscopeDraftInput} from './compactHoroscopeDraft.mjs';
+import {configurationEvidenceInput} from './horoscopeConfigurationEvidence.mjs';
 import {weeklyHoroscopeEvidence,weeklyMeaningReferences} from './weeklyRequestEvidence.mjs';
 import {HOROSCOPE_SIGNS,horoscopeSignLabel,horoscopeOverviewHeadline} from '../../apps/web/src/content/horoscopeEditions.mjs';
 import {usesWeeklyFromSamples,weeklyFromSamplesFacts} from './weeklyFromSamples.mjs';
@@ -34,10 +36,12 @@ export function buildHoroscopeDraftInput({plan,context,task,target,engineFacts,a
       primaryPassages:context.primaryRegisterPassages??[],supportingPassages:context.sameFamilyExamples??[],factsText});
     return ['SURFACE\nhoroscopes','CONTENT FAMILY\nhoroscope','REGISTER\nsecond_person',
       `TASK\n${task}`,`READING HEADLINE\n${horoscopeDraftSchema(engineFacts.risingSign).properties.headline.enum[0]}`,
+      ...(engineFacts.configurationEvidence?[configurationEvidenceInput(engineFacts.configurationEvidence)]:[]),
       `COMPLETE SAVED WEEKLY BRIEF\n${variables.prompt}`,
       ...(!variables.uses('governedFacts')?[`CALCULATED ASTROLOGY\n${factsText}`]:[])
     ].join('\n\n');
   }
+  if(['daily','weekly'].includes(engineFacts?.window?.period))return buildCompactHoroscopeDraftInput({context,task,target,engineFacts,argumentOutline,writingProfile,headline:horoscopeDraftSchema(engineFacts.risingSign).properties.headline.enum[0]});
   if(engineFacts?.window?.period==='seasonal')return buildSeasonalDraftInput({context,task,engineFacts,argumentOutline,writingProfile});
   if(engineFacts?.risingSign==='overview')return buildHoroscopeOverviewInput({plan,context,task,target,engineFacts,argumentOutline,spine,writingProfile});
   context=forecastWriterEvidence(context);

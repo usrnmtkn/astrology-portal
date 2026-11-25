@@ -2,14 +2,29 @@ import {createHash} from 'node:crypto';
 import {horoscopeProfileEvidence} from './horoscopePromptVariables.mjs';
 import {studioWritingProfileReceipt} from './studioWritingProfileReceipt.mjs';
 import {usesWeeklyFromSamples} from './weeklyFromSamples.mjs';
+import {weeklyProfileExamples} from './weeklyProfileExamples.mjs';
+import {dailyWriterSourceSelection} from './dailyHoroscopeEvidence.mjs';
 
 const hash=text=>createHash('sha256').update(text).digest('hex');
 export const HOROSCOPE_EVIDENCE_RECEIPT='horoscope-owner-evidence/v1';
 
 /** This private, editor-only receipt inventories both evidence paths. Saved
  * comparisons retain their designation; a profile does not confer authorship. */
-export function horoscopeEvidenceReceipt(context,writingProfile) {
+export function horoscopeEvidenceReceipt(original,writingProfile,sign=null) {
   const profile=studioWritingProfileReceipt(writingProfile,{allowStarter:true});
+  const context=profile.period==='daily'?dailyWriterSourceSelection(original,{writingProfile}):original;
+  if(writingProfile.profile.period==='weekly'&&/^WEEKLY PROMPT V2\r?\n/u.test(writingProfile.profile.prompt)) {
+    const selected=weeklyProfileExamples(writingProfile.profile.sourceGuidance,sign);
+    if(selected){
+      const {sourceGuidance,passages,...selection}=selected;
+      return {version:HOROSCOPE_EVIDENCE_RECEIPT,route:'canonical-horoscope-writer',period:profile.period,profile,
+        selection:{mode:'owner-selected-weekly-v2',...selection},
+        passages:passages.map(p=>({...p,sourcePath:`studio-writing-profile/${profile.id}/sourceGuidance`})),
+        distinctPassageCount:new Set(passages.map(p=>p.sha256)).size,corrections:context.corrections??[],savedCorrections:selected.corrections,
+        rejectedExamples:[],comparisonBlock:sourceGuidance,
+        limitations:'Whole declared units selected from the unchanged saved collection. Offsets and archive hash refer to that original profile. Selection preserves designation; it does not infer authorship, current facts or approval of new prose.'};
+    }
+  }
   if(usesWeeklyFromSamples(writingProfile.profile)||(writingProfile.profile.period==='weekly'&&/^WEEKLY PROMPT V2\r?\n/u.test(writingProfile.profile.prompt))) {
     const text=writingProfile.profile.sourceGuidance;
     return {version:HOROSCOPE_EVIDENCE_RECEIPT,route:'canonical-horoscope-writer',period:profile.period,
@@ -33,7 +48,7 @@ export function horoscopeEvidenceReceipt(context,writingProfile) {
   const passages=[...selected,...comparisons],byHash=new Map();
   for(const p of passages){const first=byHash.get(p.sha256);if(first)p.duplicateOf=first;else byHash.set(p.sha256,p.id);}
   return {version:HOROSCOPE_EVIDENCE_RECEIPT,route:'canonical-horoscope-writer',period:profile.period,
-    profile,selection:context.retrievalSelection??null,passages,distinctPassageCount:byHash.size,
+    profile,selection:context.retrievalSelection??null,...(context.writerSourceSelection?{writerSourceSelection:context.writerSourceSelection}:{}),passages,distinctPassageCount:byHash.size,
     corrections:context.corrections??[],savedCorrections:saved.corrections,
     rejectedExamples:context.rejectedExamples??[],
     comparisonBlock:saved.comparisons,

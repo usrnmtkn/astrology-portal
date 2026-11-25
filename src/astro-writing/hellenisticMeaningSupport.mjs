@@ -40,7 +40,8 @@ export function buildHellenisticMeaningSupport({facts={},plan={},family='',surfa
   if(family==='horoscope'||facts.window?.period||nodes.some(n=>n.transiting))scopes.add('forecast');
   // These routes deliberately admit only their governed reader-meaning
   // projection. Mechanical source notes must not bypass that boundary.
-  const projectionOnly=(surface==='you'&&family==='transit-aspect')||family==='bond-effect';
+  const projectionOnly=(surface==='you'&&family==='transit-aspect')||family==='bond-effect'
+    ||family==='horoscope'&&['daily','weekly'].includes(facts.window?.period);
   const records=projectionOnly?[]:framework.sections.filter(record=>scopes.has(record.runtimeScope));
   return {
     version:HELLENISTIC_MEANING_VERSION,role:'meaning-only',authority,

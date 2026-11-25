@@ -244,8 +244,22 @@ const cron=async(secret:string)=>{
 };
 assert.equal((await cron('wrong')).statusCode,401);
 // Other synthetic rows are already complete, paused or not enrolled.
-assert.equal((await cron('synthetic-daily-cron')).statusCode,200);
+const cronCalls={writer:writerFixture.calls,review:writerFixture.reviewCalls,batch:writerFixture.batchCalls};
+for(let invocation=0;invocation<3;invocation++){
+ const before=latest(cronId).updated_at,result=await cron('synthetic-daily-cron');
+ assert.equal(result.statusCode,200,JSON.stringify(result.payload));
+ const saved=latest(cronId).source_snapshot.horoscopeGeneration.batch;
+ if(saved.status==='complete')break;
+ // A bounded invocation may yield; the cron must resume its saved requests.
+ // Do not require all 25 stages to fit in one three-minute worker slice.
+ assert.equal(result.payload.state,'running',JSON.stringify({result:result.payload,batch:saved}));
+ assert.equal(saved.status,'running');assert.equal(saved.lease,null);
+ assert.notEqual(latest(cronId).updated_at,before,'Each yielded slice makes persisted progress');
+}
 assert.equal(latest(cronId).source_snapshot.horoscopeGeneration.batch.status,'complete');
+assert.equal(writerFixture.calls-cronCalls.writer,12,'Cron continuation never repeats an approved writer');
+assert.equal(writerFixture.reviewCalls-cronCalls.review,12,'Each exact draft retains only its existing prose check');
+assert.equal(writerFixture.batchCalls-cronCalls.batch,1,'Continuation keeps one complete-set review');
 
 // Exact owner approval remains separate from review. A valid current review
 // reaches the isolated reader verbatim. Unavailable semantic advice also cannot veto an owner decision.

@@ -1,0 +1,7 @@
+/** Compact horoscope examples teach reasoning as well as phrasing. A topic
+ * independently licensed by current meaning is not an imported source fact. */
+export const PUBLIC_HOROSCOPE_EVIDENCE_BOUNDARY=`Write a public horoscope for people who share this rising sign. Develop the supplied interpretation through recognizable desires, responses and possibilities. House topics identify life areas; combining them does not establish a personal incident, misconduct or a relationship problem. An illustration may clarify the meaning, but do not build the reading around an imagined mistake and then teach the reader how to avoid it. Keep unknown circumstances conditional; conditional wording supplies no evidence of conduct or motives. Guidance needs a purpose within the developed interpretation. Enjoyment, attraction or curiosity can be complete without a warning, permission statement or lesson in proper behavior. Do not invent a simplistic belief or false choice for the reader merely to correct it.`;
+
+export const COMPACT_REFERENCE_LEARNING=`Learn language, reasoning and development from the complete approved examples. Do not reproduce their sentences or substantial stretches of wording, or import their anecdotes, participants, personal history or timing. Their subject and advice are not compulsory. An overlap in subject or response is valid when this reading's current calculated astrology and governed meanings independently support it. Do not choose an unrelated premise merely to avoid an example's subject.
+
+${PUBLIC_HOROSCOPE_EVIDENCE_BOUNDARY}`;

@@ -3,12 +3,46 @@ import test from 'node:test';
 import {mkdtempSync,readFileSync,statSync,rmSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
-import {writingFeedbackKeys,selectExplicitWritingFeedback,hydrateExplicitWritingFeedback,validateExplicitWritingFeedback} from '../../src/astro-writing/explicitWritingFeedback.mjs';
+import {writingFeedbackKeys,selectExplicitWritingFeedback,hydrateExplicitWritingFeedback,validateExplicitWritingFeedback,explicitFeedbackMarker} from '../../src/astro-writing/explicitWritingFeedback.mjs';
+import {HOROSCOPE_SIGNS} from '../../apps/web/src/content/horoscopeEditions.mjs';
+import {horoscopeFeedbackUnit} from '../../src/astro-writing/horoscopeFeedbackUnits.mjs';
 import {runFeedbackCommand} from '../../scripts/studio-writing-feedback.mjs';
 import {createHash} from 'node:crypto';
 
 const row=(id,target)=>({id,version:1,status:'active',kind:'rejection',target_keys:[target],rejected_text:`Synthetic rejected passage ${id}.`,
   source_roles:null,owner_reason:`Synthetic owner reason ${id}.`,source_uri:'thread:aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',source_date:'2026-10-21T05:00:00Z'});
+
+test('single-sign horoscope feedback uses one complete rejection unit while frozen and full-set requests keep the complete source',()=>{
+  for(const format of ['bare-label','markdown','crlf'])for(const period of ['daily','weekly']){
+    const units=HOROSCOPE_SIGNS.map(sign=>{
+      const name=sign[0].toUpperCase()+sign.slice(1);
+      return `${format==='bare-label'?name+'\n':''}${format==='markdown'?'### ':''}${name} & ${name} Rising\n\nComplete synthetic ${sign} rejected opening.\n\nComplete synthetic ${sign} rejected ending with café and 🌙.\n\n`.replaceAll('\n',format==='crlf'?'\r\n':'\n');
+    });
+    const full=units.join(''),feedback={...row('zodiac',`horoscope/${period}`),rejected_text:full,owner_reason:'Exact complete owner reason.\n\nIts second paragraph and original scope stay intact.'};
+    const before=structuredClone(feedback),selected=selectExplicitWritingFeedback([feedback],writingFeedbackKeys({period}));
+    assert(hydrateExplicitWritingFeedback({input:selected.marker},selected.receipt,[feedback]).input.includes(JSON.stringify(full).slice(1,-1)),'A legacy/full-set marker retains all twelve bodies');
+    for(const sign of HOROSCOPE_SIGNS){
+      const marker=explicitFeedbackMarker(selected.receipt,{horoscopeSign:sign}),sent=hydrateExplicitWritingFeedback({input:marker},selected.receipt,[feedback]).input;
+      const data=JSON.parse(sent.slice(sent.lastIndexOf('\n')+1));
+      assert.equal(data.rejected,units[HOROSCOPE_SIGNS.indexOf(sign)]);
+      assert.equal(data.ownerReason,feedback.owner_reason);assert.deepEqual(data.targetKeys,feedback.target_keys);
+      const {selection}=data;assert.equal(full.slice(selection.start,selection.end),data.rejected);
+      assert.equal(selection.originalRejectedTextSha256,createHash('sha256').update(full).digest('hex'));
+      assert.equal(selection.selectedUnitSha256,createHash('sha256').update(data.rejected).digest('hex'));
+      assert.throws(()=>hydrateExplicitWritingFeedback({input:marker+selected.marker},selected.receipt,[feedback]),/once/);
+      assert.throws(()=>hydrateExplicitWritingFeedback({input:marker},selected.receipt,[{...feedback,owner_reason:'Changed reason.'}]),/changed/);
+    }
+    assert.deepEqual(feedback,before,'Selection cannot edit source text, reason, hash or targets');
+    for(const text of ['Unknown source.\n'+full,units.slice(0,11).join(''),full.replace('Taurus & Taurus Rising','Aries & Aries Rising')]){
+      assert.equal(horoscopeFeedbackUnit(text,'aries'),null,'Ambiguous and incomplete collections retain full transport');
+    }
+  }
+  for(const period of ['monthly','seasonal']){
+    const selected=selectExplicitWritingFeedback([row('other',`horoscope/${period}`)],writingFeedbackKeys({period}));
+    assert.throws(()=>explicitFeedbackMarker(selected.receipt,{horoscopeSign:'aries'}),/scope/);
+  }
+  assert.throws(()=>horoscopeFeedbackUnit('Complete source.','unknown'),/valid/);
+});
 
 test('SQL and API timestamp representations preserve exact feedback and saved-request identity',()=>{
   const original={...row('timestamp','writing/all'),source_date:'2026-10-21 05:00:00.123456+00'};

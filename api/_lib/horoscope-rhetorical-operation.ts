@@ -7,7 +7,7 @@ import {horoscopeEditionBody} from '../../apps/web/src/content/horoscopeEditions
 import {AdminHttpError} from './admin-http.js';
 import {assertHoroscopeRow} from './horoscope-editions.js';
 import {horoscopeProviderDiagnostic} from './horoscope-provider-result.js';
-import {weeklyPreviousReadingsCurrent} from '../../src/astro-writing/weeklyPreviousReadings.mjs';
+import {horoscopePreviousReadingsCurrent} from '../../src/astro-writing/horoscopePreviousReadings.mjs';
 
 export const isHoroscopeReview=(operation:any)=>supportedHoroscopeReview(operation?.workflow);
 
@@ -20,7 +20,7 @@ export async function queueHoroscopeReview({row,persist,operation,candidate,rece
     startedAt:new Date().toISOString(),actor:operation.actor,planHash:operation.planHash,candidate,receipt,candidateHash:horoscopeReviewHash(candidate),
     evidenceHash:horoscopeReviewHash(operation.reviewEvidence),config:provider.normalizeProviderConfig({maxOutputTokens:6000},'judge'),
     reviewRequest:{input,instructions,schema:horoscopeReviewSchema(operation.reviewEvidence)},responseId:null,writerOperation:operation};
-  if(!weeklyPreviousReadingsCurrent(row,receipt.previousReadings))return horoscopeRhetoricalOperation({action:'context-changed',row:{...row,source_snapshot:{...row.source_snapshot,horoscopeGeneration:{...row.source_snapshot.horoscopeGeneration,active:review}}},persist});
+  if(!horoscopePreviousReadingsCurrent(row,receipt.previousReadings))return horoscopeRhetoricalOperation({action:'context-changed',row:{...row,source_snapshot:{...row.source_snapshot,horoscopeGeneration:{...row.source_snapshot.horoscopeGeneration,active:review}}},persist});
   const saved=await persist({source_snapshot:{...row.source_snapshot,horoscopeGeneration:{...row.source_snapshot.horoscopeGeneration,active:review,lastError:null}}});
   return {status:202,payload:{ok:true,rows:[saved],pending:true}};
 }
@@ -57,6 +57,7 @@ export async function horoscopeRhetoricalOperation({action,row:initialRow,persis
       requestHash:operation.requestHash,responseId:operation.responseId,config:operation.config,usage:payload.usage??null,completedAt:new Date().toISOString(),ownerApproved:false};
     if(verdict.rhetoricalBlocked)return hold('rhetorical_pattern','The prose check found manufactured rhetorical polish. Review the quoted findings, then edit or reject this reading. The other readings can continue.',review);
     if(verdict.directionBlocked)return hold('weekly_direction_drift','The draft does not follow the saved concern, stakes or observation throughout its development and ending. Review the quoted findings, then edit or reject this reading.',review);
+    if(verdict.voiceReviewRequired)return hold('voice_review_required','The comparison with your examples needs review. Your complete draft and the cited passages are saved for editing or rejection. Other readings can continue; no rewrite was requested.',review);
     const edition={...row.sections.horoscopeEdition,passages:row.sections.horoscopeEdition.passages.map((p:any)=>p.sign===operation.sign?{...p,...operation.candidate}:p)};
     const generation=row.source_snapshot.horoscopeGeneration;
     const candidateHolds={...generation.candidateHolds};delete candidateHolds[operation.sign];
@@ -65,8 +66,8 @@ export async function horoscopeRhetoricalOperation({action,row:initialRow,persis
     assertHoroscopeRow({...row,...patch});row=await persist(patch);
     return {status:200,payload:{ok:true,rows:[row],pending:false}};
   };
-  if(!weeklyPreviousReadingsCurrent(row,operation.receipt?.previousReadings))
-    return hold('weekly_comparison_context_changed','Earlier Weekly readings or this sign changed while the request was running. The returned draft is saved for editing or rejection; newer wording was kept. No replacement request was sent.');
+  if(!horoscopePreviousReadingsCurrent(row,operation.receipt?.previousReadings))
+    return hold(row.sections.horoscopeEdition.window.period==='daily'?'daily_comparison_context_changed':'weekly_comparison_context_changed',`Earlier ${row.sections.horoscopeEdition.window.period==='daily'?'Daily':'Weekly'} readings or this sign changed while the request was running. The returned draft is saved for editing or rejection; newer wording was kept. No replacement request was sent.`);
   if(recoverSign){
     const response=await responses.storedWritingResponse({apiKey,responseId:operation.responseId});
     if(!response.ok)throw new AdminHttpError(503,'The saved prose review could not be retrieved. Your draft is kept; no new request was made.');

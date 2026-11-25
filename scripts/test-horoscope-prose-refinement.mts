@@ -5,6 +5,7 @@ import {emptyHoroscopeEdition,horoscopeEditionBody,horoscopeEditionKey} from '..
 import {decodeWeeklyHistoryRow} from '../api/_lib/horoscope-history-storage';
 import {defaultHoroscopeProfile} from '../src/astro-writing/horoscopeWritingProfiles.mjs';
 import {proposeWeeklyProfile,proposeMonthlyProfile} from '../src/astro-writing/horoscopeProfileRefinements.mjs';
+import {compactVoiceParts} from '../src/astro-writing/compactVoiceInstructions.mjs';
 import {HOROSCOPE_PROSE_INSTRUCTIONS_VERSION,horoscopeProseInstructions} from '../src/astro-writing/horoscopeProseInstructions.mjs';
 import {seasonalEditorialAdapter} from '../src/astro-writing/seasonalEditorialAdapter.mjs';
 import {latest} from '../src/astro-writing/editorial/controller.mjs';
@@ -57,6 +58,7 @@ try{
     if(period==='weekly'){
       assert.equal(profile.structure,base.structure);
       assert(profile.voiceGuidance.includes(demonstrations));assert(profile.voiceGuidance.includes(languageRules));
+      assert(!profile.voiceGuidance.includes('End by turning the developed point'),'A future proposal cannot restore a compulsory corrective ending');
     }
     const saved=await store.invoke('POST',{profile,expectedUpdatedAt:null},'/api/admin/generated-content?writingProfiles=true');
     assert.equal(saved.status,200);const savedRow=structuredClone(store.rows.get(saved.payload.profile.id));
@@ -82,19 +84,25 @@ try{
     assert.deepEqual(store.rows.get(saved.payload.profile.id),savedRow,'Assembly never edits the saved profile');
     assert.deepEqual(row.facts.horoscopeBrief,packet,'Full signed facts are untouched');
     const requests=[...writerFixture.requests].filter(([id])=>!oldIds.has(id)).map(([,r])=>r);
-    const prose=requests.find(r=>r.instructions===horoscopeProseInstructions(period));assert(prose);
-    for(const field of ['voiceGuidance','structure','sourceGuidance'])assert(prose.input.includes(profile[field]));
+    const prose=requests.find(r=>r.instructions.startsWith(horoscopeProseInstructions(period)));assert(prose);
+    for(const field of ['structure','sourceGuidance'])assert(prose.input.includes(profile[field]));
+    if(period==='weekly'){
+      const voice=compactVoiceParts(profile);
+      assert(prose.instructions.includes(voice.editorial));assert(prose.input.includes(voice.archive));
+      assert(!prose.instructions.includes(demonstrations),'Proposal demonstrations remain source data');
+    }else assert(prose.input.includes(profile.voiceGuidance));
     for(const old of ['a useful next move','GHOSTWRITER CRAFT GUIDANCE','Effective TLDR Astro writing rules'])assert(!prose.instructions.includes(old));
     for(const label of ['CORRECTIO','TRICOLON','PURPLE_PROSE'])assert(prose.instructions.includes(label));
-    for(const header of ['NEUTRAL HELLENISTIC MEANING SUPPORT','OWNER-APPROVED STYLE REFERENCE']){
+    for(const header of [...(period==='weekly'?[]:['NEUTRAL HELLENISTIC MEANING SUPPORT']),'OWNER-APPROVED STYLE REFERENCE']){
       const data=JSON.parse(prose.input.split(header+'\n')[1].split('\n')[0]);assert(!('authority' in data));
     }
     if(period==='weekly'){
-      assert(prose.instructions.includes('An opening may need several connected sentences'));
-      assert(prose.instructions.includes('No compulsory hook'));
-      assert(prose.instructions.includes('abstract psychological verdict'));
-      assert(prose.instructions.includes('The approved plan sets scope, not a required recognition, complication, correction or paragraph sequence.'));
-      assert(prose.instructions.includes('without requiring a psychological revelation'));
+      assert(!prose.input.includes('NEUTRAL HELLENISTIC MEANING SUPPORT'),'Weekly prose uses governed development meanings rather than a general doctrine appendix');
+      assert(prose.instructions.includes('complete saved Weekly guide govern'));
+      assert(prose.instructions.includes('Explicitly owner-designated Weekly examples take priority'));
+      assert(!prose.input.includes('Once you choose a situation, develop the people'));
+      const scope=JSON.parse(prose.input.split('REVIEWED EDITORIAL SCOPE\n')[1].split('\n')[0]);
+      assert(!Object.hasOwn(scope,'recognition')&&!Object.hasOwn(scope,'complication')&&!Object.hasOwn(scope,'response'),'Generated recognition and ending scripts stay outside the Weekly writer');
       const facts=JSON.parse(prose.input.split('CALCULATED FACTS\n')[1].split('\n')[0]);
       assert.equal(facts.signs.length,1);assert.equal(facts.signs[0].sign,'aries');assert.equal(packet.brief.signs.length,12);
     }

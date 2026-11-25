@@ -108,7 +108,7 @@ for(const [sign,immediate] of [['aries',false],['taurus',true]] as const){
  assert.equal(row.source_snapshot.horoscopeGeneration.active,null);assert.equal(row.source_snapshot.horoscopeGeneration.lastError.code,'required_punctuation');
  assert(row.source_snapshot.horoscopeGeneration.lastError.candidate.body.includes('\u2014'));assert(row.source_snapshot.horoscopeGeneration.lastError.receipt.usage);
  assert.equal(row.sections.horoscopeEdition.passages.find((p:any)=>p.sign===sign).body,'');assert.equal(writerFixture.calls,before+1);
- assert(writerFixture.requests.get(row.source_snapshot.horoscopeGeneration.lastError.operation.responseId).input.includes(HOROSCOPE_PUNCTUATION_RULE));
+ assert(writerFixture.requests.get(row.source_snapshot.horoscopeGeneration.lastError.operation.responseId).instructions.includes(HOROSCOPE_PUNCTUATION_RULE),'The high-priority punctuation rule need not be duplicated in the prompt body');
  const candidate={...row.sections.horoscopeEdition,passages:row.sections.horoscopeEdition.passages.map((p:any)=>p.sign===sign?{...p,...row.source_snapshot.horoscopeGeneration.lastError.candidate}:p)};
  const save=(ed:any,version=row.updated_at)=>store.invoke('PATCH',{id:row.id,expectedUpdatedAt:version,sections:{horoscopeEdition:ed},body:horoscopeEditionBody(ed)});
  assert.equal((await save(candidate,'2000-01-01T00:00:00Z')).status,409);

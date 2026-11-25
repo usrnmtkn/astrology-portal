@@ -2,18 +2,19 @@ import {resolveHoroscopeClaimSubjects,horoscopePlacementClaims,horoscopeHouseIng
 import {horoscopeAspectFindings,horoscopeAspectHouseSubjects,horoscopePersonalSignClaims} from './horoscopeAspectClaims.mjs';
 import {horoscopePunctuationFindings,horoscopeVocabularyFindings} from './horoscopeEditorialConstraints.mjs';
 import {seasonalDateFindings} from './horoscopeSeasonalDates.mjs';
+import {dailyHoroscopeFindings} from './dailyHoroscopeValidation.mjs';
 import {validateCopy} from './validateCopy.mjs';
 import {governValidationResult} from './effectiveRuleGovernance.mjs';
 import {HOROSCOPE_SIGNS} from '../../apps/web/src/content/horoscopeEditions.mjs';
 import {horoscopeEventsInWindow,horoscopeEventPlanet,horoscopeHouse} from './horoscopeDevelopments.mjs';
 import {horoscopePhasePattern,normalizeHoroscopePhase,horoscopeLunationPhase as lunationPhase} from './horoscopeLunationClaims.mjs';
 
-export const horoscopeValidationVersion='horoscope-facts/v17';
+export const horoscopeValidationVersion='horoscope-facts/v20';
 const bodies='Sun|Moon|Mercury|Venus|Mars|Jupiter|Saturn|Uranus|Neptune|Pluto';
 const signs=HOROSCOPE_SIGNS.join('|');
 const ordinals=['first','second','third','fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth'];
 
-export function validateHoroscopeReading(passage,brief,{ownerCorrections=[],anchorPlanet=brief.window.period==='daily'?'moon':'sun'}={}) {
+export function validateHoroscopeReading(passage,brief,{ownerCorrections=[],sourcePassages=[],anchorPlanet=brief.window.period==='daily'?'moon':'sun'}={}) {
   const planet=anchorPlanet;
   const anchor=brief.positions.find(p=>p.planet.toLowerCase()===planet);
   if(!anchor)throw new Error('Calculated horoscope anchor is missing.');
@@ -21,6 +22,7 @@ export function validateHoroscopeReading(passage,brief,{ownerCorrections=[],anch
   const lint=governValidationResult(validateCopy({headline:passage.headline,body:passage.body},{validationProfile:'horoscope',family:'horoscope',surface:'horoscopes',register:'second_person',requiredFields:['headline','body'],ownerCorrections}),{surface:'horoscopes',family:'horoscope'});
   const violations=[...lint.violations,...horoscopePunctuationFindings(passage),...horoscopeVocabularyFindings(passage,brief.window.period)], text=resolveHoroscopeClaimSubjects(`${passage.headline}\n${passage.body}`);
   const fail=detail=>violations.push({category:'horoscope_fact_boundary',detail,governanceTier:'blocking'});
+  if(brief.window.period==='daily')violations.push(...dailyHoroscopeFindings(passage,{sourcePassages}));
   if(!/\b(?:you|your)\b/iu.test(passage.body))violations.push({category:'register_consistency',detail:'Address the reader in the second person.',governanceTier:'blocking'});
   if(/\b(?:born with|your natal|since childhood)\b/iu.test(text))fail('A temporary forecast cannot establish natal biography.');
   horoscopeAspectFindings(text,brief).forEach(fail);

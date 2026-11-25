@@ -4,6 +4,7 @@ import {installAlternativeHoroscopeProviders} from '../tests/helpers/horoscope-p
 import {decodeWeeklyHistoryRow} from '../api/_lib/horoscope-history-storage';
 import {emptyHoroscopeEdition,horoscopeEditionBody,horoscopeEditionKey} from '../apps/web/src/content/horoscopeEditions.mjs';
 import {defaultHoroscopeProfile,HOROSCOPE_RUN_PROMPT_VARIABLES} from '../src/astro-writing/horoscopeWritingProfiles.mjs';
+import {enableCompactVoiceInstructions,compactVoiceParts} from '../src/astro-writing/compactVoiceInstructions.mjs';
 import {assertHoroscopeRequestEvidence,restoreWeeklyRequestMeanings} from './assert-horoscope-request-evidence.mjs';
 
 installHoroscopeWriterFixture();installAlternativeHoroscopeProviders();
@@ -13,17 +14,23 @@ globalThis.fetch=async(input:any,options:any={})=>{
   if(options.method==='POST'&&['https://api.openai.com/v1/responses','https://api.anthropic.com/v1/messages','https://generativelanguage.googleapis.com/v1beta/interactions'].includes(url)){
     const request=JSON.parse(options.body),provider=url.includes('anthropic')?'claude':url.includes('googleapis')?'gemini':'current';
     captures.push({provider,input:provider==='claude'?request.messages[0].content:request.input,
+      instructions:provider==='claude'?request.system:provider==='gemini'?request.system_instruction:request.instructions,
       schema:provider==='claude'?request.output_config.format.schema:provider==='gemini'?request.response_format.schema:request.text.format.schema});
   }
   return transport(input,options);
 };
 let previousProfile:any,cases=0;
-for(const v2 of [false,true])for(const optional of [false,true]){
+for(const v2 of [false,true])for(const optional of [false,true])for(const instructionVoice of (v2&&optional?[false,true]:[false])){
   const profile=defaultHoroscopeProfile('weekly');
   const complete='Complete synthetic saved example opening.\nPERIOD DEVELOPMENTS — EACH FACT WITH ITS OWN MEANING AND LIFE AREA\n{ "temporaryMeaning": "Opaque saved example, never generated facts." }\nComplete synthetic saved example ending. 🌙';
-  profile.voiceGuidance+='\n'+complete;
+  profile.voiceGuidance+='\nRETAINED SAVED-GUIDE SOURCE EXAMPLES\n'+complete;
   if(v2)profile.prompt='WEEKLY PROMPT V2\nWrite {{period}}.\n{{voiceGuidance}}\n{{structure}}\n{{sourceGuidance}}';
   if(optional)profile.prompt+='\n\n'+HOROSCOPE_RUN_PROMPT_VARIABLES.map(name=>`${name}\n{{${name}}}`).join('\n\n');
+  if(instructionVoice){
+    profile.voiceGuidance=defaultHoroscopeProfile('weekly').voiceGuidance;
+    profile.sourceGuidance+='\n'+complete;
+    profile.prompt=enableCompactVoiceInstructions(profile.prompt);
+  }
   const saved=await store.invoke('POST',{profile,expectedUpdatedAt:previousProfile?.updatedAt??null},'/api/admin/generated-content?writingProfiles=true');
   assert.equal(saved.status,200);previousProfile=saved.payload.profile;
   for(const choice of ['current','claude','gemini']){
@@ -50,7 +57,12 @@ for(const v2 of [false,true])for(const optional of [false,true]){
     assert.deepEqual(writer.schema.required,['headline','body']);
     if(!v2)assertHoroscopeRequestEvidence(writer.input,optional?['primaryOwnerVoiceSources','supportingOwnerVoiceSources']:[]);
     else if(!optional)for(const label of ['WEEKLY COMPLETE SOURCE PASSAGES','SHARED FIVE-ROLE EVIDENCE','REGISTER REFERENCE','REJECTED READINGS'])assert(!writer.input.includes(label),'V2 retains its existing source boundary');
-    for(const field of ['voiceGuidance','structure','sourceGuidance'])assert(writer.input.includes(profile[field]),`Complete ${field} stays exact`);
+    for(const field of ['structure','sourceGuidance'])assert(writer.input.includes(profile[field]),`Complete ${field} stays exact`);
+    const voice=compactVoiceParts(profile);
+    assert.equal(writer.instructions.split(voice.editorial).length-1,1,'Every actual provider receives the saved editorial Voice exactly once without opt-in');
+    assert(!writer.input.includes(voice.editorial));
+    assert(!writer.instructions.includes(complete),'Opaque archived saved example stays source data');
+    if(voice.archive)assert(writer.input.includes(voice.archive),'The explicit retained-example archive stays complete');
     assert(writer.input.includes(complete),'Saved JSON-looking source remains opaque');
     // Meaning sources are generated JSON, never parsed out of saved prose.
     const factsInput=optional?writer.input.split('governedFacts\n').at(-1):writer.input;

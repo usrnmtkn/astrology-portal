@@ -1,5 +1,7 @@
 import forecastProse from '../src/astro-writing/forecastProseDevelopment.cjs';
 const {FORECAST_PROSE_DEVELOPMENT}=forecastProse;
+import {withCompactVoiceInstructions} from '../src/astro-writing/compactVoiceInstructions.mjs';
+import {defaultHoroscopeProfile} from '../src/astro-writing/horoscopeWritingProfiles.mjs';
 import assert from 'node:assert/strict';
 import {decodeWeeklyHistoryRow} from '../api/_lib/horoscope-history-storage';
 import {applyCheckpointFixture} from '../tests/helpers/horoscope-checkpoint-fixture.mts';
@@ -10,8 +12,10 @@ import {horoscopeWriterConfig} from '../src/astro-writing/horoscopeWriterModels.
 import {buildHoroscopeProviderRequest,readClaudeStream,readGeminiStream,normalizeClaudeResult,normalizeGeminiResult} from '../api/_lib/horoscope-provider-codecs';
 import responses from '../src/astro-writing/openAIResponses.cjs';
 import {horoscopeProseInstructions} from '../src/astro-writing/horoscopeProseInstructions.mjs';
+import {DAILY_HOROSCOPE_INSTRUCTIONS} from '../src/astro-writing/dailyHoroscopeDraft.mjs';
 import {claudeRequestId,geminiRequestId,saveHoroscopeStreamResult,storedHoroscopeResponse} from '../api/_lib/horoscope-provider';
 import {horoscopeWeeklyBatchRecovery} from '../src/astro-writing/horoscopeWeeklyBatchRecovery.mjs';
+import providerConfig from '../src/astro-writing/offlineProviderConfig.cjs';
 
 installHoroscopeWriterFixture();
 const transport=installAlternativeHoroscopeProviders();
@@ -23,6 +27,14 @@ assert.equal(nativeRequest.stream,undefined,'New runs must not depend on a local
 const exactInput='Complete synthetic instructions\n\nComplete synthetic owner evidence\n\nFinal evidence sentence.';
 const exactInstructions=responses.governedInstructionsForRole('WRITER',{surface:'horoscopes',family:'horoscope',taskInstructions:'Exact synthetic profile.'});
 const schema={type:'object',properties:{body:{type:'string'}},required:['body'],additionalProperties:false};
+for(const period of ['daily','weekly','monthly','seasonal']){
+ const config=horoscopeWriterConfig('current',period);
+ const request=buildHoroscopeProviderRequest({config,input:exactInput,instructions:exactInstructions,schema});
+ assert.equal(request.reasoning.effort,'medium','Horoscope prose must leave room for a complete reader response');
+ assert.equal(request.max_output_tokens,12000,'The repair must not silently raise the paid output ceiling');
+ assert.equal(config.model,providerConfig.normalizeProviderConfig({},'writer').model,'This is the existing model, not an unapproved model switch');
+}
+assert.equal(providerConfig.normalizeProviderConfig({},'writer').reasoningEffort,'xhigh','Other writing surfaces retain their existing default');
 for(const choice of ['gemini','claude'] as const){
  const request=buildHoroscopeProviderRequest({config:horoscopeWriterConfig(choice),input:exactInput,instructions:exactInstructions,schema});
  assert.equal(choice==='gemini'?request.input:request.messages[0].content,exactInput);
@@ -67,8 +79,8 @@ const step=async(id:string)=>{
 };
 
 // Verify the actual OpenAI dispatch, not only the configuration helper. Weekly
-// leaves more of its bounded output budget for prose; Daily keeps its setting.
-for(const [period,effort] of [['daily','xhigh'],['weekly','medium']]){
+// and Daily leave more of their bounded output budget for reader prose.
+for(const [period,effort] of [['daily','medium'],['weekly','medium']]){
   const id=await create(period,'2026-11-23'),prepared=await action(id,'prepare');
   const started=await action(id,'generate',{sign:'aries',approvedPlanHash:prepared.payload.plan.planHash});
   assert.equal(started.status,202,JSON.stringify(started.payload));
@@ -119,8 +131,8 @@ for(const period of ['daily','weekly','monthly','seasonal'])for(const choice of 
   const raw=transport.requests.at(-1),request=raw.request;
   const instructions=raw.provider==='gemini'?request.system_instruction:request.system;
   const input=raw.provider==='gemini'?request.input:request.messages[0].content;
-  if(period==='daily')assert(instructions.includes('HOROSCOPE EDITORIAL AUTHORITY'));
-  else assert.equal(instructions,horoscopeProseInstructions(period));
+  const base=period==='daily'?DAILY_HOROSCOPE_INSTRUCTIONS:horoscopeProseInstructions(period);
+  assert.equal(instructions,withCompactVoiceInstructions(base,defaultHoroscopeProfile(period)));
   if(period==='seasonal'){
     const run=editorialFixtureRows.get(generation.editorialRuns.aries.id).state;
     const captured=run.artifacts.find((a:any)=>a.kind==='model_response'&&a.value.stage==='prose').value.request;
@@ -508,3 +520,4 @@ const recovered=await storedHoroscopeResponse({operation:backgroundOperation,fet
 assert.equal((await recovered.json()).output[0].content[0].text,'Complete synthetic response.');assert.equal(reads,1);
 await assert.rejects(storedHoroscopeResponse({operation:backgroundOperation,fetchImpl:async()=>Response.json({id:'v1_wrong_result',status:'completed',steps:[]})}),/does not match/);
 console.log('Provider-stored results survive the former local checkpoint deadline; wrong identities cannot be admitted.');
+await store.close();

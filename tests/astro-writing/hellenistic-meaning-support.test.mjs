@@ -76,10 +76,16 @@ test('knowledge validation rejects voice promotion and broken page provenance be
   }finally{fs.rmSync(directory,{recursive:true,force:true});}
 });
 
-test('Personal Transit and relationship projections cannot admit raw mechanics',()=>{
-  for(const context of [{surface:'you',family:'transit-aspect'},{family:'bond-effect'}]){
-    assert.equal(hellenisticMeaningPrompt({...context,facts:{house:1,sign:'leo',aspect:'square'}}),'');
+test('reader-meaning projections cannot admit raw mechanics',()=>{
+  for(const context of [{surface:'you',family:'transit-aspect'},{family:'bond-effect'},
+    ...['daily','weekly'].map(period=>({family:'horoscope',surface:'horoscopes',facts:{window:{period},house:1,sign:'leo',aspect:'square'}}))]){
+    assert.equal(hellenisticMeaningPrompt({...context,facts:{...context.facts,house:1,sign:'leo',aspect:'square'}}),'');
     assert.equal(buildHellenisticMeaningSupport(context).receipt.projectionOnly,true);
+  }
+  for(const period of ['monthly','seasonal']){
+    const support=buildHellenisticMeaningSupport({family:'horoscope',facts:{window:{period},house:1,sign:'leo',aspect:'square'}});
+    assert.equal(support.receipt.projectionOnly,false);
+    assert(support.records.length>0,'Other horoscope formats keep their existing source boundary');
   }
 });
 

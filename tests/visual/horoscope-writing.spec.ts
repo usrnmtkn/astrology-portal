@@ -3,7 +3,7 @@ import { fork } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
-import { HOROSCOPE_PERIODS, HOROSCOPE_PROFILE_FIELD_LIMIT, HOROSCOPE_RUN_PROMPT_VARIABLES } from '../../src/astro-writing/horoscopeWritingProfiles.mjs';
+import { HOROSCOPE_PERIODS, HOROSCOPE_PROFILE_FIELD_LIMIT, HOROSCOPE_RUN_PROMPT_VARIABLES, defaultHoroscopeProfile } from '../../src/astro-writing/horoscopeWritingProfiles.mjs';
 
 const endpoint = '/api/admin/generated-content?writingProfiles=true';
 const entry = process.env.STUDIO_PRODUCTION_ENTRY === '1' ? '/admin/content' : '/';
@@ -51,8 +51,7 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
     await page.screenshot({path:`test-results/ai-writing-${state}-${width}-${theme}.png`, fullPage:true, animations:'disabled'});
    };
    await expect(voice).toBeVisible();
-   await expect(voice).toHaveValue(/Name the actual calculated destination sign/);
-   await expect(voice).toHaveValue(/both lived-experience and transit-first openings/);
+   await expect(voice).toHaveValue(defaultHoroscopeProfile('weekly').voiceGuidance);
    await expect(editor.getByRole('tab')).toHaveText(['Voice', 'Structure', 'Sources', 'Prompt', 'Preview']);
    await expect(editor.getByRole('heading')).toHaveText(['Weekly instructions']);
    await expect(editor.getByRole('heading', {level:2})).toHaveText('Weekly instructions');
