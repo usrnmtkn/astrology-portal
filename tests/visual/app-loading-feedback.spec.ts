@@ -2,6 +2,7 @@ import { expect, test, type Page } from "@playwright/test";
 import { writeFile } from "node:fs/promises";
 import { readFileSync } from "node:fs";
 import { readerResponse } from '../helpers/reader-response';
+import { healthyEphemerisProbe } from '../helpers/ephemeris-health';
 
 const weekGuidance = (page: Page, dateKey: string) => page.locator(`#calendar-day-group-${dateKey} .calendar-day-group__blurb`);
 const dayGuidance = (page: Page) => page.locator("[data-calendar-date] [data-guidance-key]").first();
@@ -11,6 +12,20 @@ test.beforeEach(async ({ page }) => {
   await page.route("**/rest/v1/**", route => route.fulfill({ json: [] }));
   await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse([]) }));
 });
+
+for (const cancellation of ['Execution context was destroyed, most likely because of a navigation', 'Cannot find context with specified id']) {
+  test(`a cancelled health probe settles reader route cleanup: ${cancellation}`, async ({ page }) => {
+    await healthyEphemerisProbe({
+      route: page.route.bind(page),
+      isClosed: page.isClosed.bind(page),
+      evaluate: async () => { throw new Error(cancellation); }
+    });
+    const failed = page.waitForEvent('requestfailed', request => request.url() === 'https://health-fixture.example.test/api/health?scope=ephemeris');
+    await page.evaluate(() => { void fetch('https://health-fixture.example.test/api/health?scope=ephemeris').catch(() => {}); });
+    expect((await failed).failure()).not.toBeNull();
+    await page.unrouteAll({ behavior: 'wait' });
+  });
+}
 
 test("offline snapshot publication keeps complete Calendar guidance available during live API failure", async ({ page }) => {
   test.setTimeout(60_000);
