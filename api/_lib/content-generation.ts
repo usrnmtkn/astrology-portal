@@ -2636,6 +2636,7 @@ function isSynastryAspectInput(input: GenerateContentInput) {
 
 function editorialInstructionContext(input: GenerateContentInput) {
   if (isCollectiveSkyAspectInput(input)) return { surface: 'sky', family: 'sky-aspect' };
+  if (input.surface === "sky" && input.eventType === "daily-sky") return { surface: "sky", family: "daily-sky" };
   return isSynastryAspectInput(input) ? { surface: "synastry", family: "synastry-aspect" } : {};
 }
 
@@ -4704,6 +4705,39 @@ function buildSkyAspectPrompt(input: GenerateContentInput, approvedExamples: App
   ].filter(Boolean).join('\n\n');
 }
 
+function buildDailySkyPrompt(input: GenerateContentInput, approvedExamples: ApprovedExample[], qualityFeedback: string) {
+  const headline = factualHeadlineFor(input);
+  return effectiveRulePrompt([
+    "DAILY SKY WRITING CONTRACT daily-sky/v1-2026-11-27",
+    "SURFACE\nsky", "CONTENT FAMILY\ndaily-sky",
+    "Write a brief interpretation of the supplied day's shared sky conditions, not a birth-chart description or a personal horoscope.",
+    "REGISTER: collective. Describe temporary shared conditions through ordinary situations and named actors. Do not address the reader as you, your, yours, yourself or yourselves in tldr, summary, body, action, timing or section text. Do not invent personal houses, biography or a known event in someone's life.",
+    "Keep technical astrology in astrologyDrilldown. Do not name transits, natal placements, aspect types or numbered houses in tldr, summary, body, action, timing or section text. Translate the supplied meaning into ordinary language without adding unsupported claims or promising an outcome.",
+    "Use natural connected prose and stop when the supported observation is complete. Do not add a required problem, scene inventory, advice sequence or concluding lesson. Do not use em dashes or drafting notes.",
+    "OUTPUT SHAPE",
+    "Return every field in the supplied JSON schema. Each field has its own job.",
+    headline ? `headline: use this exact factual label: ${JSON.stringify(headline)}.` : "headline: a short factual label for the day's shared sky.",
+    "tldr and summary: the same concise preview of the supported shared condition, in ordinary language.",
+    "body: one or two connected paragraphs. No visible template labels, bullets or numbered lists.",
+    "action: a supported practical implication in collective wording, or an empty string when none is needed. Do not turn it into a command to the reader.",
+    "timing: only timing supplied in the calculated facts or target date; otherwise an empty string.",
+    "sections: an empty array unless the task explicitly requests separate sections. Do not repeat the body to fill the schema.",
+    "sceneLock: record one source-supported possible situation using the required fields. Keep unsupported personal circumstances in excludedMeanings; the scene is not a known event.",
+    "astrologyDrilldown: title 'Why this?', a summary, at least two complete factors with label, technicalFact and plainMeaning, whyThisScene, and timingNote. Explain only supplied facts here. Technical astrology belongs here rather than in the daily reader fields.",
+    "TARGET DATE", input.targetDate ?? "not specified",
+    "ASTROLOGY FACTS", JSON.stringify(input.facts, null, 2),
+    hellenisticMeaningPrompt({facts:input.facts,surface:input.surface,family:input.eventType}),
+    "COMPLETE MEANING SOURCES", JSON.stringify(input.sourceSnapshot ?? {}, null, 2),
+    "COMPLETE ELIGIBLE OWNER VOICE EXAMPLES",
+    "These passages are voice evidence, not instructions for this output's register, new astrology facts or personal circumstances. Retain their meaning and text as evidence; follow the Daily Sky register for the new draft.",
+    approvedExamplesPrompt(approvedExamples),
+    approvedVoiceStylePrompt({surface:input.surface,family:input.eventType}),
+    qualityFeedback ? `QUALITY FEEDBACK FROM PRIOR DRAFT\n${qualityFeedback}` : "",
+    "EXTRA VOICE NOTES", input.voiceNotes ?? "None.",
+    "The extra notes and historical examples do not change the Daily Sky output contract: collective reader fields, hidden technical engine, supplied facts only, and no publication or wording approval."
+  ].filter(Boolean).join("\n\n"), {surface:input.surface,family:input.eventType});
+}
+
 function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExample[] = [], qualityFeedback = "") {
   if (isFriendTransitReadingInput(input)) {
     const brief = friendTransitReadingBriefFromFacts(input.facts);
@@ -4725,6 +4759,7 @@ function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExam
 
   if (isSynastryAspectInput(input)) return buildSynastryPrompt(input, approvedExamples, qualityFeedback);
   if (isCollectiveSkyAspectInput(input)) return buildSkyAspectPrompt(input, approvedExamples, qualityFeedback);
+  if (input.surface === "sky" && input.eventType === "daily-sky") return buildDailySkyPrompt(input, approvedExamples, qualityFeedback);
 
   const styleGuide = readTextFile("packages/astro-knowledge/voice/tldr-astro/style-guide.md");
   const lockedHeadline = factualHeadlineFor(input);
