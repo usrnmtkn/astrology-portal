@@ -72,7 +72,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       },
       knowledgeIds: topAspects.map((aspect) => `sky-${aspect.from.toLowerCase()}-${aspect.type}-${aspect.to.toLowerCase()}`),
       sourceSnapshot: loadSkySourceSnapshot(),
-      voiceNotes: "Write for the Sky page. Make it actionable. Use the pattern: headline, what you may notice, why, what to do, timing."
+      voiceNotes: "Write a brief Daily Sky observation in collective wording. Keep the shared situation understandable without technical astrology. Put the supporting astrology in the drilldown, and use only the supplied day's facts."
     };
     await assertNewGeneratedInterpretation(input);
     const generated = await generateContent(input);
